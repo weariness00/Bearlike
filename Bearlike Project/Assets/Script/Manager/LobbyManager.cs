@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Script.Data;
+using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+
 
 public class LobbyManager : MonoBehaviour
 {
+    public TMP_InputField userID;
     
 }

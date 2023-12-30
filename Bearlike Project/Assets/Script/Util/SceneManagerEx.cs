@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 public enum SceneType
 {
     Lobby,
+    Matching,
     Game,
 }
 

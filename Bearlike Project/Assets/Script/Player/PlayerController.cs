@@ -1,21 +1,24 @@
 ﻿using Fusion;
-using UnityEngine;
+using Script.Photon;
 
-public class PlayerController : NetworkBehaviour
+namespace Script.Player
 {
-    private NetworkCharacterController _cc;
-    
-    private void Awake()
+    public class PlayerController : NetworkBehaviour
     {
-        _cc = GetComponent<NetworkCharacterController>();
-    }
+        private NetworkCharacterController _cc;
     
-    public override void FixedUpdateNetwork()
-    {
-        if (GetInput(out NetworkInputData data))
+        private void Awake()
         {
-            data.direction.Normalize();
-            _cc.Move(5*data.direction*Runner.DeltaTime);
+            _cc = GetComponent<NetworkCharacterController>();
+        }
+    
+        public override void FixedUpdateNetwork()
+        {
+            if (GetInput(out NetworkInputData data))
+            {
+                data.direction.Normalize();
+                _cc.Move(5*data.direction*Runner.DeltaTime);
+            }
         }
     }
 }
