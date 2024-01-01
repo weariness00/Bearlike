@@ -1,23 +1,21 @@
-﻿using System;
-using Fusion;
-using Script.Photon;
-using UnityEngine;
+﻿using Fusion;
+using Script.Data;
 
 public class GameManager : NetworkBehaviour
 {
-    public NetworkPrefabRef p;
-
+    private UserData _userData;
+    private NetworkRunner _runner;
+    
     private void Start()
     {
-        FindObjectOfType<NetworkRunner>().Spawn(p, Vector3.zero, Quaternion.identity);
+        _userData = FindObjectOfType<UserData>();
+        _runner = FindObjectOfType<NetworkRunner>();
+        
+        _userData.SpawnPlayers();
     }
 
     public override void FixedUpdateNetwork()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Runner.Spawn(p, Vector3.zero, Quaternion.identity);
-        }
     }
 }
 

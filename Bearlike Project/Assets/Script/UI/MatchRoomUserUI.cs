@@ -12,7 +12,7 @@ public class MatchRoomUserUI : MonoBehaviour
     {
         for (int i = 0; i < NetworkProjectConfig.Global.Simulation.PlayerCount && i < dataList.Length; i++)
         {
-            users_Text[i].text = dataList[i].Name;
+            users_Text[i].text = dataList[i].Name.ToString();
         }
     }
 }

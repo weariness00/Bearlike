@@ -19,8 +19,14 @@ namespace Script.Photon
     {
         public int count = 0;
 
+        public NetworkPrefabRef userDataPrefabRef;
         public UserData userData;
         private NetworkRunner _runner;
+
+        private void Start()
+        {
+            userData = FindObjectOfType<UserData>();
+        }
 
         async void Matching(GameMode mode)
         {
@@ -54,31 +60,19 @@ namespace Script.Photon
         {
             count++;
             var matchManager = FindObjectOfType<MatchManager>();
-                
-            UserDataStruct data = new UserDataStruct();
-            data.PlayerRef = player;
-            data.Name = player.ToString();
-                
-            matchManager.userData.UserDictionary.Set(player, data);
+            if (runner.IsServer)
+            {
+                userData = _runner.Spawn(userDataPrefabRef, Vector3.zero, Quaternion.identity).GetComponent<UserData>();
+                var data = new UserDataStruct();
+                data.PlayerRef = player;
+                data.Name = player.ToString(); 
+                // userData.InsertUserData(player, data);
+            }
             matchManager.DataUpdate();
-
-            // if (runner.IsServer)
-            // {
-            //     // Create a unique position for the player
-            //     Vector3 spawnPosition = new Vector3(runner.Config.Simulation.PlayerCount * 2, 1, 0);
-            //     NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
-            //     // Keep track of the player avatars for easy access
-            //     _spawnedCharacters.Add(player, networkPlayerObject);
-            // }
         }
 
         public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
         {
-            // if (_spawnedCharacters.TryGetValue(player, out NetworkObject networkObject))
-            // {
-            //     runner.Despawn(networkObject);
-            //     _spawnedCharacters.Remove(player);
-            // }
             count--;
         }
 

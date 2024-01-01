@@ -1,4 +1,6 @@
-﻿using Fusion;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Fusion;
 using Script.Data;
 using Script.Util;
 using UnityEngine;
@@ -9,22 +11,22 @@ namespace Script.Manager
     public class MatchManager : NetworkBehaviour
     {
         public MatchRoomUserUI roomUserUI;
-        public UserData userData;
 
-        public NetworkPrefabRef pf;
-
-        private NetworkRunner _runner;
+        public List<NetworkPrefabRef> PlayerPrefabRefs;
         
-
-        private void Start()
-        {
-            _runner = FindObjectOfType<NetworkRunner>();
-        }
-
         public void DataUpdate()
         {
+            var userData = FindObjectOfType<UserData>();
+            
             var items = NetworkUtil.DictionaryItems(userData.UserDictionary);
             roomUserUI.UpdateData(items);
+        }
+
+        async void NextPlayerPrefab()
+        {
+            var userData = FindObjectOfType<UserData>();
+
+            userData.ChangePlayerRef(Runner.LocalPlayer, PlayerPrefabRefs[0]);
         }
         
         async void GameStart()
@@ -38,7 +40,7 @@ namespace Script.Manager
                 localPhysicsMode = LocalPhysicsMode.Physics3D,
             };
 
-            _runner.LoadScene(sceneRef, lp);
+            Runner.LoadScene(sceneRef, lp);
         }
     }
 }
