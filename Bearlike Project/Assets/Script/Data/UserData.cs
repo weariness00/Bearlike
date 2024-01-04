@@ -8,7 +8,7 @@ namespace Script.Data
 {
     public struct UserDataStruct : INetworkStruct
     {
-        [Networked] public NetworkString<_32> Name { get; set; }
+        public NetworkString<_32> Name { get; set; }
         public PlayerRef PlayerRef;
         public NetworkPrefabRef PrefabRef;
     }   

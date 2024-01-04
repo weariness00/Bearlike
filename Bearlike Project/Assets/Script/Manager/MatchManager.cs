@@ -22,14 +22,14 @@ namespace Script.Manager
             roomUserUI.UpdateData(items);
         }
 
-        async void NextPlayerPrefab()
+        void NextPlayerPrefab()
         {
             var userData = FindObjectOfType<UserData>();
 
             userData.ChangePlayerRef(Runner.LocalPlayer, PlayerPrefabRefs[0]);
         }
         
-        async void GameStart()
+        void GameStart()
         {
             gameObject.SetActive(false);
             

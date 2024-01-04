@@ -15,7 +15,7 @@ namespace Script.Photon
         public Vector3 direction;
     }
     
-    public class MatchNetwork : MonoBehaviour, INetworkRunnerCallbacks
+    public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     {
         public int count = 0;
 
@@ -51,10 +51,12 @@ namespace Script.Photon
                 Scene = scene,
                 SceneManager = ObjectUtil.GetORAddComponet<NetworkSceneManagerDefault>(gameObject)
             });
+
+            gameObject.transform.parent = Managers.Instance.transform;
         }
 
-        async void MakeRoom() => Matching(GameMode.Host);
-        async void JoinRoom() => Matching(GameMode.Client);
+        void MakeRoom() => Matching(GameMode.Host);
+        void JoinRoom() => Matching(GameMode.Client);
 
         public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {

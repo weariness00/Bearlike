@@ -1,5 +1,4 @@
-﻿using Script.Data;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
 
