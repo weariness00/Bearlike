@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Fusion;
 using Fusion.Sockets;
 using Script.Data;
@@ -10,35 +11,32 @@ using UnityEngine.SceneManagement;
 
 namespace Script.Photon
 {
-    public struct NetworkInputData : INetworkInput
-    {
-        public Vector3 direction;
-    }
-    
     public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     {
+        public static NetworkManager Instance;
+        
         public int count = 0;
 
         public NetworkPrefabRef userDataPrefabRef;
-        public UserData userData;
+        private UserData _userData;
         private NetworkRunner _runner;
-
-        private void Start()
+    
+        private void Awake()
         {
-            userData = FindObjectOfType<UserData>();
+            if(Instance == null) Instance = this;
         }
 
-        async void Matching(GameMode mode)
+        async Task Matching(GameMode mode)
         {
-            // Create the Fusion runner and let it know that we will be providing user input
-            
+            // Create the Fusion runner and let it know that we will be providing user inpuz
+
             _runner = ObjectUtil.GetORAddComponet<NetworkRunner>(gameObject);
             _runner.ProvideInput = true;
 
             // Create the NetworkSceneInfo from the current scene
             var scene = SceneRef.FromIndex((int)SceneType.Matching);
             var sceneInfo = new NetworkSceneInfo();
-            if (scene.IsValid)  
+            if (scene.IsValid)
             {
                 sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
             }
@@ -55,46 +53,58 @@ namespace Script.Photon
             gameObject.transform.parent = Managers.Instance.transform;
         }
 
-        void MakeRoom() => Matching(GameMode.Host);
-        void JoinRoom() => Matching(GameMode.Client);
+        async Task RandomMatching() => await Matching(GameMode.AutoHostOrClient);
+        async Task MakeRoom() => await Matching(GameMode.Host);
+        async Task JoinRoom() => await Matching(GameMode.Client);
 
         public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
             count++;
             var matchManager = FindObjectOfType<MatchManager>();
-            if (runner.IsServer)
+            var data = new UserDataStruct();
+
+            if (_userData == null)
             {
-                userData = _runner.Spawn(userDataPrefabRef, Vector3.zero, Quaternion.identity).GetComponent<UserData>();
-                var data = new UserDataStruct();
-                data.PlayerRef = player;
-                data.Name = player.ToString(); 
-                // userData.InsertUserData(player, data);
+                _userData = FindObjectOfType<UserData>();
+                if(_userData == null)
+                    _userData = _runner.Spawn(userDataPrefabRef, Vector3.zero, Quaternion.identity).GetComponent<UserData>();
             }
+            data.PlayerRef = player;
+            data.Name = player.ToString();
+            data.PrefabRef = matchManager.PlayerPrefabRefs[0]; // 임시 : 나중에는 유저가 선택하면 바꿀 수 있거나 아니면 이전 정보를 가져와 그 캐릭터로 잡아줌
+            
+            _userData.InsertUserData(player, data);
             matchManager.DataUpdate();
         }
 
         public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
         {
+            DebugManager.Log($"종료 : {player}");
+            
             count--;
+            _userData.UserDictionary.Remove(player);
         }
 
         public void OnInput(NetworkRunner runner, NetworkInput input)
         {
-            var data = new NetworkInputData();
+            var playerInputData = new PlayerInputData();
+
+            if (KeyManager.InputAction(KeyToAction.MoveFront))
+                playerInputData.MoveFront = true;
+            if (KeyManager.InputAction(KeyToAction.MoveBack))
+                playerInputData.MoveBack = true;
+            if (KeyManager.InputAction(KeyToAction.MoveLeft))
+                playerInputData.MoveLeft = true;
+            if (KeyManager.InputAction(KeyToAction.MoveRight))
+                playerInputData.MoveRight = true;
+
+            if (KeyManager.InputActionDown(KeyToAction.Attack))
+                playerInputData.Attack = true;
             
-            if (Input.GetKey(KeyCode.W))
-                data.direction += Vector3.forward;
-            
-            if (Input.GetKey(KeyCode.S))
-                data.direction += Vector3.back;
-            
-            if (Input.GetKey(KeyCode.A))
-                data.direction += Vector3.left;
-            
-            if (Input.GetKey(KeyCode.D))
-                data.direction += Vector3.right;
-            
-            input.Set(data);
+            playerInputData.MouseAxis.x = Input.GetAxis("Mouse X");
+            playerInputData.MouseAxis.y = Input.GetAxis("Mouse Y");
+
+            input.Set(playerInputData);
         }
 
         public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)
@@ -103,6 +113,11 @@ namespace Script.Photon
 
         public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
         {
+            var player = runner.LocalPlayer;
+            DebugManager.Log($"강제 종료 : {runner.LocalPlayer}");
+            
+            count--;
+            _userData.UserDictionary.Remove(runner.LocalPlayer);
         }
 
         public void OnConnectedToServer(NetworkRunner runner)
@@ -111,6 +126,9 @@ namespace Script.Photon
 
         public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
         {
+            DebugManager.LogWaring($"서버 연결이 끊김\n" +
+                                   $"서버 이름 : {runner.SceneManager.MainRunnerScene.name}");
+            SceneManager.LoadScene((int)SceneType.Lobby);
         }
 
         public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request,
@@ -140,10 +158,12 @@ namespace Script.Photon
 
         public void OnSceneLoadDone(NetworkRunner runner)
         {
+            DebugManager.Log($"씬 Loading 끝 : {runner.SceneManager.MainRunnerScene.name}");
         }
 
         public void OnSceneLoadStart(NetworkRunner runner)
         {
+            DebugManager.Log($"씬 Loading 시작 : {runner.SceneManager.MainRunnerScene.name}");
         }
 
         public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)

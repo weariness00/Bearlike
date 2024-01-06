@@ -11,6 +11,7 @@ namespace Script.Manager
         public bool log;
         public bool logWaring;
         public bool logError;
+        public bool drawRay;
 
         private void Awake()
         {
@@ -32,7 +33,12 @@ namespace Script.Manager
             if (!DebugManager.Instance.isDebug && !DebugManager.Instance.logError) return;
             Debug.LogError(massage);
         }
-        
+
+        public static void DrawRay(Vector3 position, Vector3 direction, Color color)
+        {
+            if (!DebugManager.Instance.isDebug && !DebugManager.Instance.drawRay) return;
+            Debug.DrawRay(position,direction,color);
+        }
     }
 }
 

@@ -1,4 +1,5 @@
 ﻿using Fusion;
+using Script.Manager;
 using Script.Photon;
 using UnityEngine;
 
@@ -6,20 +7,41 @@ namespace Script.Player
 {
     public class PlayerController : NetworkBehaviour
     {
-        private NetworkCharacterController _cc;
-    
-        private void Awake()
-        {
-            _cc = GetComponent<NetworkCharacterController>();
-        }
-    
         public override void FixedUpdateNetwork()
         {
-            if (GetInput(out NetworkInputData data))
+            if (GetInput(out PlayerInputData data))
             {
-                data.direction.Normalize();
-                _cc.Move(5*data.direction*Runner.DeltaTime);
+                MouseRotate(data.MouseAxis);
+                MoveControl(data);
             }
+        }
+
+        private void MoveControl(PlayerInputData data)
+        {
+            if (data.MoveFront)
+                transform.position += transform.forward * Runner.DeltaTime;
+            if (data.MoveBack)
+                transform.position += -transform.forward * Runner.DeltaTime;
+            if (data.MoveLeft)
+                transform.position += -transform.right * Runner.DeltaTime;
+            if (data.MoveRight)
+                transform.position += transform.right * Runner.DeltaTime;
+        }
+        
+        public float rotateSpeed = 500.0f;
+        float xRotate, yRotate, xRotateMove, yRotateMove;
+        public void MouseRotate(Vector2 mouseAxis)
+        {
+            xRotateMove = mouseAxis.y * Runner.DeltaTime * rotateSpeed;
+            yRotateMove = mouseAxis.x * Runner.DeltaTime * rotateSpeed;
+
+            yRotate = transform.eulerAngles.y + yRotateMove;
+            xRotate = xRotate + xRotateMove;
+
+            xRotate = Mathf.Clamp(xRotate, -90, 90); // 위, 아래 고정
+            var angle = new Vector3(xRotate, yRotate, 0);
+
+            transform.eulerAngles = angle;
         }
     }
 }

@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Fusion;
 using Script.Data;
+using Script.Manager;
+using Script.Photon;
 using TMPro;
 using UnityEngine;
 

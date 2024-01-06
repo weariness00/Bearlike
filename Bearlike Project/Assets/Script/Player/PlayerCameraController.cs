@@ -21,7 +21,4 @@ public class PlayerCameraController : MonoBehaviour
         
         _camera.transform.LookAt(transform);
     }
-    
-    
 }
-

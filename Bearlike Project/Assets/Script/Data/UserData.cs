@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Fusion;
+using Script.Manager;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -25,6 +26,8 @@ namespace Script.Data
 
         public void InsertUserData(PlayerRef playerRef, UserDataStruct userData)
         {
+            DebugManager.Log($"Add Player Data : {userData.Name}");
+            
             UserDictionary.Add(playerRef, userData);
         }
 
@@ -32,7 +35,12 @@ namespace Script.Data
         {
             if (UserDictionary.TryGet(playerRef, out UserDataStruct data))
             {
+                DebugManager.Log($"{playerRef}의 캐릭터를 변경");
                 data.PrefabRef = prefabRef;
+            }
+            else
+            {
+                DebugManager.Log($"{playerRef}가 존재하지 않아 캐릭터를 변경할 수 없습니다.");
             }
 
             UserDictionary.Set(playerRef, data);

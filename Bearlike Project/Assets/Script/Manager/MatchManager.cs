@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using ExitGames.Client.Photon.StructWrapping;
 using Fusion;
 using Script.Data;
+using Script.Photon;
 using Script.Util;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,10 +13,16 @@ namespace Script.Manager
 {
     public class MatchManager : NetworkBehaviour
     {
+        public static MatchManager Instance;
         public MatchRoomUserUI roomUserUI;
 
         public List<NetworkPrefabRef> PlayerPrefabRefs;
-        
+
+        public void Awake()
+        {
+            if (Instance == null) Instance = this;
+        }
+
         public void DataUpdate()
         {
             var userData = FindObjectOfType<UserData>();
@@ -22,7 +31,7 @@ namespace Script.Manager
             roomUserUI.UpdateData(items);
         }
 
-        void NextPlayerPrefab()
+        public void NextPlayerPrefab()
         {
             var userData = FindObjectOfType<UserData>();
 
