@@ -7,7 +7,10 @@ namespace Script.Manager
     {
         public static DebugManager Instance;
 
-        public bool isBuild;
+        public bool isDebug;
+        public bool log;
+        public bool logWaring;
+        public bool logError;
 
         private void Awake()
         {
@@ -16,17 +19,17 @@ namespace Script.Manager
 
         public static void Log(object massage)
         {
-            if (DebugManager.Instance.isBuild) return;
+            if (!DebugManager.Instance.isDebug && !DebugManager.Instance.log) return;
             Debug.Log(massage);
         }
         public static void LogWaring(object massage)
         {
-            if (DebugManager.Instance.isBuild) return;
+            if (!DebugManager.Instance.isDebug && !DebugManager.Instance.logWaring) return;
             Debug.LogWarning(massage);
         }
         public static void LogError(object massage)
         {
-            if (DebugManager.Instance.isBuild) return;
+            if (!DebugManager.Instance.isDebug && !DebugManager.Instance.logError) return;
             Debug.LogError(massage);
         }
         
