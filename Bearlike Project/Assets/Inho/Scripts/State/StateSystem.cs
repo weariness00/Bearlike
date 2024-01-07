@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Inho.Scripts
+namespace Inho.Scripts.State
 {
     public class StateSystem : MonoBehaviour
     {
@@ -14,11 +14,13 @@ namespace Inho.Scripts
         void Start()
         {
             ManagedState.Initialization();
+            ManagedState.ShowInfo();
         }
 
         void Update()
         {   
-            ManagedState
+            if(Input.GetKeyDown(KeyCode.A)) ManagedState.ShowInfo();
+            if(Input.GetKeyDown(KeyCode.D)) ManagedState.BeDamaged(10);
         }
     } 
 }

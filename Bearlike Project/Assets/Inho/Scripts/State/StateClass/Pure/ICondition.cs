@@ -1,4 +1,8 @@
-namespace Inho.Scripts
+//---------------------------------------------------------------------------------
+// Object의 상태를 나타내는 인터페이스
+//---------------------------------------------------------------------------------
+
+namespace Inho.Scripts.State
 {
     public enum eCondition
     {
@@ -17,7 +21,7 @@ namespace Inho.Scripts
         public bool PoisonedIsOn();
         public bool WeakIsOn();
         
-        
         public void AddCondition(eCondition condition);
+        public void DelCondition(eCondition condition);
     }
 }
