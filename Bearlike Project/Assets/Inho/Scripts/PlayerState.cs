@@ -9,6 +9,7 @@ namespace Inho.Scripts
         public override void Initialization()
         {
             mHP = 100;
+            mForce = 10.0f;
             mCondition = eCondition.Normality;
         }
         

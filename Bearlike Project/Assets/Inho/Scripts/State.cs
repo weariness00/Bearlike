@@ -4,7 +4,7 @@ namespace Inho.Scripts
     {
         // Member Variable
         protected float mHP;                // 체력        
-        protected float Force;              // 힘
+        protected float mForce;              // 힘
         protected eCondition mCondition;    // 상태
         
         // Member Function
