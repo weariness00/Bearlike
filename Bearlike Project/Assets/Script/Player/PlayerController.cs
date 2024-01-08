@@ -1,4 +1,5 @@
-﻿using Fusion;
+﻿using System;
+using Fusion;
 using Script.Manager;
 using Script.Photon;
 using UnityEngine;
@@ -7,12 +8,26 @@ namespace Script.Player
 {
     public class PlayerController : NetworkBehaviour
     {
+        public IEquipment equipment;
+
+        private void Start()
+        {
+            // 임시로 장비 착용
+            // 상호작용으로 착요하게 바꿀 예정
+            equipment = GetComponentInChildren<IEquipment>();  
+        }
+
         public override void FixedUpdateNetwork()
         {
             if (GetInput(out PlayerInputData data))
-            {
+            {       
                 MouseRotate(data.MouseAxis);
                 MoveControl(data);
+
+                if (data.Attack)
+                {
+                    equipment.Action?.Invoke();
+                }
             }
         }
 

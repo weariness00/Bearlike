@@ -4,11 +4,11 @@ using UnityEngine;
 
 namespace Script.Weapon.Gun
 {
-    public class GunBase : MonoBehaviour
+    public class GunBase : WeaponBase, IEquipment
     {
-        public void Update()
+        protected virtual void Start()
         {
-            CheckRay();
+            Action += CheckRay;
         }
 
         public virtual void Shoot()
@@ -18,12 +18,25 @@ namespace Script.Weapon.Gun
 
         public void CheckRay()
         {
-            Debug.DrawRay(transform.position, transform.forward * int.MaxValue, Color.red);
-            if (Physics.Raycast(transform.position, transform.forward, out var hit))
+            Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+            Debug.DrawRay(ray.origin, ray.direction * int.MaxValue, Color.red, 1.0f);
+            if (Physics.Raycast(ray, out var hit))
             {
                 DebugManager.Log($"Ray충돌\n총 이름 : {name}\n맞은 대상 : {hit.collider.name}");
             }
         }
+
+        #region Equip
+
+        public Action Action { get; set; }
+        public bool IsEquip { get; set; }
+
+        public void Equip()
+        {
+            
+        }
+
+        #endregion
     }
 }
 
