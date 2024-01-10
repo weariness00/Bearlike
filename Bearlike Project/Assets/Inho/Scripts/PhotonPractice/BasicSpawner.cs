@@ -9,6 +9,47 @@ namespace Inho.Scripts.PhotonPractice
 {
     public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     {
+        private NetworkRunner _runner;
+
+        private void OnGUI()
+        {
+            if (_runner == null)
+            {
+                if (GUI.Button(new Rect(0,0,200,40), "Host"))
+                {
+                    StartGame(GameMode.Host);
+                }
+                if (GUI.Button(new Rect(0,40,200,40), "Join"))
+                {
+                    StartGame(GameMode.Client);
+                }
+            }
+        }
+        
+        async void StartGame(GameMode mode)
+        {
+            // Create the Fusion runner and let it know that we will be providing user input    
+            _runner = gameObject.AddComponent<NetworkRunner>();
+            _runner.ProvideInput = true;
+
+            // Create the NetworkSceneInfo from the current scene
+            var scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
+            var sceneInfo = new NetworkSceneInfo();
+            if (scene.IsValid) 
+            {
+                sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
+            }
+
+            // Start or join (depends on gamemode) a session with a specific name
+            await _runner.StartGame(new StartGameArgs()
+            {
+                GameMode = mode,
+                SessionName = "TestRoom",
+                Scene = scene,
+                SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
+            });
+        }
+        
         [SerializeField] private NetworkPrefabRef _playerPrefab;
         private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
 
@@ -67,47 +108,6 @@ namespace Inho.Scripts.PhotonPractice
         public void OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player){ }
         public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, ArraySegment<byte> data){ }
         public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress){ }
-    
-        private NetworkRunner _runner;
-
-        async void StartGame(GameMode mode)
-        {
-            // Create the Fusion runner and let it know that we will be providing user input    
-            _runner = gameObject.AddComponent<NetworkRunner>();
-            _runner.ProvideInput = true;
-
-            // Create the NetworkSceneInfo from the current scene
-            var scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
-            var sceneInfo = new NetworkSceneInfo();
-            if (scene.IsValid) 
-            {
-                sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
-            }
-
-            // Start or join (depends on gamemode) a session with a specific name
-            await _runner.StartGame(new StartGameArgs()
-            {
-                GameMode = mode,
-                SessionName = "TestRoom",
-                Scene = scene,
-                SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
-            });
-        }
-    
-        private void OnGUI()
-        {
-            if (_runner == null)
-            {
-                if (GUI.Button(new Rect(0,0,200,40), "Host"))
-                {
-                    StartGame(GameMode.Host);
-                }
-                if (GUI.Button(new Rect(0,40,200,40), "Join"))
-                {
-                    StartGame(GameMode.Client);
-                }
-            }
-        }
     }
 }
 
