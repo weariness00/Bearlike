@@ -1,7 +1,10 @@
 ﻿using System;
 using Fusion;
+using Script.GameStatus;
 using Script.Manager;
 using Script.Photon;
+using Script.Weapon.Gun;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Script.Player
@@ -9,6 +12,7 @@ namespace Script.Player
     public class PlayerController : NetworkBehaviour
     {
         public IEquipment equipment;
+        public StatusValue ammo = new StatusValue();
 
         private void Start()
         {
@@ -26,7 +30,14 @@ namespace Script.Player
 
                 if (data.Attack)
                 {
-                    equipment.Action?.Invoke();
+                    equipment.AttackAction?.Invoke();
+                }
+
+                if (data.ReLoad && equipment.IsGun)
+                {
+                    var gun = equipment as GunBase;
+                    gun.ammo = ammo;
+                    gun.ReLoadBullet();
                 }
             }
         }

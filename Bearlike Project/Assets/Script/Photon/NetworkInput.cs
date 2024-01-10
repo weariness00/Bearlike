@@ -13,6 +13,7 @@ namespace Script.Photon
         public NetworkBool MoveFront;
 
         public NetworkBool Attack;
+        public NetworkBool ReLoad;
         
         public NetworkButtons Buttons;
     }

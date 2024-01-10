@@ -20,6 +20,7 @@ namespace Script.Manager
         MoveRight,
         
         Attack,
+        ReLoad,
         
         Esc,
     }
@@ -45,6 +46,7 @@ namespace Script.Manager
         {
             keyDictionary.Add(KeyToAction.MoveFront, KeyCode.W);
             keyDictionary.Add(KeyToAction.Esc, KeyCode.Escape);
+            keyDictionary.Add(KeyToAction.ReLoad, KeyCode.R);
             
             mouseDictionary.Add(KeyToAction.Attack, MouseButton.LeftMouse);
         }

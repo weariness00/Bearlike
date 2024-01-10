@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: -5523292380954461702}
   - component: {fileID: 7557161874361324735}
   - component: {fileID: 5866411453329338664}
+  - component: {fileID: 44962900864568622}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -131,6 +132,42 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: -5523292380954461702}
+--- !u!114 &44962900864568622
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4024171478794838668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24fa62afdb754031bd29e32b0727d371, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp:
+    min: 0
+    max: 0
+    current: 0
+    isMin: 0
+    isMax: 0
+  mp:
+    min: 0
+    max: 0
+    current: 0
+    isMin: 0
+    isMax: 0
+  damage:
+    min: 0
+    max: 0
+    current: 0
+    isMin: 0
+    isMax: 0
+  speed:
+    min: 0
+    max: 0
+    current: 0
+    isMin: 0
+    isMax: 0
 --- !u!1 &6182026329050871802
 GameObject:
   m_ObjectHideFlags: 0

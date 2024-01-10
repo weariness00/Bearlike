@@ -98,7 +98,10 @@ namespace Script.Photon
             if (KeyManager.InputAction(KeyToAction.MoveRight))
                 playerInputData.MoveRight = true;
 
-            if (KeyManager.InputActionDown(KeyToAction.Attack))
+            if (KeyManager.InputActionDown(KeyToAction.ReLoad))
+                playerInputData.ReLoad = true;
+
+            if (KeyManager.InputAction(KeyToAction.Attack))
                 playerInputData.Attack = true;
             
             playerInputData.MouseAxis.x = Input.GetAxis("Mouse X");
