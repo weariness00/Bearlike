@@ -49,11 +49,22 @@ namespace Inho.Scripts.State
         // HP
         
         // LV
-        // public void IncreaseExp(int value)
-        // {
-        //     mExp += value;
-        //     
-        // }
+        public void IncreaseExp(int value)
+        {
+            mExp += value;
+
+            if (mLevel == 1 && mExp >= (int)ePlayerExp.Lv1)
+            {
+                mLevel++;
+                mExp -= (int)ePlayerExp.Lv1;
+            }
+            else if (mLevel == 2 && mExp >= (int)ePlayerExp.Lv2)
+            {
+                mLevel++;
+                mExp -= (int)ePlayerExp.Lv2;
+            }
+            // 해당 수식을 깔끔하게 로직짜기 ==> ePlayerExp와 mLevel의 연동을 시켜야함
+        }
         //
 
         // DeBug Function
