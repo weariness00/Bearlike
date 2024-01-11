@@ -8,8 +8,8 @@ namespace Inho.Scripts.State
     {
         // Member Variable
         protected float mHP;                // 체력        
-        protected float mAtk;            // 공격력
-        protected float mDfs;           // 방어력
+        protected float mAtk;               // 공격력
+        protected float mDfs;               // 방어력
         protected float mAvoid;             // 회피
         protected float mspeed;             // 이동 속도
         

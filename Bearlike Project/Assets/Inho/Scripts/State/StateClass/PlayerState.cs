@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -12,6 +13,7 @@ namespace Inho.Scripts.State
 
         private int mLevel;             // 레벨
         private int mExp;               // 경험치
+        private List<int> mExpAmount;   // 레벨별 경험치량
         
         // Member Function
         // ObjectState abstract class Function
@@ -28,6 +30,9 @@ namespace Inho.Scripts.State
             
             mForce = 10.0f;
             mCondition = eCondition.Normality;
+            
+            for(int i = 0; i < 10; ++i)
+                mExpAmount.Add(10 * (int)math.pow(i,2));    // 임시 수치 적용
 
             // mPlayerID 초기화 필요 ==> 입장 할때 순서대로 번호 부여 혹은 고유 아이디 존재하게 구현
             // mPlayerJob 초기화 필요 ==> 직업 선택한후에 초기화 해주게 구현
@@ -38,13 +43,13 @@ namespace Inho.Scripts.State
 
         public override void BeDamaged(float attack)
         {
-            if ((Random.Range(0.0f, 100.0f) < mAvoid)) return;
+            if ((Random.Range(0.0f, 99.9f) < mAvoid)) return;
             
-            var DamageRate = math.log10((attack / mDfs) * 10);
+            var damageRate = math.log10((attack / mDfs) * 10);
 
-            if (WeakIsOn()) DamageRate *= 1.5f;
+            if (WeakIsOn()) damageRate *= 1.5f;
 
-            mHP -= DamageRate * attack;
+            mHP -= damageRate * attack;
         }
         // HP
         
@@ -53,17 +58,11 @@ namespace Inho.Scripts.State
         {
             mExp += value;
 
-            if (mLevel == 1 && mExp >= (int)ePlayerExp.Lv1)
-            {
+            if (mExpAmount[mLevel] <= mExp)
+            {                
+                mExp -= mExpAmount[mLevel];
                 mLevel++;
-                mExp -= (int)ePlayerExp.Lv1;
             }
-            else if (mLevel == 2 && mExp >= (int)ePlayerExp.Lv2)
-            {
-                mLevel++;
-                mExp -= (int)ePlayerExp.Lv2;
-            }
-            // 해당 수식을 깔끔하게 로직짜기 ==> ePlayerExp와 mLevel의 연동을 시켜야함
         }
         //
 
