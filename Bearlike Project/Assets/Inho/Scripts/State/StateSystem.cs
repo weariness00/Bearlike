@@ -1,3 +1,4 @@
+using Inho.Scripts.Equipment;
 using UnityEngine;
 
 namespace Inho.Scripts.State
@@ -8,22 +9,25 @@ namespace Inho.Scripts.State
     public class StateSystem : MonoBehaviour
     {
         public State ManagedState;
+        public EquitmentSystem Equitment;
 
         private void Awake()
         {
             ManagedState = new PlayerState();   // adapter 형식으로 바꿔보자
+            Equitment = new EquitmentSystem();
         }
 
         void Start()
         {
             ManagedState.Initialization();
             ManagedState.ShowInfo();
+            Equitment.Init();
         }
         
         void Update()
         {   
             if(Input.GetKeyDown(KeyCode.A)) ManagedState.ShowInfo();
-            if(Input.GetKeyDown(KeyCode.S)) ManagedState.BeDamaged(1.0f);
+            if(Input.GetKeyDown(KeyCode.S)) ManagedState.BeDamaged(Equitment.GetEquitment().GetDamage());
             if (Input.GetKeyDown(KeyCode.Z)) ManagedState.AddCondition((int)eCondition.Weak);
             if (Input.GetKeyDown(KeyCode.X)) ManagedState.DelCondition((int)eCondition.Weak);
         }

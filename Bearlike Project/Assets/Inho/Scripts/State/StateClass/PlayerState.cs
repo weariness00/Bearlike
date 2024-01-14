@@ -16,7 +16,7 @@ namespace Inho.Scripts.State
 
         private int mLevel;             // 레벨
         private int mExp;               // 경험치
-        private List<int> mExpAmount;   // 레벨별 경험치량
+        private List<int> mExpAmount = new List<int>();   // 레벨별 경험치량
         
         // Member Function
         // ObjectState abstract class Function
@@ -42,8 +42,9 @@ namespace Inho.Scripts.State
         }
         
         // HP
+        // // 스킬, 무기, 캐릭터 스텟을 모두 고려한 함수 구현 필요
         public override void BeDamaged(float attack)
-        {
+        {   
             if ((Random.Range(0.0f, 99.9f) < mAvoid)) return;
             
             var damageRate = math.log10((attack / mDfs) * 10);
@@ -70,7 +71,7 @@ namespace Inho.Scripts.State
         // DeBug Function
         public override void ShowInfo()
         {
-            Debug.Log("체력 : " +  mHP + " 힘 : " + mForce + " 상태 : " + mCondition);
+            Debug.Log($"체력 : " +  mHP + $" 힘 : " + mForce + $" 상태 : " + (eCondition)mCondition);
         }
         
         

@@ -21,7 +21,9 @@
         
         public void HealingHP(float value) { mHP += value; }
         public abstract void BeDamaged(float attack);
-        
+
+        public float GetAtk() { return mAtk; }
+
         // DeBug Function
         public abstract void ShowInfo();
     }

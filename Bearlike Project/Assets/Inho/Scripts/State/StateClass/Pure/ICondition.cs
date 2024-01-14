@@ -5,7 +5,6 @@ namespace Inho.Scripts.State
     /// <summary>
     /// Object의 상태를 나타내는 열거형
     /// </summary>
-    [Flags]
     public enum eCondition
     {
         Normality = 0b_0000_0000, // 정상
@@ -19,6 +18,9 @@ namespace Inho.Scripts.State
     /// </summary>
     public interface ICondition
     {
+        // C#에서 가능 
+        // public int x { get; set; }
+
         // Condition Determination Function
         public bool On(int condition);
         
