@@ -1,9 +1,8 @@
-﻿//---------------------------------------------------------------------------------
-// Object의 기본 능력치를 나타내는 Class
-//---------------------------------------------------------------------------------
-
-namespace Inho.Scripts.State
+﻿namespace Inho.Scripts.State
 {
+    /// <summary>
+    /// // Object의 기본 능력치를 나타내는 Class
+    /// </summary>
     public abstract class ObjectState
     {
         // Member Variable
@@ -14,13 +13,13 @@ namespace Inho.Scripts.State
         protected float mspeed;             // 이동 속도
         
         protected float mForce;             // 힘
-        protected eCondition mCondition;    // 상태
+        protected int mCondition;    // 상태
 
         
         // Member Function
         public abstract void Initialization();
         
-        public abstract void HealingHP(); // type별로 다른 비율
+        public void HealingHP(float value) { mHP += value; }
         public abstract void BeDamaged(float attack);
         
         // DeBug Function

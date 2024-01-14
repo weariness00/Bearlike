@@ -1,9 +1,11 @@
-//
-// Object의 상태를 나타내는 인터페이스 &lt;
-//
+using System;
 
 namespace Inho.Scripts.State
 {
+    /// <summary>
+    /// Object의 상태를 나타내는 열거형
+    /// </summary>
+    [Flags]
     public enum eCondition
     {
         Normality = 0b_0000_0000, // 정상
@@ -12,16 +14,19 @@ namespace Inho.Scripts.State
         Count
     }
     
+    /// <summary>
+    /// Object의 상태를 나타내는 인터페이스
+    /// </summary>
     public interface ICondition
     {
         // Condition Determination Function
-        public bool On(eCondition condition);
+        public bool On(int condition);
         
         public bool NormalityIsOn();
         public bool PoisonedIsOn();
         public bool WeakIsOn();
         
-        public void AddCondition(eCondition condition);
-        public void DelCondition(eCondition condition);
+        public void AddCondition(int condition);
+        public void DelCondition(int condition);
     }
 }

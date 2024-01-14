@@ -5,6 +5,9 @@ using Random = UnityEngine.Random;
 
 namespace Inho.Scripts.State
 {
+    /// <summary>
+    /// Player의 State을 나타내는 Class
+    /// </summary>
     public class PlayerState : State
     {
         // Member Variable
@@ -29,7 +32,7 @@ namespace Inho.Scripts.State
             mspeed = 1.0f;
             
             mForce = 10.0f;
-            mCondition = eCondition.Normality;
+            mCondition = (int)eCondition.Normality;
             
             for(int i = 0; i < 10; ++i)
                 mExpAmount.Add(10 * (int)math.pow(i,2));    // 임시 수치 적용
@@ -39,8 +42,6 @@ namespace Inho.Scripts.State
         }
         
         // HP
-        public override void HealingHP() { mHP += 10.0f; }
-
         public override void BeDamaged(float attack)
         {
             if ((Random.Range(0.0f, 99.9f) < mAvoid)) return;
@@ -64,7 +65,7 @@ namespace Inho.Scripts.State
                 mLevel++;
             }
         }
-        //
+        // LV
 
         // DeBug Function
         public override void ShowInfo()
@@ -74,20 +75,20 @@ namespace Inho.Scripts.State
         
         
         // ICondition Interface Function
-        public override bool On(eCondition condition) { return (mCondition & condition) == condition; }
+        public override bool On(int condition) { return (mCondition & condition) == condition; }
 
-        public override bool NormalityIsOn() { return On(eCondition.Normality); }
-        public override bool PoisonedIsOn() { return On(eCondition.Poisoned); }
-        public override bool WeakIsOn() { return On(eCondition.Weak); }
+        public override bool NormalityIsOn() { return On((int)eCondition.Normality); }
+        public override bool PoisonedIsOn() { return On((int)eCondition.Poisoned); }
+        public override bool WeakIsOn() { return On((int)eCondition.Weak); }
         
-        public override void AddCondition(eCondition condition)
+        public override void AddCondition(int condition)
         {
-            mCondition |= condition;
+            if(!On(condition)) mCondition |= condition;
         }
         
-        public override void DelCondition(eCondition condition)
+        public override void DelCondition(int condition)
         {
-            mCondition ^= condition;
+            if(On(condition)) mCondition ^= condition;
         }
     }
 }
