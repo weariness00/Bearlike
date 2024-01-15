@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Script.GameStatus;
 using Unity.Mathematics;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -14,56 +15,84 @@ namespace Inho.Scripts.State
         private int mPlayerID;          // 아이디
         private PlayerJob mPlayerJob;   // 직업
 
-        private int mLevel;             // 레벨
-        private int mExp;               // 경험치
+        private StatusValue<int> mLevel = new StatusValue<int>();             // 레벨
+        private StatusValue<int> mExp = new StatusValue<int>();               // 경험치
         private List<int> mExpAmount = new List<int>();   // 레벨별 경험치량
         
         // Member Function
         // ObjectState abstract class Function
-        public override void Initialization()
+        public PlayerState()
         {
-            mLevel = 1;
-            mExp = 0;
+            mHP.max = 100;
+            mHP.min = 0;
+            mHP.current = 100;
+
+            mAtk.max = 100;
+            mAtk.min = 1;
+            mAtk.current = 1;
+
+            mDfs.max = 100;
+            mDfs.min = 1;
+            mDfs.current = 1;
+
+            mAvoid.max = 100.0f;
+            mAvoid.min = 0.0f;
+            mAvoid.current = 0.0f;
             
-            mHP = 100.0f;
-            mAtk = 1.0f;
-            mDfs = 1.0f;
-            mAvoid = 0.0f;
-            mspeed = 1.0f;
+            mspeed.max = 100;
+            mspeed.min = 1;
+            mspeed.current = 1;
+
+            mForce.max = 1000;
+            mForce.min = 0;
+            mForce.current = 10;
             
-            mForce = 10.0f;
             mCondition = (int)eCondition.Normality;
             
             for(int i = 0; i < 10; ++i)
                 mExpAmount.Add(10 * (int)math.pow(i,2));    // 임시 수치 적용
+            
+            mLevel.max = 10;
+            mLevel.min = 1;
+            mLevel.current = 1;
+
+            mExp.max = mExpAmount[mLevel.current];
+            mExp.min = 0;
+            mExp.current = 0;
 
             // mPlayerID 초기화 필요 ==> 입장 할때 순서대로 번호 부여 혹은 고유 아이디 존재하게 구현
             // mPlayerJob 초기화 필요 ==> 직업 선택한후에 초기화 해주게 구현
         }
-        
+
+        public override void Initialization()
+        {
+            
+        }
+
         // HP
         // // 스킬, 무기, 캐릭터 스텟을 모두 고려한 함수 구현 필요
         public override void BeDamaged(float attack)
         {   
-            if ((Random.Range(0.0f, 99.9f) < mAvoid)) return;
+            if ((Random.Range(0.0f, 99.9f) < mAvoid.current)) return;
             
-            var damageRate = math.log10((attack / mDfs) * 10);
+            var damageRate = math.log10((attack / mDfs.current) * 10);
 
             if (WeakIsOn()) damageRate *= 1.5f;
 
-            mHP -= damageRate * attack;
+            mHP.current -= (int)(damageRate * attack);
         }
         // HP
         
         // LV
         public void IncreaseExp(int value)
         {
-            mExp += value;
+            mExp.current += value;
 
-            if (mExpAmount[mLevel] <= mExp)
-            {                
-                mExp -= mExpAmount[mLevel];
-                mLevel++;
+            while (mExpAmount[mLevel.current] <= mExp.current && mLevel.max > mLevel.current)
+            {
+                mExp.current -= mExpAmount[mLevel.current];
+                mLevel.current++;
+                mExp.max = mExpAmount[mLevel.current];
             }
         }
         // LV
@@ -71,7 +100,7 @@ namespace Inho.Scripts.State
         // DeBug Function
         public override void ShowInfo()
         {
-            Debug.Log($"체력 : " +  mHP + $" 힘 : " + mForce + $" 상태 : " + (eCondition)mCondition);
+            Debug.Log($"체력 : " +  mHP.current + $" 힘 : " + mForce.current + $" 상태 : " + (eCondition)mCondition);
         }
         
         

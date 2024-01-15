@@ -8,8 +8,8 @@ namespace Inho.Scripts.State
     /// </summary>
     public class StateSystem : MonoBehaviour
     {
-        public State ManagedState;
-        public EquitmentSystem Equitment;
+        private State ManagedState;
+        private EquitmentSystem Equitment;
 
         private void Awake()
         {
@@ -19,7 +19,7 @@ namespace Inho.Scripts.State
 
         void Start()
         {
-            ManagedState.Initialization();
+            // ManagedState.Initialization();
             ManagedState.ShowInfo();
             Equitment.Init();
         }

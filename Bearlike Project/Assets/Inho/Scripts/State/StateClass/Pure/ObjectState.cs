@@ -1,4 +1,6 @@
-﻿namespace Inho.Scripts.State
+﻿using Script.GameStatus;
+
+namespace Inho.Scripts.State
 {
     /// <summary>
     /// // Object의 기본 능력치를 나타내는 Class
@@ -6,23 +8,21 @@
     public abstract class ObjectState
     {
         // Member Variable
-        protected float mHP;                // 체력        
-        protected float mAtk;               // 공격력
-        protected float mDfs;               // 방어력
-        protected float mAvoid;             // 회피
-        protected float mspeed;             // 이동 속도
+        protected StatusValue<int> mHP = new StatusValue<int>();                // 체력        
+        protected StatusValue<int> mAtk = new StatusValue<int>();                 // 공격력
+        protected StatusValue<int> mDfs = new StatusValue<int>();                 // 방어력
+        protected StatusValue<float> mAvoid = new StatusValue<float>();               // 회피
+        protected StatusValue<int> mspeed = new StatusValue<int>();               // 이동 속도
         
-        protected float mForce;             // 힘
+        protected StatusValue<int> mForce = new StatusValue<int>();               // 힘
         protected int mCondition;    // 상태
 
         
         // Member Function
         public abstract void Initialization();
         
-        public void HealingHP(float value) { mHP += value; }
+        public void HealingHP(int value) { mHP.current += value; }
         public abstract void BeDamaged(float attack);
-
-        public float GetAtk() { return mAtk; }
 
         // DeBug Function
         public abstract void ShowInfo();
