@@ -10,7 +10,6 @@ namespace Inho.Scripts.State
         Normality = 0b_0000_0000, // 정상
         Poisoned = 0b_0000_0001, // 중독
         Weak = 0b_0000_0010, // 취약 => 최종 데미지 1.5배 증가
-        Count
     }
     
     /// <summary>

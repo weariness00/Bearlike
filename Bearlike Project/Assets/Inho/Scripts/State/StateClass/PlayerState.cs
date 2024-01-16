@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Script.GameStatus;
 using Unity.Mathematics;
@@ -17,7 +18,7 @@ namespace Inho.Scripts.State
 
         private StatusValue<int> mLevel = new StatusValue<int>();             // 레벨
         private StatusValue<int> mExp = new StatusValue<int>();               // 경험치
-        private List<int> mExpAmount = new List<int>();   // 레벨별 경험치량
+        private List<int> mExpAmount = new List<int>();                        // 레벨별 경험치량
         
         // Member Function
         // ObjectState abstract class Function
@@ -63,14 +64,32 @@ namespace Inho.Scripts.State
             // mPlayerID 초기화 필요 ==> 입장 할때 순서대로 번호 부여 혹은 고유 아이디 존재하게 구현
             // mPlayerJob 초기화 필요 ==> 직업 선택한후에 초기화 해주게 구현
         }
-
+        
+        
+        // Loop
+        public override void MainLoop()
+        {
+            if (PoisonedIsOn())
+            {
+                BePoisoned(1);
+                ShowInfo();
+            }
+        }
+        
         public override void Initialization()
         {
             
         }
+        // Loop
+        
 
         // HP
         // // 스킬, 무기, 캐릭터 스텟을 모두 고려한 함수 구현 필요
+        public void BePoisoned(int value)
+        {
+            mHP.current -= value;
+        }
+        
         public override void BeDamaged(float attack)
         {   
             if ((Random.Range(0.0f, 99.9f) < mAvoid.current)) return;
@@ -93,6 +112,7 @@ namespace Inho.Scripts.State
                 mExp.current -= mExpAmount[mLevel.current];
                 mLevel.current++;
                 mExp.max = mExpAmount[mLevel.current];
+                if(mLevel.max <= mLevel.current) Debug.Log("최대 레벨 도달");
             }
         }
         // LV
@@ -100,7 +120,7 @@ namespace Inho.Scripts.State
         // DeBug Function
         public override void ShowInfo()
         {
-            Debug.Log($"체력 : " +  mHP.current + $" 힘 : " + mForce.current + $" 상태 : " + (eCondition)mCondition);
+            Debug.Log($"체력 : " +  mHP.current + $" 힘 : " + mForce.current + $" 상태 : " + (eCondition)mCondition);    // condition이 2개 이상인 경우에는 어떻게 출력?
         }
         
         

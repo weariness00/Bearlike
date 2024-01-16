@@ -20,9 +20,11 @@ namespace Inho.Scripts.State
         
         // Member Function
         public abstract void Initialization();
+        public abstract void MainLoop();
         
         public void HealingHP(int value) { mHP.current += value; }
         public abstract void BeDamaged(float attack);
+        // public abstract void BePoisoned();
 
         // DeBug Function
         public abstract void ShowInfo();

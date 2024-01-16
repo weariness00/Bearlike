@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using Inho.Scripts.Equipment;
 using UnityEngine;
 
@@ -22,6 +24,7 @@ namespace Inho.Scripts.State
             // ManagedState.Initialization();
             ManagedState.ShowInfo();
             Equitment.Init();
+            InvokeRepeating(nameof(MainLoop), 0.0f, 1.0f);
         }
         
         void Update()
@@ -30,6 +33,13 @@ namespace Inho.Scripts.State
             if(Input.GetKeyDown(KeyCode.S)) ManagedState.BeDamaged(Equitment.GetEquitment().GetDamage());
             if (Input.GetKeyDown(KeyCode.Z)) ManagedState.AddCondition((int)eCondition.Weak);
             if (Input.GetKeyDown(KeyCode.X)) ManagedState.DelCondition((int)eCondition.Weak);
+            if(Input.GetKeyDown(KeyCode.C)) ManagedState.AddCondition((int)eCondition.Poisoned);
+            if(Input.GetKeyDown(KeyCode.V)) ManagedState.DelCondition((int)eCondition.Poisoned);
+        }
+
+        private void MainLoop()
+        {
+            ManagedState.MainLoop();
         }
     } 
 }
