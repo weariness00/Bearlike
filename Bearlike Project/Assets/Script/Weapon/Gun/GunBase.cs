@@ -10,11 +10,17 @@ namespace Script.Weapon.Gun
     {
         public StatusValue magazine = new StatusValue(); // 한 탄창
         public StatusValue ammo; // 총 탄약
+
+        public virtual void Awake()
+        {
+            base.Awake();
+        }
         
-        protected override void Start()
+        public virtual void Start()
         {
             base.Start();
             AttackAction += Shoot;
+            IsGun = true;
 
             BulletInit();
         }
@@ -28,6 +34,7 @@ namespace Script.Weapon.Gun
             }
         }
 
+        // 카메라가 바라보는 방향으로 직선 레이를 쏜다.    
         public void CheckRay()
         {
             Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
@@ -66,11 +73,13 @@ namespace Script.Weapon.Gun
         #region Equip
 
         public Action AttackAction { get; set; }
+        public Action EquipAction { get; set; }
         public bool IsEquip { get; set; }
         public bool IsGun { get; set; }
 
         public void Equip()
         {
+            EquipAction?.Invoke();
         }
 
         #endregion

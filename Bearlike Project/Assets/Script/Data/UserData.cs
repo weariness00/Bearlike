@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
+using System.Threading.Tasks;
 using Fusion;
 using Script.Manager;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Script.Data
@@ -12,16 +12,24 @@ namespace Script.Data
         public NetworkString<_32> Name { get; set; }
         public PlayerRef PlayerRef;
         public NetworkPrefabRef PrefabRef;
+        public NetworkId NetworkId;
     }   
 
     public class UserData : NetworkBehaviour
     {
+        public static UserData Instance;
+        
         [Networked, Capacity(3)]
         public NetworkDictionary<PlayerRef, UserDataStruct> UserDictionary { get; }
 
         private void Awake()
         {
-            DontDestroyOnLoad(gameObject);
+            Instance = this;
+        }
+
+        public override void Spawned()
+        {
+            Runner.MakeDontDestroyOnLoad(gameObject);
         }
 
         public void InsertUserData(PlayerRef playerRef, UserDataStruct userData)
@@ -46,12 +54,22 @@ namespace Script.Data
             UserDictionary.Set(playerRef, data);
         }
 
-        public void SpawnPlayers()
+        public async Task<bool> SpawnPlayers()
         {
-            foreach (var (key, value) in UserDictionary)
+            if (Runner.IsServer)
             {
-                Runner.SpawnAsync(value.PrefabRef, Vector3.zero, Quaternion.identity, value.PlayerRef);
+                foreach (var (key, value) in UserDictionary)
+                {
+                    var userDataStruct = value;
+                    var spawnObject = await Runner.SpawnAsync(value.PrefabRef, Vector3.zero, Quaternion.identity, value.PlayerRef);
+                    
+                    userDataStruct.NetworkId = spawnObject.Id;
+                    UserDictionary.Remove(key);
+                    UserDictionary.Add(key, userDataStruct);
+                }
             }
+
+            return true;
         }
     }
 }

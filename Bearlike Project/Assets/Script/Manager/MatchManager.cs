@@ -48,8 +48,8 @@ namespace Script.Manager
                 loadSceneMode = LoadSceneMode.Single,
                 localPhysicsMode = LocalPhysicsMode.Physics3D,
             };
-
-            Runner.LoadScene(sceneRef, lp);
+            
+            var networkSceneAsyncOp = Runner.LoadScene(sceneRef, lp, true);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Fusion;
@@ -15,8 +16,6 @@ namespace Script.Photon
     {
         public static NetworkManager Instance;
         
-        public int count = 0;
-
         public NetworkPrefabRef userDataPrefabRef;
         private UserData _userData;
         private NetworkRunner _runner;
@@ -24,6 +23,37 @@ namespace Script.Photon
         private void Awake()
         {
             if(Instance == null) Instance = this;
+        }
+
+        private Action<NetworkObject> _IsSetPlayerObjectEvent;
+        [HideInInspector]
+        public Action<NetworkObject> IsSetPlayerObjectEvent
+        {
+            get => _IsSetPlayerObjectEvent;
+            set
+            {
+                if (_runner.TryGetPlayerObject(_runner.LocalPlayer, out var playerObject))
+                {
+                    StopCoroutine("IsSetPlayerObjectEventCoroutine");
+                    value.Invoke(playerObject);
+                    return;
+                }
+
+                _IsSetPlayerObjectEvent = value;
+            }
+        }
+        IEnumerator IsSetPlayerObjectEventCoroutine()
+        {
+            while (true)
+            {
+                if (_runner.TryGetPlayerObject(_runner.LocalPlayer, out var playerObject))
+                {
+                    IsSetPlayerObjectEvent?.Invoke(playerObject);
+                    break;
+                }
+
+                yield return null;
+            }
         }
 
         async Task Matching(GameMode mode)
@@ -51,6 +81,8 @@ namespace Script.Photon
             });
 
             gameObject.transform.parent = Managers.Instance.transform;
+
+            StartCoroutine(IsSetPlayerObjectEventCoroutine());
         }
 
         async Task RandomMatching() => await Matching(GameMode.AutoHostOrClient);
@@ -59,7 +91,6 @@ namespace Script.Photon
 
         public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
-            count++;
             var matchManager = FindObjectOfType<MatchManager>();
             var data = new UserDataStruct();
 
@@ -81,7 +112,6 @@ namespace Script.Photon
         {
             DebugManager.Log($"종료 : {player}");
             
-            count--;
             _userData.UserDictionary.Remove(player);
         }
 
@@ -103,6 +133,9 @@ namespace Script.Photon
 
             if (KeyManager.InputAction(KeyToAction.Attack))
                 playerInputData.Attack = true;
+
+            if (KeyManager.InputActionDown(KeyToAction.Esc))
+                OnPlayerLeft(runner, runner.LocalPlayer);
             
             playerInputData.MouseAxis.x = Input.GetAxis("Mouse X");
             playerInputData.MouseAxis.y = Input.GetAxis("Mouse Y");
@@ -119,12 +152,12 @@ namespace Script.Photon
             var player = runner.LocalPlayer;
             DebugManager.Log($"강제 종료 : {runner.LocalPlayer}");
             
-            count--;
             _userData.UserDictionary.Remove(runner.LocalPlayer);
         }
 
         public void OnConnectedToServer(NetworkRunner runner)
         {
+            DebugManager.Log("서버 연결 성공");
         }
 
         public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
@@ -141,6 +174,7 @@ namespace Script.Photon
 
         public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason)
         {
+            DebugManager.LogError($"서버 연결 실패 : {reason}");
         }
 
         public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
@@ -166,7 +200,6 @@ namespace Script.Photon
 
         public void OnSceneLoadStart(NetworkRunner runner)
         {
-            DebugManager.Log($"씬 Loading 시작 : {runner.SceneManager.MainRunnerScene.name}");
         }
 
         public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
