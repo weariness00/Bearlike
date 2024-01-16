@@ -1,15 +1,13 @@
-using System;
-
-namespace Inho.Scripts.State
+namespace Inho.Scripts.State.StateClass.Pure
 {
     /// <summary>
     /// Object의 상태를 나타내는 열거형
     /// </summary>
     public enum eCondition
     {
-        Normality = 0b_0000_0000, // 정상
-        Poisoned = 0b_0000_0001, // 중독
-        Weak = 0b_0000_0010, // 취약 => 최종 데미지 1.5배 증가
+        Normality = 0b_0000_0000,           // 정상
+        Poisoned = 0b_0000_0001,            // 중독
+        Weak = 0b_0000_0010,                // 취약 => 최종 데미지 1.5배 증가
     }
     
     /// <summary>

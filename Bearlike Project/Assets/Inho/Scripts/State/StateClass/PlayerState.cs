@@ -1,24 +1,24 @@
-using System.Collections;
 using System.Collections.Generic;
+using Inho.Scripts.State.StateClass.Pure;
 using Script.GameStatus;
 using Unity.Mathematics;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Inho.Scripts.State
+namespace Inho.Scripts.State.StateClass
 {
     /// <summary>
     /// Player의 State을 나타내는 Class
     /// </summary>
-    public class PlayerState : State
+    public class PlayerState : Pure.State
     {
         // Member Variable
-        private int mPlayerID;          // 아이디
-        private PlayerJob mPlayerJob;   // 직업
+        private int mPlayerID;                                                  // 아이디
+        private PlayerJob mPlayerJob;                                           // 직업
 
-        private StatusValue<int> mLevel = new StatusValue<int>();             // 레벨
-        private StatusValue<int> mExp = new StatusValue<int>();               // 경험치
-        private List<int> mExpAmount = new List<int>();                        // 레벨별 경험치량
+        private StatusValue<int> mLevel = new StatusValue<int>();               // 레벨
+        private StatusValue<int> mExp = new StatusValue<int>();                 // 경험치
+        private List<int> mExpAmount = new List<int>();                         // 레벨별 경험치량
         
         // Member Function
         // ObjectState abstract class Function
@@ -71,14 +71,14 @@ namespace Inho.Scripts.State
         {
             if (PoisonedIsOn())
             {
-                BePoisoned(1);
+                BePoisoned(Constants.POISONDAMAGE);
                 ShowInfo();
             }
         }
         
         public override void Initialization()
         {
-            
+            // 혹시 모를 함수
         }
         // Loop
         

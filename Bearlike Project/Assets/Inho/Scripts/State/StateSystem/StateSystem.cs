@@ -1,16 +1,16 @@
-using System;
-using System.Collections;
 using Inho.Scripts.Equipment;
+using Inho.Scripts.State.StateClass;
+using Inho.Scripts.State.StateClass.Pure;
 using UnityEngine;
 
-namespace Inho.Scripts.State
+namespace Inho.Scripts.State.StateSystem
 {
     /// <summary>
     /// 모든 State을 관리하는 System Class
     /// </summary>
     public class StateSystem : MonoBehaviour
     {
-        private State ManagedState;
+        private StateClass.Pure.State ManagedState;
         private EquitmentSystem Equitment;
 
         private void Awake()
@@ -29,8 +29,8 @@ namespace Inho.Scripts.State
         
         void Update()
         {   
-            if(Input.GetKeyDown(KeyCode.A)) ManagedState.ShowInfo();
-            if(Input.GetKeyDown(KeyCode.S)) ManagedState.BeDamaged(Equitment.GetEquitment().GetDamage());
+            if(Input.GetKeyDown(KeyCode.Q)) ManagedState.ShowInfo();
+            if(Input.GetKeyDown(KeyCode.E)) ManagedState.BeDamaged(Equitment.GetEquitment().GetDamage());
             if (Input.GetKeyDown(KeyCode.Z)) ManagedState.AddCondition((int)eCondition.Weak);
             if (Input.GetKeyDown(KeyCode.X)) ManagedState.DelCondition((int)eCondition.Weak);
             if(Input.GetKeyDown(KeyCode.C)) ManagedState.AddCondition((int)eCondition.Poisoned);

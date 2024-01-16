@@ -1,4 +1,4 @@
-namespace Inho.Scripts.State
+namespace Inho.Scripts.State.StateClass.Pure
 {
     /// <summary>
     /// 추상클래스 ObjectState와 인터페이스 ICondition의 합친 가장 기본적인 State Class
