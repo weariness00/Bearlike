@@ -13,6 +13,10 @@ namespace Script.Manager
         public bool logError;
         public bool drawRay;
 
+        [Header("TO DO")] 
+        public bool isAllToDo;
+        public bool isToDo;
+
         private void Awake()
         {
             if (Instance == null) Instance = this;
@@ -33,6 +37,16 @@ namespace Script.Manager
             if (!DebugManager.Instance.isDebug && !DebugManager.Instance.logError) return;
             Debug.LogError(massage);
         }
+
+        #region TO DO Debug
+
+        public static void ToDo(object massage)
+        {
+            if (!DebugManager.Instance.isDebug && !DebugManager.Instance.isAllToDo && !DebugManager.Instance.isToDo) return;
+            Debug.Log("TO DO List\n" + massage);
+        }
+
+        #endregion
 
         public static void DrawRay(Vector3 position, Vector3 direction, Color color)
         {

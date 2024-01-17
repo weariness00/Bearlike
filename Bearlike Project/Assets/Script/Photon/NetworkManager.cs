@@ -32,6 +32,7 @@ namespace Script.Photon
             get => _IsSetPlayerObjectEvent;
             set
             {
+                DebugManager.ToDo($"SetPlayerObject가 호스트에서는 되는데 클라이언트에서는 안되는 이유 찾기");
                 if (_runner.TryGetPlayerObject(_runner.LocalPlayer, out var playerObject))
                 {
                     StopCoroutine("IsSetPlayerObjectEventCoroutine");
