@@ -402,7 +402,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1247885454}
   m_Layer: 0
-  m_Name: SpawnPlaces
+  m_Name: PlayerSpawnPlaces
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -489,6 +489,84 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1247885454}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1662219604
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1662219607}
+  - component: {fileID: 1662219606}
+  - component: {fileID: 1662219605}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1662219605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1662219604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 4074179200
+  ObjectInterest: 1
+  Flags: 131073
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 1662219606}
+--- !u!114 &1662219606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1662219604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cee097a6de9140a5a4efef8c767d3366, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isRandomObject: 0
+  isRandomPlace: 0
+  isRandomInterval: 0
+  co: 10
+  spawnObjectList:
+  - RawGuidValue: f8ef412af506096419c9bfc7727f9940
+  spawnObjectOrders: 00000000
+  spawnPlace:
+    _spotList:
+    - {fileID: 1437214147}
+    - {fileID: 1108002951}
+  spawnPlaces: 0000000001000000
+  spawnIntervals:
+  - 0.1
+  networkObjects: []
+--- !u!4 &1662219607
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1662219604}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.1459858, y: 1.382618, z: 0.082567334}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1793537449
 GameObject:
@@ -754,3 +832,4 @@ SceneRoots:
   - {fileID: 1965290067}
   - {fileID: 148781568}
   - {fileID: 1247885454}
+  - {fileID: 1662219607}
