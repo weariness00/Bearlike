@@ -13,9 +13,6 @@ namespace Inho.Scripts.State.StateClass
     public class PlayerState : Pure.State
     {
         // Member Variable
-        private int mPlayerID;                                                  // 아이디
-        private PlayerJob mPlayerJob;                                           // 직업
-
         private StatusValue<int> mLevel = new StatusValue<int>();               // 레벨
         private StatusValue<int> mExp = new StatusValue<int>();                 // 경험치
         private List<int> mExpAmount = new List<int>();                         // 레벨별 경험치량
@@ -30,7 +27,7 @@ namespace Inho.Scripts.State.StateClass
 
             mAtk.max = 100;
             mAtk.min = 1;
-            mAtk.current = 1;
+            mAtk.current = 10;
 
             mDfs.max = 100;
             mDfs.min = 1;
@@ -44,9 +41,9 @@ namespace Inho.Scripts.State.StateClass
             mspeed.min = 1;
             mspeed.current = 1;
 
-            mAtkSpedd.max = 10.0f;
-            mAtkSpedd.min = 0.5f;
-            mAtkSpedd.current = 1.0f;
+            mAtkSpeed.max = 10.0f;
+            mAtkSpeed.min = 0.5f;
+            mAtkSpeed.current = 1.0f;
 
             mForce.max = 1000;
             mForce.min = 0;
@@ -124,7 +121,7 @@ namespace Inho.Scripts.State.StateClass
         // DeBug Function
         public override void ShowInfo()
         {
-            Debug.Log($"체력 : " +  mHP.current + $" 힘 : " + mForce.current + $" 상태 : " + (eCondition)mCondition);    // condition이 2개 이상인 경우에는 어떻게 출력?
+            Debug.Log($"체력 : " +  mHP.current + $" 공격력 : " + mAtk.current + $" 공격 속도 : " + mAtkSpeed.current + $" 상태 : " + (eCondition)mCondition);    // condition이 2개 이상인 경우에는 어떻게 출력?
         }
         
         

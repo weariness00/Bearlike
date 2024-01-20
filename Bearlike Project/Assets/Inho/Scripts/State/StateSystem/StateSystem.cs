@@ -2,6 +2,7 @@ using Inho.Scripts.Equipment;
 using Inho.Scripts.State.StateClass;
 using Inho.Scripts.State.StateClass.Pure;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Inho.Scripts.State.StateSystem
 {
@@ -10,39 +11,42 @@ namespace Inho.Scripts.State.StateSystem
     /// </summary>
     public class StateSystem : MonoBehaviour
     {
-        private StateClass.Pure.State ManagedState= new PlayerState();
-        private EquitmentSystem Equitment;
+        private StateClass.Pure.State mManagedState;
+        private EquitmentSystem mEquitment;
 
         private void Awake()
         {
-            // ManagedState = new PlayerState();   // adapter 형식으로 바꿔보자
-            Equitment = new EquitmentSystem();
+            if(gameObject.CompareTag("Player"))
+                mManagedState = new PlayerState();
+            mEquitment = new EquitmentSystem();
         }
 
         void Start()
         {
-            // ManagedState.Initialization();
-            ManagedState.ShowInfo();
-            Equitment.Init();
-            InvokeRepeating(nameof(MainLoop), 0.0f, 1.0f);
+            mEquitment.Init();
+            if (SceneManager.GetActiveScene().name == "StateSystemScene")
+                InvokeRepeating(nameof(MainLoop), 0.0f, 1.0f);
         }
-        
+
         void Update()
-        {   
-            if(Input.GetKeyDown(KeyCode.Q)) ManagedState.ShowInfo();
-            if(Input.GetKeyDown(KeyCode.E)) ManagedState.BeDamaged(Equitment.GetEquitment().GetDamage());
-            if (Input.GetKeyDown(KeyCode.Z)) ManagedState.AddCondition((int)eCondition.Weak);
-            if (Input.GetKeyDown(KeyCode.X)) ManagedState.DelCondition((int)eCondition.Weak);
-            if(Input.GetKeyDown(KeyCode.C)) ManagedState.AddCondition((int)eCondition.Poisoned);
-            if(Input.GetKeyDown(KeyCode.V)) ManagedState.DelCondition((int)eCondition.Poisoned);
+        {
+            if (SceneManager.GetActiveScene().name == "StateSystemScene")
+            {
+                if (Input.GetKeyDown(KeyCode.E)) mManagedState.BeDamaged(mEquitment.GetEquitment().GetDamage());
+                if (Input.GetKeyDown(KeyCode.Z)) mManagedState.AddCondition((int)eCondition.Weak);
+                if (Input.GetKeyDown(KeyCode.X)) mManagedState.DelCondition((int)eCondition.Weak);
+                if (Input.GetKeyDown(KeyCode.C)) mManagedState.AddCondition((int)eCondition.Poisoned);
+                if (Input.GetKeyDown(KeyCode.V)) mManagedState.DelCondition((int)eCondition.Poisoned);
+            }
+            if (Input.GetKeyDown(KeyCode.Q)) mManagedState.ShowInfo();
         }
 
         private void MainLoop()
         {
-            ManagedState.MainLoop();
+            mManagedState.MainLoop();
         }   
 
-        public StateClass.Pure.State GetState() { return ManagedState; }
+        public StateClass.Pure.State GetState() { return mManagedState; }
     } 
 }
 

@@ -13,7 +13,7 @@ namespace Inho.Scripts.State.StateClass.Pure
         protected StatusValue<int> mDfs = new StatusValue<int>();                   // 방어력
         protected StatusValue<float> mAvoid = new StatusValue<float>();             // 회피
         protected StatusValue<int> mspeed = new StatusValue<int>();                 // 이동 속도
-        protected StatusValue<float> mAtkSpedd = new StatusValue<float>();          // 공격 속도
+        protected StatusValue<float> mAtkSpeed = new StatusValue<float>();          // 공격 속도
         
         protected StatusValue<int> mForce = new StatusValue<int>();                 // 힘
         protected int mCondition;    // 상태
@@ -26,6 +26,12 @@ namespace Inho.Scripts.State.StateClass.Pure
         public void HealingHP(int value) { mHP.current += value; }
         public abstract void BeDamaged(float attack);
         // public abstract void BePoisoned();
+
+        public void SetAtk(int value) { mAtk.current = value; }
+        public int GetAtk() { return mAtk.current; }
+        
+        public void SetAtkSpeed(float value) { mAtkSpeed.current = value; }
+        public float GetAtkSpeed() { return mAtkSpeed.current; }
 
         // DeBug Function
         public abstract void ShowInfo();
