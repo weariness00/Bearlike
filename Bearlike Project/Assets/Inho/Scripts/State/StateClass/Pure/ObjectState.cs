@@ -13,6 +13,7 @@ namespace Inho.Scripts.State.StateClass.Pure
         protected StatusValue<int> mDfs = new StatusValue<int>();                   // 방어력
         protected StatusValue<float> mAvoid = new StatusValue<float>();             // 회피
         protected StatusValue<int> mspeed = new StatusValue<int>();                 // 이동 속도
+        protected StatusValue<float> mAtkSpedd = new StatusValue<float>();          // 공격 속도
         
         protected StatusValue<int> mForce = new StatusValue<int>();                 // 힘
         protected int mCondition;    // 상태

@@ -44,6 +44,10 @@ namespace Inho.Scripts.State.StateClass
             mspeed.min = 1;
             mspeed.current = 1;
 
+            mAtkSpedd.max = 10.0f;
+            mAtkSpedd.min = 0.5f;
+            mAtkSpedd.current = 1.0f;
+
             mForce.max = 1000;
             mForce.min = 0;
             mForce.current = 10;

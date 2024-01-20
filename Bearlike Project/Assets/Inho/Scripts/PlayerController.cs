@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Inho.Scripts.State.StateClass.Pure;
+using Inho.Scripts.State.StateSystem;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -16,7 +18,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (cc.isGrounded)
+        // if (cc.isGrounded)
         {         
             var h = Input.GetAxis("Horizontal");
             var v = Input.GetAxis("Vertical");
@@ -32,7 +34,34 @@ public class PlayerController : MonoBehaviour
                 dir.y = 7.5f;
         }
 
-        dir.y += Physics.gravity.y * Time.deltaTime;
+        // dir.y += Physics.gravity.y * Time.deltaTime;
         cc.Move(dir * Time.deltaTime);
+    }
+    
+    private void OnTriggerEnter(Collider collision)
+    {
+        // StateSystemScene
+        if (collision.GetComponent<Collider>().gameObject.CompareTag("Buff"))
+        {
+            if (collision.gameObject.name == "PoisonSphere")
+            {
+                var state = transform.parent.gameObject.GetComponent<StateSystem>().GetState();
+                state.AddCondition((int)eCondition.Poisoned);
+            }            
+            else if (collision.gameObject.name == "WeakSphere")
+            {
+                var state = transform.parent.gameObject.GetComponent<StateSystem>().GetState();
+                state.AddCondition((int)eCondition.Weak);
+            }
+            else if (collision.gameObject.name == "AntidoteSphere")
+            {
+                var state = transform.parent.gameObject.GetComponent<StateSystem>().GetState();
+                state.DelCondition((int)eCondition.Poisoned);
+                state.DelCondition((int)eCondition.Weak);
+            }
+        }
+        // StateSystemScene
+        
+        
     }
 }

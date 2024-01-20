@@ -10,12 +10,12 @@ namespace Inho.Scripts.State.StateSystem
     /// </summary>
     public class StateSystem : MonoBehaviour
     {
-        private StateClass.Pure.State ManagedState;
+        private StateClass.Pure.State ManagedState= new PlayerState();
         private EquitmentSystem Equitment;
 
         private void Awake()
         {
-            ManagedState = new PlayerState();   // adapter 형식으로 바꿔보자
+            // ManagedState = new PlayerState();   // adapter 형식으로 바꿔보자
             Equitment = new EquitmentSystem();
         }
 
@@ -40,7 +40,9 @@ namespace Inho.Scripts.State.StateSystem
         private void MainLoop()
         {
             ManagedState.MainLoop();
-        }
+        }   
+
+        public StateClass.Pure.State GetState() { return ManagedState; }
     } 
 }
 
