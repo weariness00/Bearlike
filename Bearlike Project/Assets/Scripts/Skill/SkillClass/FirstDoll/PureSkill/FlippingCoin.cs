@@ -1,4 +1,4 @@
-﻿using Inho.Scripts.State.StateSystem;
+﻿using State.StateSystem;
 using UnityEngine;
 
 namespace Inho.Scripts.Skill.SkillClass.FirstDoll.PureSkill

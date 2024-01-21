@@ -1,4 +1,4 @@
-﻿using Inho.Scripts.State.StateClass;
+﻿using State.StateClass;
 
 namespace Inho.Scripts.PlayerInfo
 {

@@ -1,4 +1,4 @@
-﻿namespace Inho.Scripts.State
+﻿namespace State
 {
     public class Constants
     {

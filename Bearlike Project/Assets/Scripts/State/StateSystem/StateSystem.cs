@@ -1,17 +1,17 @@
 using Inho.Scripts.Equipment;
-using Inho.Scripts.State.StateClass;
-using Inho.Scripts.State.StateClass.Pure;
+using State.StateClass;
+using State.StateClass.Pure;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Inho.Scripts.State.StateSystem
+namespace State.StateSystem
 {
     /// <summary>
     /// 모든 State을 관리하는 System Class
     /// </summary>
     public class StateSystem : MonoBehaviour
     {
-        private StateClass.Pure.State mManagedState;
+        private global::State.StateClass.Pure.State mManagedState;
         private EquitmentSystem mEquitment;
 
         private void Awake()
@@ -46,7 +46,7 @@ namespace Inho.Scripts.State.StateSystem
             mManagedState.MainLoop();
         }   
 
-        public StateClass.Pure.State GetState() { return mManagedState; }
+        public global::State.StateClass.Pure.State GetState() { return mManagedState; }
     } 
 }
 

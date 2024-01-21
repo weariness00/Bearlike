@@ -1,4 +1,4 @@
-﻿namespace Inho.Scripts.State.StateClass
+﻿namespace State.StateClass
 {
     public enum PlayerJob
     {

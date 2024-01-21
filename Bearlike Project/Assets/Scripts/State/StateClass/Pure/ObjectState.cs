@@ -1,7 +1,6 @@
-﻿
-using Scripts.State.GameStatus;
+﻿using Scripts.State.GameStatus;
 
-namespace Inho.Scripts.State.StateClass.Pure
+namespace State.StateClass.Pure
 {
     /// <summary>
     /// // Object의 기본 능력치를 나타내는 Class
@@ -24,15 +23,15 @@ namespace Inho.Scripts.State.StateClass.Pure
         public abstract void Initialization();
         public abstract void MainLoop();
         
-        public void HealingHP(int value) { mHP.current += value; }
+        public void HealingHP(int value) { mHP.Current += value; }
         public abstract void BeDamaged(float attack);
         // public abstract void BePoisoned();
 
-        public void SetAtk(int value) { mAtk.current = value; }
-        public int GetAtk() { return mAtk.current; }
+        public void SetAtk(int value) { mAtk.Current = value; }
+        public int GetAtk() { return mAtk.Current; }
         
-        public void SetAtkSpeed(float value) { mAtkSpeed.current = value; }
-        public float GetAtkSpeed() { return mAtkSpeed.current; }
+        public void SetAtkSpeed(float value) { mAtkSpeed.Current = value; }
+        public float GetAtkSpeed() { return mAtkSpeed.Current; }
 
         // DeBug Function
         public abstract void ShowInfo();

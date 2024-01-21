@@ -1,4 +1,4 @@
-namespace Inho.Scripts.State.StateClass.Pure
+namespace State.StateClass.Pure
 {
     /// <summary>
     /// Object의 상태를 나타내는 열거형

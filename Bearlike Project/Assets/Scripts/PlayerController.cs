@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using Inho.Scripts.State.StateClass.Pure;
-using Inho.Scripts.State.StateSystem;
+using State.StateClass.Pure;
+using State.StateSystem;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour

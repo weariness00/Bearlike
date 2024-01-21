@@ -1,11 +1,11 @@
 using System.Collections.Generic;
-using Inho.Scripts.State.StateClass.Pure;
 using Scripts.State.GameStatus;
+using State.StateClass.Pure;
 using Unity.Mathematics;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Inho.Scripts.State.StateClass
+namespace State.StateClass
 {
     /// <summary>
     /// Player의 State을 나타내는 Class
@@ -30,41 +30,41 @@ namespace Inho.Scripts.State.StateClass
             mHP.Current = 100;
 
             mAtk.Max = 100;
-            mAtk.min = 1;
-            mAtk.current = 10;
+            mAtk.Min = 1;
+            mAtk.Current = 10;
 
             mDfs.Max = 100;
-            mDfs.min = 1;
-            mDfs.current = 1;
+            mDfs.Min = 1;
+            mDfs.Current = 1;
 
             mAvoid.Max = 100.0f;
-            mAvoid.min = 0.0f;
-            mAvoid.current = 0.0f;
+            mAvoid.Min = 0.0f;
+            mAvoid.Current = 0.0f;
             
             mspeed.Max = 100;
-            mspeed.min = 1;
-            mspeed.current = 1;
+            mspeed.Min = 1;
+            mspeed.Current = 1;
 
-            mAtkSpeed.max = 10.0f;
-            mAtkSpeed.min = 0.5f;
-            mAtkSpeed.current = 1.0f;
+            mAtkSpeed.Max = 10.0f;
+            mAtkSpeed.Min = 0.5f;
+            mAtkSpeed.Current = 1.0f;
 
-            mForce.max = 1000;
-            mForce.min = 0;
-            mForce.current = 10;
+            mForce.Max = 1000;
+            mForce.Min = 0;
+            mForce.Current = 10;
             
             mCondition = (int)eCondition.Normality;
             
             for(int i = 0; i < 10; ++i)
                 mExpAmount.Add(10 * (int)math.pow(i,2));    // 임시 수치 적용
             
-            mLevel.max = 10;
-            mLevel.min = 1;
-            mLevel.current = 1;
+            mLevel.Max = 10;
+            mLevel.Min = 1;
+            mLevel.Current = 1;
 
-            mExp.max = mExpAmount[mLevel.current];
-            mExp.min = 0;
-            mExp.current = 0;
+            mExp.Max = mExpAmount[mLevel.Current];
+            mExp.Min = 0;
+            mExp.Current = 0;
 
             // mPlayerID 초기화 필요 ==> 입장 할때 순서대로 번호 부여 혹은 고유 아이디 존재하게 구현
             // mPlayerJob 초기화 필요 ==> 직업 선택한후에 초기화 해주게 구현
@@ -92,32 +92,32 @@ namespace Inho.Scripts.State.StateClass
         // // 스킬, 무기, 캐릭터 스텟을 모두 고려한 함수 구현 필요
         public void BePoisoned(int value)
         {
-            mHP.current -= value;
+            mHP.Current -= value;
         }
         
         public override void BeDamaged(float attack)
         {   
-            if ((Random.Range(0.0f, 99.9f) < mAvoid.current)) return;
+            if ((Random.Range(0.0f, 99.9f) < mAvoid.Current)) return;
             
-            var damageRate = math.log10((attack / mDfs.current) * 10);
+            var damageRate = math.log10((attack / mDfs.Current) * 10);
 
             if (WeakIsOn()) damageRate *= 1.5f;
 
-            mHP.current -= (int)(damageRate * attack);
+            mHP.Current -= (int)(damageRate * attack);
         }
         // HP
         
         // LV
         public void IncreaseExp(int value)
         {
-            mExp.current += value;
+            mExp.Current += value;
 
-            while (mExpAmount[mLevel.current] <= mExp.current && mLevel.max > mLevel.current)
+            while (mExpAmount[mLevel.Current] <= mExp.Current && mLevel.Max > mLevel.Current)
             {
-                mExp.current -= mExpAmount[mLevel.current];
-                mLevel.current++;
-                mExp.max = mExpAmount[mLevel.current];
-                if(mLevel.max <= mLevel.current) Debug.Log("최대 레벨 도달");
+                mExp.Current -= mExpAmount[mLevel.Current];
+                mLevel.Current++;
+                mExp.Max = mExpAmount[mLevel.Current];
+                if(mLevel.Max <= mLevel.Current) Debug.Log("최대 레벨 도달");
             }
         }
         // LV
@@ -125,7 +125,7 @@ namespace Inho.Scripts.State.StateClass
         // DeBug Function
         public override void ShowInfo()
         {
-            Debug.Log($"체력 : " +  mHP.current + $" 공격력 : " + mAtk.current + $" 공격 속도 : " + mAtkSpeed.current + $" 상태 : " + (eCondition)mCondition);    // condition이 2개 이상인 경우에는 어떻게 출력?
+            Debug.Log($"체력 : " +  mHP.Current + $" 공격력 : " + mAtk.Current + $" 공격 속도 : " + mAtkSpeed.Current + $" 상태 : " + (eCondition)mCondition);    // condition이 2개 이상인 경우에는 어떻게 출력?
         }
         
         
