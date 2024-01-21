@@ -1,4 +1,5 @@
-﻿using Script.GameStatus;
+﻿
+using Scripts.State.GameStatus;
 
 namespace Inho.Scripts.State.StateClass.Pure
 {

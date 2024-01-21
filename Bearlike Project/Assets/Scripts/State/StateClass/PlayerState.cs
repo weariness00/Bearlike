@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Inho.Scripts.State.StateClass.Pure;
-using Script.GameStatus;
+using Scripts.State.GameStatus;
 using Unity.Mathematics;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -25,23 +25,23 @@ namespace Inho.Scripts.State.StateClass
         // ObjectState abstract class Function
         public PlayerState()
         {
-            mHP.max = 100;
-            mHP.min = 0;
-            mHP.current = 100;
+            mHP.Max = 100;
+            mHP.Min = 0;
+            mHP.Current = 100;
 
-            mAtk.max = 100;
+            mAtk.Max = 100;
             mAtk.min = 1;
             mAtk.current = 10;
 
-            mDfs.max = 100;
+            mDfs.Max = 100;
             mDfs.min = 1;
             mDfs.current = 1;
 
-            mAvoid.max = 100.0f;
+            mAvoid.Max = 100.0f;
             mAvoid.min = 0.0f;
             mAvoid.current = 0.0f;
             
-            mspeed.max = 100;
+            mspeed.Max = 100;
             mspeed.min = 1;
             mspeed.current = 1;
 

@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Script.GameStatus
+namespace Scripts.State.GameStatus
 {
     public class Status : MonoBehaviour
     {
         public Status[] statusArray;
 
-        public StatusValue hp = new StatusValue();
-        public StatusValue mp = new StatusValue();
-        public StatusValue damage = new StatusValue();
-        public StatusValue speed = new StatusValue();
+        public StatusValue<float> hp = new StatusValue<float>();
+        public StatusValue<float> mp = new StatusValue<float>();
+        public StatusValue<float> damage = new StatusValue<float>();
+        public StatusValue<float> speed = new StatusValue<float>();
 
         private void Start()
         {

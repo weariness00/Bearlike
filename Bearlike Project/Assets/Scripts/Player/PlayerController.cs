@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections;
-using Fusion;
-using Script.Data;
-using Script.GameStatus;
+﻿using Fusion;
 using Script.Manager;
 using Script.Photon;
 using Script.Util;
 using Script.Weapon.Gun;
+using Scripts.State.GameStatus;
 using UnityEngine;
 
 namespace Script.Player
@@ -16,7 +13,7 @@ namespace Script.Player
         public Status status;
 
         public IEquipment equipment;
-        public StatusValue ammo = new StatusValue();
+        public StatusValue<int> ammo = new StatusValue<int>();
         
         private void Awake()
         {
