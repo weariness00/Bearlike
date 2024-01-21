@@ -1,15 +1,14 @@
 ﻿using System;
-using Script.GameStatus;
 using Script.Manager;
-using Script.Util;
+using Scripts.State.GameStatus;
 using UnityEngine;
 
 namespace Script.Weapon.Gun
 {
     public class GunBase : WeaponBase, IEquipment
     {
-        public StatusValue magazine = new StatusValue(); // 한 탄창
-        public StatusValue ammo; // 총 탄약
+        public StatusValue<int> magazine = new StatusValue<int>(); // 한 탄창
+        public StatusValue<int> ammo = new StatusValue<int>(); // 총 탄약
 
         public virtual void Awake()
         {

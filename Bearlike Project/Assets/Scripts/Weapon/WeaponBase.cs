@@ -1,6 +1,6 @@
 ﻿using System;
-using Script.GameStatus;
 using Script.Util;
+using Scripts.State.GameStatus;
 using UnityEngine;
 
 public interface IEquipment

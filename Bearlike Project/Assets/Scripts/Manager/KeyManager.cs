@@ -1,16 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Script.Manager
 {
-    [System.Serializable]
-    public class KeyDataInfo
-    {
-        public KeyCode Key;
-        public KeyToAction Action;
-    }
-
     [System.Serializable]
     public enum KeyToAction
     {
@@ -39,17 +35,61 @@ namespace Script.Manager
         private void Awake()
         { 
             if(Instance == null) Instance = this;
-            DefaultKeySetting();
+            DefaultLoad();
+        }
+
+        private void OnApplicationQuit()
+        {
+            Save();
         }
         
-        public void DefaultKeySetting()
+        #region Json Function
+
+        public void Save()
         {
-            keyDictionary.Add(KeyToAction.MoveFront, KeyCode.W);
-            keyDictionary.Add(KeyToAction.Esc, KeyCode.Escape);
-            keyDictionary.Add(KeyToAction.ReLoad, KeyCode.R);
+            Dictionary<KeyToAction, string> keyDictData = new Dictionary<KeyToAction, string>();
+            foreach (var (key, value) in keyDictionary)
+            {
+                keyDictData.Add(key, value.ToString());
+            }
+            foreach (var (key, value) in mouseDictionary)
+            {
+                keyDictData.Add(key, value.ToString());
+            }
             
-            mouseDictionary.Add(KeyToAction.Attack, MouseButton.LeftMouse);
+            var data = JsonConvert.SerializeObject(keyDictData);
+
+            File.WriteAllText(Application.dataPath + "/Json/KeyManager/KeyData.json", data);
         }
+
+        public void Load(string fileName)
+        {
+            var path = Application.dataPath + $"/Json/KeyManager/{fileName}.json";
+            if (File.Exists(path) == false) return;
+            var data = File.ReadAllText(path);
+
+            var keyDictData = JsonConvert.DeserializeObject<Dictionary<KeyToAction, string>>(data); 
+            
+            keyDictionary.Clear();
+            mouseDictionary.Clear();
+            foreach (var (action, value) in keyDictData)
+            {
+                if (Enum.TryParse(value, out KeyCode keyCode))
+                {
+                    keyDictionary.Add(action, keyCode);
+                }
+                else if(Enum.TryParse(value, out MouseButton mouseButton))
+                {
+                    mouseDictionary.Add(action, mouseButton);
+                }
+            }
+        }
+
+        void DefaultLoad() => Load("DefaultKeyData");
+
+        #endregion
+
+        #region Action Function
 
         public static bool InputActionDown(KeyToAction action)
         {
@@ -130,5 +170,7 @@ namespace Script.Manager
 
             MouseDictionary[action] = button;
         }
+        
+        #endregion
     }
 }

@@ -1,8 +1,6 @@
-﻿using System;
-using Fusion;
-using Script.GameStatus;
+﻿using Fusion;
 using Script.Util;
-using UnityEngine;
+using Scripts.State.GameStatus;
 
 namespace Script.Monster
 {
