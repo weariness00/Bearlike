@@ -12,6 +12,10 @@ namespace Inho.Scripts.State.StateClass
     /// </summary>
     public class PlayerState : Pure.State
     {
+        #region Public Parameter
+
+        #endregion
+        
         // Member Variable
         private StatusValue<int> mLevel = new StatusValue<int>();               // 레벨
         private StatusValue<int> mExp = new StatusValue<int>();                 // 경험치
