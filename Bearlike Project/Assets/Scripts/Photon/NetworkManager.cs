@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Fusion;
+using Fusion.Addons.Physics;
 using Fusion.Sockets;
 using Script.Data;
 using Script.Manager;
@@ -61,6 +62,7 @@ namespace Script.Photon
         {
             // Create the Fusion runner and let it know that we will be providing user inpuz
 
+            ObjectUtil.GetORAddComponet<RunnerSimulatePhysics3D>(gameObject);
             _runner = ObjectUtil.GetORAddComponet<NetworkRunner>(gameObject);
             _runner.ProvideInput = true;
 

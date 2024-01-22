@@ -1,4 +1,5 @@
 ﻿using Fusion;
+using Fusion.Addons.SimpleKCC;
 using Script.Manager;
 using Script.Photon;
 using Script.Util;
@@ -14,6 +15,8 @@ namespace Script.Player
 
         public IEquipment equipment;
         public StatusValue<int> ammo = new StatusValue<int>();
+
+        private SimpleKCC _simpleKCC;
         
         private void Awake()
         {
@@ -21,12 +24,11 @@ namespace Script.Player
             // 상호작용으로 착요하게 바꿀 예정
             equipment = GetComponentInChildren<IEquipment>();
             status = ObjectUtil.GetORAddComponet<Status>(gameObject);
-
-            equipment.EquipAction += status.FindAllChildStatus;
         }
-
+        
         public override void Spawned()
         {
+            _simpleKCC = ObjectUtil.GetORAddComponet<SimpleKCC>(gameObject);
             if (HasInputAuthority)
             {
                 name = "Local Player";
@@ -49,7 +51,7 @@ namespace Script.Player
                 MouseRotate(data.MouseAxis);
                 MoveControl(data);
 
-                if (data.Attack)
+                if (data.Attack && equipment != null)
                 {
                     equipment.AttackAction?.Invoke();
                 }
@@ -75,8 +77,8 @@ namespace Script.Player
             if (data.MoveRight)
                 dir += transform.right;
 
-            dir *= Runner.DeltaTime;
-            transform.position += dir;
+            dir *= Runner.DeltaTime * 100f;
+            _simpleKCC.Move(dir);
         }
         
         public float rotateSpeed = 500.0f;
@@ -92,7 +94,7 @@ namespace Script.Player
             xRotate = Mathf.Clamp(xRotate, -90, 90); // 위, 아래 고정
             var angle = new Vector3(xRotate, yRotate, 0);
 
-            transform.eulerAngles = angle;
+            _simpleKCC.SetLookRotation(angle);
         }
     }
 }
