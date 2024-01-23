@@ -1,13 +1,13 @@
 ﻿using State.StateSystem;
 using UnityEngine;
 
-namespace Inho.Scripts.Skill.SkillClass.FirstDoll.PureSkill
+namespace Skill.SkillClass.FirstDoll.PureSkill
 {
     /// <summary>
     /// 동전 던지기(첫째곰) : 앞 면이 나올시에는 공속이 1.5배 상승, 뒷 면이 나올시에는 데미지 1.2배 상승
     ///                    지속 시간은 10초 정도로 설정 AND 쿨타임은 30초로 설정
     /// </summary>
-    public class FlippingCoin : Pure.Skill
+    public class FlippingCoin : Inho.Scripts.Skill.SkillClass.Pure.Skill
     {
         public FlippingCoin()
         {
@@ -25,12 +25,12 @@ namespace Inho.Scripts.Skill.SkillClass.FirstDoll.PureSkill
             if (Random.Range(0, 2) == 0)
             {
                 // HEAD
-                playerState.SetAtkSpeed(playerState.GetAtkSpeed() * 1.5f);
+                playerState._attackSpeed.Current *= 1.5f;
             }
             else
             {
                 // TAIL
-                playerState.SetAtk((int)(playerState.GetAtk() * 1.2f));
+                playerState._attack.Current = (int)(playerState._attack.Current * 1.2f);
             }
         }
     }

@@ -17,7 +17,7 @@ namespace Inho.Scripts.Skill.System
         {
             if (Input.GetKeyDown(KeyCode.I))
             {
-                IndividualSkill.mFC.Run();
+                IndividualSkill._filppingCoin.Run();
             }
         }
     }
