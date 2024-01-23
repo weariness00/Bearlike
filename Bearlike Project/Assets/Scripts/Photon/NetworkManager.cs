@@ -165,7 +165,7 @@ namespace Script.Photon
 
         public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
         {
-            DebugManager.LogWaring($"서버 연결이 끊김\n" +
+            DebugManager.LogWarning($"서버 연결이 끊김\n" +
                                    $"서버 이름 : {runner.SceneManager.MainRunnerScene.name}");
             SceneManager.LoadScene((int)SceneType.Lobby);
         }

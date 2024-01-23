@@ -27,7 +27,7 @@ namespace Script.Manager
             if (!DebugManager.Instance.isDebug && !DebugManager.Instance.log) return;
             Debug.Log(massage);
         }
-        public static void LogWaring(object massage)
+        public static void LogWarning(object massage)
         {
             if (!DebugManager.Instance.isDebug && !DebugManager.Instance.logWaring) return;
             Debug.LogWarning(massage);

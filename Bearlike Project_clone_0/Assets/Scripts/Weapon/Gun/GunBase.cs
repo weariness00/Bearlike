@@ -5,8 +5,14 @@ using UnityEngine;
 
 namespace Script.Weapon.Gun
 {
-    public class GunBase : WeaponBase, IEquipment
+    public class GunBase : WeaponBase
     {
+        [Header("사운드")]
+        public AudioSource shootSound;
+        public AudioSource emptyAmmoSound;
+        public AudioSource reloadSound;
+        
+        [Header("총알")]
         public StatusValue<int> magazine = new StatusValue<int>(); // 한 탄창
         public StatusValue<int> ammo = new StatusValue<int>(); // 총 탄약
 
@@ -30,6 +36,11 @@ namespace Script.Weapon.Gun
             {
                 CheckRay();
                 magazine.Current--;
+                SoundManager.Play(shootSound);
+            }
+            else
+            {
+                SoundManager.Play(emptyAmmoSound);
             }
         }
 
@@ -60,8 +71,13 @@ namespace Script.Weapon.Gun
         
         public virtual void ReLoadBullet()
         {
+            SoundManager.Play(reloadSound);
             var needChargingAmmoCount = magazine.Max - magazine.Current;
-            if (ammo.Current < needChargingAmmoCount) needChargingAmmoCount = ammo.Current;
+            if (ammo.Current < needChargingAmmoCount)
+            {
+                needChargingAmmoCount = ammo.Current;
+            }
+            
             magazine.Current += needChargingAmmoCount;
             ammo.Current -= needChargingAmmoCount;
         }
@@ -71,13 +87,14 @@ namespace Script.Weapon.Gun
 
         #region Equip
 
-        public Action AttackAction { get; set; }
-        public Action EquipAction { get; set; }
-        public bool IsEquip { get; set; }
-        public bool IsGun { get; set; }
+        // public Action AttackAction { get; set; }
+        // public Action EquipAction { get; set; }
+        // public bool IsEquip { get; set; }
+        // public bool IsGun { get; set; }
 
-        public void Equip()
+        public override void Equip()
         {
+            base.Equip();
             EquipAction?.Invoke();
         }
 

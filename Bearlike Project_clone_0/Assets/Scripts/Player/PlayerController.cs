@@ -19,7 +19,7 @@ namespace Script.Player
         public StatusValue<int> ammo = new StatusValue<int>();
 
         private SimpleKCC _simpleKCC;
-        
+        private NetworkMecanimAnimator _networkAnimator;
         private void Awake()
         {
             // 임시로 장비 착용
@@ -27,6 +27,7 @@ namespace Script.Player
             equipment = GetComponentInChildren<IEquipment>();
             // status = ObjectUtil.GetORAddComponet<Status>(gameObject);
             status = ObjectUtil.GetORAddComponet<PlayerState>(gameObject);
+            _networkAnimator = GetComponent<NetworkMecanimAnimator>();
         }
 
         public override void Spawned()
@@ -47,24 +48,17 @@ namespace Script.Player
                 name = "Remote Player";
         }
 
+        public override void Render()
+        {
+        }
+
         public override void FixedUpdateNetwork()
         {
             if (GetInput(out PlayerInputData data))
             {       
-                MouseRotate(data.MouseAxis);
+                MouseRotateControl(data.MouseAxis);
                 MoveControl(data);
-
-                if (data.Attack && equipment != null)
-                {
-                    equipment.AttackAction?.Invoke();
-                }
-
-                if (data.ReLoad && equipment.IsGun)
-                {
-                    var gun = equipment as GunBase;
-                    gun.ammo = ammo;
-                    gun.ReLoadBullet();
-                }
+                WeaponControl(data);
             }
         }
 
@@ -86,7 +80,7 @@ namespace Script.Player
         
         public float rotateSpeed = 500.0f;
         float xRotate, yRotate, xRotateMove, yRotateMove;
-        public void MouseRotate(Vector2 mouseAxis)
+        public void MouseRotateControl(Vector2 mouseAxis)
         {
             xRotateMove = mouseAxis.y * Runner.DeltaTime * rotateSpeed;
             yRotateMove = mouseAxis.x * Runner.DeltaTime * rotateSpeed;
@@ -98,6 +92,26 @@ namespace Script.Player
             var angle = new Vector3(xRotate, yRotate, 0);
 
             _simpleKCC.SetLookRotation(angle);
+        }
+
+        void WeaponControl(PlayerInputData data)
+        {
+            if (data.ChangeWeapon0)
+            {
+                equipment = GetComponentInChildren<WeaponBase>();
+            }
+            
+            if (data.Attack && equipment != null)
+            {
+                equipment.AttackAction?.Invoke();
+            }
+
+            if (data.ReLoad && equipment.IsGun)
+            {
+                var gun = equipment as GunBase;
+                gun.ammo = ammo;
+                gun.ReLoadBullet();
+            }
         }
     }
 }

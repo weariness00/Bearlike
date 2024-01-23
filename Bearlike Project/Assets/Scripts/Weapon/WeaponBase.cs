@@ -14,7 +14,7 @@ public interface IEquipment
     public void Equip();
 }
 
-public class WeaponBase : MonoBehaviour
+public class WeaponBase : MonoBehaviour, IEquipment
 {
     public Status status;
 
@@ -26,6 +26,14 @@ public class WeaponBase : MonoBehaviour
     public virtual void Start()
     {
         
+    }
+
+    public Action AttackAction { get; set; }
+    public Action EquipAction { get; set; }
+    public bool IsEquip { get; set; }
+    public bool IsGun { get; set; }
+    public virtual void Equip()
+    {
     }
 }
 

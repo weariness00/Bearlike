@@ -14,6 +14,8 @@ namespace Script.Photon
 
         public NetworkBool Attack;
         public NetworkBool ReLoad;
+
+        public NetworkBool ChangeWeapon0;
         
         public NetworkButtons Buttons;
     }
