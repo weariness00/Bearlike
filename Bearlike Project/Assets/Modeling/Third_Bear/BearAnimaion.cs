@@ -8,6 +8,8 @@ public class BearAnimation : MonoBehaviour
     {
         Idle,
         Walk,
-        Walk_Gun //gun
+        Right,
+        Left,
+        Back
     }
 }
