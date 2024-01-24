@@ -9,6 +9,11 @@ namespace Scripts.State.GameStatus
         public StatusValue()
         {
         }
+
+        public static implicit operator T(StatusValue<T> value)
+        {
+            return value.Current;
+        }
         
         public T Current
         {
