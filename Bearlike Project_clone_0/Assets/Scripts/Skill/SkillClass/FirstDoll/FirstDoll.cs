@@ -1,14 +1,14 @@
-﻿using Inho.Scripts.Skill.SkillClass.FirstDoll.PureSkill;
+﻿using Skill.SkillClass.FirstDoll.PureSkill;
 
 namespace Inho.Scripts.Skill.SkillClass.FirstDoll
 {
     public class FirstDoll
     {
-        public Pure.Skill mFC;
+        public Pure.Skill _filppingCoin;
 
         public FirstDoll()
         {
-            mFC = new FlippingCoin();
+            _filppingCoin = new FlippingCoin();
         }
     }
 }

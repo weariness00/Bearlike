@@ -10,7 +10,7 @@ public class SoundManager : MonoBehaviour
 
 	public AudioMixer audioMixer;
 	
-	AudioSource[] audioSources = new AudioSource[(int)SoundType.MaxValue];
+	public AudioSource[] audioSources;
 	Dictionary<string, AudioClip> clipDictionary = new Dictionary<string, AudioClip>();
 
 	string defualt_Path = "Sound/";
