@@ -6,10 +6,6 @@ namespace Scripts.State.GameStatus
     [System.Serializable]
     public class StatusValue<T> where T : struct, IComparable
     {
-        public StatusValue()
-        {
-        }
-
         public static implicit operator T(StatusValue<T> value)
         {
             return value.Current;

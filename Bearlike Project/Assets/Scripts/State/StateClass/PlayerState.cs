@@ -17,9 +17,9 @@ namespace State.StateClass
         #endregion
         
         // Member Variable
-        private StatusValue<int> _level = new StatusValue<int>();               // 레벨
-        private StatusValue<int> _exp = new StatusValue<int>();                 // 경험치
-        private List<int> _expAmount = new List<int>();                         // 레벨별 경험치량
+        [SerializeField] private StatusValue<int> _level = new StatusValue<int>();               // 레벨
+        [SerializeField] private StatusValue<int> _exp = new StatusValue<int>();                 // 경험치
+        [SerializeField] private List<int> _expAmount = new List<int>();                         // 레벨별 경험치량
         
         // Member Function
         // ObjectState abstract class Function

@@ -1,4 +1,5 @@
-﻿using Fusion;
+﻿using System;
+using Fusion;
 using Script.Data;
 using Script.GamePlay;
 using Script.Manager;
@@ -9,6 +10,12 @@ public class GameManager : NetworkBehaviour
     private UserData _userData;
     [SerializeField]private SpawnPlace _spawnPlace = new SpawnPlace();
 
+    #region Data Property
+
+    public float playTimer = 0f; 
+
+    #endregion
+    
     private void Awake()
     {
         _spawnPlace.Initialize();
@@ -19,7 +26,12 @@ public class GameManager : NetworkBehaviour
         _userData = FindObjectOfType<UserData>();
         
         UserInit();
-     }
+    }
+
+    public override void FixedUpdateNetwork()
+    {
+        playTimer += Runner.DeltaTime;
+    }
 
     async void UserInit()
     {   
