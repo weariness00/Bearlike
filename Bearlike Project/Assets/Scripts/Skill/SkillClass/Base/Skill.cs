@@ -1,4 +1,4 @@
-﻿namespace Inho.Scripts.Skill.SkillClass.Pure
+﻿namespace Inho.Scripts.Skill.SkillClass.Base
 {
     public abstract class Skill
     {

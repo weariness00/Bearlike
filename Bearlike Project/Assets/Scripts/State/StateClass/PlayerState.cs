@@ -10,7 +10,7 @@ namespace State.StateClass
     /// <summary>
     /// Player의 State을 나타내는 Class
     /// </summary>
-    public class PlayerState : Pure.State
+    public class PlayerState : Base.State
     {
         #region Public Parameter
 

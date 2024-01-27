@@ -11,7 +11,7 @@ namespace State.StateSystem
     /// </summary>
     public class StateSystem : MonoBehaviour
     {
-        private global::State.StateClass.Pure.State mManagedState;
+        private global::State.StateClass.Base.State mManagedState;
         private EquitmentSystem mEquitment;
 
         private void Awake()
@@ -46,7 +46,7 @@ namespace State.StateSystem
             mManagedState.MainLoop();
         }   
 
-        public global::State.StateClass.Pure.State GetState() { return mManagedState; }
+        public global::State.StateClass.Base.State GetState() { return mManagedState; }
     } 
 }
 

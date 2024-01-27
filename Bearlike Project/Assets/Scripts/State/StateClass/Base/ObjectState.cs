@@ -1,6 +1,6 @@
 ﻿using Scripts.State.GameStatus;
 
-namespace State.StateClass.Pure
+namespace State.StateClass.Base
 {
     /// <summary>
     /// // Object의 기본 능력치를 나타내는 Class
@@ -28,6 +28,6 @@ namespace State.StateClass.Pure
         // public abstract void BePoisoned();
 
         // DeBug Function
-        public abstract void ShowInfo();
+        public abstract void ShowInfo();wW
     }
 }

@@ -1,5 +1,5 @@
 ﻿using System;
-using Inho.Scripts.Skill.SkillClass.FirstDoll;
+using Skill.SkillClass.FirstDoll;
 using UnityEngine;
 
 namespace Inho.Scripts.Skill.System
