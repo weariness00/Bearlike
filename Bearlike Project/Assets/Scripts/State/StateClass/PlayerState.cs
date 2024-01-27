@@ -17,54 +17,54 @@ namespace State.StateClass
         #endregion
         
         // Member Variable
-        private StatusValue<int> mLevel = new StatusValue<int>();               // 레벨
-        private StatusValue<int> mExp = new StatusValue<int>();                 // 경험치
-        private List<int> mExpAmount = new List<int>();                         // 레벨별 경험치량
+        private StatusValue<int> _level = new StatusValue<int>();               // 레벨
+        private StatusValue<int> _exp = new StatusValue<int>();                 // 경험치
+        private List<int> _expAmount = new List<int>();                         // 레벨별 경험치량
         
         // Member Function
         // ObjectState abstract class Function
         public PlayerState()
         {
-            mHP.Max = 100;
-            mHP.Min = 0;
-            mHP.Current = 100;
+            _hp.Max = 100;
+            _hp.Min = 0;
+            _hp.Current = 100;
 
-            mAtk.Max = 100;
-            mAtk.Min = 1;
-            mAtk.Current = 10;
+            _attack.Max = 100;
+            _attack.Min = 1;
+            _attack.Current = 10;
 
-            mDfs.Max = 100;
-            mDfs.Min = 1;
-            mDfs.Current = 1;
+            _defence.Max = 100;
+            _defence.Min = 1;
+            _defence.Current = 1;
 
-            mAvoid.Max = 100.0f;
-            mAvoid.Min = 0.0f;
-            mAvoid.Current = 0.0f;
+            _avoid.Max = 100.0f;
+            _avoid.Min = 0.0f;
+            _avoid.Current = 0.0f;
             
-            mspeed.Max = 100;
-            mspeed.Min = 1;
-            mspeed.Current = 1;
+            _moveSpeed.Max = 100;
+            _moveSpeed.Min = 1;
+            _moveSpeed.Current = 1;
 
-            mAtkSpeed.Max = 10.0f;
-            mAtkSpeed.Min = 0.5f;
-            mAtkSpeed.Current = 1.0f;
+            _attackSpeed.Max = 10.0f;
+            _attackSpeed.Min = 0.5f;
+            _attackSpeed.Current = 1.0f;
 
-            mForce.Max = 1000;
-            mForce.Min = 0;
-            mForce.Current = 10;
+            _force.Max = 1000;
+            _force.Min = 0;
+            _force.Current = 10;
             
-            mCondition = (int)eCondition.Normality;
+            _condition = (int)eCondition.Normality;
             
             for(int i = 0; i < 10; ++i)
-                mExpAmount.Add(10 * (int)math.pow(i,2));    // 임시 수치 적용
+                _expAmount.Add(10 * (int)math.pow(i,2));    // 임시 수치 적용
             
-            mLevel.Max = 10;
-            mLevel.Min = 1;
-            mLevel.Current = 1;
+            _level.Max = 10;
+            _level.Min = 1;
+            _level.Current = 1;
 
-            mExp.Max = mExpAmount[mLevel.Current];
-            mExp.Min = 0;
-            mExp.Current = 0;
+            _exp.Max = _expAmount[_level.Current];
+            _exp.Min = 0;
+            _exp.Current = 0;
 
             // mPlayerID 초기화 필요 ==> 입장 할때 순서대로 번호 부여 혹은 고유 아이디 존재하게 구현
             // mPlayerJob 초기화 필요 ==> 직업 선택한후에 초기화 해주게 구현
@@ -92,32 +92,32 @@ namespace State.StateClass
         // // 스킬, 무기, 캐릭터 스텟을 모두 고려한 함수 구현 필요
         public void BePoisoned(int value)
         {
-            mHP.Current -= value;
+            _hp.Current -= value;
         }
         
-        public override void BeDamaged(float attack)
+        public override void BeDamaged(float damage)
         {   
-            if ((Random.Range(0.0f, 99.9f) < mAvoid.Current)) return;
+            if ((Random.Range(0.0f, 99.9f) < _avoid.Current)) return;
             
-            var damageRate = math.log10((attack / mDfs.Current) * 10);
+            var damageRate = math.log10((damage / _defence.Current) * 10);
 
             if (WeakIsOn()) damageRate *= 1.5f;
 
-            mHP.Current -= (int)(damageRate * attack);
+            _hp.Current -= (int)(damageRate * damage);
         }
         // HP
         
         // LV
         public void IncreaseExp(int value)
         {
-            mExp.Current += value;
+            _exp.Current += value;
 
-            while (mExpAmount[mLevel.Current] <= mExp.Current && mLevel.Max > mLevel.Current)
+            while (_expAmount[_level.Current] <= _exp.Current && _level.Max > _level.Current)
             {
-                mExp.Current -= mExpAmount[mLevel.Current];
-                mLevel.Current++;
-                mExp.Max = mExpAmount[mLevel.Current];
-                if(mLevel.Max <= mLevel.Current) Debug.Log("최대 레벨 도달");
+                _exp.Current -= _expAmount[_level.Current];
+                _level.Current++;
+                _exp.Max = _expAmount[_level.Current];
+                if(_level.Max <= _level.Current) Debug.Log("최대 레벨 도달");
             }
         }
         // LV
@@ -125,12 +125,12 @@ namespace State.StateClass
         // DeBug Function
         public override void ShowInfo()
         {
-            Debug.Log($"체력 : " +  mHP.Current + $" 공격력 : " + mAtk.Current + $" 공격 속도 : " + mAtkSpeed.Current + $" 상태 : " + (eCondition)mCondition);    // condition이 2개 이상인 경우에는 어떻게 출력?
+            Debug.Log($"체력 : " +  _hp.Current + $" 공격력 : " + _attack.Current + $" 공격 속도 : " + _attackSpeed.Current + $" 상태 : " + (eCondition)_condition);    // condition이 2개 이상인 경우에는 어떻게 출력?
         }
         
         
         // ICondition Interface Function
-        public override bool On(int condition) { return (mCondition & condition) == condition; }
+        public override bool On(int condition) { return (_condition & condition) == condition; }
 
         public override bool NormalityIsOn() { return On((int)eCondition.Normality); }
         public override bool PoisonedIsOn() { return On((int)eCondition.Poisoned); }
@@ -138,12 +138,12 @@ namespace State.StateClass
         
         public override void AddCondition(int condition)
         {
-            if(!On(condition)) mCondition |= condition;
+            if(!On(condition)) _condition |= condition;
         }
         
         public override void DelCondition(int condition)
         {
-            if(On(condition)) mCondition ^= condition;
+            if(On(condition)) _condition ^= condition;
         }
     }
 }

@@ -9,30 +9,24 @@ namespace State.StateClass.Pure
     public abstract class ObjectState : MonoBehaviour
     {
         // Member Variable
-        protected StatusValue<int> mHP = new StatusValue<int>();                    // 체력        
-        protected StatusValue<int> mAtk = new StatusValue<int>();                   // 공격력
-        protected StatusValue<int> mDfs = new StatusValue<int>();                   // 방어력
-        protected StatusValue<float> mAvoid = new StatusValue<float>();             // 회피
-        protected StatusValue<int> mspeed = new StatusValue<int>();                 // 이동 속도
-        protected StatusValue<float> mAtkSpeed = new StatusValue<float>();          // 공격 속도
+        public StatusValue<int> _hp = new StatusValue<int>();                    // 체력        
+        public StatusValue<int> _attack = new StatusValue<int>();                   // 공격력
+        public StatusValue<int> _defence = new StatusValue<int>();                   // 방어력
+        public StatusValue<float> _avoid = new StatusValue<float>();             // 회피
+        public StatusValue<int> _moveSpeed = new StatusValue<int>();                 // 이동 속도
+        public StatusValue<float> _attackSpeed = new StatusValue<float>();          // 공격 속도
         
-        protected StatusValue<int> mForce = new StatusValue<int>();                 // 힘
-        protected int mCondition;    // 상태
+        public StatusValue<int> _force = new StatusValue<int>();                 // 힘
+        public int _condition;    // 상태
 
         
         // Member Function
         public abstract void Initialization();
         public abstract void MainLoop();
         
-        public void HealingHP(int value) { mHP.Current += value; }
-        public abstract void BeDamaged(float attack);
+        public void HealingHP(int value) { _hp.Current += value; }
+        public abstract void BeDamaged(float damage);
         // public abstract void BePoisoned();
-
-        public void SetAtk(int value) { mAtk.Current = value; }
-        public int GetAtk() { return mAtk.Current; }
-        
-        public void SetAtkSpeed(float value) { mAtkSpeed.Current = value; }
-        public float GetAtkSpeed() { return mAtkSpeed.Current; }
 
         // DeBug Function
         public abstract void ShowInfo();
