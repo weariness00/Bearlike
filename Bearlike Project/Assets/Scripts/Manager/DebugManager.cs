@@ -22,6 +22,8 @@ namespace Script.Manager
             if (Instance == null) Instance = this;
         }
 
+        #region Log
+
         public static void Log(object massage)
         {
             if (!DebugManager.Instance.isDebug && !DebugManager.Instance.log) return;
@@ -38,7 +40,9 @@ namespace Script.Manager
             Debug.LogError(massage);
         }
 
-        #region TO DO Debug
+        #endregion
+
+        #region TODO Log
 
         public static void ToDo(object massage)
         {
