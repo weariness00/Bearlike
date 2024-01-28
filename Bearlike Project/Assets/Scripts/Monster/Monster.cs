@@ -1,6 +1,7 @@
 ﻿using Fusion;
 using Script.Util;
 using Scripts.State.GameStatus;
+using Unity.VisualScripting;
 
 namespace Script.Monster
 {
@@ -10,7 +11,7 @@ namespace Script.Monster
 
         private void Awake()
         {
-            status = ObjectUtil.GetORAddComponet<Status>(gameObject);
+            status = gameObject.GetOrAddComponent<Status>();
         }
     }
 }

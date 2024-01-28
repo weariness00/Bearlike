@@ -8,6 +8,7 @@ using Fusion.Sockets;
 using Script.Data;
 using Script.Manager;
 using Script.Util;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -62,8 +63,8 @@ namespace Script.Photon
         {
             // Create the Fusion runner and let it know that we will be providing user inpuz
 
-            ObjectUtil.GetORAddComponet<RunnerSimulatePhysics3D>(gameObject);
-            _runner = ObjectUtil.GetORAddComponet<NetworkRunner>(gameObject);
+            gameObject.GetOrAddComponent<RunnerSimulatePhysics3D>();
+            _runner = gameObject.GetOrAddComponent<NetworkRunner>();
             _runner.ProvideInput = true;
 
             // Create the NetworkSceneInfo from the current scene
@@ -80,7 +81,7 @@ namespace Script.Photon
                 GameMode = mode,
                 SessionName = "Matching Room",
                 Scene = scene,
-                SceneManager = ObjectUtil.GetORAddComponet<NetworkSceneManagerDefault>(gameObject)
+                SceneManager = gameObject.GetOrAddComponent<NetworkSceneManagerDefault>()
             });
 
             gameObject.transform.parent = Managers.Instance.transform;

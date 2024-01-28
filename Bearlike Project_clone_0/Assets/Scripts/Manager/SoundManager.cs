@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Script.Manager;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -56,7 +57,8 @@ public class SoundManager : MonoBehaviour
 		{
 			DestroyImmediate(transform.GetChild(0).gameObject);
 		}
-		
+
+		audioSources = new AudioSource[(int)SoundType.MaxValue];
 		for(int i = 0; i < (int)SoundType.MaxValue; i++)
 		{
 			GameObject obj = new GameObject { name = ((SoundType)i).ToString() };

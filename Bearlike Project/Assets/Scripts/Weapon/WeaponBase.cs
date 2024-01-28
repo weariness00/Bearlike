@@ -1,6 +1,7 @@
 ﻿using System;
 using Script.Util;
 using Scripts.State.GameStatus;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public interface IEquipment
@@ -20,7 +21,7 @@ public class WeaponBase : MonoBehaviour, IEquipment
 
     public virtual void Awake()
     {
-        status = ObjectUtil.GetORAddComponet<Status>(gameObject);
+        status = gameObject.GetOrAddComponent<Status>();
     }
 
     public virtual void Start()

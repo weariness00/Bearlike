@@ -6,6 +6,7 @@ using Script.Util;
 using Script.Weapon.Gun;
 using Scripts.State.GameStatus;
 using State.StateClass;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Script.Player
@@ -26,13 +27,13 @@ namespace Script.Player
             // 상호작용으로 착요하게 바꿀 예정
             equipment = GetComponentInChildren<IEquipment>();
             // status = ObjectUtil.GetORAddComponet<Status>(gameObject);
-            status = ObjectUtil.GetORAddComponet<PlayerState>(gameObject);
+            status = gameObject.GetOrAddComponent<PlayerState>();
             _networkAnimator = GetComponent<NetworkMecanimAnimator>();
         }
 
         public override void Spawned()
         {
-            _simpleKCC = ObjectUtil.GetORAddComponet<SimpleKCC>(gameObject);
+            _simpleKCC = gameObject.GetOrAddComponent<SimpleKCC>();
             if (HasInputAuthority)
             {
                 name = "Local Player";
