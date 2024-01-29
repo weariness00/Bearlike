@@ -1,12 +1,14 @@
-﻿using UnityEngine;
+﻿using Script.Data;
+using UnityEngine;
 
 namespace ProjectUpdate
 {
+    [DefaultExecutionOrder((int)DefaultExecutionOrderType.LobbySceneStart)]
     public class ProjectUpdateManager : MonoBehaviour
     {
-        public void CheckVersion()
+        void Start()
         {
-            
+            GoogleStorageManager.DownloadFile("bearlike-json", "DefaultKeyData.json",  $"{Application.dataPath}/Json/KeyManager");
         }
     }
 }

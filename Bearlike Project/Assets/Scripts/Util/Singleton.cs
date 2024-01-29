@@ -1,5 +1,4 @@
-﻿using System;
-using Unity.VisualScripting;
+﻿using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Util
@@ -29,8 +28,15 @@ namespace Util
         {
             if (_instance == null)
             {
+                var componet = FindObjectOfType<T>();
+                if (componet != null)
+                {
+                    _instance = componet;
+                    return;
+                }
+
                 var singletonObject = new GameObject(typeof(T).Name);
-                _instance = singletonObject.AddComponent<T>();
+                _instance = singletonObject.GetOrAddComponent<T>();
             }
         }
     }
