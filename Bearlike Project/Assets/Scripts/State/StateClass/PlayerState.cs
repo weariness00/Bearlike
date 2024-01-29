@@ -4,6 +4,7 @@ using Scripts.State.GameStatus;
 using State.StateClass.Base;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace State.StateClass
@@ -14,22 +15,18 @@ namespace State.StateClass
     public class PlayerState : Base.State
     {
         // Member Variable
-        #region status
-        
-        #endregion
-        
         #region info
         
         public StatusValue<int> Level { get; set; }               // 레벨
         public StatusValue<int> Experience { get; set; }                 // 경험치
-        public List<int> ExperienceAmountList { get; set; }                  // 레벨별 경험치량
-        public float immortalDurationAfterSpawn = 2f;          // 무적 시간
+        public List<int> ExperienceAmountList { get; set; }     // 레벨별 경험치량
+        public float immortalDurationAfterSpawn = 2f;           // 무적 시간
         
         #endregion
         
         #region timer
         
-        public GameObject ImmortalityIndicator;
+        public GameObject immortalityIndicator;
         [Networked]
         private TickTimer _immortalTimer { get; set; }
         
@@ -170,7 +167,7 @@ namespace State.StateClass
 
         public override void Render()
         {
-            ImmortalityIndicator.SetActive(IsImmortal);
+            immortalityIndicator.SetActive(IsImmortal);
         }
 
         // DeBug Function
