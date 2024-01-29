@@ -26,17 +26,17 @@ namespace Script.Manager
 
         public static void Log(object massage)
         {
-            if (!DebugManager.Instance.isDebug && !DebugManager.Instance.log) return;
+            if (!DebugManager.Instance.isDebug || !DebugManager.Instance.log) return;
             Debug.Log(massage);
         }
         public static void LogWarning(object massage)
         {
-            if (!DebugManager.Instance.isDebug && !DebugManager.Instance.logWaring) return;
+            if (!DebugManager.Instance.isDebug || !DebugManager.Instance.logWaring) return;
             Debug.LogWarning(massage);
         }
         public static void LogError(object massage)
         {
-            if (!DebugManager.Instance.isDebug && !DebugManager.Instance.logError) return;
+            if (!DebugManager.Instance.isDebug || !DebugManager.Instance.logError) return;
             Debug.LogError(massage);
         }
 
@@ -46,7 +46,7 @@ namespace Script.Manager
 
         public static void ToDo(object massage)
         {
-            if (!DebugManager.Instance.isDebug && !DebugManager.Instance.isAllToDo && !DebugManager.Instance.isToDo) return;
+            if (!DebugManager.Instance.isDebug || !DebugManager.Instance.isAllToDo || !DebugManager.Instance.isToDo) return;
             Debug.Log("TO DO List\n" + massage);
         }
 
@@ -54,7 +54,7 @@ namespace Script.Manager
 
         public static void DrawRay(Vector3 position, Vector3 direction, Color color)
         {
-            if (!DebugManager.Instance.isDebug && !DebugManager.Instance.drawRay) return;
+            if (!DebugManager.Instance.isDebug || !DebugManager.Instance.drawRay) return;
             Debug.DrawRay(position,direction,color);
         }
     }
