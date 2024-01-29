@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using State.StateClass.Pure;
+using State.StateClass.Base;
 using State.StateSystem;
 using UnityEngine;
 
@@ -46,18 +46,18 @@ public class PlayerController : MonoBehaviour
             if (collision.gameObject.name == "PoisonSphere")
             {
                 var state = transform.parent.gameObject.GetComponent<StateSystem>().GetState();
-                state.AddCondition((int)eCondition.Poisoned);
+                state.AddCondition(ObjectProperty.Poisoned);
             }            
             else if (collision.gameObject.name == "WeakSphere")
             {
                 var state = transform.parent.gameObject.GetComponent<StateSystem>().GetState();
-                state.AddCondition((int)eCondition.Weak);
+                state.AddCondition(ObjectProperty.Weak);
             }
             else if (collision.gameObject.name == "AntidoteSphere")
             {
                 var state = transform.parent.gameObject.GetComponent<StateSystem>().GetState();
-                state.DelCondition((int)eCondition.Poisoned);
-                state.DelCondition((int)eCondition.Weak);
+                state.DelCondition(ObjectProperty.Poisoned);
+                state.DelCondition(ObjectProperty.Weak);
             }
         }
         // StateSystemScene

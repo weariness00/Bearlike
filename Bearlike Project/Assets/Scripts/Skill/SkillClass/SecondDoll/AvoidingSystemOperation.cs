@@ -18,7 +18,7 @@ namespace Skill.SkillClass.SecondDoll
         {
             var playerState = GameObject.Find("Player").GetComponent<StateSystem>().GetState();
 
-            playerState._avoid.Current *= 1.3f;
+            playerState.Avoid.Current *= 1.3f;
         }
     }
 }
