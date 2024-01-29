@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Inho_Test_.PhotonPractice
 {
-    public struct NetworkInputDataTest : INetworkInput
+    public struct TestNetworkInputData : INetworkInput
     {
         public Vector3 direction;
     }

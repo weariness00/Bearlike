@@ -2,7 +2,7 @@ using Fusion;
 
 namespace Inho_Test_.PhotonPractice
 {
-    public class PlayerTest : NetworkBehaviour
+    public class TestPlayer : NetworkBehaviour
     {
         private NetworkCharacterController _cc;
 
@@ -13,7 +13,7 @@ namespace Inho_Test_.PhotonPractice
 
         public override void FixedUpdateNetwork()
         {
-            if (GetInput(out NetworkInputDataTest data))
+            if (GetInput(out TestNetworkInputData data))
             {
                 data.direction.Normalize();
                 _cc.Move(5*data.direction*Runner.DeltaTime);

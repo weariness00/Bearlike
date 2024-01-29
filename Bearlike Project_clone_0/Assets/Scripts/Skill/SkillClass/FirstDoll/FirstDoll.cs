@@ -1,10 +1,10 @@
-﻿using Skill.SkillClass.FirstDoll.PureSkill;
+﻿using Skill.SkillClass.FirstDoll.UniqueSkill;
 
-namespace Inho.Scripts.Skill.SkillClass.FirstDoll
+namespace Skill.SkillClass.FirstDoll
 {
     public class FirstDoll
     {
-        public Pure.Skill _filppingCoin;
+        public Inho.Scripts.Skill.SkillClass.Base.Skill _filppingCoin;
 
         public FirstDoll()
         {

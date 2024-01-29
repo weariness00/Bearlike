@@ -5,9 +5,9 @@ using Fusion.Sockets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Inho.Scripts.PhotonPractice
+namespace Inho_Test_.PhotonPractice
 {
-    public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
+    public class TestBasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     {
         private NetworkRunner _runner;
 
@@ -76,7 +76,7 @@ namespace Inho.Scripts.PhotonPractice
     
         public void OnInput(NetworkRunner runner, NetworkInput input)
         {
-            var data = new NetworkInputData();
+            var data = new TestNetworkInputData();
 
             if (Input.GetKey(KeyCode.W))
                 data.direction += Vector3.forward;

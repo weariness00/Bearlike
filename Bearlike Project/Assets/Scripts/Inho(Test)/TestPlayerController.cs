@@ -4,7 +4,7 @@ using State.StateClass.Base;
 using State.StateSystem;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class TestPlayerController : MonoBehaviour
 {
     private Vector3 _dir; 
     private CharacterController _cc;

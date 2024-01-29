@@ -25,12 +25,12 @@ namespace Skill.SkillClass.FirstDoll.UniqueSkill
             if (Random.Range(0, 2) == 0)
             {
                 // HEAD
-                playerState.AttackSpeed.Current *= 1.5f;
+                playerState.attackSpeed.Current *= 1.5f;
             }
             else
             {
                 // TAIL
-                playerState.Attack.Current = (int)(playerState.Attack.Current * 1.2f);
+                playerState.attack.Current = (int)(playerState.attack.Current * 1.2f);
             }
         }
     }

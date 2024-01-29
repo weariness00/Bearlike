@@ -1,5 +1,4 @@
-﻿using System;
-using Script.Player;
+﻿using Script.Player;
 using Scripts.State.GameStatus;
 
 namespace Item.Container

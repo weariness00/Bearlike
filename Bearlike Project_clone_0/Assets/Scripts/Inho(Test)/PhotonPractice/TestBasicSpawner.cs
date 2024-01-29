@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 namespace Inho_Test_.PhotonPractice
 {
-    public class BasicSpawnerTest : MonoBehaviour, INetworkRunnerCallbacks
+    public class TestBasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     {
         private NetworkRunner _runner;
 
@@ -76,7 +76,7 @@ namespace Inho_Test_.PhotonPractice
     
         public void OnInput(NetworkRunner runner, NetworkInput input)
         {
-            var data = new NetworkInputDataTest();
+            var data = new TestNetworkInputData();
 
             if (Input.GetKey(KeyCode.W))
                 data.direction += Vector3.forward;
