@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Fusion;
+﻿using System.Collections.Generic;
+using System.IO;
+using Newtonsoft.Json;
 using Script.Manager;
 using UnityEngine;
 
@@ -12,10 +12,15 @@ namespace Item.Looting
         public bool isDrop; // 드랍을 했는지
 
         [SerializeField] private LootingItem[] _dropItems;
-        
+
         private void Start()
         {
             CalLootingItem();
+            var path = Application.dataPath + $"/Json/Looting Table/Monster Looting Table List.json";
+            var data = File.ReadAllText(path);
+
+            _dropItems = JsonConvert.DeserializeObject<LootingItem[]>(data); 
+
         }
 
         private void OnDestroy()

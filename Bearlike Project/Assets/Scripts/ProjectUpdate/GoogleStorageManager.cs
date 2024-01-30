@@ -46,11 +46,8 @@ namespace ProjectUpdate
             {
                 Directory.CreateDirectory(destinationPath);
             }
-            if (File.Exists(destinationPath) && 
-                IsFileVersionDifferent(request.Execute(), fileName))
-            {
-                return;
-            }
+            if(File.Exists(fileName) == false) {return;}
+            if (IsFileVersionDifferent(request.Execute(), fileName)) { return; }
             
             using var stream = new FileStream(fileName, FileMode.Create);
             request.Download(stream);
