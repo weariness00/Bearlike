@@ -52,7 +52,7 @@ namespace ProjectUpdate
                 return;
             }
             
-            using var stream = new FileStream(destinationPath, FileMode.Create);
+            using var stream = new FileStream(fileName, FileMode.Create);
             request.Download(stream);
         }
 
