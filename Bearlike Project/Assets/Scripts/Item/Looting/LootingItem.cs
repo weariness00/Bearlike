@@ -6,6 +6,7 @@ namespace Item.Looting
     [System.Serializable]
     public struct LootingItem
     {
+        public int TargetObjectID; // Monster가 될 수 있고 상자가 될 수 있고 아이템이 될 수도 있다.
         public int ItemID;
         public string ItemName;
         
