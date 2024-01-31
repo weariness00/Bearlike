@@ -97,13 +97,13 @@ namespace Script.Manager
             if (KeyDictionary.TryGetValue(action, out var key) &&
                 Input.GetKeyDown(key))
             {
-                DebugManager.Log($"Key Down : {key}");
+                if(IsDebug){DebugManager.Log($"Key Down : {key}");}
                 return true;
             }
             else if (MouseDictionary.TryGetValue(action, out var mouse) && 
                      Input.GetMouseButtonDown((int)mouse))
             {
-                DebugManager.Log($"Mouse Down : {mouse}");
+                if(IsDebug){DebugManager.Log($"Mouse Down : {mouse}");}
                 return true;
             }
 
@@ -115,13 +115,14 @@ namespace Script.Manager
             if (KeyDictionary.TryGetValue(action, out var key) &&
                 Input.GetKey(key))
             {
-                DebugManager.Log($"Key Press : {key}");
+                if(IsDebug){DebugManager.Log($"Key Press : {key}");}
                 return true;
             }
             else if (MouseDictionary.TryGetValue(action, out var mouse) && 
                      Input.GetMouseButton((int)mouse))
             {
-                DebugManager.Log($"Mouse Press : {mouse}");
+                if(IsDebug){DebugManager.Log($"Mouse Press : {mouse}");}
+                
                 return true;
             }
 

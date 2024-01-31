@@ -2,7 +2,6 @@
 using Fusion.Addons.SimpleKCC;
 using Script.Manager;
 using Script.Photon;
-using Script.Util;
 using Script.Weapon.Gun;
 using Scripts.State.GameStatus;
 using State.StateClass;
@@ -110,7 +109,6 @@ namespace Script.Player
             if (data.ReLoad && equipment.IsGun)
             {
                 var gun = equipment as GunBase;
-                gun.ammo = ammo;
                 gun.ReLoadBullet();
             }
         }
