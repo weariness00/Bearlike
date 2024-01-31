@@ -1,4 +1,5 @@
-﻿using Fusion;
+﻿using System;
+using Fusion;
 using Fusion.Addons.SimpleKCC;
 using Script.Manager;
 using Script.Photon;
@@ -50,6 +51,18 @@ namespace Script.Player
 
         public override void Render()
         {
+        }
+
+        private void Update()
+        {
+            if (Input.GetMouseButtonDown((int)MouseButton.Middle))
+            {
+                Cursor.lockState = CursorLockMode.None;
+            }
+            if (Input.GetMouseButtonUp((int)MouseButton.Middle))
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+            }
         }
 
         public override void FixedUpdateNetwork()

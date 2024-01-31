@@ -1,6 +1,9 @@
 ﻿using System;
+using Fusion;
+using Fusion.LagCompensation;
 using Script.Manager;
 using Scripts.State.GameStatus;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Weapon.Bullet;
@@ -10,7 +13,7 @@ namespace Script.Weapon.Gun
     public class GunBase : WeaponBase
     {
         public static StatusValue<int> ammo = new StatusValue<int>(){Max = 100, Current = int.MaxValue};
-        
+
         [Header("이펙트")]
         
         [Header("사운드")]
@@ -25,7 +28,7 @@ namespace Script.Weapon.Gun
         public float bulletFirePerMinute; // 분당 총알 발사량
         public StatusValue<float> fireLateSecond = new StatusValue<float>(); // 총 발사후 기다리는 시간
         public StatusValue<float> reloadLateSecond = new StatusValue<float>(){Max = 1, Current = float.MaxValue}; // 재장전 시간
-
+        
         public override void Awake()
         {
             base.Awake();
@@ -38,6 +41,11 @@ namespace Script.Weapon.Gun
             IsGun = true;
 
             BulletInit();
+        }
+
+        public override void Spawned()
+        {
+            base.Spawned();
         }
 
         public override void FixedUpdateNetwork()
@@ -84,16 +92,17 @@ namespace Script.Weapon.Gun
             Vector3 detination = Vector3.zero;
             Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
             DebugManager.DrawRay(ray.origin, ray.direction * int.MaxValue, Color.red, 1.0f);
-            if (Physics.Raycast(ray, out var hit))
+            // if (Physics.Raycast(ray, out var hit, float.MaxValue))
+            if(Runner.LagCompensation.Raycast(ray.origin, ray.direction, float.MaxValue, Runner.LocalPlayer, out var hit))
             {
-                DebugManager.Log($"Ray충돌\n총 이름 : {name}\n맞은 대상 : {hit.collider.name}");
-                var hitStatus = hit.collider.GetComponent<Status>();
+                DebugManager.Log($"Ray충돌\n총 이름 : {name}\n맞은 대상 : {hit.Hitbox.name}");
+                var hitStatus = hit.Hitbox.GetComponent<Status>();
 
                 if (hitStatus != null)
                 {
                     hitStatus.hp.Current -= status.damage.Current;
                 }
-                detination = hit.point;
+                detination = hit.Point;
             }
             else
             {
