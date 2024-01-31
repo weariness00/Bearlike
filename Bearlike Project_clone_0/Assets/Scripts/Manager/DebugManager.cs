@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Script.Manager
 {
@@ -52,10 +51,10 @@ namespace Script.Manager
 
         #endregion
 
-        public static void DrawRay(Vector3 position, Vector3 direction, Color color)
+        public static void DrawRay(Vector3 position, Vector3 direction, Color color, float time)
         {
             if (!DebugManager.Instance.isDebug || !DebugManager.Instance.drawRay) return;
-            Debug.DrawRay(position,direction,color);
+            Debug.DrawRay(position,direction,color, time);
         }
     }
 }

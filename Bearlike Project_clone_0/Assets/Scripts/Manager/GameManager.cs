@@ -26,6 +26,8 @@ public class GameManager : NetworkBehaviour
         _userData = FindObjectOfType<UserData>();
         
         UserInit();
+        
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     public override void FixedUpdateNetwork()

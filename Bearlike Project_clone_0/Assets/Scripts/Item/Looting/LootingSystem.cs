@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 using ProjectUpdate;
 using Script.Manager;
 using UnityEngine;
@@ -8,19 +10,45 @@ namespace Item.Looting
 {
     public class LootingSystem : Singleton<LootingSystem>
     {
-        [SerializeField]private LootingItem[] _lootingItems;
+        private LootingItem[] _monsterLootingItems;
+        [HideInInspector] public Dictionary<int, LootingItem[]> monsterLootingItemDictionary = new Dictionary<int, LootingItem[]>();
 
-        public void Start()
+        protected override void Awake()
         {
-            DebugManager.ToDo("루팅 테이블을 어떻게 캐싱 할 것인지 방법 정하기");
             JsonConvertExtension.Load(ProjectUpdateManager.Instance.monsterLootingTableList,
                 (data) =>
                 {
-                    _lootingItems = JsonConvert.DeserializeObject<LootingItem[]>(data);
-                    
+                    _monsterLootingItems = JsonConvert.DeserializeObject<LootingItem[]>(data);
+                    SetLootingTable(_monsterLootingItems, monsterLootingItemDictionary);
+                    _monsterLootingItems = null;
                     DebugManager.Log("Monster Looting Table List를 불러왔습니다.");
                 }
-                );
+            );
+        }
+
+        private void SetLootingTable(LootingItem[] lootingItems, Dictionary<int, LootingItem[]> lootingItemDict)
+        {
+            int id = 0;
+            int currentArrayIndex = 0;
+            for (int i = 0; i < lootingItems.Length; i++)
+            {
+                if (lootingItems[i].TargetObjectID == id) {continue;}
+
+                int subArrayLength = i - currentArrayIndex;
+                LootingItem[] subLootingItems = new LootingItem[subArrayLength];
+                Array.Copy(lootingItems, currentArrayIndex, subLootingItems, 0, subArrayLength);
+                lootingItemDict.Add(id,subLootingItems);
+
+                id = lootingItems[i].TargetObjectID;
+                currentArrayIndex = i;
+            }
+
+            { // 마지막 배열도 분해하기
+                int subArrayLength = lootingItems.Length - currentArrayIndex;
+                LootingItem[] subLootingItems = new LootingItem[subArrayLength];
+                Array.Copy(lootingItems, currentArrayIndex, subLootingItems, 0, subArrayLength);
+                lootingItemDict.Add(id,subLootingItems);
+            }
         }
     }
 }

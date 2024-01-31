@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using Script.Manager;
@@ -8,43 +9,36 @@ namespace Item.Looting
 {
     public class LootingTable : MonoBehaviour
     {
-        public List<LootingItem> itemList;
         public bool isDrop; // 드랍을 했는지
 
-        [SerializeField] private LootingItem[] _dropItems;
-
-        private void Start()
-        {
-            CalLootingItem();
-            var path = Application.dataPath + $"/Json/Looting Table/Monster Looting Table List.json";
-            var data = File.ReadAllText(path);
-
-            _dropItems = JsonConvert.DeserializeObject<LootingItem[]>(data); 
-
-        }
-
+        [SerializeField] private LootingItem[] _dropItems = Array.Empty<LootingItem>();
+        
         private void OnDestroy()
         {
             if (!isDrop) { SpawnDropItem();}
         }
 
         // 어떤 아이템을 드랍하게 될지 계산
-        LootingItem[] CalLootingItem()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lit"> 루팅 아이템 정보 </param>
+        /// <returns></returns>
+        public LootingItem[] CalLootingItem(LootingItem[] lit)
         {
             List<LootingItem> dropItemList = new List<LootingItem>();
-            foreach (var lootingItem in itemList)
+            foreach (var lootingItem in lit)
             {
                 if(lootingItem.IsDrop() == false) continue;
 
                 dropItemList.Add(lootingItem);
             }
-            itemList.Clear();
-            
+
             return dropItemList.ToArray();
         }
 
         // 드랍해야될 아이템을 스폰
-        void SpawnDropItem()
+        public void SpawnDropItem()
         {
             foreach (var dropItem in _dropItems)
             {

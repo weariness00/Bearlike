@@ -41,13 +41,16 @@ namespace Scripts.State.GameStatus
         
         void CheckCurrent()
         {
-            if (_current.CompareTo(_min) < 0)
+            isMin = isMax = false;
+            if (_current.CompareTo(_min) <= 0)
             {
                 _current = _min;
+                isMin = true;
             }
-            else if (_current.CompareTo(_max) > 0)
+            else if (_current.CompareTo(_max) >= 0)
             {
                 _current = _max;
+                isMax = true;
             }
         }
     }

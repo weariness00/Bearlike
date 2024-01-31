@@ -397,6 +397,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5836075655250462756}
   - component: {fileID: 5738161923665670711}
+  - component: {fileID: -6221961776782598227}
   m_Layer: 0
   m_Name: Gun
   m_TagString: Untagged
@@ -438,15 +439,41 @@ MonoBehaviour:
   shootSound: {fileID: 2742436703845408458}
   emptyAmmoSound: {fileID: 5268244690611952886}
   reloadSound: {fileID: 6607486078533799955}
+  bullet: {fileID: -6395905962208903233, guid: 4d5ab57928fac524b89ae76e0691aa9e, type: 3}
   magazine:
     _min: 0
     _max: 10
     _current: 0
     isMin: 0
     isMax: 0
-  ammo:
+  bulletFirePerMinute: 700
+  fireLateSecond:
     _min: 0
-    _max: 100
-    _current: 100
+    _max: 0
+    _current: 0
     isMin: 0
     isMax: 0
+  reloadLateSecond:
+    _min: 0
+    _max: 1
+    _current: 1
+    isMin: 0
+    isMax: 1
+--- !u!114 &-6221961776782598227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6072068737464605952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 3167533257
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 5738161923665670711}

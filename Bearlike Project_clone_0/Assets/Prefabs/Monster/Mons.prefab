@@ -11,12 +11,13 @@ GameObject:
   - component: {fileID: 7491738959388561210}
   - component: {fileID: 3877605175306938669}
   - component: {fileID: 7690511289519872951}
-  - component: {fileID: 2718368849841371147}
   - component: {fileID: 4950547396980175010}
   - component: {fileID: 674681997400611571}
   - component: {fileID: 8404013375858834041}
   - component: {fileID: 7820318641680391820}
   - component: {fileID: -4512206738770446292}
+  - component: {fileID: -4382739694991346033}
+  - component: {fileID: -4863995383214484489}
   m_Layer: 0
   m_Name: Mons
   m_TagString: Untagged
@@ -89,29 +90,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &2718368849841371147
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4714873602930505835}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!114 &4950547396980175010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -125,6 +103,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   status: {fileID: 674681997400611571}
+  lootingTable: {fileID: 0}
+  id: 0
 --- !u!114 &674681997400611571
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -173,7 +153,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb38a8d7b1dd4c17a11def9cd7d7a7a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemList: []
+  isDrop: 0
+  _dropItems: []
 --- !u!114 &7820318641680391820
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -193,6 +174,7 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 4950547396980175010}
   - {fileID: -4512206738770446292}
+  - {fileID: -4382739694991346033}
 --- !u!114 &-4512206738770446292
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,3 +191,41 @@ MonoBehaviour:
   SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0
+--- !u!114 &-4382739694991346033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4714873602930505835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1039544458, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Config: 3
+  BroadRadius: 1.2247449
+  Offset: {x: 0, y: 0, z: 0}
+  GizmosColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  Hitboxes:
+  - {fileID: -4863995383214484489}
+--- !u!114 &-4863995383214484489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4714873602930505835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1014831617, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Type: 1
+  SphereRadius: 0
+  CapsuleRadius: 0
+  BoxExtents: {x: 0.5, y: 1, z: 0.5}
+  CapsuleHeight: 0
+  Offset: {x: 0, y: 0, z: 0}
+  Root: {fileID: -4382739694991346033}
+  GizmosColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}

@@ -1,8 +1,8 @@
-﻿using Fusion;
+﻿using System;
+using Fusion;
 using Fusion.Addons.SimpleKCC;
 using Script.Manager;
 using Script.Photon;
-using Script.Util;
 using Script.Weapon.Gun;
 using Scripts.State.GameStatus;
 using State.StateClass;
@@ -51,6 +51,18 @@ namespace Script.Player
 
         public override void Render()
         {
+        }
+
+        private void Update()
+        {
+            if (Input.GetMouseButtonDown((int)MouseButton.Middle))
+            {
+                Cursor.lockState = CursorLockMode.None;
+            }
+            if (Input.GetMouseButtonUp((int)MouseButton.Middle))
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+            }
         }
 
         public override void FixedUpdateNetwork()
@@ -110,7 +122,6 @@ namespace Script.Player
             if (data.ReLoad && equipment.IsGun)
             {
                 var gun = equipment as GunBase;
-                gun.ammo = ammo;
                 gun.ReLoadBullet();
             }
         }
