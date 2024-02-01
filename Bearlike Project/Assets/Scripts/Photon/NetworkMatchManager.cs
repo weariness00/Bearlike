@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using ExitGames.Client.Photon.StructWrapping;
+﻿using System.Collections.Generic;
 using Fusion;
 using Script.Data;
-using Script.Photon;
 using Script.Util;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Script.Manager
+namespace Photon
 {
-    public class MatchManager : NetworkBehaviour
+    public class NetworkMatchManager : NetworkBehaviour
     {
-        public static MatchManager Instance;
+        public static NetworkMatchManager Instance;
         public MatchRoomUserUI roomUserUI;
 
         public List<NetworkPrefabRef> PlayerPrefabRefs;

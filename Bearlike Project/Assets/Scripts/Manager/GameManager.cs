@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Fusion;
 using Script.Data;
 using Script.GamePlay;
@@ -9,6 +10,8 @@ public class GameManager : NetworkBehaviour
 {
     private UserData _userData;
     [SerializeField]private SpawnPlace _spawnPlace = new SpawnPlace();
+
+    public List<SceneRef> sceneList = new List<SceneRef>();
 
     #region Data Property
 

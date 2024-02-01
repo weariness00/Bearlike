@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Fusion;
 using Fusion.Addons.Physics;
 using Fusion.Sockets;
+using Photon;
 using Script.Data;
 using Script.Manager;
 using Script.Util;
@@ -14,24 +15,17 @@ using UnityEngine.SceneManagement;
 
 namespace Script.Photon
 {
-    public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
+    public class NetworkManager : global::Util.Singleton<NetworkManager>, INetworkRunnerCallbacks
     {
-        public static NetworkManager Instance;
-        
         public NetworkPrefabRef userDataPrefabRef;
         private UserData _userData;
         private NetworkRunner _runner;
-    
-        private void Awake()
-        {
-            if(Instance == null) Instance = this;
-        }
 
-        private Action<NetworkObject> _IsSetPlayerObjectEvent;
-        [HideInInspector]
+        private Action<NetworkObject> _isSetPlayerObjectEvent;
+
         public Action<NetworkObject> IsSetPlayerObjectEvent
         {
-            get => _IsSetPlayerObjectEvent;
+            get => _isSetPlayerObjectEvent;
             set
             {
                 DebugManager.ToDo($"SetPlayerObject가 호스트에서는 되는데 클라이언트에서는 안되는 이유 찾기");
@@ -42,9 +36,29 @@ namespace Script.Photon
                     return;
                 }
 
-                _IsSetPlayerObjectEvent = value;
+                _isSetPlayerObjectEvent = value;
             }
         }
+
+        #region Scene Static Funtion
+
+        public async static void LoadScene(SceneType type)
+        {
+            DebugManager.ToDo("나중에 씬 호출을 에셋 번들로 바꾸기");
+            if (Instance._runner.IsSceneAuthority)
+            {
+                var scene = SceneRef.FromIndex((int)SceneType.Matching);
+                await Instance._runner.LoadScene(scene, LoadSceneMode.Additive);
+            }
+        }
+
+        public static void LoadScene(int type) => LoadScene((SceneType)type);
+        public static void LoadScene(string type) => LoadScene((SceneType)Enum.Parse(typeof(SceneType), type));
+
+        #endregion
+
+        #region Network Connect Function
+
         IEnumerator IsSetPlayerObjectEventCoroutine()
         {
             while (true)
@@ -93,21 +107,26 @@ namespace Script.Photon
         async Task MakeRoom() => await Matching(GameMode.Host);
         async Task JoinRoom() => await Matching(GameMode.Client);
 
+        #endregion
+
+        #region Network Callback Function
+
         public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
-            var matchManager = FindObjectOfType<MatchManager>();
+            var matchManager = FindObjectOfType<NetworkMatchManager>();
             var data = new UserDataStruct();
 
             if (_userData == null)
             {
                 _userData = FindObjectOfType<UserData>();
-                if(_userData == null)
+                if (_userData == null)
                     _userData = _runner.Spawn(userDataPrefabRef, Vector3.zero, Quaternion.identity).GetComponent<UserData>();
             }
+
             data.PlayerRef = player;
             data.Name = player.ToString();
             data.PrefabRef = matchManager.PlayerPrefabRefs[0]; // 임시 : 나중에는 유저가 선택하면 바꿀 수 있거나 아니면 이전 정보를 가져와 그 캐릭터로 잡아줌
-            
+
             _userData.InsertUserData(player, data);
             matchManager.DataUpdate();
         }
@@ -115,7 +134,7 @@ namespace Script.Photon
         public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
         {
             DebugManager.Log($"종료 : {player}");
-            
+
             _userData.UserDictionary.Remove(player);
         }
 
@@ -140,7 +159,7 @@ namespace Script.Photon
 
             if (KeyManager.InputActionDown(KeyToAction.Esc))
                 OnPlayerLeft(runner, runner.LocalPlayer);
-            
+
             playerInputData.MouseAxis.x = Input.GetAxis("Mouse X");
             playerInputData.MouseAxis.y = Input.GetAxis("Mouse Y");
 
@@ -155,7 +174,7 @@ namespace Script.Photon
         {
             var player = runner.LocalPlayer;
             DebugManager.Log($"강제 종료 : {runner.LocalPlayer}");
-            
+
             _userData.UserDictionary.Remove(runner.LocalPlayer);
         }
 
@@ -167,7 +186,7 @@ namespace Script.Photon
         public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
         {
             DebugManager.LogWarning($"서버 연결이 끊김\n" +
-                                   $"서버 이름 : {runner.SceneManager.MainRunnerScene.name}");
+                                    $"서버 이름 : {runner.SceneManager.MainRunnerScene.name}");
             SceneManager.LoadScene((int)SceneType.Lobby);
         }
 
@@ -222,5 +241,7 @@ namespace Script.Photon
         public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress)
         {
         }
+
+        #endregion
     }
 }
