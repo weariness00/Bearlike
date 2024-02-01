@@ -35,7 +35,9 @@ namespace Scripts.State.GameStatus
         [SerializeField] private T _min;
         [SerializeField] private T _max;
         [SerializeField] private T _current;
-        
+
+        public bool isOverMax; // 기존의 Max보다 높은 값을 허용 할 것인지
+        public bool isOverMin; // 기존의 Min보다 낮은 값을 허용 할 것인지
         public bool isMin;
         public bool isMax;
         
@@ -44,12 +46,12 @@ namespace Scripts.State.GameStatus
             isMin = isMax = false;
             if (_current.CompareTo(_min) <= 0)
             {
-                _current = _min;
+                if(isOverMin) {_current = _min;}
                 isMin = true;
             }
             else if (_current.CompareTo(_max) >= 0)
             {
-                _current = _max;
+                if(isOverMax) {_current = _max;}
                 isMax = true;
             }
         }
