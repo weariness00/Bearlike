@@ -10,6 +10,8 @@ namespace Script.GamePlay
         [SerializeField] private List<Transform> _spotList = new List<Transform>();
         private Dictionary<string, Transform> _spotDictionary;
 
+        public int Length => _spotList.Count;
+        
         public void Initialize()
         {
             _spotDictionary = new Dictionary<string, Transform>();
