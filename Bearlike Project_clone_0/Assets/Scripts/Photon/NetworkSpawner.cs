@@ -1,8 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Fusion;
 using Script.GamePlay;
+using Scripts.State.GameStatus;
+using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -10,32 +13,43 @@ namespace Script.Photon
 {
     public class NetworkSpawner : NetworkBehaviour
     {
+        public bool isStartSpawn = false; // 이 컴포넌트가 생성되자마자 스폰하게 할 것인지
+        
         // 해당 random은 아래의 리스트의 원소상에서의 랜덤임
         public bool isRandomObject = false; // 랜덤한 객체를 소환할 것인지
         public bool isRandomPlace = false; // 랜덤한 위치에 소환할 것인지
         public bool isRandomInterval = false; // 랜덤한 간격에 소환할 것인지
-        public int co;
-
+        public StatusValue<int> spawnCount = new StatusValue<int>(); // 현재 스폰된 갯수
+        
         public List<NetworkPrefabRef> spawnObjectList = new List<NetworkPrefabRef>();
         public int[] spawnObjectOrders; // 스폰할 객체, 1개일 경우 해당 객체만 스폰 여러개일 경우 순차적으로 스폰
         private int _SpawnObjectOrderCount; // 현재 스폰할 객체
         private NetworkPrefabRef _currentSpawnObjectOrder;
         
         [SerializeField] SpawnPlace spawnPlace; // 스폰 위치
-        public int[] spawnPlaces; // 스폰 위치 설정, 1개일 경우 반복 여러개일 경우 순차적으로 실행
+        [Tooltip("다음 스폰 위치 순서 인덱스 SpawnPlace를 기반으로 한다.")] public int[] spawnPlaceOrders; // 스폰 위치 설정, 1개일 경우 반복 여러개일 경우 순차적으로 실행
         private int _spawnPlaceCount;
         private Transform _currentSpawnPlace;
 
         public float[] spawnIntervals; // 스폰 간격, 1개일 경우 반복 여러개일 경우 순차적으로 실행
         private int _spawnIntervalCount;
-        [Networked] private TickTimer currentSpawnInterval { get; set; } // 현재 스폰 간격
+        [Networked] private TickTimer CurrentSpawnInterval { get; set; } // 현재 스폰 간격
         
         [HideInInspector] public List<NetworkObject> networkObjects;
+        public Action<GameObject> SpawnSuccessAction;
         private Coroutine _currentSpawnCoroutine = null;
 
         public override void Spawned()
         {
-            SpawnStart();
+            if (spawnPlace.Length == 0)
+            {
+                _currentSpawnPlace = gameObject.transform;
+            }
+            
+            if (isStartSpawn)
+            {
+                SpawnStart();
+            }
         }
 
         public void SpawnStart()
@@ -68,12 +82,32 @@ namespace Script.Photon
 
         void NextPlace()
         {
-            if (isRandomPlace)
-                _spawnPlaceCount = Random.Range(0, spawnPlaces.Length);
+            if (spawnPlace.Length == 0) { return; }
+            
+            _spawnPlaceCount++;
+            int length = 0;
+            
+            // 길이 할당
+            if(spawnPlaceOrders != null)
+            {
+                length = spawnPlaceOrders.Length;
+            }
             else
-                _spawnPlaceCount++;
-
-            if (spawnPlaces.Length - 1 < _spawnPlaceCount) _spawnPlaceCount = 0;
+            {
+                length = spawnPlace.Length;
+            }
+            
+            // 인덱스 설정
+            if (isRandomPlace)
+            {
+                _spawnPlaceCount = Random.Range(0, length);
+            }
+            if (length - 1 < _spawnPlaceCount)
+            {
+                _spawnPlaceCount = 0;
+            }
+            
+            // 위치 할당
             _currentSpawnPlace = spawnPlace.GetSpot(_spawnPlaceCount);
         }
 
@@ -90,13 +124,19 @@ namespace Script.Photon
         
         void NextInterval()
         {
+            if (spawnIntervals == null)
+            {
+                CurrentSpawnInterval = TickTimer.CreateFromSeconds(Runner, 1f);
+                return;
+            }
+            
             if (isRandomInterval)
                 _spawnIntervalCount =  Random.Range(0, spawnIntervals.Length);
             else
                 _spawnIntervalCount++;
             
             if (spawnIntervals.Length - 1 < _spawnIntervalCount) _spawnIntervalCount = 0;
-            currentSpawnInterval = TickTimer.CreateFromSeconds(Runner, spawnIntervals[_spawnIntervalCount]);
+            CurrentSpawnInterval = TickTimer.CreateFromSeconds(Runner, spawnIntervals[_spawnIntervalCount]);
         }
         
         /// <summary>
@@ -104,7 +144,8 @@ namespace Script.Photon
         /// </summary>
         async Task SpawnTask()
         {
-            await Runner.SpawnAsync(_currentSpawnObjectOrder, _currentSpawnPlace.position);
+            var obj = await Runner.SpawnAsync(_currentSpawnObjectOrder, _currentSpawnPlace.position);
+            SpawnSuccessAction?.Invoke(obj.gameObject);
             NextObject();
             NextPlace();
             NextInterval();
@@ -112,13 +153,20 @@ namespace Script.Photon
 
         private IEnumerator SpawnCoroutine()
         {
-            var c = 0;
+            if (spawnObjectList.Count == 0)
+            {
+                Debug.LogWarning("Null Reference Is Spawn Object List");
+                yield break;
+            }
+            
+            spawnCount.Current = 0;
             while (true)
             {
                 yield return null;
-                if (currentSpawnInterval.Expired(Runner) == false) continue; // 스폰 간격만큼의 시간이 지났는지 확인
+                if (CurrentSpawnInterval.Expired(Runner) == false) continue; // 스폰 간격만큼의 시간이 지났는지 확인
                 yield return SpawnTask();
-                if (++c > co - 1) SpawnStop();
+                ++spawnCount.Current;
+                if (spawnCount.isMax) SpawnStop();
             }
         }
     }

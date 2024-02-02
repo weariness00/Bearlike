@@ -30,6 +30,11 @@ namespace State.StateClass.Base
 
         public StatusValue<int> force = new StatusValue<int>();               // 힘
         public int condition;                                               // 상태
+
+        #region Variable Paramiter
+        public bool IsDie => hp.isMin;
+
+        #endregion
         
         // Member Function
         public abstract void Initialization();
@@ -40,7 +45,9 @@ namespace State.StateClass.Base
 
         // DeBug Function
         public abstract void ShowInfo();
-        
+
+        #region Condition Interface Functon
+
         // ICondition Interface Function
         public abstract bool On(ObjectProperty condition);
             
@@ -50,5 +57,8 @@ namespace State.StateClass.Base
             
         public abstract void AddCondition(ObjectProperty condition);
         public abstract void DelCondition(ObjectProperty condition);
+        
+        #endregion
+
     }
 }

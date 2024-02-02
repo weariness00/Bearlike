@@ -58,6 +58,8 @@ namespace Script.Player
             if (Input.GetMouseButtonDown((int)MouseButton.Middle))
             {
                 Cursor.lockState = CursorLockMode.None;
+                NetworkManager.UnloadScene(SceneType.StageDestroy);
+
             }
             if (Input.GetMouseButtonUp((int)MouseButton.Middle))
             {

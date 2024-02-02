@@ -1,49 +1,55 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using Fusion;
+using GamePlay.StageLevel;
+using Photon;
 using Script.Data;
 using Script.GamePlay;
-using Script.Manager;
 using UnityEngine;
 
-public class GameManager : NetworkBehaviour
+namespace Manager
 {
-    private UserData _userData;
-    [SerializeField]private SpawnPlace _spawnPlace = new SpawnPlace();
+    public class GameManager : NetworkSingleton<GameManager>
+    {
+        private UserData _userData;
+        [SerializeField]private SpawnPlace _spawnPlace = new SpawnPlace();
 
-    #region Data Property
+        public List<StageLevelBase> sceneList = new List<StageLevelBase>();
 
-    public float playTimer = 0f; 
+        #region Data Property
 
-    #endregion
+        public float playTimer = 0f; 
+
+        #endregion
     
-    private void Awake()
-    {
-        _spawnPlace.Initialize();
-    }
-
-    private void Start()
-    {
-        _userData = FindObjectOfType<UserData>();
-        
-        UserInit();
-        
-        Cursor.lockState = CursorLockMode.Locked;
-    }
-
-    public override void FixedUpdateNetwork()
-    {
-        playTimer += Runner.DeltaTime;
-    }
-
-    async void UserInit()
-    {   
-        await _userData.SpawnPlayers();
-        if (Runner != null && Runner.IsServer)
+        private void Awake()
         {
-            foreach (var (key, user) in _userData.UserDictionary)
+            _spawnPlace.Initialize();
+        }
+
+        private void Start()
+        {
+            _userData = FindObjectOfType<UserData>();
+        
+            UserInit();
+        
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+
+        public override void FixedUpdateNetwork()
+        {
+            playTimer += Runner.DeltaTime;
+        }
+
+        async void UserInit()
+        {   
+            await _userData.SpawnPlayers();
+            if (Runner != null && Runner.IsServer)
             {
-                var playerObject = Runner.FindObject(user.NetworkId);
-                playerObject.transform.position = _spawnPlace.GetRandomSpot().position;
+                foreach (var (key, user) in _userData.UserDictionary)
+                {
+                    var playerObject = Runner.FindObject(user.NetworkId);
+                    playerObject.transform.position = _spawnPlace.GetRandomSpot().position;
+                }
             }
         }
     }

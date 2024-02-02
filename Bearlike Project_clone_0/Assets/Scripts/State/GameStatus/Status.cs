@@ -9,6 +9,8 @@ namespace Scripts.State.GameStatus
         public StatusValue<float> damage = new StatusValue<float>();
         public StatusValue<float> speed = new StatusValue<float>();
 
+        public bool isDie;
+
         private void Start()
         {
             // 임시
