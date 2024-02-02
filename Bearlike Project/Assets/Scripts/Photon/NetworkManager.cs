@@ -8,7 +8,6 @@ using Fusion.Sockets;
 using Photon;
 using Script.Data;
 using Script.Manager;
-using Script.Util;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -42,18 +41,48 @@ namespace Script.Photon
 
         #region Scene Static Funtion
 
-        public async static void LoadScene(SceneType type)
+        public static async void LoadScene(SceneType type, LoadSceneParameters parameters, bool setActiveOnLoad = false)
+        {
+            if (Instance._runner.IsSceneAuthority)
+            {
+                var sceneRef = SceneRef.FromIndex((int)type);
+                if(parameters.loadSceneMode == LoadSceneMode.Single)
+                {
+                    Instance._runner.LoadScene(sceneRef, parameters, setActiveOnLoad);
+                }
+                else
+                {
+                    await Instance._runner.LoadScene(sceneRef, parameters, setActiveOnLoad);
+                }
+                DebugManager.Log($"씬 불러오기 성공 : {type.ToString()}");
+            }
+        }
+        
+        public static void LoadScene(SceneType type, LoadSceneMode sceneMode = LoadSceneMode.Single, LocalPhysicsMode physicsMode = LocalPhysicsMode.None, bool setActiveOnLoad = false)
         {
             DebugManager.ToDo("나중에 씬 호출을 에셋 번들로 바꾸기");
             if (Instance._runner.IsSceneAuthority)
             {
-                var scene = SceneRef.FromIndex((int)SceneType.Matching);
-                await Instance._runner.LoadScene(scene, LoadSceneMode.Additive);
+                LoadSceneParameters sceneParameters = new LoadSceneParameters()
+                {
+                    loadSceneMode = LoadSceneMode.Single,
+                    localPhysicsMode = LocalPhysicsMode.Physics3D,
+                };
+                NetworkManager.LoadScene(type, sceneParameters, setActiveOnLoad);
             }
         }
 
-        public static void LoadScene(int type) => LoadScene((SceneType)type);
-        public static void LoadScene(string type) => LoadScene((SceneType)Enum.Parse(typeof(SceneType), type));
+        public static void LoadScene(int type, LoadSceneMode sceneMode = LoadSceneMode.Single, LocalPhysicsMode physicsMode = LocalPhysicsMode.None, bool setActiveOnLoad = false) => LoadScene((SceneType)type, sceneMode, physicsMode, setActiveOnLoad);
+        public static void LoadScene(string type, LoadSceneMode sceneMode = LoadSceneMode.Single, LocalPhysicsMode physicsMode = LocalPhysicsMode.None, bool setActiveOnLoad = false) => LoadScene((SceneType)Enum.Parse(typeof(SceneType), type), sceneMode, physicsMode, setActiveOnLoad);
+
+        public static async void UnloadScene(SceneType type)
+        {
+            if (Instance._runner.IsSceneAuthority)
+            {
+                var sceneRef = SceneRef.FromIndex((int)type);
+                await Instance._runner.UnloadScene(sceneRef);
+            }
+        }
 
         #endregion
 

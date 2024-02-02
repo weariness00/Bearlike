@@ -5,8 +5,6 @@ namespace Monster
 {
     public class MonsterManager : Singleton<MonsterManager>
     {
-        public StageLevelBase stageLevel;
-        
         
     }
 }

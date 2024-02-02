@@ -1,28 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
 using Fusion;
+using Manager;
 using Script.Manager;
 using Script.Monster;
 using Script.Photon;
 using Scripts.State.GameStatus;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace GamePlay.StageLevel
 {
     public class StageLevelBase : NetworkBehaviour
     {
+        #region Stage Info Variable
+
+        [Header("스테이지 정보")]
         public StageLevelInfo stageLevelInfo;
 
+        [Header("맵 정보")] 
+        public Vector3 mapSize;
+
+        [Header("몬스터 정보")]
         public List<NetworkSpawner> monsterSpawnerList = new List<NetworkSpawner>();
         public Transform monsterParentTransform = null;
 
         public bool isStageClear = false;
-        public string nextStageSceneName;
+        public int nextStageSceneIndex = (int)SceneType.StageDestroy;
 
+        #endregion
+        
         private Action _updateStageAction = null;
         
-        #region Destroy Varius
+        #region Destroy Variable
 
         public StatusValue<float> destroyTimeLimit = new StatusValue<float>();
         public StatusValue<int> monsterKillCount = new StatusValue<int>();
@@ -35,7 +44,16 @@ namespace GamePlay.StageLevel
         public string difficultInfo;
 
         #region Unity Event Function
-        
+
+        private void Awake()
+        {
+            var camera = GetComponentInChildren<Camera>();
+            if (camera != null)
+            {
+                DestroyImmediate(camera.gameObject);
+            }
+        }
+
         private void Start()
         {
             stageLevelInfo.AliveMonsterCount.isOverMax = true;
@@ -48,6 +66,8 @@ namespace GamePlay.StageLevel
                     _updateStageAction = DestroyUpdate;
                     break;
             }
+            
+            GameManager.Instance.sceneList.Add(this);
         }
 
         public override void FixedUpdateNetwork()

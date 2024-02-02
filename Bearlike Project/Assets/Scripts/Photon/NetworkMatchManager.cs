@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Fusion;
 using Script.Data;
+using Script.Photon;
 using Script.Util;
 using UnityEngine.SceneManagement;
 
@@ -37,14 +38,13 @@ namespace Photon
         {
             gameObject.SetActive(false);
             
-            var sceneRef = SceneRef.FromIndex((int)SceneType.Game);
-            LoadSceneParameters lp = new LoadSceneParameters()
+            LoadSceneParameters lsp = new LoadSceneParameters()
             {
-                loadSceneMode = LoadSceneMode.Single,
+                loadSceneMode = LoadSceneMode.Additive,
                 localPhysicsMode = LocalPhysicsMode.Physics3D,
             };
             
-            var networkSceneAsyncOp = Runner.LoadScene(sceneRef, lp, true);
+            NetworkManager.LoadScene(SceneType.Game, LoadSceneMode.Single);
         }
     }
 }

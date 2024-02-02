@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 42810327}
   - component: {fileID: 42810326}
   - component: {fileID: 42810328}
+  - component: {fileID: 42810329}
   m_Layer: 0
   m_Name: Destroy Stage
   m_TagString: Untagged
@@ -163,12 +164,12 @@ MonoBehaviour:
       isOverMin: 0
       isMin: 0
       isMax: 0
+  mapSize: {x: 10, y: 10, z: 1}
   monsterSpawnerList:
   - {fileID: 354704606}
   monsterParentTransform: {fileID: 2096895239}
   isStageClear: 0
-  nextStageLevelInfo:
-    RawValue: 2
+  nextStageSceneIndex: 3
   destroyTimeLimit:
     _min: 0
     _max: 0
@@ -202,6 +203,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1850824451}
   - {fileID: 1301782218}
   - {fileID: 2096895239}
   - {fileID: 354704604}
@@ -227,6 +229,27 @@ MonoBehaviour:
   - {fileID: 354704605}
   NetworkedBehaviours:
   - {fileID: 42810326}
+--- !u!65 &42810329
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 42810325}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 2147483648
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &354704603
 GameObject:
   m_ObjectHideFlags: 0
@@ -685,12 +708,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1850824448}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 42810327}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1850824452
 MonoBehaviour:
@@ -771,5 +794,4 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1850824451}
   - {fileID: 42810327}
