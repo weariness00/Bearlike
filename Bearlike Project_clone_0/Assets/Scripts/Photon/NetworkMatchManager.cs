@@ -37,14 +37,7 @@ namespace Photon
         void GameStart()
         {
             gameObject.SetActive(false);
-            
-            LoadSceneParameters lsp = new LoadSceneParameters()
-            {
-                loadSceneMode = LoadSceneMode.Additive,
-                localPhysicsMode = LocalPhysicsMode.Physics3D,
-            };
-            
-            NetworkManager.LoadScene(SceneType.Game, LoadSceneMode.Single);
+            NetworkManager.LoadScene(SceneType.Game, LoadSceneMode.Single, LocalPhysicsMode.Physics3D);
         }
     }
 }

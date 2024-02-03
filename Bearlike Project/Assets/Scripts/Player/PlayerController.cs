@@ -26,7 +26,6 @@ namespace Script.Player
             // 임시로 장비 착용
             // 상호작용으로 착요하게 바꿀 예정
             equipment = GetComponentInChildren<IEquipment>();
-            // status = ObjectUtil.GetORAddComponet<Status>(gameObject);
             status = gameObject.GetOrAddComponent<PlayerState>();
             _networkAnimator = GetComponent<NetworkMecanimAnimator>();
         }
@@ -57,18 +56,17 @@ namespace Script.Player
         {
             if (Input.GetMouseButtonDown((int)MouseButton.Middle))
             {
-                Cursor.lockState = CursorLockMode.None;
-                NetworkManager.UnloadScene(SceneType.StageDestroy);
-
-            }
-            if (Input.GetMouseButtonUp((int)MouseButton.Middle))
-            {
-                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.lockState = Cursor.lockState == CursorLockMode.None ? CursorLockMode.Locked : CursorLockMode.None;
             }
         }
 
         public override void FixedUpdateNetwork()
         {
+            if (Cursor.lockState == CursorLockMode.None)
+            {
+                return;
+            }
+            
             if (GetInput(out PlayerInputData data))
             {       
                 MouseRotateControl(data.MouseAxis);

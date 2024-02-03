@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: -4512206738770446292}
   - component: {fileID: -4382739694991346033}
   - component: {fileID: -4863995383214484489}
+  - component: {fileID: 12576215274529182}
   m_Layer: 0
   m_Name: Mons
   m_TagString: Untagged
@@ -102,9 +103,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dee67e2025f45d4a3233c2233fb66bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  status: {fileID: 674681997400611571}
-  lootingTable: {fileID: 0}
   id: 0
+  status: {fileID: 0}
+  lootingTable: {fileID: 0}
 --- !u!114 &674681997400611571
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -121,26 +122,35 @@ MonoBehaviour:
     _min: 0
     _max: 100
     _current: 100
+    isOverMax: 0
+    isOverMin: 0
     isMin: 0
     isMax: 0
   mp:
     _min: 0
     _max: 100
     _current: 100
+    isOverMax: 0
+    isOverMin: 0
     isMin: 0
     isMax: 0
   damage:
     _min: 0
     _max: 100
     _current: 100
+    isOverMax: 0
+    isOverMin: 0
     isMin: 0
     isMax: 0
   speed:
     _min: 0
     _max: 100
     _current: 100
+    isOverMax: 0
+    isOverMin: 0
     isMin: 0
     isMax: 0
+  isDie: 0
 --- !u!114 &8404013375858834041
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -229,3 +239,30 @@ MonoBehaviour:
   Offset: {x: 0, y: 0, z: 0}
   Root: {fileID: -4382739694991346033}
   GizmosColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+--- !u!54 &12576215274529182
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4714873602930505835}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

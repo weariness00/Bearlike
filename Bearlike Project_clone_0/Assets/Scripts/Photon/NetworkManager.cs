@@ -16,6 +16,8 @@ namespace Script.Photon
 {
     public class NetworkManager : global::Util.Singleton<NetworkManager>, INetworkRunnerCallbacks
     {
+        public static NetworkRunner Runner => Instance._runner;
+        
         public NetworkPrefabRef userDataPrefabRef;
         private UserData _userData;
         private NetworkRunner _runner;
@@ -41,11 +43,10 @@ namespace Script.Photon
 
         #region Scene Static Funtion
 
-        public static async void LoadScene(SceneType type, LoadSceneParameters parameters, bool setActiveOnLoad = false)
+        public static async Task LoadScene(SceneRef sceneRef, LoadSceneParameters parameters, bool setActiveOnLoad = false)
         {
             if (Instance._runner.IsSceneAuthority)
             {
-                var sceneRef = SceneRef.FromIndex((int)type);
                 if(parameters.loadSceneMode == LoadSceneMode.Single)
                 {
                     Instance._runner.LoadScene(sceneRef, parameters, setActiveOnLoad);
@@ -54,35 +55,38 @@ namespace Script.Photon
                 {
                     await Instance._runner.LoadScene(sceneRef, parameters, setActiveOnLoad);
                 }
-                DebugManager.Log($"씬 불러오기 성공 : {type.ToString()}");
+                DebugManager.Log($"씬 불러오기 성공 : {sceneRef}");
             }
         }
         
-        public static void LoadScene(SceneType type, LoadSceneMode sceneMode = LoadSceneMode.Single, LocalPhysicsMode physicsMode = LocalPhysicsMode.None, bool setActiveOnLoad = false)
+        public static async Task LoadScene(SceneType type, LoadSceneMode sceneMode = LoadSceneMode.Single, LocalPhysicsMode physicsMode = LocalPhysicsMode.None, bool setActiveOnLoad = false)
         {
             DebugManager.ToDo("나중에 씬 호출을 에셋 번들로 바꾸기");
             if (Instance._runner.IsSceneAuthority)
             {
                 LoadSceneParameters sceneParameters = new LoadSceneParameters()
                 {
-                    loadSceneMode = LoadSceneMode.Single,
-                    localPhysicsMode = LocalPhysicsMode.Physics3D,
+                    loadSceneMode = sceneMode,
+                    localPhysicsMode = physicsMode,
                 };
-                NetworkManager.LoadScene(type, sceneParameters, setActiveOnLoad);
+                await NetworkManager.LoadScene(type, sceneParameters, setActiveOnLoad);
             }
         }
 
-        public static void LoadScene(int type, LoadSceneMode sceneMode = LoadSceneMode.Single, LocalPhysicsMode physicsMode = LocalPhysicsMode.None, bool setActiveOnLoad = false) => LoadScene((SceneType)type, sceneMode, physicsMode, setActiveOnLoad);
-        public static void LoadScene(string type, LoadSceneMode sceneMode = LoadSceneMode.Single, LocalPhysicsMode physicsMode = LocalPhysicsMode.None, bool setActiveOnLoad = false) => LoadScene((SceneType)Enum.Parse(typeof(SceneType), type), sceneMode, physicsMode, setActiveOnLoad);
+        public static Task LoadScene(SceneType type, LoadSceneParameters parameters, bool setActiveOnLoad = false) => LoadScene(SceneRef.FromIndex((int)type), parameters, setActiveOnLoad);
+        public static Task LoadScene(int type, LoadSceneMode sceneMode = LoadSceneMode.Single, LocalPhysicsMode physicsMode = LocalPhysicsMode.None, bool setActiveOnLoad = false) => LoadScene((SceneType)type, sceneMode, physicsMode, setActiveOnLoad);
+        public static Task LoadScene(string path, LoadSceneMode sceneMode = LoadSceneMode.Single, LocalPhysicsMode physicsMode = LocalPhysicsMode.None, bool setActiveOnLoad = false) => LoadScene(SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(path)), new LoadSceneParameters(sceneMode, physicsMode), setActiveOnLoad);
+        public static Task LoadScene(string path, LoadSceneParameters parameters, bool setActiveOnLoad = false) => LoadScene(SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(path)), parameters, setActiveOnLoad); 
 
-        public static async void UnloadScene(SceneType type)
+        public static async void UnloadScene(SceneRef sceneRef)
         {
             if (Instance._runner.IsSceneAuthority)
             {
-                var sceneRef = SceneRef.FromIndex((int)type);
                 await Instance._runner.UnloadScene(sceneRef);
             }
         }
+        public static void UnloadScene(string path) => UnloadScene(SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(path))); 
+        public static void UnloadScene(SceneType type) => UnloadScene(SceneRef.FromIndex((int)type)); 
 
         #endregion
 
@@ -186,8 +190,8 @@ namespace Script.Photon
             if (KeyManager.InputAction(KeyToAction.Attack))
                 playerInputData.Attack = true;
 
-            if (KeyManager.InputActionDown(KeyToAction.Esc))
-                OnPlayerLeft(runner, runner.LocalPlayer);
+            // if (KeyManager.InputActionDown(KeyToAction.Esc))
+            //     OnPlayerLeft(runner, runner.LocalPlayer);
 
             playerInputData.MouseAxis.x = Input.GetAxis("Mouse X");
             playerInputData.MouseAxis.y = Input.GetAxis("Mouse Y");

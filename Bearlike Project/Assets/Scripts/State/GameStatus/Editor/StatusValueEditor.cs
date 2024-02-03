@@ -45,7 +45,7 @@ namespace Scripts.State.GameStatus.Editor
 
             int sliderInterval = 150;
             var currentSliderPos = new Rect(position.x, position.y, sliderInterval, position.height);
-            current.floatValue = (int)GUI.HorizontalSlider(currentSliderPos, current.floatValue, min.floatValue, max.intValue);
+            current.floatValue = (int)GUI.HorizontalSlider(currentSliderPos, current.floatValue, min.floatValue, max.floatValue);
             sumInterval += sliderInterval + 10;
                 
             // TO DO

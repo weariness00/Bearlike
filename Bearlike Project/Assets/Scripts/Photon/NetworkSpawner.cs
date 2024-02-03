@@ -45,7 +45,7 @@ namespace Script.Photon
             {
                 _currentSpawnPlace = gameObject.transform;
             }
-            
+
             if (isStartSpawn)
             {
                 SpawnStart();
@@ -124,7 +124,7 @@ namespace Script.Photon
         
         void NextInterval()
         {
-            if (spawnIntervals == null)
+            if (spawnIntervals.Length == 0)
             {
                 CurrentSpawnInterval = TickTimer.CreateFromSeconds(Runner, 1f);
                 return;

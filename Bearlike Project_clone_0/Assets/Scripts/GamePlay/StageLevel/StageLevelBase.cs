@@ -7,29 +7,39 @@ using Script.Monster;
 using Script.Photon;
 using Scripts.State.GameStatus;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+using Util.Map;
 
 namespace GamePlay.StageLevel
 {
     public class StageLevelBase : NetworkBehaviour
     {
+        public SceneReference sceneReference;
+        private Action _updateStageAction = null;
+        
         #region Stage Info Variable
 
         [Header("스테이지 정보")]
         public StageLevelInfo stageLevelInfo;
+        public bool isStageClear = false;
+        public int nextStageSceneIndex = (int)SceneType.StageDestroy;
 
         [Header("맵 정보")] 
-        public Vector3 mapSize;
+        public GameObject stageGameObject;
+        [SerializeField] private MapInfoMono _mapInfoMono;
+        public MapInfo MapInfo
+        {
+            get => _mapInfoMono.info;
+            set => _mapInfoMono.info = value;
+        }
 
         [Header("몬스터 정보")]
         public List<NetworkSpawner> monsterSpawnerList = new List<NetworkSpawner>();
         public Transform monsterParentTransform = null;
 
-        public bool isStageClear = false;
-        public int nextStageSceneIndex = (int)SceneType.StageDestroy;
-
         #endregion
         
-        private Action _updateStageAction = null;
         
         #region Destroy Variable
 
@@ -38,7 +48,6 @@ namespace GamePlay.StageLevel
 
         #endregion
         
-        public string mapInfo;
         public string goalInfo; 
         public string awardInfo;
         public string difficultInfo;
@@ -47,18 +56,7 @@ namespace GamePlay.StageLevel
 
         private void Awake()
         {
-            var camera = GetComponentInChildren<Camera>();
-            if (camera != null)
-            {
-                DestroyImmediate(camera.gameObject);
-            }
-        }
-
-        private void Start()
-        {
-            stageLevelInfo.AliveMonsterCount.isOverMax = true;
-            if (monsterParentTransform == null) { monsterParentTransform = gameObject.transform; }
-
+            stageGameObject.SetActive(false);
             StageMemoryOptimize();
             switch (stageLevelInfo.StageLevelType)
             {
@@ -66,8 +64,12 @@ namespace GamePlay.StageLevel
                     _updateStageAction = DestroyUpdate;
                     break;
             }
-            
-            GameManager.Instance.sceneList.Add(this);
+        }
+
+        private void Start()
+        {
+            stageLevelInfo.AliveMonsterCount.isOverMax = true;
+            if (monsterParentTransform == null) { monsterParentTransform = gameObject.transform; }
         }
 
         public override void FixedUpdateNetwork()
@@ -79,6 +81,18 @@ namespace GamePlay.StageLevel
         #endregion
 
         #region Defualt Function
+
+        public void StageInit()
+        {
+            stageGameObject.transform.position = MapInfo.pivot;
+            stageGameObject.SetActive(true);
+            
+            if(stageGameObject.GetComponentInChildren<EventSystem>() != null){Destroy(stageGameObject.GetComponentInChildren<EventSystem>().gameObject);}
+            if(stageGameObject.GetComponentInChildren<Camera>() != null){Destroy(stageGameObject.GetComponentInChildren<Camera>().gameObject);}
+            
+            Runner.MoveGameObjectToSameScene(gameObject, GameManager.Instance.gameObject);
+            Runner.MoveGameObjectToSameScene(stageGameObject, GameManager.Instance.gameObject);
+        }
 
         // 스테이지 타입에 맞지 않는 멥버 변수 메모리 해제
         void StageMemoryOptimize()
@@ -123,7 +137,6 @@ namespace GamePlay.StageLevel
 
         void StageClear()
         {
-            NetworkManager.LoadScene(SceneType.StageDestroy);
             
         }
         
