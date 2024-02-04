@@ -56,7 +56,7 @@ namespace Script.Weapon.Gun
 
                 if (hitStatus != null)
                 {
-                    hitStatus.hp.Current -= status.damage.Current;
+                    hitStatus.hp.Current -= state.attack.Current;
                 }
             }
         }
