@@ -33,6 +33,8 @@ namespace Photon
         void GameStart()
         {
             gameObject.SetActive(false);
+            Runner.SessionInfo.IsVisible = false;
+            Runner.SessionInfo.IsOpen = false;
             NetworkManager.LoadScene(SceneType.Game, LoadSceneMode.Single, LocalPhysicsMode.Physics3D);
         }
     }

@@ -123,7 +123,7 @@ namespace Photon
                 sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
             }
             
-            _runner.JoinSessionLobby()
+            DebugManager.ToDo("게임 세션을 만들때 구글 스토리지를 통해 만들어진 섹션 정보 얻어올 수 있게 하기");
 
             // Start or join (depends on gamemode) a session with a specific name   
             await _runner.StartGame(new StartGameArgs()

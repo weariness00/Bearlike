@@ -49,6 +49,11 @@ namespace Script.Weapon.Gun
 
         public override void FixedUpdateNetwork()
         {
+            if (Runner.IsPlayer == false)
+            {
+                return;
+            }
+            
             base.FixedUpdateNetwork();
             if (fireLateSecond.isMax == false)
             {
