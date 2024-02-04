@@ -24,7 +24,6 @@ namespace GamePlay.StageLevel
         [Header("스테이지 정보")]
         public StageLevelInfo stageLevelInfo;
         public bool isStageClear = false;
-        public int nextStageSceneIndex = (int)SceneType.StageDestroy;
 
         [Header("맵 정보")] 
         public GameObject stageGameObject;

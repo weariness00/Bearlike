@@ -54,6 +54,11 @@ namespace Script.Player
         public override void FixedUpdateNetwork()
         {
             base.FixedUpdateNetwork();
+            if (Runner.IsPlayer == false)
+            {
+                return;
+            }
+            
             if (Cursor.lockState == CursorLockMode.None)
             {
                 DebugManager.ToDo("return 되면 플레이어의 위치가 고정되는 문제 해결 찾기");

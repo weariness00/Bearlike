@@ -1,4 +1,5 @@
 ﻿using Fusion;
+using Photon;
 using Script.Photon;
 using UnityEngine;
 

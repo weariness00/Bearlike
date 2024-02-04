@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 using Fusion;
 using Fusion.Addons.Physics;
 using Fusion.Sockets;
-using Photon;
 using Script.Data;
 using Script.Manager;
+using Script.Photon;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Script.Photon
+namespace Photon
 {
     public class NetworkManager : global::Util.Singleton<NetworkManager>, INetworkRunnerCallbacks
     {
@@ -122,14 +122,19 @@ namespace Script.Photon
             {
                 sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
             }
+            
+            _runner.JoinSessionLobby()
 
             // Start or join (depends on gamemode) a session with a specific name   
             await _runner.StartGame(new StartGameArgs()
             {
                 GameMode = mode,
-                SessionName = "Matching Room",
+                SessionName = "Game Room",
                 Scene = scene,
-                SceneManager = gameObject.GetOrAddComponent<NetworkSceneManagerDefault>()
+                SceneManager = gameObject.GetOrAddComponent<NetworkSceneManagerDefault>(),
+                PlayerCount = 3,
+                IsVisible = true,
+                IsOpen = true,
             });
 
             gameObject.transform.parent = Managers.Instance.transform;
@@ -262,6 +267,8 @@ namespace Script.Photon
 
         public void OnSceneLoadStart(NetworkRunner runner)
         {
+            DebugManager.Log($"씬 Loading 중");
+            
         }
 
         public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
