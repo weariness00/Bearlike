@@ -13,11 +13,11 @@ GameObject:
   - component: {fileID: 7690511289519872951}
   - component: {fileID: 2718368849841371147}
   - component: {fileID: 4950547396980175010}
-  - component: {fileID: 674681997400611571}
   - component: {fileID: 8404013375858834041}
   - component: {fileID: 7820318641680391820}
   - component: {fileID: -4512206738770446292}
   - component: {fileID: 2976298614429634604}
+  - component: {fileID: 525910678908119656}
   m_Layer: 0
   m_Name: Mons
   m_TagString: Monster
@@ -125,43 +125,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dee67e2025f45d4a3233c2233fb66bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  status: {fileID: 674681997400611571}
---- !u!114 &674681997400611571
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4714873602930505835}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24fa62afdb754031bd29e32b0727d371, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hp:
-    _min: 0
-    _max: 100
-    _current: 100
-    isMin: 0
-    isMax: 0
-  mp:
-    _min: 0
-    _max: 100
-    _current: 100
-    isMin: 0
-    isMax: 0
-  damage:
-    _min: 0
-    _max: 100
-    _current: 100
-    isMin: 0
-    isMax: 0
-  speed:
-    _min: 0
-    _max: 100
-    _current: 100
-    isMin: 0
-    isMax: 0
+  status: {fileID: 0}
 --- !u!114 &8404013375858834041
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -233,3 +197,16 @@ MonoBehaviour:
   Root: {fileID: 0}
   GizmosColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   damageMultiplier: 1
+--- !u!114 &525910678908119656
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4714873602930505835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8f91f630adc5204694e199f934eb86e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  managedState: {fileID: 0}
