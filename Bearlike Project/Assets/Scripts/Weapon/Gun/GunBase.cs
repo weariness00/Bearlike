@@ -1,9 +1,9 @@
-﻿using Script.Manager;
+﻿using System;
+using Script.Manager;
 using Scripts.State.GameStatus;
-using State.StateSystem;
 using UnityEngine;
 
-namespace Inho_Test_.Weapon.Gun
+namespace Script.Weapon.Gun
 {
     public class GunBase : WeaponBase
     {
@@ -52,13 +52,11 @@ namespace Inho_Test_.Weapon.Gun
             if (Physics.Raycast(ray, out var hit))
             {
                 DebugManager.Log($"Ray충돌\n총 이름 : {name}\n맞은 대상 : {hit.collider.name}");
-                
-                var hitStateSystem = hit.collider.GetComponent<StateSystem>();
-                var hitState = hitStateSystem.GetState();
+                var hitStatus = hit.collider.GetComponent<Status>();
 
-                if (hitState != null)
+                if (hitStatus != null)
                 {
-                    hitState.hp.Current -= state.attack.Current;
+                    hitStatus.hp.Current -= status.damage.Current;
                 }
             }
         }

@@ -1,10 +1,8 @@
 ﻿using System;
 using Script.Util;
 using Scripts.State.GameStatus;
-using State.StateSystem;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public interface IEquipment
 {
@@ -19,12 +17,11 @@ public interface IEquipment
 
 public class WeaponBase : MonoBehaviour, IEquipment
 {
-    public State.StateClass.Base.State state;
+    public Status status;
 
     public virtual void Awake()
     {
-        var stateSystem = gameObject.GetComponent<StateSystem>();
-        state = stateSystem.GetState();
+        status = gameObject.GetOrAddComponent<Status>();
     }
 
     public virtual void Start()

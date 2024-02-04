@@ -21,16 +21,15 @@ namespace State.StateClass.Base
     public abstract class State : NetworkBehaviour
     {
         // Member Variable
-        public StatusValue<int> hp = new StatusValue<int>();                   // 체력        
+        public StatusValue<int> hp = new StatusValue<int>();                              // 체력        
         public StatusValue<int> attack = new StatusValue<int>();               // 공격력
         public StatusValue<int> defence = new StatusValue<int>();              // 방어력
-        public StatusValue<float> avoid = new StatusValue<float>();            // 회피
-        public StatusValue<int> moveSpeed = new StatusValue<int>();            // 이동 속도
-        public StatusValue<float> attackSpeed = new StatusValue<float>();      // 공격 속도
+        public StatusValue<float> avoid = new StatusValue<float>();           // 회피
+        public StatusValue<int> moveSpeed = new StatusValue<int>();          // 이동 속도
+        public StatusValue<float> attackSpeed = new StatusValue<float>();     // 공격 속도
 
-        public StatusValue<int> force = new StatusValue<int>();                // 힘
-        public int condition;                                                  // 상태
-        public int property;                                                   // 속성(공격시 상대에게 적용되는 속성)
+        public StatusValue<int> force = new StatusValue<int>();               // 힘
+        public int condition;                                               // 상태
         
         // Member Function
         public abstract void Initialization();

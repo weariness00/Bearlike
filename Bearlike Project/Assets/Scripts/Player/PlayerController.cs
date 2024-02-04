@@ -1,9 +1,9 @@
 ﻿using Fusion;
 using Fusion.Addons.SimpleKCC;
-using Inho_Test_.Weapon.Gun;
 using Script.Manager;
 using Script.Photon;
 using Script.Util;
+using Script.Weapon.Gun;
 using Scripts.State.GameStatus;
 using State.StateClass;
 using Unity.VisualScripting;

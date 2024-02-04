@@ -12,15 +12,13 @@ namespace State.StateSystem
     /// </summary>
     public class StateSystem : MonoBehaviour
     {
-        [SerializeField] public StateClass.Base.State managedState;
+        [SerializeField] public global::State.StateClass.Base.State managedState;
         private EquitmentSystem _equitment;
 
         private void Awake()
         {
             if(gameObject.CompareTag("Player"))
-            {
                 managedState = gameObject.AddComponent<PlayerState>();
-            }
             _equitment = new EquitmentSystem();
         }
 
@@ -35,16 +33,12 @@ namespace State.StateSystem
         {
             if (SceneManager.GetActiveScene().name == "StateSystemScene")
             {
-                if (gameObject.CompareTag("Player"))
-                {
-                    if (Input.GetKeyDown(KeyCode.E)) managedState.ApplyDamage(_equitment.GetEquitment().GetDamage(), ObjectProperty.Normality);
-                    if (Input.GetKeyDown(KeyCode.Z)) managedState.AddCondition(ObjectProperty.Weak);
-                    if (Input.GetKeyDown(KeyCode.X)) managedState.DelCondition(ObjectProperty.Weak);
-                    if (Input.GetKeyDown(KeyCode.C)) managedState.AddCondition(ObjectProperty.Poisoned);
-                    if (Input.GetKeyDown(KeyCode.V)) managedState.DelCondition(ObjectProperty.Poisoned);
-                }
+                if (Input.GetKeyDown(KeyCode.E)) managedState.ApplyDamage(_equitment.GetEquitment().GetDamage(), ObjectProperty.Normality);
+                if (Input.GetKeyDown(KeyCode.Z)) managedState.AddCondition(ObjectProperty.Weak);
+                if (Input.GetKeyDown(KeyCode.X)) managedState.DelCondition(ObjectProperty.Weak);
+                if (Input.GetKeyDown(KeyCode.C)) managedState.AddCondition(ObjectProperty.Poisoned);
+                if (Input.GetKeyDown(KeyCode.V)) managedState.DelCondition(ObjectProperty.Poisoned);
             }
-
             if (Input.GetKeyDown(KeyCode.Q)) managedState.ShowInfo();
         }
 
