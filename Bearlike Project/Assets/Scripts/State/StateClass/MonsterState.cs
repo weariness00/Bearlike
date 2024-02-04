@@ -1,5 +1,6 @@
 ﻿using State.StateClass.Base;
 using Unity.Mathematics;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace State.StateClass
@@ -52,37 +53,23 @@ namespace State.StateClass
 
         public override void ShowInfo()
         {
-            throw new System.NotImplementedException();
+            Debug.Log($"체력 : " +  hp.Current + $" 공격력 : " + attack.Current + $" 공격 속도 : " + attackSpeed.Current + $" 상태 : " + (ObjectProperty)condition);    // condition이 2개 이상인 경우에는 어떻게 출력?
         }
 
-        public override bool On(ObjectProperty condition)
-        {
-            throw new System.NotImplementedException();
-        }
+        public override bool On(ObjectProperty condition) { return (base.condition & (int)condition) == (int)condition; }
 
-        public override bool NormalityIsOn()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override bool PoisonedIsOn()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override bool WeakIsOn()
-        {
-            throw new System.NotImplementedException();
-        }
-
+        public override bool NormalityIsOn() { return On(ObjectProperty.Normality); }
+        public override bool PoisonedIsOn() { return On(ObjectProperty.Poisoned); }
+        public override bool WeakIsOn() { return On(ObjectProperty.Weak); }
+        
         public override void AddCondition(ObjectProperty condition)
         {
-            throw new System.NotImplementedException();
+            if(!On(condition)) base.condition |= (int)condition;
         }
-
+        
         public override void DelCondition(ObjectProperty condition)
         {
-            throw new System.NotImplementedException();
+            if(On(condition)) base.condition ^= (int)condition;
         }
     }
 }
