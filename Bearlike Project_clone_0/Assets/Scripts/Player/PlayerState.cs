@@ -36,9 +36,9 @@ namespace State.StateClass
         // ObjectState abstract class Function
         void Awake()
         {
-            hp.Max = 100;
-            hp.Min = 0;
-            hp.Current = 100;
+            _hp.Max = 100;
+            _hp.Min = 0;
+            _hp.Current = 100;
 
             attack.Max = 100;
             attack.Min = 1;
@@ -65,6 +65,7 @@ namespace State.StateClass
             force.Current = 10;
             
             condition = (int)ObjectProperty.Normality;
+            property = (int)ObjectProperty.Normality;
             
             for(int i = 0; i < 10; ++i)
                 experienceAmountList.Add(10 * (int)math.pow(i,2));    // 임시 수치 적용
@@ -91,11 +92,6 @@ namespace State.StateClass
                 ShowInfo();
             }
         }
-        
-        public override void Initialization()
-        {
-            // 혹시 모를 함수
-        }
         // Loop
         
 
@@ -103,12 +99,13 @@ namespace State.StateClass
         // 스킬, 무기, 캐릭터 스텟을 모두 고려한 함수 구현 필요
         public void BePoisoned(int value)
         {
-            hp.Current -= value;
+            _hp.Current -= value;
         }
         
+        // [Rpc()]
         public override bool ApplyDamage(float damage, ObjectProperty monsterProperty) // MonsterRef instigator,
         {
-            if (hp.Current < 0)
+            if (_hp.Current < 0)
             {
                 return false;
             }
@@ -132,9 +129,9 @@ namespace State.StateClass
                 damageRate *= 1.5f;
             }
 
-            hp.Current -= (int)(damageRate * damage);
+            _hp.Current -= (int)(damageRate * damage);
 
-            if (hp.Current == hp.Min)
+            if (_hp.Current == _hp.Min)
             {
                 // 킬로그 구현할지 고민 (monster -> player)
                 // respawn 시키는 코드 구현
@@ -171,7 +168,7 @@ namespace State.StateClass
         // DeBug Function
         public override void ShowInfo()
         {
-            Debug.Log($"체력 : " +  hp.Current + $" 공격력 : " + attack.Current + $" 공격 속도 : " + attackSpeed.Current + $" 상태 : " + (ObjectProperty)condition);    // condition이 2개 이상인 경우에는 어떻게 출력?
+            Debug.Log($"체력 : " +  _hp.Current + $" 공격력 : " + attack.Current + $" 공격 속도 : " + attackSpeed.Current + $" 상태 : " + (ObjectProperty)condition);    // condition이 2개 이상인 경우에는 어떻게 출력?
         }
         
         

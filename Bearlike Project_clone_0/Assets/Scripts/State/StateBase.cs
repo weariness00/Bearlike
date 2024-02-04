@@ -19,9 +19,9 @@ namespace State.StateClass.Base
     /// 기본 능력치를 나타내는 Class
     /// </summary>
     public abstract class StateBase : NetworkBehaviour
-    {
+    {    
         // Member Variable
-        public StatusValue<int> hp = new StatusValue<int>();                              // 체력        
+        public StatusValue<int> _hp = new StatusValue<int>();                              // 체력        
         public StatusValue<int> attack = new StatusValue<int>();               // 공격력
         public StatusValue<int> defence = new StatusValue<int>();              // 방어력
         public StatusValue<float> avoid = new StatusValue<float>();           // 회피
@@ -31,15 +31,15 @@ namespace State.StateClass.Base
         public StatusValue<int> force = new StatusValue<int>();               // 힘
         public int condition;                                               // 상태
 
-        public int property = 0;
+        public int property;
 
         #region Variable Paramiter
-        public bool IsDie => hp.isMin;
+        
+        public bool IsDie => _hp.isMin;
 
         #endregion
         
         // Member Function
-        public abstract void Initialization();
         public abstract void MainLoop();
         
         public abstract bool ApplyDamage(float damage, ObjectProperty property); // MonsterRef instigator,

@@ -24,8 +24,8 @@ namespace Manager
         public List<StageLevelBase> stageList = new List<StageLevelBase>();
 
         #region Data Property
-
-        public float playTimer = 0f; 
+        
+        [Networked] public float PlayTimer { get; set; }
 
         #endregion
 
@@ -45,7 +45,7 @@ namespace Manager
 
         public override void FixedUpdateNetwork()
         {
-            playTimer += Runner.DeltaTime;
+            PlayTimer += Runner.DeltaTime;
         }
         #endregion
 
