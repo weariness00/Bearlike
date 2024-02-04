@@ -45,17 +45,17 @@ public class TestPlayerController : MonoBehaviour
         {
             if (collision.gameObject.name == "PoisonSphere")
             {
-                var state = transform.parent.gameObject.GetComponent<StateSystem>().GetState();
+                var state = transform.parent.gameObject.GetComponent<StateSystem>().State;
                 state.AddCondition(ObjectProperty.Poisoned);
             }            
             else if (collision.gameObject.name == "WeakSphere")
             {
-                var state = transform.parent.gameObject.GetComponent<StateSystem>().GetState();
+                var state = transform.parent.gameObject.GetComponent<StateSystem>().State;
                 state.AddCondition(ObjectProperty.Weak);
             }
             else if (collision.gameObject.name == "AntidoteSphere")
             {
-                var state = transform.parent.gameObject.GetComponent<StateSystem>().GetState();
+                var state = transform.parent.gameObject.GetComponent<StateSystem>().State;
                 state.DelCondition(ObjectProperty.Poisoned);
                 state.DelCondition(ObjectProperty.Weak);
             }

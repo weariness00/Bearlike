@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3839981835069566420}
   - component: {fileID: 5004122699310759584}
-  - component: {fileID: 1268317160687148368}
   m_Layer: 0
   m_Name: "\uC624\uB978\uD314"
   m_TagString: Untagged
@@ -54,27 +53,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.4, y: 0.13, z: 0.15}
   m_Center: {x: -0.15, y: -0.02, z: -0.01}
---- !u!114 &1268317160687148368
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1500486533150506143}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 472408415568130499ec8a6fec6e04d2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Type: 1
-  SphereRadius: 0
-  CapsuleRadius: 0
-  BoxExtents: {x: 0.2, y: 0.06, z: 0.06}
-  CapsuleHeight: 0
-  Offset: {x: -0.15, y: -0.03, z: -0.01}
-  Root: {fileID: 0}
-  GizmosColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  damageMultiplier: 0.75
 --- !u!1 &1725309102771400486
 GameObject:
   m_ObjectHideFlags: 0
@@ -85,7 +63,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8381390239728996206}
   - component: {fileID: 2425370000088332518}
-  - component: {fileID: 1075927872080016987}
   m_Layer: 0
   m_Name: "\uC67C\uBC1C"
   m_TagString: Untagged
@@ -129,27 +106,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.3, y: 0.2, z: 0.2}
   m_Center: {x: -0.07, y: 0, z: 0}
---- !u!114 &1075927872080016987
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1725309102771400486}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 472408415568130499ec8a6fec6e04d2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Type: 1
-  SphereRadius: 0
-  CapsuleRadius: 0
-  BoxExtents: {x: 0.15, y: 0.1, z: 0.1}
-  CapsuleHeight: 0
-  Offset: {x: -0.06, y: 0, z: 0}
-  Root: {fileID: 0}
-  GizmosColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  damageMultiplier: 1
 --- !u!1 &1952261687275833102
 GameObject:
   m_ObjectHideFlags: 0
@@ -160,7 +116,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4408128077055845063}
   - component: {fileID: 6411433029761717881}
-  - component: {fileID: 2399599858289026451}
   m_Layer: 0
   m_Name: "\uC624\uB978\uCABD \uB2E4\uB9AC"
   m_TagString: Untagged
@@ -205,27 +160,37 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.5, y: 0.15, z: 0.2}
   m_Center: {x: -0.25, y: 0, z: 0}
---- !u!114 &2399599858289026451
-MonoBehaviour:
+--- !u!1 &2284992206261127531
+GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1952261687275833102}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 472408415568130499ec8a6fec6e04d2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Type: 1
-  SphereRadius: 0
-  CapsuleRadius: 0
-  BoxExtents: {x: 0.15, y: 0.1, z: 0.1}
-  CapsuleHeight: 0
-  Offset: {x: -0.2, y: 0, z: 0}
-  Root: {fileID: 0}
-  GizmosColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  damageMultiplier: 0.75
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5815346519373132986}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5815346519373132986
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2284992206261127531}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8875764649507591473}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2496537874633687412
 GameObject:
   m_ObjectHideFlags: 0
@@ -236,7 +201,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4977776363382273804}
   - component: {fileID: 3445151014260327476}
-  - component: {fileID: 3857434819401303753}
   m_Layer: 0
   m_Name: "\uC67C\uD314"
   m_TagString: Untagged
@@ -280,27 +244,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.4, y: 0.13, z: 0.15}
   m_Center: {x: -0.15, y: 0.02, z: -0.01}
---- !u!114 &3857434819401303753
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2496537874633687412}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 472408415568130499ec8a6fec6e04d2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Type: 1
-  SphereRadius: 0
-  CapsuleRadius: 0
-  BoxExtents: {x: 0.2, y: 0.06, z: 0.06}
-  CapsuleHeight: 0
-  Offset: {x: -0.15, y: 0.01, z: -0.01}
-  Root: {fileID: 0}
-  GizmosColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  damageMultiplier: 0.75
 --- !u!1 &2658013986518334168
 GameObject:
   m_ObjectHideFlags: 0
@@ -420,7 +363,6 @@ GameObject:
   m_Component:
   - component: {fileID: 393970992225079130}
   - component: {fileID: 1162743367403861725}
-  - component: {fileID: 470775204771629347}
   m_Layer: 0
   m_Name: "\uC544\uB7AB\uCC99\uCD94"
   m_TagString: Untagged
@@ -467,27 +409,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.2, y: 0.5, z: 0.4}
   m_Center: {x: -0.1, y: 0, z: 0}
---- !u!114 &470775204771629347
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4329065379414461866}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 472408415568130499ec8a6fec6e04d2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Type: 1
-  SphereRadius: 0
-  CapsuleRadius: 0
-  BoxExtents: {x: 0.1, y: 0.25, z: 0.2}
-  CapsuleHeight: 0
-  Offset: {x: -0.095, y: 0, z: 0}
-  Root: {fileID: 0}
-  GizmosColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  damageMultiplier: 1
 --- !u!1 &4910098564648988719
 GameObject:
   m_ObjectHideFlags: 0
@@ -527,6 +448,7 @@ Transform:
   m_Children:
   - {fileID: 8132733441997062368}
   - {fileID: 3894390410395096859}
+  - {fileID: 5815346519373132986}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2772802092429274023
@@ -550,6 +472,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  simpleKcc: {fileID: 0}
   rotateSpeed: 500
 --- !u!114 &8389592379722413424
 MonoBehaviour:
@@ -587,7 +510,6 @@ MonoBehaviour:
   - {fileID: 8125642409520989695}
   - {fileID: 7044020874265611949}
   - {fileID: -4627320855333868288}
-  - {fileID: 7141731051744100799}
 --- !u!54 &7507528767881361376
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -702,7 +624,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6873415420095817130}
   - component: {fileID: 2558751313020331897}
-  - component: {fileID: 5493037342123919130}
   m_Layer: 0
   m_Name: "\uC717\uCC99\uCD94"
   m_TagString: Untagged
@@ -749,27 +670,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.2, y: 0.5, z: 0.4}
   m_Center: {x: -0.1, y: 0, z: 0}
---- !u!114 &5493037342123919130
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5293648659765142871}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 472408415568130499ec8a6fec6e04d2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Type: 1
-  SphereRadius: 0
-  CapsuleRadius: 0
-  BoxExtents: {x: 0.15, y: 0.25, z: 0.2}
-  CapsuleHeight: 0
-  Offset: {x: -0.1, y: 0, z: 0}
-  Root: {fileID: 0}
-  GizmosColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  damageMultiplier: 1
 --- !u!1 &5295904768458949790
 GameObject:
   m_ObjectHideFlags: 0
@@ -780,7 +680,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3732163229212872097}
   - component: {fileID: 6803118932873320504}
-  - component: {fileID: 7152558490869887139}
   m_Layer: 0
   m_Name: "\uC67C\uCABD \uB2E4\uB9AC"
   m_TagString: Untagged
@@ -825,27 +724,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.5, y: 0.15, z: 0.2}
   m_Center: {x: -0.25, y: 0, z: 0}
---- !u!114 &7152558490869887139
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5295904768458949790}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 472408415568130499ec8a6fec6e04d2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Type: 1
-  SphereRadius: 0
-  CapsuleRadius: 0
-  BoxExtents: {x: 0.15, y: 0.1, z: 0.1}
-  CapsuleHeight: 0
-  Offset: {x: -0.2, y: 0, z: 0}
-  Root: {fileID: 0}
-  GizmosColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  damageMultiplier: 0.75
 --- !u!1 &5429415377498254323
 GameObject:
   m_ObjectHideFlags: 0
@@ -856,7 +734,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1612205733949058238}
   - component: {fileID: 4539248711211814584}
-  - component: {fileID: 7768538969329970132}
   m_Layer: 0
   m_Name: "\uC624\uB978\uBC1C"
   m_TagString: Untagged
@@ -900,27 +777,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.3, y: 0.2, z: 0.2}
   m_Center: {x: -0.07, y: 0, z: 0}
---- !u!114 &7768538969329970132
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5429415377498254323}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 472408415568130499ec8a6fec6e04d2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Type: 1
-  SphereRadius: 0
-  CapsuleRadius: 0
-  BoxExtents: {x: 0.15, y: 0.1, z: 0.1}
-  CapsuleHeight: 0
-  Offset: {x: -0.06, y: 0, z: 0}
-  Root: {fileID: 0}
-  GizmosColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  damageMultiplier: 1
 --- !u!1 &6938260859825332720
 GameObject:
   m_ObjectHideFlags: 0
@@ -1178,7 +1034,6 @@ GameObject:
   m_Component:
   - component: {fileID: 63170840848993537}
   - component: {fileID: 5728794524017627819}
-  - component: {fileID: 5059793365490058816}
   m_Layer: 0
   m_Name: "\uBA38\uB9AC"
   m_TagString: Untagged
@@ -1224,27 +1079,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.5, y: 0.5, z: 0.5}
   m_Center: {x: -0.2, y: 0, z: 0.03}
---- !u!114 &5059793365490058816
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7797262244898891050}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 472408415568130499ec8a6fec6e04d2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Type: 2
-  SphereRadius: 0.25
-  CapsuleRadius: 0
-  BoxExtents: {x: 0, y: 0, z: 0}
-  CapsuleHeight: 0
-  Offset: {x: -0.2, y: 0, z: 0}
-  Root: {fileID: 0}
-  GizmosColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  damageMultiplier: 1.5
 --- !u!1001 &3224169773136229256
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1338,16 +1172,16 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f6c35e07e452a16428614d0fe19d704a, type: 3}
---- !u!114 &7141731051744100799 stripped
+--- !u!114 &367513862888926245 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5738161923665670711, guid: f6c35e07e452a16428614d0fe19d704a,
+  m_CorrespondingSourceObject: {fileID: -6221961776782598227, guid: f6c35e07e452a16428614d0fe19d704a,
     type: 3}
   m_PrefabInstance: {fileID: 3224169773136229256}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7525f686c63047f3bb190326523b134b, type: 3}
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &8954117791491062700 stripped

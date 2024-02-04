@@ -1,11 +1,8 @@
-using Inho.Scripts.Equipment;
-using Script.Monster;
 using State.StateClass;
 using State.StateClass.Base;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 
 namespace State.StateSystem
 {
@@ -14,8 +11,9 @@ namespace State.StateSystem
     /// </summary>
     public class StateSystem : MonoBehaviour
     {
-        [SerializeField] public global::State.StateClass.Base.State managedState;
-        private EquitmentSystem _equitment;
+        [SerializeField] public StateBase managedState;
+        // private EquitmentSystem _equitment;
+        public StateBase State => managedState;
 
         private void Awake()
         {
@@ -27,7 +25,7 @@ namespace State.StateSystem
             {
                 managedState = gameObject.GetOrAddComponent<MonsterState>();
             }
-            _equitment = new EquitmentSystem();
+            // _equitment = new EquitmentSystem();
         }
 
         void Start()
@@ -57,7 +55,6 @@ namespace State.StateSystem
             managedState.MainLoop();
         }   
 
-        public global::State.StateClass.Base.State GetState() { return managedState; }
     } 
 }
 

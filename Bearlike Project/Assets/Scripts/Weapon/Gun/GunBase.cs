@@ -95,9 +95,9 @@ namespace Script.Weapon.Gun
             if(Runner.LagCompensation.Raycast(ray.origin, ray.direction, float.MaxValue, Runner.LocalPlayer, out var hit))
             {
                 DebugManager.Log($"Ray충돌\n총 이름 : {name}\n맞은 대상 : {hit.Hitbox.name}");
-                var hitStatus = hit.Hitbox.GetComponent<Status>();
+                var hitState = hit.Hitbox.GetComponent<StateSystem>().State;
 
-                if (hitStatus != null)
+                if (hitState != null)
                 {
                     hitState.ApplyDamage(state.attack.Current, (ObjectProperty)state.property); // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
                     hitState.ShowInfo();
@@ -115,10 +115,10 @@ namespace Script.Weapon.Gun
         private void ApplyDamage(Hitbox playerHitbox)
         {
             var playerStateSystem = playerHitbox.Root.GetComponent<StateSystem>();
-            var playerState = playerStateSystem.GetState();
+            var playerState = playerStateSystem.State;
 
             var monsterStateSystem = gameObject.GetComponent<StateSystem>();
-            var monsterState = monsterStateSystem.GetState();
+            var monsterState = monsterStateSystem.State;
             
             playerState.ApplyDamage(monsterState.attack.Current, (ObjectProperty)monsterState.property);
         }

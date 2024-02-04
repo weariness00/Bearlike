@@ -20,7 +20,7 @@ namespace Script.Player
 
         public IEquipment equipment;
         public StatusValue<int> ammo = new StatusValue<int>();
-
+        
         [HideInInspector] public SimpleKCC simpleKcc;
         private NetworkMecanimAnimator _networkAnimator;
         private void Awake()

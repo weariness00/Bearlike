@@ -8,7 +8,7 @@ namespace State.StateClass
     /// <summary>
     /// Monster의 State을 나타내는 Class
     /// </summary>
-    public class MonsterState : Base.State
+    public class MonsterState : Base.StateBase
     {
         public override void Initialization()
         {
