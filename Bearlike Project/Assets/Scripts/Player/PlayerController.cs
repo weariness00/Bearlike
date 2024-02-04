@@ -1,6 +1,7 @@
 ﻿using System;
 using Fusion;
 using Fusion.Addons.SimpleKCC;
+using Script.Data;
 using Script.Manager;
 using Script.Photon;
 using Script.Weapon.Gun;
@@ -8,6 +9,7 @@ using Scripts.State.GameStatus;
 using State.StateClass;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Script.Player
 {
@@ -19,7 +21,7 @@ namespace Script.Player
         public IEquipment equipment;
         public StatusValue<int> ammo = new StatusValue<int>();
 
-        private SimpleKCC _simpleKCC;
+        [HideInInspector] public SimpleKCC simpleKcc;
         private NetworkMecanimAnimator _networkAnimator;
         private void Awake()
         {
@@ -32,7 +34,8 @@ namespace Script.Player
 
         public override void Spawned()
         {
-            _simpleKCC = gameObject.GetOrAddComponent<SimpleKCC>();
+            Cursor.lockState = CursorLockMode.Locked;
+            simpleKcc = gameObject.GetOrAddComponent<SimpleKCC>();
             if (HasInputAuthority)
             {
                 name = "Local Player";
@@ -40,7 +43,7 @@ namespace Script.Player
                 Runner.SetPlayerObject(Runner.LocalPlayer, Object);
                 
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
-                // 임시 처방 SetPlayerObject가 안되는 이유 알아내야함
+                DebugManager.ToDo("임시 처방 SetPlayerObject가 안되는 이유 알아내야함");
                 if (Runner.GetPlayerObject(Runner.LocalPlayer) == null)
                     GetComponent<PlayerCameraController>().SetPlayerCamera(Object);
             }
@@ -48,25 +51,23 @@ namespace Script.Player
                 name = "Remote Player";
         }
 
-        public override void Render()
-        {
-        }
-
-        private void Update()
-        {
-            if (Input.GetMouseButtonDown((int)MouseButton.Middle))
-            {
-                Cursor.lockState = Cursor.lockState == CursorLockMode.None ? CursorLockMode.Locked : CursorLockMode.None;
-            }
-        }
-
         public override void FixedUpdateNetwork()
         {
+            base.FixedUpdateNetwork();
             if (Cursor.lockState == CursorLockMode.None)
             {
+                DebugManager.ToDo("return 되면 플레이어의 위치가 고정되는 문제 해결 찾기");
+                simpleKcc.Move(Vector3.zero);
                 return;
             }
-            
+
+            var spawnPosition = UserData.Instance.UserDictionary[Runner.LocalPlayer].TeleportPosition;
+            if (spawnPosition.Count != 0)
+            {
+                simpleKcc.SetPosition(spawnPosition[0]); 
+                UserData.SetTeleportPosition(Runner.LocalPlayer, null);
+            }
+
             if (GetInput(out PlayerInputData data))
             {       
                 MouseRotateControl(data.MouseAxis);
@@ -88,7 +89,7 @@ namespace Script.Player
                 dir += transform.right;
 
             dir *= Runner.DeltaTime * 100f;
-            _simpleKCC.Move(dir);
+            simpleKcc.Move(dir);
         }
         
         public float rotateSpeed = 500.0f;
@@ -104,7 +105,7 @@ namespace Script.Player
             xRotate = Mathf.Clamp(xRotate, -90, 90); // 위, 아래 고정
             var angle = new Vector3(xRotate, yRotate, 0);
 
-            _simpleKCC.SetLookRotation(angle);
+            simpleKcc.SetLookRotation(angle);
         }
 
         void WeaponControl(PlayerInputData data)

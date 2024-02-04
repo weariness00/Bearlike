@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Fusion;
 using Manager;
 using Script.Manager;
@@ -82,6 +83,8 @@ namespace GamePlay.StageLevel
 
         #region Defualt Function
 
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsServer)]
+        public void StageInitRPC() => StageInit();
         public void StageInit()
         {
             stageGameObject.transform.position = MapInfo.pivot;

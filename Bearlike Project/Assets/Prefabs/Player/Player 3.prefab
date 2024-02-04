@@ -434,6 +434,8 @@ MonoBehaviour:
     _min: 0
     _max: 0
     _current: 0
+    isOverMax: 0
+    isOverMin: 0
     isMin: 0
     isMax: 0
   rotateSpeed: 500
@@ -1024,6 +1026,16 @@ PrefabInstance:
       propertyPath: SortKey
       value: 510615160
       objectReference: {fileID: 0}
+    - target: {fileID: 2742436703845408458, guid: f6c35e07e452a16428614d0fe19d704a,
+        type: 3}
+      propertyPath: m_PlayOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5268244690611952886, guid: f6c35e07e452a16428614d0fe19d704a,
+        type: 3}
+      propertyPath: m_PlayOnAwake
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5738161923665670711, guid: f6c35e07e452a16428614d0fe19d704a,
         type: 3}
       propertyPath: SortKey
@@ -1083,6 +1095,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Gun
+      objectReference: {fileID: 0}
+    - target: {fileID: 6607486078533799955, guid: f6c35e07e452a16428614d0fe19d704a,
+        type: 3}
+      propertyPath: m_PlayOnAwake
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

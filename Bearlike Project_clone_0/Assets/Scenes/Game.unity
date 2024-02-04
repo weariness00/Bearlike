@@ -270,7 +270,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SortKey: 2343850387
   ObjectInterest: 1
-  Flags: 262145
+  Flags: 131073
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 148781567}
@@ -1022,6 +1022,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 962364571}
+  - component: {fileID: 962364573}
+  - component: {fileID: 962364572}
   m_Layer: 0
   m_Name: Game Stage
   m_TagString: Untagged
@@ -1047,6 +1049,41 @@ Transform:
   - {fileID: 1965290067}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &962364572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 962364570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0
+--- !u!114 &962364573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 962364570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 4000847924
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects:
+  - {fileID: 1662219605}
+  NetworkedBehaviours:
+  - {fileID: 962364572}
 --- !u!1 &1108002950
 GameObject:
   m_ObjectHideFlags: 0
@@ -1395,6 +1432,7 @@ GameObject:
   - component: {fileID: 1763687601}
   - component: {fileID: 1763687600}
   - component: {fileID: 1763687599}
+  - component: {fileID: 1763687604}
   m_Layer: 31
   m_Name: Game Stage Data
   m_TagString: Untagged
@@ -1441,6 +1479,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 1763687602}
+  - {fileID: 1763687604}
 --- !u!114 &1763687601
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1521,6 +1560,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1763687604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1763687598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0
 --- !u!1 &1793537449
 GameObject:
   m_ObjectHideFlags: 0

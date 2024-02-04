@@ -133,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 42810327}
   - component: {fileID: 42810328}
+  - component: {fileID: 42810329}
   m_Layer: 0
   m_Name: Destroy Stage
   m_TagString: Untagged
@@ -172,10 +173,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SortKey: 663280606
   ObjectInterest: 1
-  Flags: 131073
+  Flags: 262145
   NestedObjects:
   - {fileID: 354704605}
-  NetworkedBehaviours: []
+  NetworkedBehaviours:
+  - {fileID: 42810329}
+--- !u!114 &42810329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 42810325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0
 --- !u!1 &320169026
 GameObject:
   m_ObjectHideFlags: 0
@@ -363,6 +381,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Destory Stage Data
       objectReference: {fileID: 0}
+    - target: {fileID: 8025208599522178229, guid: fe48cae74f1bd2a4d9af117ca76f8e11,
+        type: 3}
+      propertyPath: SyncParent
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -408,6 +431,19 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 381942108}
+  - {fileID: 381942111}
+--- !u!114 &381942111 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8025208599522178229, guid: fe48cae74f1bd2a4d9af117ca76f8e11,
+    type: 3}
+  m_PrefabInstance: {fileID: 381942107}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 381942109}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &750807269
 GameObject:
   m_ObjectHideFlags: 0

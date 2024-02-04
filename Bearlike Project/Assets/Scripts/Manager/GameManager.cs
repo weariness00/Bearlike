@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using Fusion;
+using Fusion.Addons.SimpleKCC;
 using GamePlay.StageLevel;
 using Photon;
 using Script.Data;
 using Script.GamePlay;
 using Script.Photon;
+using Script.Player;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Util;
@@ -14,7 +16,6 @@ namespace Manager
 {
     public class GameManager : NetworkSingleton<GameManager>
     {
-        private UserData _userData;
         [SerializeField]private SpawnPlace _spawnPlace = new SpawnPlace();
 
         private MapGenerate _mapGenerate = new MapGenerate();
@@ -35,19 +36,11 @@ namespace Manager
             _spawnPlace.Initialize();
         }
 
-        private void Start()
-        {
-            _userData = FindObjectOfType<UserData>();
-        
-            UserInit();
-        
-            Cursor.lockState = CursorLockMode.Locked;
-        }
-
         public override void Spawned()
         {
             base.Spawned();
             Init();
+            UserInit();
         }
 
         public override void FixedUpdateNetwork()
@@ -56,22 +49,22 @@ namespace Manager
         }
         #endregion
 
-        async void Init()
+        void Init()
         {
-            defaultStage.MapInfo = await _mapGenerate.FindEmptySpace(defaultStage.MapInfo);
+            defaultStage.MapInfo = _mapGenerate.FindEmptySpace(defaultStage.MapInfo);
             defaultStage.StageInit();
             _mapGenerate.AddMap(defaultStage.MapInfo);
         }
         
         async void UserInit()
         {   
-            await _userData.SpawnPlayers();
+            await UserData.Instance.SpawnPlayers();
             if (Runner != null && Runner.IsServer)
             {
-                foreach (var (key, user) in _userData.UserDictionary)
+                foreach (var (key, user) in UserData.Instance.UserDictionary)
                 {
-                    var playerObject = Runner.FindObject(user.NetworkId);
-                    playerObject.transform.position = _spawnPlace.GetRandomSpot().position;
+                    // var playerController = Runner.FindObject(user.NetworkId).GetComponent<PlayerController>();
+                    UserData.SetTeleportPosition(key, _spawnPlace.GetRandomSpot().position);
                 }
             }
         }
@@ -90,15 +83,15 @@ namespace Manager
                 return;
             }
 
-            await NetworkManager.LoadScene(stage.sceneReference.ScenePath, LoadSceneMode.Additive, LocalPhysicsMode.Physics3D);
+            await NetworkManager.LoadScene(stage.sceneReference.ScenePath,LoadSceneMode.Additive, LocalPhysicsMode.Physics3D);
             foreach (var stageLevelBase in FindObjectsOfType<StageLevelBase>())
             {
                 if (stage.stageLevelInfo.StageLevelType == stageLevelBase.stageLevelInfo.StageLevelType)
                 {
-                    stageLevelBase.MapInfo = await _mapGenerate.FindEmptySpace(stage.MapInfo, defaultStage.MapInfo);
-                    stageLevelBase.StageInit();
+                    stageLevelBase.MapInfo = await _mapGenerate.FindEmptySpaceSync(stage.MapInfo, defaultStage.MapInfo);
+                    stageLevelBase.StageInitRPC();
                     
-                    NetworkManager.UnloadScene(stage.sceneReference.ScenePath);
+                    // NetworkManager.UnloadScene(stage.sceneReference.ScenePath);
                     
                     _mapGenerate.AddMap(stageLevelBase.MapInfo);
                     break;

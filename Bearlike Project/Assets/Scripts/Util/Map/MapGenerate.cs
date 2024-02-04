@@ -41,7 +41,7 @@ namespace Util.Map
         /// <param name="mapInfo"> 빈 공간에 들어갈 맵 정보 </param>
         /// <param name="generatedMapInfo"> 이미 생성된 맵 정보 없으면 Default값 </param>
         /// <returns></returns>
-        public async Task<MapInfo> FindEmptySpace(MapInfo mapInfo, MapInfo generatedMapInfo = default)
+        public async Task<MapInfo> FindEmptySpaceSync(MapInfo mapInfo, MapInfo generatedMapInfo = default)
         {
             var dir = GetRandomDirection();
             var origin = generatedMapInfo.pivot + DirectionMultiple(dir / 2, generatedMapInfo.size);
@@ -50,7 +50,27 @@ namespace Util.Map
             if (Physics.Raycast(origin, dir * int.MaxValue, out var hit, LayerMask.GetMask("Map")))
             {
                 generatedMapInfo = hit.collider.GetComponent<MapInfoMono>().info;
-                makeMapInfo = await FindEmptySpace(mapInfo, generatedMapInfo);
+                makeMapInfo = await FindEmptySpaceSync(mapInfo, generatedMapInfo);
+            }
+            else
+            {
+                makeMapInfo.pivot = origin + DirectionMultiple(dir / 2, mapInfo.size);
+                makeMapInfo.size = mapInfo.size;
+            }
+
+            return makeMapInfo;
+        }
+        
+        public MapInfo FindEmptySpace(MapInfo mapInfo, MapInfo generatedMapInfo = default)
+        {
+            var dir = GetRandomDirection();
+            var origin = generatedMapInfo.pivot + DirectionMultiple(dir / 2, generatedMapInfo.size);
+            MapInfo makeMapInfo;
+            
+            if (Physics.Raycast(origin, dir * int.MaxValue, out var hit, LayerMask.GetMask("Map")))
+            {
+                generatedMapInfo = hit.collider.GetComponent<MapInfoMono>().info;
+                makeMapInfo = FindEmptySpace(mapInfo, generatedMapInfo);
             }
             else
             {

@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 2330416457773590121}
   - component: {fileID: 5713381459070474948}
   - component: {fileID: 1447030405736922233}
+  - component: {fileID: 8025208599522178229}
+  - component: {fileID: 2754069817133072123}
   m_Layer: 31
   m_Name: Destory Stage Data
   m_TagString: Untagged
@@ -61,6 +63,7 @@ MonoBehaviour:
       isMax: 0
   isStageClear: 0
   nextStageSceneIndex: 3
+  stageGameObject: {fileID: 0}
   _mapInfoMono: {fileID: 5713381459070474948}
   monsterSpawnerList:
   - {fileID: 0}
@@ -120,3 +123,38 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 10, y: 1, z: 10}
   m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!114 &8025208599522178229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3775322230510242185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncScale: 0
+  SyncParent: 1
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0
+--- !u!114 &2754069817133072123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3775322230510242185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 75631492
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 2330416457773590121}
+  - {fileID: 8025208599522178229}

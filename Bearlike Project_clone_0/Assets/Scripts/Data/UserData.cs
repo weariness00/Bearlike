@@ -13,6 +13,7 @@ namespace Script.Data
         public PlayerRef PlayerRef;
         public NetworkPrefabRef PrefabRef;
         public NetworkId NetworkId;
+        [Networked, Capacity(1)]public NetworkLinkedList<Vector3> TeleportPosition { get;}
     }   
 
     public class UserData : NetworkBehaviour
@@ -22,6 +23,23 @@ namespace Script.Data
         [Networked, Capacity(3)]
         public NetworkDictionary<PlayerRef, UserDataStruct> UserDictionary { get; }
 
+        #region Static Function
+
+        public static void SetTeleportPosition(PlayerRef key, Vector3? value)
+        {
+            var data = Instance.UserDictionary[key];
+            
+            data.TeleportPosition.Clear();
+            if (value != null)
+            {
+                data.TeleportPosition.Add(value.Value);
+            }
+
+            Instance.UserDictionary.Set(key, data);
+        }
+
+        #endregion
+        
         private void Awake()
         {
             Instance = this;
