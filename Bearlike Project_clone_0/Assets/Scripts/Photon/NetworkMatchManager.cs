@@ -1,23 +1,19 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Fusion;
 using Script.Data;
 using Script.Photon;
 using Script.Util;
+using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
 
 namespace Photon
 {
     public class NetworkMatchManager : NetworkBehaviour
     {
-        public static NetworkMatchManager Instance;
         public MatchRoomUserUI roomUserUI;
 
         public List<NetworkPrefabRef> PlayerPrefabRefs;
-
-        public void Awake()
-        {
-            if (Instance == null) Instance = this;
-        }
 
         public void DataUpdate()
         {
