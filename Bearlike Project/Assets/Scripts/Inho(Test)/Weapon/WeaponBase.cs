@@ -1,4 +1,5 @@
 ﻿using System;
+using Fusion;
 using Script.Util;
 using Scripts.State.GameStatus;
 using State.StateSystem;
@@ -17,7 +18,7 @@ public interface IEquipment
     public void Equip();
 }
 
-public class WeaponBase : MonoBehaviour, IEquipment
+public class WeaponBase : NetworkBehaviour, IEquipment
 {
     public State.StateClass.Base.State state;
 

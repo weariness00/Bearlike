@@ -1,5 +1,7 @@
-﻿using Script.Manager;
+﻿using Fusion;
+using Script.Manager;
 using Scripts.State.GameStatus;
+using State.StateClass.Base;
 using State.StateSystem;
 using UnityEngine;
 
@@ -58,9 +60,21 @@ namespace Inho_Test_.Weapon.Gun
 
                 if (hitState != null)
                 {
-                    hitState.hp.Current -= state.attack.Current;
+                    hitState.ApplyDamage(state.attack.Current, (ObjectProperty)state.property); // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
+                    hitState.ShowInfo();
                 }
             }
+        }
+        
+        private void ApplyDamage(Hitbox playerHitbox)
+        {
+            var playerStateSystem = playerHitbox.Root.GetComponent<StateSystem>();
+            var playerState = playerStateSystem.GetState();
+
+            var monsterStateSystem = gameObject.GetComponent<StateSystem>();
+            var monsterState = monsterStateSystem.GetState();
+            
+            playerState.ApplyDamage(monsterState.attack.Current, (ObjectProperty)monsterState.property);
         }
 
         #region Bullet Funtion

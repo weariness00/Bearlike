@@ -13,6 +13,7 @@ namespace Inho.Scripts.Equipment
             
         }
         
+        
         public Equitment GetEquitment() { return _equitment; }
     }
 }
