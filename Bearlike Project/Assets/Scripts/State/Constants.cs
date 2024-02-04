@@ -1,7 +1,7 @@
 ﻿namespace State
 {
-    public class Constants
+    public class Define
     {
-        public const int POISONDAMAGE = 1;
+        public const int PoisonDamage = 1;
     }
 }

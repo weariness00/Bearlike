@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 3877605175306938669}
   - component: {fileID: 7690511289519872951}
   - component: {fileID: 4950547396980175010}
-  - component: {fileID: 674681997400611571}
   - component: {fileID: 8404013375858834041}
   - component: {fileID: 7820318641680391820}
   - component: {fileID: -4512206738770446292}
@@ -20,6 +19,7 @@ GameObject:
   - component: {fileID: -4863995383214484489}
   - component: {fileID: 12576215274529182}
   - component: {fileID: 2976298614429634604}
+  - component: {fileID: 525910678908119656}
   m_Layer: 0
   m_Name: Mons
   m_TagString: Monster
@@ -241,8 +241,9 @@ MonoBehaviour:
   Offset: {x: 0, y: 0, z: 0}
   Root: {fileID: -4382739694991346033}
   GizmosColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
---- !u!54 &12576215274529182
-Rigidbody:
+  damageMultiplier: 1
+--- !u!114 &525910678908119656
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -268,3 +269,9 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8f91f630adc5204694e199f934eb86e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  managedState: {fileID: 0}

@@ -87,7 +87,7 @@ namespace State.StateClass
         {
             if (PoisonedIsOn())
             {
-                BePoisoned(Constants.POISONDAMAGE);
+                BePoisoned(Define.PoisonDamage);
                 ShowInfo();
             }
         }
