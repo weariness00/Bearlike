@@ -17,6 +17,8 @@ namespace Script.Manager
         MoveLeft,
         MoveRight,
         
+        Jump,
+        
         Attack,
         ReLoad,
         

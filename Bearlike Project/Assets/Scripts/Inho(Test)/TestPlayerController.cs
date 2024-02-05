@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
+using State;
 using State.StateClass.Base;
-using State.StateSystem;
 using UnityEngine;
 
 public class TestPlayerController : MonoBehaviour

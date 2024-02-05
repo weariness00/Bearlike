@@ -12,6 +12,8 @@ namespace Script.Photon
         public NetworkBool MoveBack;
         public NetworkBool MoveFront;
 
+        public NetworkBool Jump;
+
         public NetworkBool Attack;
         public NetworkBool ReLoad;
 

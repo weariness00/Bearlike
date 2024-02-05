@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace State.StateSystem
+namespace State
 {
     /// <summary>
     /// 모든 State을 관리하는 System Class

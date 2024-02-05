@@ -1,4 +1,5 @@
 ﻿using System;
+using ExitGames.Client.Photon.StructWrapping;
 using Fusion;
 using Fusion.Addons.SimpleKCC;
 using Script.Data;
@@ -23,6 +24,7 @@ namespace Script.Player
         
         [HideInInspector] public SimpleKCC simpleKcc;
         private NetworkMecanimAnimator _networkAnimator;
+        [Networked] private NetworkButtons _prevInput { get; set; }
         private void Awake()
         {
             // 임시로 장비 착용
@@ -60,7 +62,7 @@ namespace Script.Player
             
             if (Cursor.lockState == CursorLockMode.None)
             {
-                DebugManager.ToDo("return 되면 플레이어의 위치가 고정되는 문제 해결 찾기");
+                DebugManager.ToDo("return 되면 플레이어의  위치가 고정되는 문제 해결 찾기");
                 return;
             }
 
@@ -82,23 +84,33 @@ namespace Script.Player
         private void MoveControl(PlayerInputData data)
         {
             Vector3 dir = Vector3.zero;
-            if (data.MoveFront)
-                dir += transform.forward;
-            if (data.MoveBack)
-                dir += -transform.forward;
-            if (data.MoveLeft)
-                dir += -transform.right;
-            if (data.MoveRight)
-                dir += transform.right;
+            Vector3 jumpImpulse = default;
+            // if (data.MoveFront)
+            //     dir += transform.forward;
+            // if (data.MoveBack)
+            //     dir += -transform.forward;
+            // if (data.MoveLeft)
+            //     dir += -transform.right;
+            // if (data.MoveRight)
+            //     dir += transform.right;
 
-            if (dir == Vector3.zero)
-            {
-                return;
-            }
+            if (data.Buttons.WasPressed(_prevInput, KeyToAction.MoveFront))
+                dir += transform.forward;
+            if (data.Buttons.WasPressed(_prevInput, KeyToAction.MoveBack))
+                dir += -transform.forward;
+            if (data.Buttons.WasPressed(_prevInput, KeyToAction.MoveLeft))
+                dir += -transform.right;
+            if (data.Buttons.WasPressed(_prevInput, KeyToAction.MoveRight))
+                dir += transform.right;
             dir *= Runner.DeltaTime * 100f;
-            simpleKcc.Move(dir);
             
-            DebugManager.Log($"{name} : {Runner.LocalPlayer}");
+            if (data.Buttons.WasPressed(_prevInput, KeyToAction.Jump)) 
+            {
+                jumpImpulse = Vector3.up * 100;
+            }
+            
+            simpleKcc.Move(dir, jumpImpulse);
+            _prevInput = data.Buttons;
         }
         
         public float rotateSpeed = 500.0f;

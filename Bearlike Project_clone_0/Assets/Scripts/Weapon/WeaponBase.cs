@@ -24,12 +24,17 @@ public class WeaponBase : NetworkBehaviour, IEquipment
 
     public virtual void Awake()
     {
-        state = gameObject.GetOrAddComponent<StateBase>();
     }
 
     public virtual void Start()
     {
         
+    }
+
+    public override void Spawned()
+    {
+        base.Spawned();
+        // state = gameObject.GetOrAddComponent<StateBase>();
     }
 
     public Action AttackAction { get; set; }

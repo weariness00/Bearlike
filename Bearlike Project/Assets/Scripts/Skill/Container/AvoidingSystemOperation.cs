@@ -1,4 +1,4 @@
-﻿using State.StateSystem;
+﻿using State;
 using UnityEngine;
 
 namespace Skill.SkillClass.SecondDoll

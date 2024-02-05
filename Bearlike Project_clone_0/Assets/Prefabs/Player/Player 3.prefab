@@ -424,8 +424,8 @@ GameObject:
   - component: {fileID: 7507528767881361376}
   - component: {fileID: 8125642409520989695}
   - component: {fileID: 7044020874265611949}
-  - component: {fileID: 6294578963449273981}
   - component: {fileID: -4627320855333868288}
+  - component: {fileID: 2627731097818578790}
   m_Layer: 0
   m_Name: Player 3
   m_TagString: Player
@@ -584,19 +584,6 @@ MonoBehaviour:
   SyncSettings: 79
   StateHashes: 000000006bd5a32d398fdc048527350bd77d4a2228a981077af3fe2e
   TriggerHashes: 0000000028a98107
---- !u!114 &6294578963449273981
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4910098564648988719}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f8f91f630adc5204694e199f934eb86e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  managedState: {fileID: 0}
 --- !u!114 &-4627320855333868288
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -614,6 +601,19 @@ MonoBehaviour:
   Offset: {x: 0, y: 0, z: 0}
   GizmosColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   Hitboxes: []
+--- !u!114 &2627731097818578790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4910098564648988719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8f91f630adc5204694e199f934eb86e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  managedState: {fileID: 0}
 --- !u!1 &5293648659765142871
 GameObject:
   m_ObjectHideFlags: 0
