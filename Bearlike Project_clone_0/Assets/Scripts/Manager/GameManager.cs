@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Fusion;
 using Fusion.Addons.SimpleKCC;
@@ -9,10 +10,12 @@ using Script.GamePlay;
 using Script.Manager;
 using Script.Photon;
 using Script.Player;
+using Scripts.State.GameStatus;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Util;
 using Util.Map;
+using Random = UnityEngine.Random;
 
 namespace Manager
 {
@@ -21,12 +24,14 @@ namespace Manager
         [SerializeField]private SpawnPlace _spawnPlace = new SpawnPlace();
 
         private MapGenerate _mapGenerate = new MapGenerate();
+        public Action stageClearAction;
+        
         [Header("스테이지")]
         public StageLevelBase defaultStage;
         public List<StageLevelBase> stageList = new List<StageLevelBase>();
+        public StatusValue<int> stageCount = new StatusValue<int>();// 현재 몇번째 스테이지 인지
 
         #region Data Property
-
         [Networked] public float PlayTimer { get; set; }
 
         #endregion
@@ -61,6 +66,8 @@ namespace Manager
         }
         #endregion
 
+        #region Inisialize
+
         void Init()
         {
             defaultStage.MapInfo = _mapGenerate.FindEmptySpace(defaultStage.MapInfo);
@@ -81,11 +88,16 @@ namespace Manager
             }
         }
 
-        #region Stage Logic Function
+        #endregion
 
-        public StageLevelBase GetRandomStage()
+
+        #region Stage Logic Function
+        
+        public StageLevelBase GetRandomStage() => GetStageIndex(Random.Range(0, stageList.Count));
+
+        public StageLevelBase GetStageIndex(int index)
         {
-            return stageList.Count == 0 ? null : stageList[Random.Range(0, stageList.Count)];
+            return stageList[index];
         }
 
         public async void SetStage(StageLevelBase stage)
@@ -122,6 +134,18 @@ namespace Manager
         }
 
         public void SetStage(int index) => SetStage(stageList.Count < index ? null : stageList[index]);
+
+        public void StageClear(StageLevelBase stage)
+        {
+            stageCount.Current++;
+            if (stageCount.isMax)
+            {
+                
+            }
+
+            stageClearAction?.Invoke();
+        }
+
         #endregion
     }
 }

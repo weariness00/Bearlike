@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using ProjectUpdate;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Util;
 
 namespace Script.Manager
 {
@@ -36,6 +37,10 @@ namespace Script.Manager
         private void Awake()
         { 
             if(Instance == null) Instance = this;
+        }
+
+        private void Start()
+        {
             DefaultLoad();
         }
 
@@ -59,31 +64,32 @@ namespace Script.Manager
             }
             
             var data = JsonConvert.SerializeObject(keyDictData);
+            
+            JsonConvertExtension.Save(data, "KeyData");
 
-            File.WriteAllText(Application.dataPath + "/Json/KeyManager/KeyData.json", data);
+            // File.WriteAllText(Application.dataPath + "/Json/KeyManager/KeyData.json", data);
         }
 
         public void Load(string fileName)
         {
-            var path = Application.dataPath + $"/Json/KeyManager/{fileName}.json";
-            if (File.Exists(path) == false) return;
-            var data = File.ReadAllText(path);
-
-            var keyDictData = JsonConvert.DeserializeObject<Dictionary<KeyToAction, string>>(data); 
-            
-            keyDictionary.Clear();
-            mouseDictionary.Clear();
-            foreach (var (action, value) in keyDictData)
+            JsonConvertExtension.Load(fileName, (data) =>
             {
-                if (Enum.TryParse(value, out KeyCode keyCode))
+                var keyDictData = JsonConvert.DeserializeObject<Dictionary<KeyToAction, string>>(data); 
+            
+                keyDictionary.Clear();
+                mouseDictionary.Clear();
+                foreach (var (action, value) in keyDictData)
                 {
-                    keyDictionary.Add(action, keyCode);
+                    if (Enum.TryParse(value, out KeyCode keyCode))
+                    {
+                        keyDictionary.Add(action, keyCode);
+                    }
+                    else if(Enum.TryParse(value, out MouseButton mouseButton))
+                    {
+                        mouseDictionary.Add(action, mouseButton);
+                    }
                 }
-                else if(Enum.TryParse(value, out MouseButton mouseButton))
-                {
-                    mouseDictionary.Add(action, mouseButton);
-                }
-            }
+            });
         }
 
         void DefaultLoad() => Load("DefaultKeyData");

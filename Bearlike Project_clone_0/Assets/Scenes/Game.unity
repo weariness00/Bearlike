@@ -240,6 +240,14 @@ MonoBehaviour:
   defaultStage: {fileID: 1763687602}
   stageList:
   - {fileID: 2330416457773590121, guid: fe48cae74f1bd2a4d9af117ca76f8e11, type: 3}
+  stageCount:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
   _PlayTimer: 0
 --- !u!4 &148781568
 Transform:
@@ -1226,6 +1234,7 @@ GameObject:
   - component: {fileID: 1557299800}
   - component: {fileID: 1557299799}
   - component: {fileID: 1557299803}
+  - component: {fileID: 1557299804}
   m_Layer: 5
   m_Name: Stage Select Canvas
   m_TagString: Untagged
@@ -1329,10 +1338,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a15a4a59a421439ab0de241822ee2f54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  selectStageIndex: 0
+  _SelectStageIndex: 
+  nextStageList: []
   stageChoiceCount: 2
   stageToggleGroup: {fileID: 34028900}
   togglePrefab: {fileID: 229020669}
+--- !u!114 &1557299804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1557299796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 2900148480
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 1557299803}
 --- !u!1 &1662219604
 GameObject:
   m_ObjectHideFlags: 0
@@ -1521,7 +1549,6 @@ MonoBehaviour:
       isMin: 0
       isMax: 0
   isStageClear: 0
-  nextStageSceneIndex: 3
   stageGameObject: {fileID: 962364570}
   _mapInfoMono: {fileID: 1763687601}
   monsterSpawnerList: []

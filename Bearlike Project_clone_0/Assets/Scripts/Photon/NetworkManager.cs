@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Fusion;
 using Fusion.Addons.Physics;
@@ -17,9 +18,11 @@ namespace Photon
     public class NetworkManager : global::Util.Singleton<NetworkManager>, INetworkRunnerCallbacks
     {
         public static NetworkRunner Runner => Instance._runner;
-        
+
         public NetworkPrefabRef userDataPrefabRef;
         private UserData _userData;
+
+        private string[] _sessionNames;
         private NetworkRunner _runner;
 
         private Action<NetworkObject> _isSetPlayerObjectEvent;
@@ -41,13 +44,55 @@ namespace Photon
             }
         }
 
+        #region Session Info
+
+        struct SessionInfo : IEnumerable<SessionInfo>
+        {
+            public string Name;
+            public int PlayerCount;
+            public bool IsStart;
+
+            public SessionInfo(string name)
+            {
+                Name = name;
+                PlayerCount = 1;
+                IsStart = false;
+            }
+
+            public IEnumerator<SessionInfo> GetEnumerator()
+            {
+                yield return this;
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
+        }
+
+        #endregion
+
+        IEnumerator IsSetPlayerObjectEventCoroutine()
+        {
+            while (true)
+            {
+                if (_runner.TryGetPlayerObject(_runner.LocalPlayer, out var playerObject))
+                {
+                    IsSetPlayerObjectEvent?.Invoke(playerObject);
+                    break;
+                }
+
+                yield return null;
+            }
+        }
+
         #region Scene Static Funtion
 
         public static async Task LoadScene(SceneRef sceneRef, LoadSceneParameters parameters, bool setActiveOnLoad = false)
         {
             if (Instance._runner.IsSceneAuthority)
             {
-                if(parameters.loadSceneMode == LoadSceneMode.Single)
+                if (parameters.loadSceneMode == LoadSceneMode.Single)
                 {
                     Instance._runner.LoadScene(sceneRef, parameters, setActiveOnLoad);
                 }
@@ -55,10 +100,11 @@ namespace Photon
                 {
                     await Instance._runner.LoadScene(sceneRef, parameters, setActiveOnLoad);
                 }
+
                 DebugManager.Log($"씬 불러오기 성공 : {sceneRef}");
             }
         }
-        
+
         public static async Task LoadScene(SceneType type, LoadSceneMode sceneMode = LoadSceneMode.Single, LocalPhysicsMode physicsMode = LocalPhysicsMode.None, bool setActiveOnLoad = false)
         {
             DebugManager.ToDo("나중에 씬 호출을 에셋 번들로 바꾸기");
@@ -75,9 +121,9 @@ namespace Photon
 
         public static Task LoadScene(SceneType type, LoadSceneParameters parameters, bool setActiveOnLoad = false) => LoadScene(SceneRef.FromIndex((int)type), parameters, setActiveOnLoad);
         public static Task LoadScene(int type, LoadSceneMode sceneMode = LoadSceneMode.Single, LocalPhysicsMode physicsMode = LocalPhysicsMode.None, bool setActiveOnLoad = false) => LoadScene((SceneType)type, sceneMode, physicsMode, setActiveOnLoad);
-        
+
         public static Task LoadScene(string path, LoadSceneMode sceneMode = LoadSceneMode.Single, LocalPhysicsMode physicsMode = LocalPhysicsMode.None, bool setActiveOnLoad = false) => LoadScene(SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(path)), new LoadSceneParameters(sceneMode, physicsMode), setActiveOnLoad);
-        public static Task LoadScene(string path, LoadSceneParameters parameters, bool setActiveOnLoad = false) => LoadScene(SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(path)), parameters, setActiveOnLoad); 
+        public static Task LoadScene(string path, LoadSceneParameters parameters, bool setActiveOnLoad = false) => LoadScene(SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(path)), parameters, setActiveOnLoad);
 
         public static async void UnloadScene(SceneRef sceneRef)
         {
@@ -86,28 +132,15 @@ namespace Photon
                 await Instance._runner.UnloadScene(sceneRef);
             }
         }
-        public static void UnloadScene(string path) => UnloadScene(SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(path))); 
-        public static void UnloadScene(SceneType type) => UnloadScene(SceneRef.FromIndex((int)type)); 
+
+        public static void UnloadScene(string path) => UnloadScene(SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(path)));
+        public static void UnloadScene(SceneType type) => UnloadScene(SceneRef.FromIndex((int)type));
 
         #endregion
 
         #region Network Connect Function
 
-        IEnumerator IsSetPlayerObjectEventCoroutine()
-        {
-            while (true)
-            {
-                if (_runner.TryGetPlayerObject(_runner.LocalPlayer, out var playerObject))
-                {
-                    IsSetPlayerObjectEvent?.Invoke(playerObject);
-                    break;
-                }
-
-                yield return null;
-            }
-        }
-
-        async Task Matching(GameMode mode)
+        async Task Matching(GameMode mode, string sessionName)
         {
             // Create the Fusion runner and let it know that we will be providing user inpuz
 
@@ -122,14 +155,12 @@ namespace Photon
             {
                 sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
             }
-            
-            DebugManager.ToDo("게임 세션을 만들때 구글 스토리지를 통해 만들어진 섹션 정보 얻어올 수 있게 하기");
 
             // Start or join (depends on gamemode) a session with a specific name   
             await _runner.StartGame(new StartGameArgs()
             {
                 GameMode = mode,
-                SessionName = "Game Room",
+                SessionName = sessionName,
                 Scene = scene,
                 SceneManager = gameObject.GetOrAddComponent<NetworkSceneManagerDefault>(),
                 PlayerCount = 3,
@@ -142,9 +173,175 @@ namespace Photon
             StartCoroutine(IsSetPlayerObjectEventCoroutine());
         }
 
-        async Task RandomMatching() => await Matching(GameMode.AutoHostOrClient);
-        async Task MakeRoom() => await Matching(GameMode.Host);
-        async Task JoinRoom() => await Matching(GameMode.Client);
+        async Task RandomMatching()
+        {
+            DebugManager.ToDo("세션에 인원이 꽉 차면 들어가지 못하게 해야됨\n" +
+                              "세션에 인원이 없으면 들어 갈 수 있게 해야됨\n" +
+                              "누군가가 세션을 나가면 정보 업데이트 해줘야함\n" +
+                              "세션에 한명도 없으면 json에 세션 지워줘야함");
+            // var fileName = "Lobby Session";
+            // string createSessionName = null;
+            // while (true)
+            // {
+            //     createSessionName = null;
+            //     var sessionNames = GoogleStorageManager.FileListFromBucket(fileName);
+            //     for (var i = 0; i < sessionNames.Length; i++)
+            //     {
+            //         if (sessionNames[i].Equals())
+            //         {
+            //             createSessionName = sessionInfos[i].Name;
+            //             ++sessionInfos[i].PlayerCount;
+            //             break;
+            //         }
+            //     }
+            //     JsonConvertExtension.Load(fileName, (data) =>
+            //     {
+            //         var sessionInfos = JsonConvert.DeserializeObject<SessionInfo[]>(data);
+            //
+            //
+            //         if (createSessionName == null)
+            //         {
+            //             var sessionNames = sessionInfos.Select(info => info.Name).ToArray();
+            //             createSessionName = GetRandomSessionName(sessionNames);
+            //             var newSessionInfo = new SessionInfo(createSessionName);
+            //             sessionInfos.AddRange(newSessionInfo);
+            //         }
+            //
+            //         JsonConvertExtension.Save(JsonConvert.SerializeObject(sessionInfos), fileName);
+            //     });
+            //     if (ProjectUpdateManager.UploadJsonToStorage(fileName))
+            //     {
+            //         break;
+            //     }
+            // }
+            //
+            // if (createSessionName == null)
+            // {
+            //     DebugManager.LogError("서버와의 연결 상태가 좋지 않습니다. 다시 시도해주세요");
+            //     return;
+            // }
+            //
+            // await Matching(GameMode.AutoHostOrClient, createSessionName);
+            await Matching(GameMode.AutoHostOrClient, "a");
+        }
+
+        async Task MakeRoom()
+        {
+            // var fileName = "Lobby Session";
+            // string createSessionName = null;
+            // while (true)
+            // {
+            //     createSessionName = null;
+            //     ProjectUpdateManager.DownLoadLobbyToStorage(fileName);
+            //     JsonConvertExtension.Load(fileName, (data) =>
+            //     {
+            //         var sessionInfos = JsonConvert.DeserializeObject<SessionInfo[]>(data);
+            //         var sessionNames = sessionInfos.Select(info => info.Name).ToArray();
+            //         createSessionName = GetRandomSessionName(sessionNames);
+            //         var newSessionInfo = new SessionInfo(createSessionName);
+            //         sessionInfos.AddRange(newSessionInfo);
+            //
+            //         JsonConvertExtension.Save(JsonConvert.SerializeObject(sessionInfos), fileName);
+            //     });
+            //     if (ProjectUpdateManager.UploadJsonToStorage(fileName))
+            //     {
+            //         break;
+            //     }
+            // }
+            //
+            // if (createSessionName == null)
+            // {
+            //     DebugManager.LogError("서버와의 연결 상태가 좋지 않습니다. 다시 시도해주세요");
+            //     return;
+            // }
+            //
+            // await Matching(GameMode.Host, createSessionName);
+            await Matching(GameMode.Host, "a");
+        }
+
+        async Task JoinRoom()
+        {
+            DebugManager.ToDo("세션에 인원이 꽉 차면 들어가지 못하게 해야됨\n" +
+                              "세션에 인원이 없으면 들어 갈 수 있게 해야됨\n" +
+                              "누군가가 세션을 나가면 정보 업데이트 해줘야함\n" +
+                              "세션에 한명도 없으면 json에 세션 지워줘야함");
+            // var fileName = "Lobby Session";
+            // string createSessionName = null;
+            // ProjectUpdateManager.DownLoadLobbyToStorage(fileName);
+            // JsonConvertExtension.Load(fileName, (data) =>
+            // {
+            //     var sessionInfos = JsonConvert.DeserializeObject<SessionInfo[]>(data);
+            //     var sessionNames = sessionInfos.Select(info => info.Name).ToArray();
+            //     createSessionName = GetRandomSessionName(sessionNames);
+            //     var newSessionInfo = new SessionInfo(createSessionName);
+            //     sessionInfos.AddRange(newSessionInfo);
+            //
+            //     JsonConvertExtension.Save(JsonConvert.SerializeObject(sessionInfos), fileName);
+            // });
+            // if (ProjectUpdateManager.UploadJsonToStorage(fileName))
+            // {
+            //     break;
+            // }
+            //
+            // if (createSessionName == null)
+            // {
+            //     DebugManager.LogError("서버와의 연결 상태가 좋지 않습니다. 다시 시도해주세요");
+            //     return;
+            // }
+            //
+            // await Matching(GameMode.Client, );
+            await Matching(GameMode.Client, "a");
+        }
+
+        private string GetRandomSessionName(string[] sessionNames)
+        {
+            string randomName;
+
+            bool isSuccess = false;
+            while (true)
+            {
+                randomName = RandomString("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890", 6);
+                isSuccess = true;
+                foreach (var sessionName in sessionNames)
+                {
+                    if (randomName.Equals(sessionName))
+                    {
+                        isSuccess = false;
+                        break;
+                    }
+                }
+
+                if (isSuccess)
+                {
+                    break;
+                }
+            }
+
+            return randomName;
+        }
+
+        private string RandomString(string text, int length)
+        {
+            System.Random random = new System.Random();
+            string randomString = new string(Enumerable.Repeat(text, length)
+                .Select(s => s[random.Next(s.Length)])
+                .ToArray());
+
+            return randomString;
+        }
+
+        private bool IsValidSessionName(string[] sessionNames, string searchSessionName)
+        {
+            foreach (var sessionName in sessionNames)
+            {
+                if (searchSessionName.Equals(sessionName))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         #endregion
 
@@ -203,10 +400,10 @@ namespace Photon
             playerInputData.MouseAxis.y = Input.GetAxis("Mouse Y");
 
             input.Set(playerInputData);
-            
+
             if (Input.GetMouseButtonDown((int)MouseButton.Middle))
             {
-                Cursor.lockState = Cursor.lockState == CursorLockMode.None ? CursorLockMode.Locked : CursorLockMode.None; 
+                Cursor.lockState = Cursor.lockState == CursorLockMode.None ? CursorLockMode.Locked : CursorLockMode.None;
             }
         }
 
@@ -224,7 +421,8 @@ namespace Photon
 
         public void OnConnectedToServer(NetworkRunner runner)
         {
-            DebugManager.Log("서버 연결 성공");
+            DebugManager.Log("서버 연결 성공\n" +
+                             $"세션 이름 : {runner.SessionInfo.Name}");
         }
 
         public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
@@ -248,8 +446,9 @@ namespace Photon
         {
         }
 
-        public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
+        public void OnSessionListUpdated(NetworkRunner runner, List<Fusion.SessionInfo> sessionList)
         {
+            
         }
 
         public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data)
@@ -268,7 +467,6 @@ namespace Photon
         public void OnSceneLoadStart(NetworkRunner runner)
         {
             DebugManager.Log($"씬 Loading 중");
-            
         }
 
         public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)

@@ -53,8 +53,7 @@ namespace Script.Player
 
         public override void FixedUpdateNetwork()
         {
-            base.FixedUpdateNetwork();
-            if (Runner.IsPlayer == false)
+            if (HasInputAuthority == false)
             {
                 return;
             }
@@ -62,7 +61,6 @@ namespace Script.Player
             if (Cursor.lockState == CursorLockMode.None)
             {
                 DebugManager.ToDo("return 되면 플레이어의 위치가 고정되는 문제 해결 찾기");
-                simpleKcc.Move(Vector3.zero);
                 return;
             }
 
@@ -93,14 +91,25 @@ namespace Script.Player
             if (data.MoveRight)
                 dir += transform.right;
 
+            if (dir == Vector3.zero)
+            {
+                return;
+            }
             dir *= Runner.DeltaTime * 100f;
             simpleKcc.Move(dir);
+            
+            DebugManager.Log($"{name} : {Runner.LocalPlayer}");
         }
         
         public float rotateSpeed = 500.0f;
         float xRotate, yRotate, xRotateMove, yRotateMove;
         public void MouseRotateControl(Vector2 mouseAxis)
         {
+            if (mouseAxis == Vector2.zero)
+            {
+                return;
+            }
+            
             xRotateMove = mouseAxis.y * Runner.DeltaTime * rotateSpeed;
             yRotateMove = mouseAxis.x * Runner.DeltaTime * rotateSpeed;
 
@@ -109,7 +118,7 @@ namespace Script.Player
 
             xRotate = Mathf.Clamp(xRotate, -90, 90); // 위, 아래 고정
             var angle = new Vector3(xRotate, yRotate, 0);
-
+            
             simpleKcc.SetLookRotation(angle);
         }
 

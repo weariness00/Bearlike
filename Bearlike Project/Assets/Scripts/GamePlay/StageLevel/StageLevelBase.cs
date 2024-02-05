@@ -159,6 +159,8 @@ namespace GamePlay.StageLevel
                 DebugManager.Log("스테이지 클리어\n" +
                                  $"스테이지 모드 :{stageLevelInfo.StageLevelType}");
                 isStageClear = true;
+                _updateStageAction -= DestroyUpdate;
+                DestroyClear();
             }
             else if (destroyTimeLimit.isMax)
             {
@@ -166,6 +168,11 @@ namespace GamePlay.StageLevel
                 _updateStageAction = null;
                 return;
             }
+        }
+
+        void DestroyClear()
+        {
+            
         }
 
         void DestroyOver()
