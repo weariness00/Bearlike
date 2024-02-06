@@ -19,8 +19,9 @@ namespace State.StateClass.Base
     /// 기본 능력치를 나타내는 Class
     /// </summary>
     public abstract class StateBase : NetworkBehaviour
-    {    
-        // Member Variable
+    {
+        #region Member Variable
+
         public StatusValue<int> _hp = new StatusValue<int>();                              // 체력        
         public StatusValue<int> attack = new StatusValue<int>();               // 공격력
         public StatusValue<int> defence = new StatusValue<int>();              // 방어력
@@ -30,23 +31,41 @@ namespace State.StateClass.Base
 
         public StatusValue<int> force = new StatusValue<int>();               // 힘
         public int condition;                                               // 상태
+        public int property;                                                // 속성
 
-        public int property;
+        #endregion
 
         #region Variable Paramiter
         
         public bool IsDie => _hp.isMin;
 
         #endregion
-        
-        // Member Function
-        public abstract void MainLoop();
-        
-        public abstract bool ApplyDamage(float damage, ObjectProperty property); // MonsterRef instigator,
-        // public abstract void BePoisoned();
 
-        // DeBug Function
+        #region Member Function
+
+        public abstract void MainLoop();
+
+        #endregion
+
+        #region HP Function
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public virtual void ApplyDamageRPC(float damage, ObjectProperty property, RpcInfo info = default)
+        {
+            ApplyDamage(damage, property);
+            
+            // TODO : Dubug
+            ShowInfo();
+        }
+        public abstract void ApplyDamage(float damage, ObjectProperty property); // MonsterRef instigator,
+
+        #endregion
+
+        #region DeBug Function
+        
         public abstract void ShowInfo();
+
+        #endregion
 
         #region Condition Interface Functon
 
@@ -61,6 +80,5 @@ namespace State.StateClass.Base
         public abstract void DelCondition(ObjectProperty condition);
         
         #endregion
-
     }
 }

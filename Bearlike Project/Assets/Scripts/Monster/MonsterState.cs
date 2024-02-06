@@ -46,6 +46,11 @@ namespace State.StateClass
             property = (int)ObjectProperty.Normality;
         }
 
+        private void Start()
+        {
+            InvokeRepeating(nameof(MainLoop), 0.0f, 1.0f);
+        }
+        
         public override void MainLoop()
         {
             if (PoisonedIsOn())
@@ -59,17 +64,17 @@ namespace State.StateClass
         {
             _hp.Current -= value;
         }
-
-        public override bool ApplyDamage(float damage, ObjectProperty property)
+        
+        public override void ApplyDamage(float damage, ObjectProperty property)
         {
             if (_hp.Current < 0)
             {
-                return false;
+                return;
             }
 
             if ((Random.Range(0.0f, 99.9f) < avoid.Current))
             {
-                return false;
+                return;
             }
             
             AddCondition(property);         // Monster의 속성을 Player상태에 적용
@@ -89,7 +94,7 @@ namespace State.StateClass
                 // respawn 시키는 코드 구현
             }
                 
-            return true;
+            return;
         }
 
         // DeBug Function

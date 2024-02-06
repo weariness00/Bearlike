@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Fusion;
 using Scripts.State.GameStatus;
@@ -25,7 +26,7 @@ namespace State.StateClass
         
         #region Timer Property
         
-        public GameObject immortalityIndicator;
+        // public GameObject immortalityIndicator;
         [Networked] private TickTimer _immortalTimer { get; set; }
         
         public bool IsImmortal => _immortalTimer.ExpiredOrNotRunning(Runner) == false;
@@ -81,8 +82,12 @@ namespace State.StateClass
             // mPlayerID 초기화 필요 ==> 입장 할때 순서대로 번호 부여 혹은 고유 아이디 존재하게 구현
             // mPlayerJob 초기화 필요 ==> 직업 선택한후에 초기화 해주게 구현
         }
-        
-        
+
+        private void Start()
+        {
+            InvokeRepeating(nameof(MainLoop), 0.0f, 1.0f);
+        }
+
         // Loop
         public override void MainLoop()
         {
@@ -102,22 +107,21 @@ namespace State.StateClass
             _hp.Current -= value;
         }
         
-        // [Rpc()]
-        public override bool ApplyDamage(float damage, ObjectProperty monsterProperty) // MonsterRef instigator,
+        public override void ApplyDamage(float damage, ObjectProperty monsterProperty) // MonsterRef instigator,
         {
             if (_hp.Current < 0)
             {
-                return false;
+                return;
             }
 
             if (IsImmortal)
             {
-                return false;
+                return;
             }
 
             if ((Random.Range(0.0f, 99.9f) < avoid.Current))
             {
-                return false;
+                return;
             }
             
             AddCondition(monsterProperty);         // Monster의 속성을 Player상태에 적용
@@ -137,7 +141,7 @@ namespace State.StateClass
                 // respawn 시키는 코드 구현
             }
                 
-            return true;
+            return;
         }
         // HP
         
@@ -162,7 +166,7 @@ namespace State.StateClass
 
         public override void Render()
         {
-            immortalityIndicator.SetActive(IsImmortal);
+            // immortalityIndicator.SetActive(IsImmortal);
         }
 
         // DeBug Function

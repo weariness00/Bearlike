@@ -2,6 +2,7 @@
 using Inho_Test_.Player;
 using Script.Manager;
 using Scripts.State.GameStatus;
+using State.StateClass;
 using State.StateClass.Base;
 using State.StateSystem;
 using UnityEngine;
@@ -116,7 +117,7 @@ namespace Script.Weapon.Gun
         
         private void ApplyDamage(Hitbox enemyHitbox)
         {
-            var enemyState = enemyHitbox.Root.GetComponent<StateSystem>().State;
+            var enemyState = enemyHitbox.Root.GetComponent<MonsterState>();
 
             if (enemyState == null || enemyState._hp.isMin)
             {
@@ -124,11 +125,12 @@ namespace Script.Weapon.Gun
             }
             
             float damageMultiplier = enemyHitbox is TestBodyHitbox bodyHitbox ? bodyHitbox.damageMultiplier : 1f;
-            var asd = state.attack.Current;
-            if (enemyState.ApplyDamage(state.attack.Current * damageMultiplier, (ObjectProperty)state.property) == false) // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
-            {
-                return;
-            }
+            
+            // if (enemyState.ApplyDamageRPC(state.attack.Current * damageMultiplier, (ObjectProperty)state.property) == false) // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
+            // {
+            //     return;
+            // }
+            enemyState.ApplyDamageRPC(state.attack.Current * damageMultiplier, (ObjectProperty)state.property);
         }
 
         #region Bullet Funtion

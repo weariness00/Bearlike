@@ -122,8 +122,6 @@ namespace Photon
             {
                 sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
             }
-            
-            _runner.JoinSessionLobby()
 
             // Start or join (depends on gamemode) a session with a specific name   
             await _runner.StartGame(new StartGameArgs()
