@@ -3,6 +3,7 @@ using Inho_Test_.Player;
 using Script.Manager;
 using Scripts.State.GameStatus;
 using State;
+using State.StateClass;
 using State.StateClass.Base;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -101,13 +102,12 @@ namespace Script.Weapon.Gun
             if(Runner.LagCompensation.Raycast(ray.origin, ray.direction, float.MaxValue, Runner.LocalPlayer, out var hit))
             {
                 DebugManager.Log($"Ray충돌\n총 이름 : {name}\n맞은 대상 : {hit.Hitbox.name}");
-                var hitState = hit.Hitbox.Root.GetComponent<StateSystem>().State;
+                var hitState = hit.Hitbox.Root.GetComponent<StatusBase>();
 
                 if (hitState != null)
                 {
                     // hitState.ApplyDamage(state.attack.Current, (ObjectProperty)state.property); // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
                     ApplyDamage(hit.Hitbox);
-                    hitState.ShowInfo();
                 }
                 detination = hit.Point;
             }
@@ -121,7 +121,7 @@ namespace Script.Weapon.Gun
         
         private void ApplyDamage(Hitbox enemyHitbox)
         {
-            var enemyState = enemyHitbox.Root.GetComponent<MonsterState>();
+            var enemyState = enemyHitbox.Root.GetComponent<MonsterStatus>();
 
             if (enemyState == null || enemyState._hp.isMin)
             {
@@ -131,7 +131,7 @@ namespace Script.Weapon.Gun
             float damageMultiplier = enemyHitbox is TestBodyHitbox bodyHitbox ? bodyHitbox.damageMultiplier : 1f;
             
             // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
-            enemyState.ApplyDamageRPC(state.attack.Current * damageMultiplier, (ObjectProperty)state.property);
+            enemyState.ApplyDamageRPC(status.attack.Current * damageMultiplier, (CrowdControl)status.property);
         }
 
         #region Bullet Funtion

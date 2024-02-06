@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 235577788175137361}
-  - component: {fileID: 4759620300204528926}
+  - component: {fileID: 7844333078755015398}
   m_Layer: 0
   m_Name: Hitbox
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7491738959388561210}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4759620300204528926
+--- !u!114 &7844333078755015398
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -50,7 +50,7 @@ MonoBehaviour:
   BoxExtents: {x: 0.5, y: 2, z: 0.5}
   CapsuleHeight: 0
   Offset: {x: 0, y: 0, z: 0}
-  Root: {fileID: 0}
+  Root: {fileID: -4382739694991346033}
   GizmosColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   damageMultiplier: 1
 --- !u!1 &4714873602930505835
@@ -69,9 +69,7 @@ GameObject:
   - component: {fileID: 7820318641680391820}
   - component: {fileID: -4512206738770446292}
   - component: {fileID: -4382739694991346033}
-  - component: {fileID: -4863995383214484489}
-  - component: {fileID: 525910678908119656}
-  - component: {fileID: 674681997400611571}
+  - component: {fileID: 5146755800053570321}
   m_Layer: 0
   m_Name: Mons
   m_TagString: Monster
@@ -194,6 +192,7 @@ MonoBehaviour:
   - {fileID: 4950547396980175010}
   - {fileID: -4512206738770446292}
   - {fileID: -4382739694991346033}
+  - {fileID: 5146755800053570321}
 --- !u!114 &-4512206738770446292
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -223,12 +222,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Config: 3
-  BroadRadius: 1.2247449
+  BroadRadius: 2.1213202
   Offset: {x: 0, y: 0, z: 0}
   GizmosColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   Hitboxes:
-  - {fileID: -4863995383214484489}
---- !u!114 &-4863995383214484489
+  - {fileID: 7844333078755015398}
+--- !u!114 &5146755800053570321
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -237,72 +236,64 @@ MonoBehaviour:
   m_GameObject: {fileID: 4714873602930505835}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1014831617, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Script: {fileID: 11500000, guid: 51a6b82460884d7593d784a347512478, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Type: 1
-  SphereRadius: 0
-  CapsuleRadius: 0
-  BoxExtents: {x: 0.5, y: 1, z: 0.5}
-  CapsuleHeight: 0
-  Offset: {x: 0, y: 0, z: 0}
-  Root: {fileID: -4382739694991346033}
-  GizmosColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
---- !u!114 &525910678908119656
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4714873602930505835}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f8f91f630adc5204694e199f934eb86e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  managedState: {fileID: 0}
---- !u!114 &674681997400611571
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4714873602930505835}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24fa62afdb754031bd29e32b0727d371, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hp:
+  _hp:
     _min: 0
-    _max: 100
-    _current: 100
+    _max: 0
+    _current: 0
     isOverMax: 0
     isOverMin: 0
     isMin: 0
     isMax: 0
-  mp:
+  attack:
     _min: 0
-    _max: 100
-    _current: 100
+    _max: 0
+    _current: 0
     isOverMax: 0
     isOverMin: 0
     isMin: 0
     isMax: 0
-  damage:
+  defence:
     _min: 0
-    _max: 100
-    _current: 100
+    _max: 0
+    _current: 0
     isOverMax: 0
     isOverMin: 0
     isMin: 0
     isMax: 0
-  speed:
+  avoid:
     _min: 0
-    _max: 100
-    _current: 100
+    _max: 0
+    _current: 0
     isOverMax: 0
     isOverMin: 0
     isMin: 0
     isMax: 0
-  isDie: 0
+  moveSpeed:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  attackSpeed:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  force:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  condition: 0
+  property: 0

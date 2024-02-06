@@ -20,7 +20,7 @@ namespace Skill.SkillClass.FirstDoll.UniqueSkill
         
         public override void Run()
         {
-            var playerState = GameObject.Find("Player").GetComponent<StateSystem>().State;
+            var playerState = GameObject.Find("Player").GetComponent<StatusSystem>().Status;
             
             if (Random.Range(0, 2) == 0)
             {

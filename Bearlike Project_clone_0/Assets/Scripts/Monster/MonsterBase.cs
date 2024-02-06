@@ -11,14 +11,14 @@ namespace Script.Monster
     public class MonsterBase : NetworkBehaviour
     {
         public int id = 0;
-        public MonsterState status;
+        public MonsterStatus status;
         public LootingTable lootingTable;
 
         public Action DieAction;
 
         private void Awake()
         {
-            status = gameObject.GetOrAddComponent<MonsterState>();
+            status = gameObject.GetOrAddComponent<MonsterStatus>();
             lootingTable = gameObject.GetOrAddComponent<LootingTable>();
         }
 

@@ -125,7 +125,7 @@ namespace Manager
                     stageLevelBase.MapInfo = await _mapGenerate.FindEmptySpaceSync(stage.MapInfo, defaultStage.MapInfo);
                     stageLevelBase.StageInitRPC();
                     
-                    // NetworkManager.UnloadScene(stage.sceneReference.ScenePath);
+                    NetworkManager.UnloadScene(stage.sceneReference.ScenePath);
                     
                     _mapGenerate.AddMap(stageLevelBase.MapInfo);
                     stageLevelBase.StageSetting();

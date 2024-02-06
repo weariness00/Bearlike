@@ -17,7 +17,7 @@ namespace Script.Player
     public class PlayerController : NetworkBehaviour
     {
         // public Status status;
-        public PlayerState status;
+        public PlayerStatus status;
 
         public IEquipment equipment;
         public StatusValue<int> ammo = new StatusValue<int>();
@@ -29,7 +29,7 @@ namespace Script.Player
             // 임시로 장비 착용
             // 상호작용으로 착요하게 바꿀 예정
             equipment = GetComponentInChildren<IEquipment>();
-            status = gameObject.GetOrAddComponent<PlayerState>();
+            status = gameObject.GetOrAddComponent<PlayerStatus>();
             _networkAnimator = GetComponent<NetworkMecanimAnimator>();
         }
 
@@ -64,9 +64,9 @@ namespace Script.Player
             //
             // if (Cursor.lockState == CursorLockMode.None)
             // {
-            //     DebugManager.ToDo("return 되면 플레이어의  위치가 고정되는 문제 해결 찾기");
             //     return;
             // }
+            DebugManager.ToDo("return 되면 플레이어의  위치가 고정되는 문제 해결 찾기");
 
             var spawnPosition = UserData.Instance.UserDictionary[Runner.LocalPlayer].TeleportPosition;
             if (spawnPosition.Count != 0)

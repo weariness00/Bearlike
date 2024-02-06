@@ -10,7 +10,7 @@ namespace State.StateClass
     /// <summary>
     /// Monster의 State을 나타내는 Class
     /// </summary>
-    public class MonsterState : Base.StateBase
+    public class MonsterStatus : Base.StatusBase
     {
         public void Awake()
         {
@@ -42,8 +42,8 @@ namespace State.StateClass
             force.Min = 0;
             force.Current = 10;
             
-            condition = (int)ObjectProperty.Normality;
-            property = (int)ObjectProperty.Normality;
+            condition = (int)CrowdControl.Normality;
+            property = (int)CrowdControl.Normality;
         }
 
         private void Start()
@@ -65,7 +65,7 @@ namespace State.StateClass
             _hp.Current -= value;
         }
         
-        public override void ApplyDamage(float damage, ObjectProperty property)
+        public override void ApplyDamage(float damage, CrowdControl property)
         {
             if (_hp.Current < 0)
             {
@@ -100,23 +100,23 @@ namespace State.StateClass
         // DeBug Function
         public override void ShowInfo()
         {
-            Debug.Log($"체력 : " +  _hp.Current + $" 공격력 : " + attack.Current + $" 공격 속도 : " + attackSpeed.Current + $" 상태 : " + (ObjectProperty)condition);    // condition이 2개 이상인 경우에는 어떻게 출력?
+            Debug.Log($"체력 : " +  _hp.Current + $" 공격력 : " + attack.Current + $" 공격 속도 : " + attackSpeed.Current + $" 상태 : " + (CrowdControl)condition);    // condition이 2개 이상인 경우에는 어떻게 출력?
         }
         
         
         // ICondition Interface Function
-        public override bool On(ObjectProperty condition) { return (base.condition & (int)condition) == (int)condition; }
+        public override bool On(CrowdControl condition) { return (base.condition & (int)condition) == (int)condition; }
 
-        public override bool NormalityIsOn() { return On(ObjectProperty.Normality); }
-        public override bool PoisonedIsOn() { return On(ObjectProperty.Poisoned); }
-        public override bool WeakIsOn() { return On(ObjectProperty.Weak); }
+        public override bool NormalityIsOn() { return On(CrowdControl.Normality); }
+        public override bool PoisonedIsOn() { return On(CrowdControl.Poisoned); }
+        public override bool WeakIsOn() { return On(CrowdControl.Weak); }
         
-        public override void AddCondition(ObjectProperty condition)
+        public override void AddCondition(CrowdControl condition)
         {
             if(!On(condition)) base.condition |= (int)condition;
         }
         
-        public override void DelCondition(ObjectProperty condition)
+        public override void DelCondition(CrowdControl condition)
         {
             if(On(condition)) base.condition ^= (int)condition;
         }

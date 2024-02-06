@@ -407,7 +407,7 @@ MonoBehaviour:
   BoxExtents: {x: 0, y: 0, z: 0}
   CapsuleHeight: 0
   Offset: {x: 0, y: 1.22, z: 0}
-  Root: {fileID: 0}
+  Root: {fileID: -4627320855333868288}
   GizmosColor: {r: 1, g: 0.015686274, b: 0.060200125, a: 1}
   damageMultiplier: 1.5
 --- !u!1 &3001690133505251898
@@ -460,7 +460,7 @@ MonoBehaviour:
   BoxExtents: {x: 0.2, y: 0.25, z: 0.2}
   CapsuleHeight: 0
   Offset: {x: 0, y: 0.75, z: 0}
-  Root: {fileID: 0}
+  Root: {fileID: -4627320855333868288}
   GizmosColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   damageMultiplier: 1
 --- !u!1 &4329065379414461866
@@ -534,8 +534,8 @@ GameObject:
   - component: {fileID: 7507528767881361376}
   - component: {fileID: 7044020874265611949}
   - component: {fileID: -4627320855333868288}
-  - component: {fileID: 2627731097818578790}
   - component: {fileID: -8376342315293501503}
+  - component: {fileID: 3591252219797454216}
   m_Layer: 0
   m_Name: Player 3
   m_TagString: Player
@@ -620,6 +620,7 @@ MonoBehaviour:
   - {fileID: 7044020874265611949}
   - {fileID: -4627320855333868288}
   - {fileID: -8376342315293501503}
+  - {fileID: 3591252219797454216}
 --- !u!54 &7507528767881361376
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -678,23 +679,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Config: 3
-  BroadRadius: 0
+  BroadRadius: 1.47
   Offset: {x: 0, y: 0, z: 0}
   GizmosColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  Hitboxes: []
---- !u!114 &2627731097818578790
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4910098564648988719}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f8f91f630adc5204694e199f934eb86e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  managedState: {fileID: 0}
+  Hitboxes:
+  - {fileID: 6627097051347971604}
+  - {fileID: 4487142287614652052}
+  - {fileID: 4285475733844208846}
+  - {fileID: 4078301493440701559}
+  - {fileID: 257172402745974576}
+  - {fileID: 1195279209751686206}
 --- !u!114 &-8376342315293501503
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -724,6 +718,94 @@ MonoBehaviour:
     StepSpeed: 1
     SnapDistance: 0.25
     SnapSpeed: 4
+--- !u!114 &3591252219797454216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4910098564648988719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d784a47bb9047c4aaac7e21de867e17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _hp:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  attack:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  defence:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  avoid:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  moveSpeed:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  attackSpeed:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  force:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  condition: 0
+  property: 0
+  level:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  experience:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  experienceAmountList: 
+  immortalDurationAfterSpawn: 2
 --- !u!1 &5293648659765142871
 GameObject:
   m_ObjectHideFlags: 0
@@ -938,7 +1020,7 @@ MonoBehaviour:
   BoxExtents: {x: 0.1, y: 0.25, z: 0.1}
   CapsuleHeight: 0
   Offset: {x: 0.3, y: 0.75, z: 0}
-  Root: {fileID: 0}
+  Root: {fileID: -4627320855333868288}
   GizmosColor: {r: 0.26824522, g: 1, b: 0, a: 1}
   damageMultiplier: 0.75
 --- !u!114 &4078301493440701559
@@ -959,7 +1041,7 @@ MonoBehaviour:
   BoxExtents: {x: 0.1, y: 0.25, z: 0.1}
   CapsuleHeight: 0
   Offset: {x: -0.3, y: 0.75, z: 0}
-  Root: {fileID: 0}
+  Root: {fileID: -4627320855333868288}
   GizmosColor: {r: 0.26666668, g: 1, b: 0, a: 1}
   damageMultiplier: 0.75
 --- !u!1 &6938260859825332720
@@ -1315,7 +1397,7 @@ MonoBehaviour:
   BoxExtents: {x: 0.1, y: 0.23, z: 0.1}
   CapsuleHeight: 0
   Offset: {x: 0.15, y: 0.25, z: 0}
-  Root: {fileID: 0}
+  Root: {fileID: -4627320855333868288}
   GizmosColor: {r: 0.09419333, g: 1, b: 0.015686274, a: 1}
   damageMultiplier: 0.75
 --- !u!114 &1195279209751686206
@@ -1336,7 +1418,7 @@ MonoBehaviour:
   BoxExtents: {x: 0.1, y: 0.23, z: 0.1}
   CapsuleHeight: 0
   Offset: {x: -0.15, y: 0.25, z: 0}
-  Root: {fileID: 0}
+  Root: {fileID: -4627320855333868288}
   GizmosColor: {r: 0.09411766, g: 1, b: 0.015686275, a: 1}
   damageMultiplier: 0.75
 --- !u!1001 &3224169773136229256

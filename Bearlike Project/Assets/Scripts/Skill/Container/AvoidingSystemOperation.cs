@@ -16,7 +16,7 @@ namespace Skill.SkillClass.SecondDoll
 
         public override void Run()
         {
-            var playerState = GameObject.Find("Player").GetComponent<StateSystem>().State;
+            var playerState = GameObject.Find("Player").GetComponent<StatusSystem>().Status;
 
             playerState.avoid.Current *= 1.3f;
         }

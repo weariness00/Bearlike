@@ -3,27 +3,28 @@ using State.StateClass.Base;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 namespace State
 {
     /// <summary>
     /// 모든 State을 관리하는 System Class
     /// </summary>
-    public class StateSystem : MonoBehaviour
+    public class StatusSystem : MonoBehaviour
     {
-        [SerializeField] public StateBase managedState;
+        [FormerlySerializedAs("managedState")] [SerializeField] public StatusBase managedStatus;
         // private EquitmentSystem _equitment;
-        public StateBase State => managedState;
+        public StatusBase Status => managedStatus;
 
         private void Awake()
         {
             if(gameObject.CompareTag("Player"))
             {
-                managedState = gameObject.GetOrAddComponent<PlayerState>();
+                managedStatus = gameObject.GetOrAddComponent<PlayerStatus>();
             }
             else
             {
-                managedState = gameObject.GetOrAddComponent<MonsterState>();
+                managedStatus = gameObject.GetOrAddComponent<MonsterStatus>();
             }
             // _equitment = new EquitmentSystem();
         }
@@ -41,18 +42,18 @@ namespace State
                 if (gameObject.CompareTag("Player"))
                 {
                     // if (Input.GetKeyDown(KeyCode.E)) managedState.ApplyDamage(_equitment.GetEquitment().GetDamage(), ObjectProperty.Normality);
-                    if (Input.GetKeyDown(KeyCode.Z)) managedState.AddCondition(ObjectProperty.Weak);
-                    if (Input.GetKeyDown(KeyCode.X)) managedState.DelCondition(ObjectProperty.Weak);
-                    if (Input.GetKeyDown(KeyCode.C)) managedState.AddCondition(ObjectProperty.Poisoned);
-                    if (Input.GetKeyDown(KeyCode.V)) managedState.DelCondition(ObjectProperty.Poisoned);
+                    if (Input.GetKeyDown(KeyCode.Z)) managedStatus.AddCondition(CrowdControl.Weak);
+                    if (Input.GetKeyDown(KeyCode.X)) managedStatus.DelCondition(CrowdControl.Weak);
+                    if (Input.GetKeyDown(KeyCode.C)) managedStatus.AddCondition(CrowdControl.Poisoned);
+                    if (Input.GetKeyDown(KeyCode.V)) managedStatus.DelCondition(CrowdControl.Poisoned);
                 }
             }
-            if (Input.GetKeyDown(KeyCode.Q)) managedState.ShowInfo();
+            if (Input.GetKeyDown(KeyCode.Q)) managedStatus.ShowInfo();
         }
 
         private void MainLoop()
         {
-            managedState.MainLoop();
+            managedStatus.MainLoop();
         }   
 
     } 

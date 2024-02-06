@@ -1,4 +1,5 @@
 using Fusion;
+using Script.Manager;
 using Scripts.State.GameStatus;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -8,7 +9,7 @@ namespace State.StateClass.Base
     /// <summary>
     /// Object의 상태를 나타내는 열거형
     /// </summary>
-    public enum ObjectProperty
+    public enum CrowdControl
     {
         Normality = 0b_0000_0000,           // 정상
         Poisoned = 0b_0000_0001,            // 중독
@@ -18,7 +19,7 @@ namespace State.StateClass.Base
     /// <summary>
     /// 기본 능력치를 나타내는 Class
     /// </summary>
-    public abstract class StateBase : NetworkBehaviour
+    public abstract class StatusBase : NetworkBehaviour
     {
         #region Member Variable
 
@@ -50,14 +51,15 @@ namespace State.StateClass.Base
         #region HP Function
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public virtual void ApplyDamageRPC(float damage, ObjectProperty property, RpcInfo info = default)
+        public virtual void ApplyDamageRPC(float damage, CrowdControl property, RpcInfo info = default)
         {
             ApplyDamage(damage, property);
             
             // TODO : Dubug
+            DebugManager.ToDo("asdkasl");
             ShowInfo();
         }
-        public abstract void ApplyDamage(float damage, ObjectProperty property); // MonsterRef instigator,
+        public abstract void ApplyDamage(float damage, CrowdControl property); // MonsterRef instigator,
 
         #endregion
 
@@ -70,14 +72,14 @@ namespace State.StateClass.Base
         #region Condition Interface Functon
 
         // ICondition Interface Function
-        public abstract bool On(ObjectProperty condition);
+        public abstract bool On(CrowdControl condition);
             
         public abstract bool NormalityIsOn();
         public abstract bool PoisonedIsOn();
         public abstract bool WeakIsOn();
             
-        public abstract void AddCondition(ObjectProperty condition);
-        public abstract void DelCondition(ObjectProperty condition);
+        public abstract void AddCondition(CrowdControl condition);
+        public abstract void DelCondition(CrowdControl condition);
         
         #endregion
     }

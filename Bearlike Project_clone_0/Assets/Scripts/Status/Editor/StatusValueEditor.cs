@@ -29,7 +29,6 @@ namespace Scripts.State.GameStatus.Editor
             int indent = EditorGUI.indentLevel;
             EditorGUI.indentLevel = 0;
 
-            int interval = 150;
             var intFieldPos = new Rect(position.x - 40, position.y, 30, position.height);
             current.floatValue = EditorGUI.FloatField(intFieldPos, current.floatValue);
             if (current.floatValue < min.floatValue)
