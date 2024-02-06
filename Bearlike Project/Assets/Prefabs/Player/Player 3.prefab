@@ -422,10 +422,10 @@ GameObject:
   - component: {fileID: 8389592379722413424}
   - component: {fileID: 3630061050747534706}
   - component: {fileID: 7507528767881361376}
-  - component: {fileID: 8125642409520989695}
   - component: {fileID: 7044020874265611949}
   - component: {fileID: -4627320855333868288}
   - component: {fileID: 2627731097818578790}
+  - component: {fileID: -8376342315293501503}
   m_Layer: 0
   m_Name: Player 3
   m_TagString: Player
@@ -507,9 +507,9 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 2772802092429274023}
   - {fileID: 8389592379722413424}
-  - {fileID: 8125642409520989695}
   - {fileID: 7044020874265611949}
   - {fileID: -4627320855333868288}
+  - {fileID: -8376342315293501503}
 --- !u!54 &7507528767881361376
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -537,35 +537,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &8125642409520989695
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4910098564648988719}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1869825851, guid: 977dbcf975465374990f471e1497f563, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _settings:
-    Shape: 1
-    IsTrigger: 0
-    Radius: 0.35
-    Height: 1.8
-    Extent: 0.035
-    ColliderLayer: 0
-    CollisionLayerMask:
-      serializedVersion: 2
-      m_Bits: 1
-    TeleportThreshold: 1
-    AntiJitterDistance: {x: 0.025, y: 0.01}
-    StepHeight: 0.5
-    StepDepth: 0.2
-    StepSpeed: 1
-    SnapDistance: 0.25
-    SnapSpeed: 4
 --- !u!114 &7044020874265611949
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -608,12 +579,41 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4910098564648988719}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f8f91f630adc5204694e199f934eb86e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   managedState: {fileID: 0}
+--- !u!114 &-8376342315293501503
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4910098564648988719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1869825851, guid: 977dbcf975465374990f471e1497f563, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _settings:
+    Shape: 1
+    IsTrigger: 0
+    Radius: 0.35
+    Height: 1.8
+    Extent: 0.035
+    ColliderLayer: 0
+    CollisionLayerMask:
+      serializedVersion: 2
+      m_Bits: 1
+    TeleportThreshold: 1
+    AntiJitterDistance: {x: 0.025, y: 0.01}
+    StepHeight: 0.5
+    StepDepth: 0.2
+    StepSpeed: 1
+    SnapDistance: 0.25
+    SnapSpeed: 4
 --- !u!1 &5293648659765142871
 GameObject:
   m_ObjectHideFlags: 0

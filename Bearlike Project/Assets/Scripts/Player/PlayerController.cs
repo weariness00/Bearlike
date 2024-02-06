@@ -24,7 +24,6 @@ namespace Script.Player
         
         [HideInInspector] public SimpleKCC simpleKcc;
         private NetworkMecanimAnimator _networkAnimator;
-        [Networked] private NetworkButtons _prevInput { get; set; }
         private void Awake()
         {
             // 임시로 장비 착용
@@ -55,16 +54,19 @@ namespace Script.Player
 
         public override void FixedUpdateNetwork()
         {
-            if (HasInputAuthority == false)
-            {
-                return;
-            }
-            
-            if (Cursor.lockState == CursorLockMode.None)
-            {
-                DebugManager.ToDo("return 되면 플레이어의  위치가 고정되는 문제 해결 찾기");
-                return;
-            }
+            // return을 하면 플레이어가 고정됨 이유 모름
+            // if (HasInputAuthority == false)
+            // {
+            //     MouseRotateControl();
+            //     MoveControl();
+            //     return;
+            // }
+            //
+            // if (Cursor.lockState == CursorLockMode.None)
+            // {
+            //     DebugManager.ToDo("return 되면 플레이어의  위치가 고정되는 문제 해결 찾기");
+            //     return;
+            // }
 
             var spawnPosition = UserData.Instance.UserDictionary[Runner.LocalPlayer].TeleportPosition;
             if (spawnPosition.Count != 0)
@@ -81,41 +83,34 @@ namespace Script.Player
             }
         }
 
-        private void MoveControl(PlayerInputData data)
+        private void MoveControl(PlayerInputData data = default)
         {
             Vector3 dir = Vector3.zero;
             Vector3 jumpImpulse = default;
-            // if (data.MoveFront)
-            //     dir += transform.forward;
-            // if (data.MoveBack)
-            //     dir += -transform.forward;
-            // if (data.MoveLeft)
-            //     dir += -transform.right;
-            // if (data.MoveRight)
-            //     dir += transform.right;
-
-            if (data.Buttons.WasPressed(_prevInput, KeyToAction.MoveFront))
+            if (data.MoveFront)
                 dir += transform.forward;
-            if (data.Buttons.WasPressed(_prevInput, KeyToAction.MoveBack))
+            if (data.MoveBack)
                 dir += -transform.forward;
-            if (data.Buttons.WasPressed(_prevInput, KeyToAction.MoveLeft))
+            if (data.MoveLeft)
                 dir += -transform.right;
-            if (data.Buttons.WasPressed(_prevInput, KeyToAction.MoveRight))
+            if (data.MoveRight)
                 dir += transform.right;
+
             dir *= Runner.DeltaTime * 100f;
             
-            if (data.Buttons.WasPressed(_prevInput, KeyToAction.Jump)) 
+            if (data.Jump) 
             {
                 jumpImpulse = Vector3.up * 100;
             }
+
+            transform.position += dir;
             
             simpleKcc.Move(dir, jumpImpulse);
-            _prevInput = data.Buttons;
         }
         
         public float rotateSpeed = 500.0f;
         float xRotate, yRotate, xRotateMove, yRotateMove;
-        public void MouseRotateControl(Vector2 mouseAxis)
+        public void MouseRotateControl(Vector2 mouseAxis = default)
         {
             if (mouseAxis == Vector2.zero)
             {

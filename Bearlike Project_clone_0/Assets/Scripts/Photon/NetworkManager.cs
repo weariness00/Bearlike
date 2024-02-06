@@ -378,32 +378,32 @@ namespace Photon
         {
             var playerInputData = new PlayerInputData();
 
-            foreach (var action in  (KeyToAction[])Enum.GetValues(typeof(KeyToAction)))
-            {
-                playerInputData.Buttons.Set(action, KeyManager.InputAction(action));
-            }
-            // if (KeyManager.InputAction(KeyToAction.MoveFront))
-            //     playerInputData.MoveFront = true;
-            // if (KeyManager.InputAction(KeyToAction.MoveBack))
-            //     playerInputData.MoveBack = true;
-            // if (KeyManager.InputAction(KeyToAction.MoveLeft))
-            //     playerInputData.MoveLeft = true;
-            // if (KeyManager.InputAction(KeyToAction.MoveRight))
-            //     playerInputData.MoveRight = true;
-            //
-            // if (KeyManager.InputAction(KeyToAction.Jump))
+            // foreach (var action in (KeyToAction[])Enum.GetValues(typeof(KeyToAction)))
             // {
-            //     playerInputData.Jump = true;
+            //     playerInputData.Buttons.Set(action, KeyManager.InputAction(action));
             // }
-            //
-            // if (KeyManager.InputActionDown(KeyToAction.ReLoad))
-            //     playerInputData.ReLoad = true;
-            //
-            // if (KeyManager.InputAction(KeyToAction.Attack))
-            //     playerInputData.Attack = true;
+            if (KeyManager.InputAction(KeyToAction.MoveFront))
+                playerInputData.MoveFront = true;
+            if (KeyManager.InputAction(KeyToAction.MoveBack))
+                playerInputData.MoveBack = true;
+            if (KeyManager.InputAction(KeyToAction.MoveLeft))
+                playerInputData.MoveLeft = true;
+            if (KeyManager.InputAction(KeyToAction.MoveRight))
+                playerInputData.MoveRight = true;
+            
+            if (KeyManager.InputAction(KeyToAction.Jump))
+            {
+                playerInputData.Jump = true;
+            }
+            
+            if (KeyManager.InputActionDown(KeyToAction.ReLoad))
+                playerInputData.ReLoad = true;
+            
+            if (KeyManager.InputAction(KeyToAction.Attack))
+                playerInputData.Attack = true;
 
-            // if (KeyManager.InputActionDown(KeyToAction.Esc))
-            //     OnPlayerLeft(runner, runner.LocalPlayer);
+            if (KeyManager.InputActionDown(KeyToAction.Esc))
+                OnPlayerLeft(runner, runner.LocalPlayer);
 
             playerInputData.MouseAxis.x = Input.GetAxis("Mouse X");
             playerInputData.MouseAxis.y = Input.GetAxis("Mouse Y");
