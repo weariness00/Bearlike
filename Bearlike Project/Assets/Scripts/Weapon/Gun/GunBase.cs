@@ -126,10 +126,7 @@ namespace Script.Weapon.Gun
             
             float damageMultiplier = enemyHitbox is TestBodyHitbox bodyHitbox ? bodyHitbox.damageMultiplier : 1f;
             
-            // if (enemyState.ApplyDamageRPC(state.attack.Current * damageMultiplier, (ObjectProperty)state.property) == false) // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
-            // {
-            //     return;
-            // }
+            // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
             enemyState.ApplyDamageRPC(state.attack.Current * damageMultiplier, (ObjectProperty)state.property);
         }
 
