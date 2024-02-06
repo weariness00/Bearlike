@@ -128,6 +128,7 @@ namespace Manager
                     // NetworkManager.UnloadScene(stage.sceneReference.ScenePath);
                     
                     _mapGenerate.AddMap(stageLevelBase.MapInfo);
+                    stageLevelBase.StageSetting();
                     break;
                 }
             }

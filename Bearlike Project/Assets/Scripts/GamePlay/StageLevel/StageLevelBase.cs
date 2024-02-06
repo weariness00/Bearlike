@@ -61,6 +61,7 @@ namespace GamePlay.StageLevel
             switch (stageLevelInfo.StageLevelType)
             {
                 case StageLevelType.Destroy:
+                    DestroyInit();
                     _updateStageAction = DestroyUpdate;
                     break;
             }
@@ -116,11 +117,11 @@ namespace GamePlay.StageLevel
         {
             foreach (var monsterSpawner in monsterSpawnerList)
             {
-                if (monsterSpawner.spawnObjectList.Count == 0)
-                {
-                    DebugManager.LogWarning("스폰할 몬스터가 리스트에 없습니다.");
-                    continue;
-                }
+                // if (monsterSpawner.spawnObjectList.Count == 0)
+                // {
+                //     DebugManager.LogWarning("스폰할 몬스터가 리스트에 없습니다.");
+                //     continue;
+                // }
                 if (stageLevelInfo.AliveMonsterCount.isMax)
                 {
                     break;

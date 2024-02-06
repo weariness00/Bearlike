@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5713381459070474948}
   - component: {fileID: 1447030405736922233}
   - component: {fileID: 8025208599522178229}
-  - component: {fileID: 2754069817133072123}
+  - component: {fileID: 1909804824452287708}
   m_Layer: 31
   m_Name: Destory Stage Data
   m_TagString: Untagged
@@ -62,7 +62,6 @@ MonoBehaviour:
       isMin: 0
       isMax: 0
   isStageClear: 0
-  nextStageSceneIndex: 3
   stageGameObject: {fileID: 0}
   _mapInfoMono: {fileID: 5713381459070474948}
   monsterSpawnerList:
@@ -136,10 +135,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SyncScale: 0
-  SyncParent: 1
+  SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0
---- !u!114 &2754069817133072123
+--- !u!114 &1909804824452287708
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -151,7 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SortKey: 75631492
+  SortKey: 3403019673
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []

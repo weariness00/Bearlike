@@ -308,7 +308,7 @@ MonoBehaviour:
   spawnObjectOrders: 
   spawnPlace:
     _spotList:
-    - {fileID: 354704604}
+    - {fileID: 1710968086}
     - {fileID: 750807270}
   spawnPlaceOrders: 
   spawnIntervals: []
@@ -371,79 +371,46 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1909804824452287708, guid: fe48cae74f1bd2a4d9af117ca76f8e11,
+        type: 3}
+      propertyPath: SortKey
+      value: 3298936569
+      objectReference: {fileID: 0}
     - target: {fileID: 2330416457773590121, guid: fe48cae74f1bd2a4d9af117ca76f8e11,
         type: 3}
       propertyPath: stageGameObject
       value: 
       objectReference: {fileID: 42810325}
+    - target: {fileID: 2330416457773590121, guid: fe48cae74f1bd2a4d9af117ca76f8e11,
+        type: 3}
+      propertyPath: destroyTimeLimit._max
+      value: 600
+      objectReference: {fileID: 0}
+    - target: {fileID: 2330416457773590121, guid: fe48cae74f1bd2a4d9af117ca76f8e11,
+        type: 3}
+      propertyPath: monsterKillCount._max
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2330416457773590121, guid: fe48cae74f1bd2a4d9af117ca76f8e11,
+        type: 3}
+      propertyPath: monsterParentTransform
+      value: 
+      objectReference: {fileID: 2096895239}
+    - target: {fileID: 2330416457773590121, guid: fe48cae74f1bd2a4d9af117ca76f8e11,
+        type: 3}
+      propertyPath: monsterSpawnerList.Array.data[0]
+      value: 
+      objectReference: {fileID: 354704606}
     - target: {fileID: 3775322230510242185, guid: fe48cae74f1bd2a4d9af117ca76f8e11,
         type: 3}
       propertyPath: m_Name
       value: Destory Stage Data
       objectReference: {fileID: 0}
-    - target: {fileID: 8025208599522178229, guid: fe48cae74f1bd2a4d9af117ca76f8e11,
-        type: 3}
-      propertyPath: SyncParent
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3775322230510242185, guid: fe48cae74f1bd2a4d9af117ca76f8e11,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 381942110}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fe48cae74f1bd2a4d9af117ca76f8e11, type: 3}
---- !u!114 &381942108 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2330416457773590121, guid: fe48cae74f1bd2a4d9af117ca76f8e11,
-    type: 3}
-  m_PrefabInstance: {fileID: 381942107}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 381942109}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee50bbc78ce44e48bf6377f60ce7f201, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &381942109 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3775322230510242185, guid: fe48cae74f1bd2a4d9af117ca76f8e11,
-    type: 3}
-  m_PrefabInstance: {fileID: 381942107}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &381942110
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 381942109}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SortKey: 2682455412
-  ObjectInterest: 1
-  Flags: 262145
-  NestedObjects: []
-  NetworkedBehaviours:
-  - {fileID: 381942108}
-  - {fileID: 381942111}
---- !u!114 &381942111 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8025208599522178229, guid: fe48cae74f1bd2a4d9af117ca76f8e11,
-    type: 3}
-  m_PrefabInstance: {fileID: 381942107}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 381942109}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &750807269
 GameObject:
   m_ObjectHideFlags: 0

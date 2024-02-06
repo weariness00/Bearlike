@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Fusion;
 using Script.GamePlay;
+using Script.Manager;
 using Scripts.State.GameStatus;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -39,21 +40,30 @@ namespace Script.Photon
         public Action<GameObject> SpawnSuccessAction;
         private Coroutine _currentSpawnCoroutine = null;
 
-        public override void Spawned()
+        public void Start()
         {
-            if (spawnPlace.Length == 0)
-            {
-                _currentSpawnPlace = gameObject.transform;
-            }
-
             if (isStartSpawn)
             {
                 SpawnStart();
             }
         }
 
+        public override void Spawned()
+        {
+            if (spawnPlace.Length == 0)
+            {
+                _currentSpawnPlace = gameObject.transform;
+            }
+        }
+
         public void SpawnStart()
         {
+            if (spawnObjectList.Count == 0)
+            {
+                DebugManager.LogWarning($"{name}에 스폰할 네트워크 객체가 없습니다.");
+                return;
+            }
+            
             spawnPlace.Initialize();
 
             _spawnPlaceCount = -1;
@@ -149,6 +159,9 @@ namespace Script.Photon
             NextObject();
             NextPlace();
             NextInterval();
+            
+            DebugManager.Log("네트워크 객체 소환\n" +
+                             $"이름 : {obj.name}");
         }
 
         private IEnumerator SpawnCoroutine()
