@@ -1,4 +1,5 @@
 ﻿using Fusion;
+using Inho_Test_.Player;
 using Script.Manager;
 using Scripts.State.GameStatus;
 using State;
@@ -100,11 +101,12 @@ namespace Script.Weapon.Gun
             if(Runner.LagCompensation.Raycast(ray.origin, ray.direction, float.MaxValue, Runner.LocalPlayer, out var hit))
             {
                 DebugManager.Log($"Ray충돌\n총 이름 : {name}\n맞은 대상 : {hit.Hitbox.name}");
-                var hitState = hit.Hitbox.GetComponent<StateSystem>().State;
+                var hitState = hit.Hitbox.Root.GetComponent<StateSystem>().State;
 
                 if (hitState != null)
                 {
-                    hitState.ApplyDamage(state.attack.Current, (ObjectProperty)state.property); // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
+                    // hitState.ApplyDamage(state.attack.Current, (ObjectProperty)state.property); // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
+                    ApplyDamage(hit.Hitbox);
                     hitState.ShowInfo();
                 }
                 detination = hit.Point;
@@ -117,15 +119,19 @@ namespace Script.Weapon.Gun
             return detination;
         }
         
-        private void ApplyDamage(Hitbox playerHitbox)
+        private void ApplyDamage(Hitbox enemyHitbox)
         {
-            var playerStateSystem = playerHitbox.Root.GetComponent<StateSystem>();
-            var playerState = playerStateSystem.State;
+            var enemyState = enemyHitbox.Root.GetComponent<MonsterState>();
 
-            var monsterStateSystem = gameObject.GetComponent<StateSystem>();
-            var monsterState = monsterStateSystem.State;
+            if (enemyState == null || enemyState._hp.isMin)
+            {
+                return;
+            }
             
-            playerState.ApplyDamage(monsterState.attack.Current, (ObjectProperty)monsterState.property);
+            float damageMultiplier = enemyHitbox is TestBodyHitbox bodyHitbox ? bodyHitbox.damageMultiplier : 1f;
+            
+            // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
+            enemyState.ApplyDamageRPC(state.attack.Current * damageMultiplier, (ObjectProperty)state.property);
         }
 
         #region Bullet Funtion

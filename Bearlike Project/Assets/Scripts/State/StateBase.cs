@@ -20,8 +20,9 @@ namespace State.StateClass.Base
     /// </summary>
     public abstract class StateBase : NetworkBehaviour
     {
-        // Member Variable
-        public StatusValue<int> hp = new StatusValue<int>();                              // 체력        
+        #region Member Variable
+
+        public StatusValue<int> _hp = new StatusValue<int>();                              // 체력        
         public StatusValue<int> attack = new StatusValue<int>();               // 공격력
         public StatusValue<int> defence = new StatusValue<int>();              // 방어력
         public StatusValue<float> avoid = new StatusValue<float>();           // 회피
@@ -30,23 +31,41 @@ namespace State.StateClass.Base
 
         public StatusValue<int> force = new StatusValue<int>();               // 힘
         public int condition;                                               // 상태
-
-        public int property = 0;
-
-        #region Variable Paramiter
-        public bool IsDie => hp.isMin;
+        public int property;                                                // 속성
 
         #endregion
-        
-        // Member Function
-        public abstract void Initialization();
-        public abstract void MainLoop();
-        
-        public abstract bool ApplyDamage(float damage, ObjectProperty property); // MonsterRef instigator,
-        // public abstract void BePoisoned();
 
-        // DeBug Function
+        #region Variable Paramiter
+        
+        public bool IsDie => _hp.isMin;
+
+        #endregion
+
+        #region Member Function
+
+        public abstract void MainLoop();
+
+        #endregion
+
+        #region HP Function
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public virtual void ApplyDamageRPC(float damage, ObjectProperty property, RpcInfo info = default)
+        {
+            ApplyDamage(damage, property);
+            
+            // TODO : Dubug
+            ShowInfo();
+        }
+        public abstract void ApplyDamage(float damage, ObjectProperty property); // MonsterRef instigator,
+
+        #endregion
+
+        #region DeBug Function
+        
         public abstract void ShowInfo();
+
+        #endregion
 
         #region Condition Interface Functon
 
@@ -61,6 +80,5 @@ namespace State.StateClass.Base
         public abstract void DelCondition(ObjectProperty condition);
         
         #endregion
-
     }
 }
