@@ -292,12 +292,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isStartSpawn: 1
+  isLoop: 1
   isRandomObject: 0
   isRandomPlace: 0
   isRandomInterval: 0
   spawnCount:
     _min: 0
-    _max: 10
+    _max: 1
     _current: 0
     isOverMax: 0
     isOverMin: 0
@@ -312,7 +313,6 @@ MonoBehaviour:
     - {fileID: 750807270}
   spawnPlaceOrders: 
   spawnIntervals: []
-  networkObjects: []
 --- !u!1001 &381942107
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -389,7 +389,7 @@ PrefabInstance:
     - target: {fileID: 2330416457773590121, guid: fe48cae74f1bd2a4d9af117ca76f8e11,
         type: 3}
       propertyPath: monsterKillCount._max
-      value: 100
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2330416457773590121, guid: fe48cae74f1bd2a4d9af117ca76f8e11,
         type: 3}

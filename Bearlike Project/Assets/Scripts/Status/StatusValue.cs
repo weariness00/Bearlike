@@ -47,12 +47,12 @@ namespace Scripts.State.GameStatus
             isMin = isMax = false;
             if (_current.CompareTo(_min) <= 0)
             {
-                if(isOverMin) {_current = _min;}
+                if(isOverMin == false) {_current = _min;}
                 isMin = true;
             }
             else if (_current.CompareTo(_max) >= 0)
             {
-                if(isOverMax) {_current = _max;}
+                if(isOverMax == false) {_current = _max;}
                 isMax = true;
             }
         }

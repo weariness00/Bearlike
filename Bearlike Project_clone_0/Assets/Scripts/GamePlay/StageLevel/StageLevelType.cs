@@ -3,7 +3,6 @@
     [System.Serializable]
     public enum StageLevelType
     {
-        None,
         Destroy,
         Survive,
         Trap,

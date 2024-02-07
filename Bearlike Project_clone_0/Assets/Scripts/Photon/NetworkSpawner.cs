@@ -15,6 +15,7 @@ namespace Script.Photon
     public class NetworkSpawner : NetworkBehaviour
     {
         public bool isStartSpawn = false; // 이 컴포넌트가 생성되자마자 스폰하게 할 것인지
+        public bool isLoop = false; // spawnCount가 max가 아니면 계속 소환하게 할 것인지
         
         // 해당 random은 아래의 리스트의 원소상에서의 랜덤임
         public bool isRandomObject = false; // 랜덤한 객체를 소환할 것인지
@@ -36,9 +37,8 @@ namespace Script.Photon
         private int _spawnIntervalCount;
         [Networked] private TickTimer CurrentSpawnInterval { get; set; } // 현재 스폰 간격
         
-        [HideInInspector] public List<NetworkObject> networkObjects;
-        public Action<GameObject> SpawnSuccessAction;
-        private Coroutine _currentSpawnCoroutine = null;
+        public Action<GameObject> SpawnSuccessAction; // 스폰 되면 실행하는 이벤트
+        private Coroutine _currentSpawnCoroutine = null; // 스폰 코루틴
 
         public void Start()
         {
@@ -177,9 +177,13 @@ namespace Script.Photon
             {
                 yield return null;
                 if (CurrentSpawnInterval.Expired(Runner) == false) continue; // 스폰 간격만큼의 시간이 지났는지 확인
+                if (spawnCount.isMax)
+                {
+                    if (isLoop) continue;
+                    SpawnStop();
+                }
                 yield return SpawnTask();
                 ++spawnCount.Current;
-                if (spawnCount.isMax) SpawnStop();
             }
         }
     }

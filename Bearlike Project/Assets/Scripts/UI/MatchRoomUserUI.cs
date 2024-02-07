@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Fusion;
+using GamePlay.StageLevel;
 using Script.Data;
 using Script.Manager;
 using Script.Photon;
@@ -19,4 +20,3 @@ public class MatchRoomUserUI : MonoBehaviour
         }
     }
 }
-

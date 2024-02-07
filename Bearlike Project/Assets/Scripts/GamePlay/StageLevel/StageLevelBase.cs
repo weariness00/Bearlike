@@ -16,8 +16,10 @@ namespace GamePlay.StageLevel
 {
     public class StageLevelBase : NetworkBehaviour
     {
+        public static Action stageClearAction = null; // 모든 스테이지에서 공통적으로 쓰이기 떄문에 전역으로 처리함
+        
         public SceneReference sceneReference;
-        private Action _updateStageAction = null;
+        private Action _stageUpdateAction = null;
         
         #region Stage Info Variable
 
@@ -40,7 +42,6 @@ namespace GamePlay.StageLevel
 
         #endregion
         
-        
         #region Destroy Variable
 
         public StatusValue<float> destroyTimeLimit = new StatusValue<float>();
@@ -62,7 +63,7 @@ namespace GamePlay.StageLevel
             {
                 case StageLevelType.Destroy:
                     DestroyInit();
-                    _updateStageAction = DestroyUpdate;
+                    _stageUpdateAction = DestroyUpdate;
                     break;
             }
         }
@@ -71,12 +72,13 @@ namespace GamePlay.StageLevel
         {
             stageLevelInfo.AliveMonsterCount.isOverMax = true;
             if (monsterParentTransform == null) { monsterParentTransform = gameObject.transform; }
+
+            stageClearAction += StopMonsterSpawn;
         }
 
         public override void FixedUpdateNetwork()
         {
-            base.FixedUpdateNetwork();
-            _updateStageAction?.Invoke();
+            _stageUpdateAction?.Invoke();
         }
 
         #endregion
@@ -87,14 +89,15 @@ namespace GamePlay.StageLevel
         public void StageInitRPC() => StageInit();
         public void StageInit()
         {
-            stageGameObject.transform.position = MapInfo.pivot;
-            stageGameObject.SetActive(true);
-            
-            if(stageGameObject.GetComponentInChildren<EventSystem>() != null){Destroy(stageGameObject.GetComponentInChildren<EventSystem>().gameObject);}
+           if(stageGameObject.GetComponentInChildren<EventSystem>() != null){Destroy(stageGameObject.GetComponentInChildren<EventSystem>().gameObject);}
             if(stageGameObject.GetComponentInChildren<Camera>() != null){Destroy(stageGameObject.GetComponentInChildren<Camera>().gameObject);}
             
             Runner.MoveGameObjectToSameScene(gameObject, GameManager.Instance.gameObject);
             Runner.MoveGameObjectToSameScene(stageGameObject, GameManager.Instance.gameObject);
+            
+            gameObject.transform.position = MapInfo.pivot;
+            stageGameObject.transform.position = MapInfo.pivot;
+            stageGameObject.SetActive(true);
         }
 
         // 스테이지 타입에 맞지 않는 멥버 변수 메모리 해제
@@ -117,24 +120,32 @@ namespace GamePlay.StageLevel
         {
             foreach (var monsterSpawner in monsterSpawnerList)
             {
-                // if (monsterSpawner.spawnObjectList.Count == 0)
-                // {
-                //     DebugManager.LogWarning("스폰할 몬스터가 리스트에 없습니다.");
-                //     continue;
-                // }
                 if (stageLevelInfo.AliveMonsterCount.isMax)
                 {
                     break;
                 }
                 stageLevelInfo.AliveMonsterCount.Current += monsterSpawner.spawnCount.Max;
                 monsterSpawner.SpawnSuccessAction += (obj) =>
-                {
+                {   
                     obj.transform.parent = monsterParentTransform;
                     
                     var monster = obj.GetComponent<MonsterBase>();
-                    monster.DieAction += () => { --stageLevelInfo.AliveMonsterCount.Current; };
+                    monster.DieAction += () =>
+                    {
+                        --stageLevelInfo.AliveMonsterCount.Current;
+                        --monsterSpawner.spawnCount.Current;
+                        ++monsterKillCount.Current;
+                    };
                 };
                 monsterSpawner.SpawnStart();
+            }
+        }
+
+        public void StopMonsterSpawn()
+        {
+            foreach (var monsterSpawner in monsterSpawnerList)
+            {
+                monsterSpawner.SpawnStop();
             }
         }
 
@@ -160,13 +171,15 @@ namespace GamePlay.StageLevel
                 DebugManager.Log("스테이지 클리어\n" +
                                  $"스테이지 모드 :{stageLevelInfo.StageLevelType}");
                 isStageClear = true;
-                _updateStageAction -= DestroyUpdate;
+                _stageUpdateAction -= DestroyUpdate;
                 DestroyClear();
+                
+                stageClearAction?.Invoke();
             }
             else if (destroyTimeLimit.isMax)
             {
                 DestroyOver();
-                _updateStageAction = null;
+                _stageUpdateAction = null;
                 return;
             }
         }

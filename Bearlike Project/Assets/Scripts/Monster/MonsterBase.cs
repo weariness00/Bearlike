@@ -1,6 +1,7 @@
 ﻿using System;
 using Fusion;
 using Item.Looting;
+using Script.Manager;
 using Script.Util;
 using Scripts.State.GameStatus;
 using State.StateClass;
@@ -33,10 +34,11 @@ namespace Script.Monster
 
         public override void FixedUpdateNetwork()
         {
-            base.FixedUpdateNetwork();
             if (status.IsDie)
             {
                 DieAction?.Invoke();
+                Destroy(gameObject);
+                DebugManager.Log($"몬스터[{name}]이 사망했습니다.");
             }
         }
     }

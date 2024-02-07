@@ -24,7 +24,6 @@ namespace Manager
         [SerializeField]private SpawnPlace _spawnPlace = new SpawnPlace();
 
         private MapGenerate _mapGenerate = new MapGenerate();
-        public Action stageClearAction;
         
         [Header("스테이지")]
         public StageLevelBase defaultStage;
@@ -89,8 +88,7 @@ namespace Manager
         }
 
         #endregion
-
-
+        
         #region Stage Logic Function
         
         public StageLevelBase GetRandomStage() => GetStageIndex(Random.Range(0, stageList.Count));
@@ -135,18 +133,7 @@ namespace Manager
         }
 
         public void SetStage(int index) => SetStage(stageList.Count < index ? null : stageList[index]);
-
-        public void StageClear(StageLevelBase stage)
-        {
-            stageCount.Current++;
-            if (stageCount.isMax)
-            {
-                
-            }
-
-            stageClearAction?.Invoke();
-        }
-
+        
         #endregion
     }
 }

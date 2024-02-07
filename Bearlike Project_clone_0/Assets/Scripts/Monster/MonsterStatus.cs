@@ -1,5 +1,6 @@
 ﻿using System;
 using Fusion;
+using Script.Manager;
 using State.StateClass.Base;
 using Unity.Mathematics;
 using UnityEngine;
@@ -14,7 +15,7 @@ namespace State.StateClass
     {
         public void Awake()
         {
-            _hp.Max = 1000;
+            _hp.Max = 100;
             _hp.Min = 0;
             _hp.Current = 1000;
 
@@ -67,7 +68,7 @@ namespace State.StateClass
         
         public override void ApplyDamage(float damage, CrowdControl property)
         {
-            if (_hp.Current < 0)
+            if (_hp.isMin)
             {
                 return;
             }
@@ -100,7 +101,7 @@ namespace State.StateClass
         // DeBug Function
         public override void ShowInfo()
         {
-            Debug.Log($"체력 : " +  _hp.Current + $" 공격력 : " + attack.Current + $" 공격 속도 : " + attackSpeed.Current + $" 상태 : " + (CrowdControl)condition);    // condition이 2개 이상인 경우에는 어떻게 출력?
+            DebugManager.Log($"체력 : " +  _hp.Current + $" 공격력 : " + attack.Current + $" 공격 속도 : " + attackSpeed.Current + $" 상태 : " + (CrowdControl)condition);    // condition이 2개 이상인 경우에는 어떻게 출력?
         }
         
         

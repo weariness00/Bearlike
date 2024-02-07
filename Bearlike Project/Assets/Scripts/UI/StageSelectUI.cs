@@ -17,32 +17,11 @@ namespace UI
         public Transform stageToggleGroup;
         public GameObject togglePrefab;
         private List<GameObject> _toggleObjectList = new List<GameObject>();
-
-        #region Vraiable RPC Function
-
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-        public void AddNextStageListRPC(StageLevelType stageLevelType)
-        {
-            if (nextStageList.Count >= StageChoiceCount)
-            {
-                nextStageList.Clear();
-            }
-
-            var stage = GameManager.Instance.GetStageIndex((int)stageLevelType);
-            nextStageList.Add(stage);
-        }
-
-        #endregion
         
-        private void Start()
-        {
-            GameManager.Instance.stageClearAction += SettingStageUI;
-        }
-
         public override void Spawned()
         {
-            base.Spawned();
-            // SettingStageUI();
+            StageLevelBase.stageClearAction += SettingStageUI;
+            SettingStageUI();
         }
 
         public void SettingStageUI()
@@ -74,12 +53,12 @@ namespace UI
                         SelectStageIndex.Set(i, SelectStageIndex.Get(index) - 1);
                     }
                 });
-                
-                AddNextStageListRPC(GameManager.Instance.GetRandomStage().stageLevelInfo.StageLevelType);
-
                 toggleObject.SetActive(true);
+                AddNextStageListRPC(GameManager.Instance.GetRandomStage().stageLevelInfo.StageLevelType);
+                
                 _toggleObjectList.Add(toggleObject);
             }
+            gameObject.SetActive(true);
         }
 
         public void SetStage()
@@ -97,6 +76,22 @@ namespace UI
             
             gameObject.SetActive(false);
         }
+        
+        #region Vraiable RPC Function
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        public void AddNextStageListRPC(StageLevelType stageLevelType)
+        {
+            if (nextStageList.Count >= StageChoiceCount)
+            {
+                nextStageList.Clear();
+            }
+
+            var stage = GameManager.Instance.GetStageIndex((int)stageLevelType);
+            nextStageList.Add(stage);
+        }
+
+        #endregion
     }
 }
 
