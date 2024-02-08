@@ -9,10 +9,7 @@ namespace BehaviorTree.Base
     {
         private List<INode> _childs;
 
-        public SelectorNode(List<INode> childs)
-        {
-            _childs = childs;
-        }
+        public SelectorNode(List<INode> childs) => _childs = childs;
         
         public INode.NodeState Evaluate()
         {
@@ -25,8 +22,8 @@ namespace BehaviorTree.Base
             {
                 switch (child.Evaluate())
                 {
-                    case INode.NodeState.Runnung:
-                        return INode.NodeState.Runnung;
+                    case INode.NodeState.Running:
+                        return INode.NodeState.Running;
                     case INode.NodeState.Success:
                         return INode.NodeState.Success;
                     // 생략
