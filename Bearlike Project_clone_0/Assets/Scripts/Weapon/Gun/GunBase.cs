@@ -29,6 +29,11 @@ namespace Script.Weapon.Gun
         public float bulletFirePerMinute; // 분당 총알 발사량
         public StatusValue<float> fireLateSecond = new StatusValue<float>(); // 총 발사후 기다리는 시간
         public StatusValue<float> reloadLateSecond = new StatusValue<float>(){Max = 1, Current = float.MaxValue}; // 재장전 시간
+
+        [Header("성능")] 
+        public StatusValue<int> attack = new StatusValue<int>();     // 공격력
+        public int property;                // 속성
+        
         
         public override void Awake()
         {
@@ -121,8 +126,13 @@ namespace Script.Weapon.Gun
         
         private void ApplyDamage(Hitbox enemyHitbox)
         {
-            var enemyState = enemyHitbox.Root.GetComponent<MonsterStatus>();
+            var enemyState = enemyHitbox.Root.GetComponent<StatusBase>();
 
+            if (enemyState.gameObject.CompareTag("Player"))
+            {
+                return;
+            }
+            
             if (enemyState == null || enemyState._hp.isMin)
             {
                 return;
@@ -131,7 +141,7 @@ namespace Script.Weapon.Gun
             float damageMultiplier = enemyHitbox is TestBodyHitbox bodyHitbox ? bodyHitbox.damageMultiplier : 1f;
             
             // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
-            enemyState.ApplyDamageRPC(status.attack.Current * damageMultiplier, (CrowdControl)status.property);
+            enemyState.ApplyDamageRPC((status.attack.Current + attack.Current) * damageMultiplier, (CrowdControl)status.property);
         }
 
         #region Bullet Funtion

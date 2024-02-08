@@ -1,4 +1,5 @@
 using State;
+using State.StateClass;
 using State.StateClass.Base;
 using UnityEngine;
 
@@ -43,17 +44,17 @@ public class TestPlayerController : MonoBehaviour
         {
             if (collision.gameObject.name == "PoisonSphere")
             {
-                var state = transform.parent.gameObject.GetComponent<StatusSystem>().Status;
+                var state = transform.parent.gameObject.GetComponent<PlayerStatus>();
                 state.AddCondition(CrowdControl.Poisoned);
             }            
             else if (collision.gameObject.name == "WeakSphere")
             {
-                var state = transform.parent.gameObject.GetComponent<StatusSystem>().Status;
+                var state = transform.parent.gameObject.GetComponent<PlayerStatus>();
                 state.AddCondition(CrowdControl.Weak);
             }
             else if (collision.gameObject.name == "AntidoteSphere")
             {
-                var state = transform.parent.gameObject.GetComponent<StatusSystem>().Status;
+                var state = transform.parent.gameObject.GetComponent<PlayerStatus>();
                 state.DelCondition(CrowdControl.Poisoned);
                 state.DelCondition(CrowdControl.Weak);
             }

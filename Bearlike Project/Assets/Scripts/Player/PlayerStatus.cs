@@ -27,9 +27,9 @@ namespace State.StateClass
         #region Timer Property
         
         // public GameObject immortalityIndicator;
-        [Networked] private TickTimer _immortalTimer { get; set; }
+        [Networked] private TickTimer ImmortalTimer { get; set; }
         
-        public bool IsImmortal => _immortalTimer.ExpiredOrNotRunning(Runner) == false;
+        public bool IsImmortal => ImmortalTimer.ExpiredOrNotRunning(Runner) == false;
         
         #endregion
         
@@ -107,7 +107,7 @@ namespace State.StateClass
             _hp.Current -= value;
         }
         
-        public override void ApplyDamage(float damage, CrowdControl monsterProperty) // MonsterRef instigator,
+        public override void ApplyDamage(float damage, CrowdControl enemyProperty) // MonsterRef instigator,
         {
             if (_hp.Current < 0)
             {
@@ -124,7 +124,7 @@ namespace State.StateClass
                 return;
             }
             
-            AddCondition(monsterProperty);         // Monster의 속성을 Player상태에 적용
+            AddCondition(enemyProperty);         // Monster의 속성을 Player상태에 적용
             
             var damageRate = math.log10((damage / defence.Current) * 10);
 
@@ -161,7 +161,7 @@ namespace State.StateClass
         // LV
         public override void Spawned()
         {
-            _immortalTimer = TickTimer.CreateFromSeconds(Runner, immortalDurationAfterSpawn);
+            ImmortalTimer = TickTimer.CreateFromSeconds(Runner, immortalDurationAfterSpawn);
         }
 
         public override void Render()

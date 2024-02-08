@@ -3,6 +3,7 @@ using Fusion;
 using Script.Util;
 using Scripts.State.GameStatus;
 using State;
+using State.StateClass;
 using State.StateClass.Base;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -21,11 +22,11 @@ public interface IEquipment
 
 public class WeaponBase : NetworkBehaviour, IEquipment
 {
-    [FormerlySerializedAs("state")] public StatusBase status;
+    public StatusBase status;
 
     public virtual void Awake()
     {
-        status = gameObject.transform.root.GetOrAddComponent<StatusSystem>().Status;
+        status = gameObject.transform.root.GetOrAddComponent<StatusBase>();
     }
 
     public virtual void Start()
