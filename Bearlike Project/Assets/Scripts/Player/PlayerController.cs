@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using ExitGames.Client.Photon.StructWrapping;
 using Fusion;
 using Fusion.Addons.SimpleKCC;
+using Item;
 using Script.Data;
 using Script.Manager;
 using Script.Photon;
@@ -21,6 +23,9 @@ namespace Script.Player
 
         public IEquipment equipment;
         public StatusValue<int> ammo = new StatusValue<int>();
+
+        [Header("아이템")] 
+        public Dictionary<int, ItemBase> itemList = new Dictionary<int, ItemBase>();
         
         [HideInInspector] public SimpleKCC simpleKcc;
         private NetworkMecanimAnimator _networkAnimator;

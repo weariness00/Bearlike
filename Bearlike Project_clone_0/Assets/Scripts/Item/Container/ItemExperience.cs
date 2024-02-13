@@ -7,6 +7,17 @@ namespace Item.Container
     {
         public StatusValue<int> experienceAmount = new StatusValue<int>();
 
+        public override void GetItem<T>(T target)
+        {
+            if (target is PlayerController)
+            {
+                var pc = (PlayerController)(object)target;
+                pc.status.IncreaseExp(experienceAmount);
+
+                Destroy(gameObject);
+            }
+        }
+
         public override ItemJsonData GetJsonData()
         {
             var data = base.GetJsonData();
@@ -21,17 +32,5 @@ namespace Item.Container
             base.SetJsonData(json);
             experienceAmount = json.GetStatusValueInt("ExperienceAmount");
         }
-
-        public override void GetItem<T>(T target)
-        {
-            if (target is PlayerController)
-            {
-                var pc = (PlayerController)(object)target;
-                pc.status.IncreaseExp(experienceAmount);
-                
-                Destroy(gameObject);
-            }
-        }
     }
 }
-
