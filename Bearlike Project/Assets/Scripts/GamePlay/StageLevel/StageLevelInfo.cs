@@ -1,4 +1,6 @@
-﻿using Scripts.State.GameStatus;
+﻿using Fusion;
+using Scripts.State.GameStatus;
+using UnityEngine;
 
 namespace GamePlay.StageLevel
 {
@@ -6,6 +8,11 @@ namespace GamePlay.StageLevel
     public struct StageLevelInfo
     {
         public StageLevelType StageLevelType;
+        public string title;
+        public string explain;
+
+        public Texture2D image;
+        
         public StatusValue<int> AliveMonsterCount;
     }
 }

@@ -59,18 +59,6 @@ namespace Script.Player
 
         public override void FixedUpdateNetwork()
         {
-            // return을 하면 플레이어가 고정됨 이유 모름
-            // if (HasInputAuthority == false)
-            // {
-            //     MouseRotateControl();
-            //     MoveControl();
-            //     return;
-            // }
-            //
-            // if (Cursor.lockState == CursorLockMode.None)
-            // {
-            //     return;
-            // }
             DebugManager.ToDo("return 되면 플레이어의  위치가 고정되는 문제 해결 찾기");
 
             var spawnPosition = UserData.Instance.UserDictionary[Runner.LocalPlayer].TeleportPosition;
@@ -82,6 +70,9 @@ namespace Script.Player
 
             if (GetInput(out PlayerInputData data))
             {       
+                if(data.Cursor)
+                    return;
+                
                 MouseRotateControl(data.MouseAxis);
                 MoveControl(data);
                 WeaponControl(data);

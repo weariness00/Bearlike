@@ -13,6 +13,7 @@ namespace Script.Data
         public PlayerRef PlayerRef;
         public NetworkPrefabRef PrefabRef;
         public NetworkId NetworkId;
+        public int ClientNumber;
         [Networked, Capacity(1)]public NetworkLinkedList<Vector3> TeleportPosition { get;}
     }   
 
@@ -76,12 +77,14 @@ namespace Script.Data
         {
             if (Runner.IsServer)
             {
+                int clientIndex = 0;
                 foreach (var (key, value) in UserDictionary)
                 {
                     var userDataStruct = value;
                     var spawnObject = await Runner.SpawnAsync(value.PrefabRef, Vector3.zero, Quaternion.identity, value.PlayerRef);
                     
                     userDataStruct.NetworkId = spawnObject.Id;
+                    userDataStruct.ClientNumber = clientIndex++;
                     UserDictionary.Remove(key);
                     UserDictionary.Add(key, userDataStruct);
                 }

@@ -377,11 +377,19 @@ namespace Photon
         public void OnInput(NetworkRunner runner, NetworkInput input)
         {
             var playerInputData = new PlayerInputData();
+            
+            // 마우스 휠 클릭시 UI와 상호작용 할 수 있도록 플레이어 정지
+            if (Input.GetMouseButtonDown((int)MouseButton.Middle))
+            {
+                Cursor.lockState = Cursor.lockState == CursorLockMode.None ? CursorLockMode.Locked : CursorLockMode.None;
+            }
+            if (Cursor.lockState == CursorLockMode.None)
+            {
+                playerInputData.Cursor = true;
+                input.Set(playerInputData);
+                return;
+            }
 
-            // foreach (var action in (KeyToAction[])Enum.GetValues(typeof(KeyToAction)))
-            // {
-            //     playerInputData.Buttons.Set(action, KeyManager.InputAction(action));
-            // }
             if (KeyManager.InputAction(KeyToAction.MoveFront))
                 playerInputData.MoveFront = true;
             if (KeyManager.InputAction(KeyToAction.MoveBack))
@@ -404,16 +412,11 @@ namespace Photon
 
             if (KeyManager.InputActionDown(KeyToAction.Esc))
                 OnPlayerLeft(runner, runner.LocalPlayer);
-
+            
             playerInputData.MouseAxis.x = Input.GetAxis("Mouse X");
             playerInputData.MouseAxis.y = Input.GetAxis("Mouse Y");
 
             input.Set(playerInputData);
-
-            if (Input.GetMouseButtonDown((int)MouseButton.Middle))
-            {
-                Cursor.lockState = Cursor.lockState == CursorLockMode.None ? CursorLockMode.Locked : CursorLockMode.None;
-            }
         }
 
         public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)
