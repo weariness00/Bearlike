@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using BehaviorTree.Base;
 using Fusion;
-using Unity.VisualScripting;
 using UnityEngine;
 
-namespace BehaviorTree
+namespace Inho_Test_.BT
 {
     [RequireComponent(typeof(Animator))]
     public class TestMonsterAI : NetworkBehaviour
@@ -36,7 +33,6 @@ namespace BehaviorTree
         private void Update()
         {
             _BTRunner.Operator();
-            OnDrawGizmos();
         }
 
         INode SettingBT()
