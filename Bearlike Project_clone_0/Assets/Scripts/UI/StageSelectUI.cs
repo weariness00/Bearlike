@@ -1,14 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Linq;
 using Fusion;
 using GamePlay.StageLevel;
 using Manager;
+using Photon;
 using Script.Data;
 using Script.Manager;
-using Script.Photon;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace UI
@@ -19,9 +18,9 @@ namespace UI
 
         #region Network Variable
 
-        private NetworkButtons buttons;
+        private ChangeDetector _changeDetector;
         [Networked] private NetworkBool IsServerSetting { get; set; }
-        [Networked] [Capacity(3)] public NetworkArray<NetworkButtons> NetworkButtonsArray { get; }
+        [Networked] [Capacity(3)] private NetworkArray<NetworkBool> NetworkReadyArray { get; } // 투표를 마치고 준비가 되었는지
         [Networked] [Capacity(3)] public NetworkArray<int> StageVoteCount { get; }
         [Networked] [Capacity(3)] public NetworkArray<StageLevelType> NetworkStageLevelTypes { get; }
         [Networked] [Tooltip("스테이지 선택지 개수")] public int StageChoiceCount { get; set; } = 2;
@@ -38,34 +37,84 @@ namespace UI
 
         public override void Spawned()
         {
+            _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
+            
             clientNumber = UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber;
 
-            selectButton.onClick.AddListener(() => { buttons.Set(0, true); });
-
             StageLevelBase.stageClearAction += SettingServer;
-            StageLevelBase.stageClearAction += SettingStageUI;
-            SettingServer();
+            SettingStageInfo();
             SettingStageUI();
         }
-
-        public override void FixedUpdateNetwork()
+        
+        public override void Render()
         {
-            NetworkButtonsArray.Set(clientNumber, buttons);
+            foreach (var change in _changeDetector.DetectChanges(this))
+            {
+                switch (change)
+                {
+                    case nameof(StageVoteCount):
+                        UpdateVoteText();
+                        break;
+                    case nameof(IsServerSetting):
+                        if (IsServerSetting)
+                        {
+                            SettingStageUI();
+                        }
+                        break;
+                    case nameof(NetworkReadyArray):
+                        var readyCount = 0;
+                        foreach (var readyValue in NetworkReadyArray)
+                        {
+                            if (readyValue == false)
+                            {
+                                continue;
+                            }
+
+                            ++readyCount;
+                        }
+
+                        if (NetworkManager.PlayerCount == readyCount)
+                        {
+                            SetStage();
+                        }
+                        break;
+                }
+            }
+        }
+        
+        public void UpdateVoteText()
+        {
+            for (int i = 0; i < StageChoiceCount; i++)
+            {
+                int stageVoteCount = StageVoteCount.Get(i);
+                stageSelectUIHandlerList[i].voteText.text = stageVoteCount.ToString();
+            }
+        }
+
+        // 투표를 마쳤다는 표시
+        public void Ready()
+        {
+            ReadyRPC(clientNumber);
+            
+            DebugManager.ToDo("투표 관련 UI도 만들어주고 업데이트 해줘야한다.");
         }
 
         public void SettingStageInfo()
         {
-            for (int i = 0; i < StageChoiceCount; i++)
+            if (Runner.IsServer == false)
             {
-                var index = i;
-                var stage = GameManager.Instance.GetRandomStage();
-                NetworkStageLevelTypes.Set(index, stage.stageLevelInfo.StageLevelType);
+                for (int i = 0; i < StageChoiceCount; i++)
+                {
+                    var index = i;
+                    var stage = GameManager.Instance.GetRandomStage();
+                    NetworkStageLevelTypes.Set(index, stage.stageLevelInfo.StageLevelType);
+                }
             }
         }
 
         public void SettingServer()
         {
-            if (Runner.IsServer)
+            if (Runner.IsServer == false)
             {
                 IsServerSetting = false;
                 SettingStageInfo();
@@ -73,14 +122,8 @@ namespace UI
             }
         }
 
-        public void SettingStageUI() => StartCoroutine(SettingStageUICoroutine());
-        IEnumerator SettingStageUICoroutine()
+        void SettingStageUI()
         {
-            while (IsServerSetting == false)
-            {
-                yield return null;
-            }
-            
             foreach (var toggleObject in stageSelectUIHandlerList)
             {
                 Destroy(toggleObject);
@@ -90,23 +133,13 @@ namespace UI
             for (int i = 0; i < StageChoiceCount; i++)
             {
                 var index = i;
-                var stageType = NetworkStageLevelTypes.Get(index);
+                var stageType = NetworkStageLevelTypes.Get(i);
                 var stage = GameManager.Instance.GetStageIndex((int)stageType);
                 var stageSelectUIObject = Instantiate(stageSelectUIPrefab, stageToggleGroup);
                 var stageSelectUIHandler = stageSelectUIObject.GetComponent<StageSelectUIHandler>();
                 stageSelectUIHandler.toggle.onValueChanged.AddListener((value) =>
                 {
-                    var voteCount = StageVoteCount.Get(index);
-                    if (value)
-                    {
-                        StageVoteCount.Set(index, voteCount + 1);
-                    }
-                    else
-                    {
-                        StageVoteCount.Set(index, voteCount - 1);
-                    }
-
-                    UpdateVoteTextRPC();
+                    FixeVoteCountRPC(index, value);
                 });
                 stageSelectUIHandler.gameObject.SetActive(true);
                 stageSelectUIHandler.Setting(stage.stageLevelInfo);
@@ -124,31 +157,45 @@ namespace UI
 
         public void SetStage()
         {
-            int bicSelectIndex = 0;
-            for (int i = 0; i < StageVoteCount.Length; i++)
+            if (Runner.IsServer)
             {
-                int vote = StageVoteCount.Get(i);
-                if (bicSelectIndex < vote)
+                int bicSelectIndex = 0;
+                for (int i = 0; i < StageVoteCount.Length; i++)
                 {
-                    bicSelectIndex = i;
+                    int vote = StageVoteCount.Get(i);
+                    if (bicSelectIndex < vote)
+                    {
+                        bicSelectIndex = i;
+                    }
                 }
-            }
 
-            GameManager.Instance.SetStage(GameManager.Instance.stageList[bicSelectIndex]);
+                GameManager.Instance.SetStage(GameManager.Instance.stageList[bicSelectIndex]);
+            }
 
             gameObject.SetActive(false);
         }
 
         #region Vraiable RPC Function
-        
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        public void UpdateVoteTextRPC()
+
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void FixeVoteCountRPC(int index, bool value)
         {
-            for (int i = 0; i < StageChoiceCount; i++)
+            var voteCount = StageVoteCount.Get(index);
+            if (value)
             {
-                int stageVoteCount = StageVoteCount.Get(i);
-                stageSelectUIHandlerList[i].voteText.text = stageVoteCount.ToString();
+                StageVoteCount.Set(index, voteCount + 1);
             }
+            else
+            {
+                StageVoteCount.Set(index, voteCount - 1);
+            }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void ReadyRPC(int index)
+        {
+            var value = NetworkReadyArray.Get(index);
+            NetworkReadyArray.Set(index, !value);
         }
 
         #endregion

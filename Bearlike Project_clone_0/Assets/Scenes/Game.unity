@@ -197,7 +197,7 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 0
+  m_ChildScaleWidth: 1
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!1 &148781566
@@ -1087,7 +1087,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1557299803}
         m_TargetAssemblyTypeName: UI.StageSelectUI, Assembly-CSharp
-        m_MethodName: SetStage
+        m_MethodName: Ready
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

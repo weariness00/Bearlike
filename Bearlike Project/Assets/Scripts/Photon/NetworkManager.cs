@@ -18,6 +18,7 @@ namespace Photon
     public class NetworkManager : global::Util.Singleton<NetworkManager>, INetworkRunnerCallbacks
     {
         public static NetworkRunner Runner => Instance._runner;
+        public static int PlayerCount => Runner.ActivePlayers.ToArray().Length;
 
         public NetworkPrefabRef userDataPrefabRef;
         private UserData _userData;
