@@ -9,7 +9,6 @@ using Script.Data;
 using Script.GamePlay;
 using Script.Manager;
 using Script.Photon;
-using Script.Player;
 using Scripts.State.GameStatus;
 using UnityEngine;
 using UnityEngine.SceneManagement;

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using ExitGames.Client.Photon.StructWrapping;
+﻿using System.Collections.Generic;
 using Fusion;
 using Fusion.Addons.SimpleKCC;
 using Item;
@@ -12,9 +10,8 @@ using Scripts.State.GameStatus;
 using State.StateClass;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Script.Player
+namespace Player
 {
     public class PlayerController : NetworkBehaviour
     {
