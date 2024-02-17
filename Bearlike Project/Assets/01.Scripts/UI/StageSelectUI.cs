@@ -169,7 +169,7 @@ namespace UI
                     }
                 }
 
-                GameManager.Instance.SetStage(GameManager.Instance.stageList[bicSelectIndex]);
+                GameManager.Instance.SetStage(nextStageList[bicSelectIndex]);
             }
 
             gameObject.SetActive(false);
