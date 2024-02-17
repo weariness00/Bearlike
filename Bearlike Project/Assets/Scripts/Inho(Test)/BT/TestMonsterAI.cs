@@ -30,6 +30,8 @@ namespace Inho_Test_.BT
             _originPos = transform.position;
         }
 
+        // 멀티쓰레드 매니저 고류, 멀티쓰레드로 작동하게 하자.
+        // monster별로 thread부여 해보자
         private void Update()
         {
             _BTRunner.Operator();
