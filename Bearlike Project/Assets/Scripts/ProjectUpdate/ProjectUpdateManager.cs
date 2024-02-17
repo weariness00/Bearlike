@@ -59,7 +59,8 @@ namespace ProjectUpdate
         void Start()
         {
             DownLoadJsonToStorage("DefaultKeyData.json");
-            GoogleStorageManager.DownloadFile(_json, monsterLootingTableList, $"{Application.dataPath}/Json/Looting Table");
+            DownLoadJsonToStorage(monsterLootingTableList);
+            // GoogleStorageManager.DownloadFile(_json, monsterLootingTableList, $"{Application.dataPath}/Json/Monster Looting Table List");
         }
     }
 }

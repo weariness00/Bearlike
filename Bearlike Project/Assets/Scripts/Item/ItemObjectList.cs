@@ -15,6 +15,7 @@ namespace Item
         {
             base.Awake();
             Init();
+            DontDestroyOnLoad(gameObject);
         }
         
         private void Init()
