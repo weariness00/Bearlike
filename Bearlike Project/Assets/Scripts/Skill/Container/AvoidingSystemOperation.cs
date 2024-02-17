@@ -1,4 +1,5 @@
 ﻿using State;
+using State.StateClass;
 using UnityEngine;
 
 namespace Skill.SkillClass.SecondDoll
@@ -16,7 +17,7 @@ namespace Skill.SkillClass.SecondDoll
 
         public override void Run()
         {
-            var playerState = GameObject.Find("Player").GetComponent<StatusSystem>().Status;
+            var playerState = GameObject.Find("Player").GetComponent<PlayerStatus>();
 
             playerState.avoid.Current *= 1.3f;
         }

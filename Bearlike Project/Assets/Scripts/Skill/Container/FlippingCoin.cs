@@ -1,4 +1,5 @@
 ﻿using State;
+using State.StateClass;
 using UnityEngine;
 
 namespace Skill.SkillClass.FirstDoll.UniqueSkill
@@ -20,7 +21,7 @@ namespace Skill.SkillClass.FirstDoll.UniqueSkill
         
         public override void Run()
         {
-            var playerState = GameObject.Find("Player").GetComponent<StatusSystem>().Status;
+            var playerState = GameObject.Find("Player").GetComponent<PlayerStatus>();
             
             if (Random.Range(0, 2) == 0)
             {
