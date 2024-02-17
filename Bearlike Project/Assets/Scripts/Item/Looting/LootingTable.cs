@@ -22,10 +22,10 @@ namespace Item.Looting
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="lit"> 루팅 아이템 정보 </param>
-        /// <returns></returns>
-        public LootingItem[] CalLootingItem(LootingItem[] lit)
+        public void CalLootingItem(LootingItem[] lit)
         {
+            DebugManager.ToDo("랜덤한 확률로 랜덤한 갯수를 떨구게 할지도 정하기");
+            
             List<LootingItem> dropItemList = new List<LootingItem>();
             foreach (var lootingItem in lit)
             {
@@ -34,7 +34,7 @@ namespace Item.Looting
                 dropItemList.Add(lootingItem);
             }
 
-            return dropItemList.ToArray();
+            _dropItems = dropItemList.ToArray();
         }
 
         // 드랍해야될 아이템을 스폰
@@ -57,8 +57,9 @@ namespace Item.Looting
                         continue;
                     }
                     
-                    var obj = Instantiate(dropObjectPrefab);
-                    obj.transform.position = gameObject.transform.position;
+                    var item = Instantiate(dropObjectPrefab).GetComponent<ItemBase>();
+                    item.transform.position = gameObject.transform.position;
+                    item.amount.Current = item.amount.Max = dropItem.Amount;
                 }
             }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using Fusion;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Scripts.State.GameStatus
 {
@@ -55,6 +56,22 @@ namespace Scripts.State.GameStatus
                 if(isOverMax == false) {_current = _max;}
                 isMax = true;
             }
+        }
+
+        public float MinMaxRandom()
+        {
+            if (this is StatusValue<int> value)
+            {
+                var randomInt = Random.Range(value._min, value._max);
+                return randomInt;
+            }
+            if (this is StatusValue<float> floatValue)
+            {
+                var randomFloat = Random.Range(floatValue._min, floatValue._max);
+                return randomFloat;
+            }
+
+            return 0f;
         }
     }
     

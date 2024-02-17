@@ -59,8 +59,6 @@ namespace Script.Player
 
         public override void FixedUpdateNetwork()
         {
-            DebugManager.ToDo("return 되면 플레이어의  위치가 고정되는 문제 해결 찾기");
-
             var spawnPosition = UserData.Instance.UserDictionary[Runner.LocalPlayer].TeleportPosition;
             if (spawnPosition.Count != 0)
             {
