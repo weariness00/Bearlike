@@ -41,7 +41,7 @@ namespace UI
             
             clientNumber = UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber;
 
-            StageLevelBase.stageClearAction += SettingServer;
+            StageLevelBase.StageClearAction += SettingServer;
             SettingStageInfo();
             SettingStageUI();
         }

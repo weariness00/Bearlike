@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Fusion;
+using Manager;
+using Script.Manager;
 using Scripts.State.GameStatus;
 using State.StateClass.Base;
 using Unity.Mathematics;
@@ -86,6 +88,15 @@ namespace State.StateClass
         private void Start()
         {
             InvokeRepeating(nameof(MainLoop), 0.0f, 1.0f);
+        }
+
+        public override void FixedUpdateNetwork()
+        {
+            if (IsDie)
+            {
+                DebugManager.ToDo("나중에는 체력을 전부 소진한다고 진짜 죽는게 아니임");
+                GameManager.Instance.AlivePlayerCount--;
+            }
         }
 
         // Loop

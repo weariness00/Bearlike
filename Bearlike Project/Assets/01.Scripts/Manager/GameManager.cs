@@ -20,19 +20,21 @@ namespace Manager
 {
     public class GameManager : NetworkSingleton<GameManager>
     {
+        #region Network Variable
+        
+        [Networked] public float PlayTimer { get; set; }
+        [Networked] public float AlivePlayerCount { get; set; }
+        
+        #endregion
+
         [SerializeField]private SpawnPlace _spawnPlace = new SpawnPlace();
 
         private MapGenerate _mapGenerate = new MapGenerate();
-        
+
         [Header("스테이지")]
         public StageLevelBase defaultStage;
         public List<StageLevelBase> stageList = new List<StageLevelBase>();
         public StatusValue<int> stageCount = new StatusValue<int>();// 현재 몇번째 스테이지 인지
-
-        #region Data Property
-        [Networked] public float PlayTimer { get; set; }
-
-        #endregion
 
         #region Unity Event Function
         protected override void Awake()
@@ -82,6 +84,7 @@ namespace Manager
                 {
                     // var playerController = Runner.FindObject(user.NetworkId).GetComponent<PlayerController>();
                     UserData.SetTeleportPosition(key, _spawnPlace.GetRandomSpot().position);
+                    AlivePlayerCount++;
                 }
             }
         }

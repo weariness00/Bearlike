@@ -8,6 +8,7 @@ using Script.Photon;
 using Script.Weapon.Gun;
 using Scripts.State.GameStatus;
 using State.StateClass;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -26,6 +27,14 @@ namespace Player
         
         [HideInInspector] public SimpleKCC simpleKcc;
         private NetworkMecanimAnimator _networkAnimator;
+
+        #region Animation Parametar
+
+        private readonly int _aniShoot = Animator.StringToHash("tShoot");
+        private readonly int _aniFrontMove = Animator.StringToHash("fFrontMove");
+        private readonly int _aniSideMove = Animator.StringToHash("fSideMove");
+
+        #endregion
         private void Awake()
         {
             // 임시로 장비 착용
@@ -81,11 +90,20 @@ namespace Player
             if (data.MoveFront)
                 dir += transform.forward;
             if (data.MoveBack)
+            {
                 dir += -transform.forward;
+            }
             if (data.MoveLeft)
+            {
                 dir += -transform.right;
+            }
             if (data.MoveRight)
+            {
                 dir += transform.right;
+            }
+
+            _networkAnimator.Animator.SetFloat(_aniFrontMove, math.abs(dir.x));
+            _networkAnimator.Animator.SetFloat(_aniSideMove, math.abs(dir.z));
 
             dir *= Runner.DeltaTime * 100f;
             
@@ -129,6 +147,7 @@ namespace Player
             
             if (data.Attack && equipment != null)
             {
+                _networkAnimator.SetTrigger(_aniShoot);
                 equipment.AttackAction?.Invoke();
             }
 

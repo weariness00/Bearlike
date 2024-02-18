@@ -21,7 +21,7 @@ namespace UI
             titleText.text = stageInfo.title;
             explainText.text = stageInfo.explain;
 
-            explainText.rectTransform.position = new Vector3(0, explainText.preferredHeight, 0);
+            explainText.rectTransform.position += new Vector3(0, explainText.preferredHeight, 0);
         }
     }
 }

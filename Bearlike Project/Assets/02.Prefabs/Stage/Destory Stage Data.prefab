@@ -50,7 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneReference:
     sceneAsset: {fileID: 102900000, guid: 7146be2ac2ab9024cba3fc8c22de3ae9, type: 3}
-    scenePath: Assets/Scenes/Stage/Stage_Destroy.unity
+    scenePath: Assets/00.Scenes/Game/Stage/Stage_Destroy.unity
   stageLevelInfo:
     StageLevelType: 0
     title: "\uACA9\uD30C"
@@ -102,8 +102,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   info:
-    pivot: {x: 0, y: 0.5, z: 0}
-    size: {x: 10, y: 1, z: 10}
+    pivot: {x: 0, y: 15, z: 0}
+    size: {x: 50, y: 30, z: 50}
 --- !u!65 &1447030405736922233
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -123,8 +123,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 10, y: 1, z: 10}
-  m_Center: {x: 0, y: 0.5, z: 0}
+  m_Size: {x: 50, y: 30, z: 50}
+  m_Center: {x: 0, y: 15, z: 0}
 --- !u!114 &8025208599522178229
 MonoBehaviour:
   m_ObjectHideFlags: 0
