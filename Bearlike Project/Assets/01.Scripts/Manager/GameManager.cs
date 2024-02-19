@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Fusion;
-using Fusion.Addons.SimpleKCC;
 using GamePlay.StageLevel;
 using Photon;
 using Script.Data;
 using Script.GamePlay;
 using Script.Manager;
-using Script.Photon;
 using Scripts.State.GameStatus;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Util;
 using Util.Map;
 using Random = UnityEngine.Random;
 

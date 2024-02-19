@@ -14,6 +14,7 @@ namespace ProjectUpdate
         
 
         public readonly string monsterLootingTableList = "Monster Looting Table List.json";
+        public readonly string stageLootingTableList = "Stage Looting Table List.json";
 
 
         #region Static Function
@@ -60,6 +61,7 @@ namespace ProjectUpdate
         {
             DownLoadJsonToStorage("DefaultKeyData.json");
             DownLoadJsonToStorage(monsterLootingTableList);
+            DownLoadJsonToStorage(stageLootingTableList);
             // GoogleStorageManager.DownloadFile(_json, monsterLootingTableList, $"{Application.dataPath}/Json/Monster Looting Table List");
         }
     }

@@ -6,6 +6,7 @@ namespace GamePlay.StageLevel.Container
 {
     public class StageSurvive : StageLevelBase
     {
+        [Header("생존 스테이지 정보")]
         public StatusValue<float> timeLimit = new StatusValue<float>();
 
         public override void StageInit()

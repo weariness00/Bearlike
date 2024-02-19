@@ -441,6 +441,7 @@ GameObject:
   - component: {fileID: 1013842080}
   - component: {fileID: 1013842079}
   - component: {fileID: 1013842078}
+  - component: {fileID: 1013842081}
   m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
@@ -531,6 +532,20 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &1013842081
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013842076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1220b8a7b21f437fb22884b274eb9b3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stage: {fileID: 786979930347788827}
+  timeText: {fileID: 988708244}
 --- !u!1 &1242328570
 GameObject:
   m_ObjectHideFlags: 0
@@ -900,11 +915,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2822727047474444618, guid: 92a5cd3245934d74c96698fcc6516e89,
+    - target: {fileID: 238595165733266923, guid: 92a5cd3245934d74c96698fcc6516e89,
+        type: 3}
+      propertyPath: timeLimit._max
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 238595165733266923, guid: 92a5cd3245934d74c96698fcc6516e89,
         type: 3}
       propertyPath: stageGameObject
       value: 
       objectReference: {fileID: 1776461677}
+    - target: {fileID: 238595165733266923, guid: 92a5cd3245934d74c96698fcc6516e89,
+        type: 3}
+      propertyPath: monsterParentTransform
+      value: 
+      objectReference: {fileID: 897065705}
+    - target: {fileID: 238595165733266923, guid: 92a5cd3245934d74c96698fcc6516e89,
+        type: 3}
+      propertyPath: monsterSpawnerList.Array.data[0]
+      value: 
+      objectReference: {fileID: 109300603}
     - target: {fileID: 2883367473362974006, guid: 92a5cd3245934d74c96698fcc6516e89,
         type: 3}
       propertyPath: SortKey
@@ -920,6 +950,18 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 92a5cd3245934d74c96698fcc6516e89, type: 3}
+--- !u!114 &786979930347788827 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 238595165733266923, guid: 92a5cd3245934d74c96698fcc6516e89,
+    type: 3}
+  m_PrefabInstance: {fileID: 786979930347788826}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d58208cb0ec04d46a679924b05261970, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

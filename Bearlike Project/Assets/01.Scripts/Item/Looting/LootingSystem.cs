@@ -10,18 +10,24 @@ namespace Item.Looting
 {
     public class LootingSystem : Singleton<LootingSystem>
     {
-        private LootingItem[] _monsterLootingItems;
         [HideInInspector] public Dictionary<int, LootingItem[]> monsterLootingItemDictionary = new Dictionary<int, LootingItem[]>();
+        [HideInInspector] public Dictionary<int, LootingItem[]> stageLootingItemDictionary = new Dictionary<int, LootingItem[]>();
 
         protected override void Awake()
         {
             JsonConvertExtension.Load(ProjectUpdateManager.Instance.monsterLootingTableList,
                 (data) =>
                 {
-                    _monsterLootingItems = JsonConvert.DeserializeObject<LootingItem[]>(data);
-                    SetLootingTable(_monsterLootingItems, monsterLootingItemDictionary);
-                    _monsterLootingItems = null;
+                    SetLootingTable(JsonConvert.DeserializeObject<LootingItem[]>(data), monsterLootingItemDictionary);
                     DebugManager.Log("Monster Looting Table List를 불러왔습니다.");
+                }
+            );
+            
+            JsonConvertExtension.Load(ProjectUpdateManager.Instance.stageLootingTableList,
+                (data) =>
+                {
+                    SetLootingTable(JsonConvert.DeserializeObject<LootingItem[]>(data), stageLootingItemDictionary);
+                    DebugManager.Log("Stage Looting Table List를 불러왔습니다.");
                 }
             );
         }

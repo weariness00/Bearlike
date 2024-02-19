@@ -112,9 +112,9 @@ namespace UI
             }
         }
 
-        public void SettingServer()
+        public void SettingServer(NetworkRunner runner)
         {
-            if (Runner.IsServer == false)
+            if (runner.IsServer == false)
             {
                 IsServerSetting = false;
                 SettingStageInfo();
@@ -134,7 +134,7 @@ namespace UI
             {
                 var index = i;
                 var stageType = NetworkStageLevelTypes.Get(i);
-                var stage = GameManager.Instance.GetStageIndex((int)stageType);
+                var stage = GameManager.Instance.GetRandomStage();
                 var stageSelectUIObject = Instantiate(stageSelectUIPrefab, stageToggleGroup);
                 var stageSelectUIHandler = stageSelectUIObject.GetComponent<StageSelectUIHandler>();
                 stageSelectUIHandler.toggle.onValueChanged.AddListener((value) =>

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Fusion;
+using Item.Looting;
 using Manager;
 using Script.Manager;
 using Script.Monster;
 using Script.Photon;
 using Scripts.State.GameStatus;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Util.Map;
@@ -16,15 +18,16 @@ namespace GamePlay.StageLevel
     {
         #region Static Variable
 
-        public static Action StageClearAction;
+        public static Action<NetworkRunner> StageClearAction;
 
         #endregion
         
         public SceneReference sceneReference;
 
-        [Header("스테이지 정보")] public StageLevelInfo stageLevelInfo;
+        [Header("스테이지 기본 정보")] public StageLevelInfo stageLevelInfo;
         public bool isStageClear = false;
         public bool isStageOver = false;
+        [HideInInspector] [Tooltip("보상 루팅 테이블")] public LootingTable lootingTable;
 
         [Header("맵 정보")] public GameObject stageGameObject;
         [SerializeField] private MapInfoMono _mapInfoMono;
@@ -45,8 +48,9 @@ namespace GamePlay.StageLevel
 
         #region Unity Event Function
 
-        private void Awake()
+        public void Awake()
         {
+            lootingTable = gameObject.GetOrAddComponent<LootingTable>();
             stageGameObject.SetActive(false);
             monsterKillCount.isOverMax = true;
         }
@@ -137,6 +141,11 @@ namespace GamePlay.StageLevel
             gameObject.transform.position = MapInfo.pivot;
             stageGameObject.transform.position = MapInfo.pivot;
             stageGameObject.SetActive(true);
+            
+            if (LootingSystem.Instance.stageLootingItemDictionary.TryGetValue((int)stageLevelInfo.StageLevelType, out var lootingItems))
+            {
+                lootingTable.CalLootingItem(lootingItems);
+            }
         }
 
         public virtual void StageUpdate()
@@ -155,7 +164,11 @@ namespace GamePlay.StageLevel
             }
             
             isStageClear = true;
-            StageClearAction?.Invoke();
+            
+            lootingTable.SpawnDropItem();
+            DebugManager.ToDo("임시적으로 모든 아이템을 드랍하게 함");
+            
+            StageClearAction?.Invoke(Runner);
             DebugManager.Log("스테이지 클리어\n" +
                              $"스테이지 모드 :{stageLevelInfo.StageLevelType}");
         }

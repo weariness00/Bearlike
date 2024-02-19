@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 870149081379242239}
-  - component: {fileID: 2330416457773590121}
+  - component: {fileID: 8430227219849765713}
   - component: {fileID: 5713381459070474948}
   - component: {fileID: 1447030405736922233}
   - component: {fileID: 8025208599522178229}
@@ -36,7 +36,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2330416457773590121
+--- !u!114 &8430227219849765713
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -45,7 +45,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3775322230510242185}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee50bbc78ce44e48bf6377f60ce7f201, type: 3}
+  m_Script: {fileID: 11500000, guid: 3b43e242f2884670b92a32f2bacce545, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   sceneReference:
@@ -65,22 +65,15 @@ MonoBehaviour:
       isMin: 0
       isMax: 0
   isStageClear: 0
+  isStageOver: 0
   stageGameObject: {fileID: 0}
   _mapInfoMono: {fileID: 5713381459070474948}
   monsterSpawnerList:
   - {fileID: 0}
   monsterParentTransform: {fileID: 0}
-  destroyTimeLimit:
-    _min: 0
-    _max: 600
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
   monsterKillCount:
     _min: 0
-    _max: 3
+    _max: 2
     _current: 0
     isOverMax: 0
     isOverMin: 0
@@ -89,6 +82,14 @@ MonoBehaviour:
   goalInfo: 
   awardInfo: 
   difficultInfo: 
+  destroyTimeLimit:
+    _min: 0
+    _max: 1000
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
 --- !u!114 &5713381459070474948
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,5 +159,5 @@ MonoBehaviour:
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 2330416457773590121}
+  - {fileID: 8430227219849765713}
   - {fileID: 8025208599522178229}

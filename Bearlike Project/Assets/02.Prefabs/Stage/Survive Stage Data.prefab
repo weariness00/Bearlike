@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 34561281172221522}
-  - component: {fileID: 2822727047474444618}
+  - component: {fileID: 238595165733266923}
   - component: {fileID: 324086506192862742}
   - component: {fileID: 1426793981416707339}
   - component: {fileID: 8148620261442689294}
@@ -36,7 +36,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2822727047474444618
+--- !u!114 &238595165733266923
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -45,7 +45,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5828818035008608910}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee50bbc78ce44e48bf6377f60ce7f201, type: 3}
+  m_Script: {fileID: 11500000, guid: d58208cb0ec04d46a679924b05261970, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   sceneReference:
@@ -58,29 +58,22 @@ MonoBehaviour:
     image: {fileID: 0}
     AliveMonsterCount:
       _min: 0
-      _max: 100
+      _max: 0
       _current: 0
       isOverMax: 0
       isOverMin: 0
       isMin: 0
       isMax: 0
   isStageClear: 0
+  isStageOver: 0
   stageGameObject: {fileID: 0}
   _mapInfoMono: {fileID: 324086506192862742}
   monsterSpawnerList:
   - {fileID: 0}
   monsterParentTransform: {fileID: 0}
-  destroyTimeLimit:
-    _min: 0
-    _max: 600
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
   monsterKillCount:
     _min: 0
-    _max: 3
+    _max: 1
     _current: 0
     isOverMax: 0
     isOverMin: 0
@@ -89,6 +82,14 @@ MonoBehaviour:
   goalInfo: 
   awardInfo: 
   difficultInfo: 
+  timeLimit:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
 --- !u!114 &324086506192862742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,5 +159,5 @@ MonoBehaviour:
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 2822727047474444618}
+  - {fileID: 238595165733266923}
   - {fileID: 8148620261442689294}
