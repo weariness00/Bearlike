@@ -1,4 +1,8 @@
-﻿namespace BehaviorTree.Base
+﻿using System.Threading;
+using Unity.Collections;
+using Unity.Jobs;
+
+namespace BehaviorTree.Base
 {
     public class BehaviorTreeRunner
     {
