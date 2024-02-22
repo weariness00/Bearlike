@@ -21,9 +21,6 @@ namespace Photon
         public static NetworkRunner Runner => Instance._runner;
         public static int PlayerCount => Runner.ActivePlayers.ToArray().Length;
 
-        public NetworkPrefabRef userDataPrefabRef;
-        private UserData _userData;
-
         private string[] _sessionNames;
         private NetworkRunner _runner;
 
@@ -352,32 +349,14 @@ namespace Photon
 
         public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
-            var matchManager = FindObjectOfType<NetworkMatchManager>();
-            var data = new UserDataStruct();
-
-            if (_userData == null)
-            {
-                _userData = FindObjectOfType<UserData>();
-                if (_userData == null)
-                {
-                    var obj = _runner.Spawn(userDataPrefabRef, Vector3.zero, Quaternion.identity);
-                    _userData = obj.GetComponent<UserData>();
-                }
-            }
-
-            data.PlayerRef = player;
-            data.Name = player.ToString();
-            data.PrefabRef = matchManager.PlayerPrefabRefs[0]; // 임시 : 나중에는 유저가 선택하면 바꿀 수 있거나 아니면 이전 정보를 가져와 그 캐릭터로 잡아줌
-
-            _userData.InsertUserData(player, data);
-            matchManager.DataUpdate();
+  
         }
 
         public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
         {
             DebugManager.Log($"종료 : {player}");
 
-            _userData.UserDictionary.Remove(player);
+            UserData.Instance.UserDictionary.Remove(player);
         }
 
         public void OnInput(NetworkRunner runner, NetworkInput input)
@@ -434,11 +413,12 @@ namespace Photon
             var player = runner.LocalPlayer;
             DebugManager.Log($"강제 종료 : {runner.LocalPlayer}");
 
-            _userData.UserDictionary.Remove(runner.LocalPlayer);
+            UserData.Instance.UserDictionary.Remove(runner.LocalPlayer);
         }
 
         public void OnConnectedToServer(NetworkRunner runner)
         {
+
             DebugManager.Log("서버 연결 성공\n" +
                              $"세션 이름 : {runner.SessionInfo.Name}");
         }

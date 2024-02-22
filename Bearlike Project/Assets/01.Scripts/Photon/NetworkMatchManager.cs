@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Fusion;
 using Script.Data;
-using Script.Photon;
 using Script.Util;
-using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
 
 namespace Photon
@@ -15,11 +12,11 @@ namespace Photon
 
         public List<NetworkPrefabRef> PlayerPrefabRefs;
 
+        [Rpc(RpcSources.All,RpcTargets.All)]
+        public void DataUpdateRPC() => DataUpdate();
         public void DataUpdate()
         {
-            var userData = FindObjectOfType<UserData>();
-            
-            var items = NetworkUtil.DictionaryItems(userData.UserDictionary);
+            var items = NetworkUtil.DictionaryItems(UserData.Instance.UserDictionary);
             roomUserUI.UpdateData(items);
         }
 
