@@ -13,7 +13,6 @@ namespace Script.Manager
         public bool drawRay;
 
         [Header("TO DO")] 
-        public bool isAllToDo;
         public bool isToDo;
 
         private void Awake()
@@ -45,7 +44,7 @@ namespace Script.Manager
 
         public static void ToDo(object massage)
         {
-            if (!DebugManager.Instance.isDebug || !DebugManager.Instance.isAllToDo || !DebugManager.Instance.isToDo) return;
+            if (!DebugManager.Instance.isDebug || !DebugManager.Instance.isToDo) return;
             Debug.Log("TO DO List\n" + massage);
         }
 
