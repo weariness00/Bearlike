@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Fusion;
 using Item.Looting;
 using Manager;
+using Photon;
 using Script.Manager;
 using Script.Monster;
 using Script.Photon;
@@ -14,7 +15,7 @@ using Util.Map;
 
 namespace GamePlay.StageLevel
 {
-    public class StageLevelBase : NetworkBehaviour
+    public class StageLevelBase : NetworkBehaviourEx
     {
         #region Static Variable
 
@@ -138,7 +139,7 @@ namespace GamePlay.StageLevel
 
             gameObject.transform.position = MapInfo.pivot;
             stageGameObject.transform.position = MapInfo.pivot;
-            stageGameObject.SetActive(true);
+            SetActiveRPC(true);
 
             if (LootingSystem.Instance.stageLootingItemDictionary.TryGetValue((int)stageLevelInfo.StageLevelType, out var lootingItems))
             {
@@ -146,7 +147,7 @@ namespace GamePlay.StageLevel
             }
         }
 
-            public virtual void StageUpdate()
+        public virtual void StageUpdate()
         {
             if (GameManager.Instance.AlivePlayerCount <= 0)
             {

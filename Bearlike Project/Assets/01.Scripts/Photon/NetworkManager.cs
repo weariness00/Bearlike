@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Fusion;
 using Fusion.Addons.Physics;
+using Fusion.Photon.Realtime;
 using Fusion.Sockets;
 using Script.Data;
 using Script.Manager;
@@ -148,7 +149,7 @@ namespace Photon
             gameObject.GetOrAddComponent<RunnerSimulatePhysics3D>();
             _runner = gameObject.GetOrAddComponent<NetworkRunner>();
             _runner.ProvideInput = true;
-
+            
             // Create the NetworkSceneInfo from the current scene
             var scene = SceneRef.FromIndex((int)SceneType.Matching);
             var sceneInfo = new NetworkSceneInfo();
@@ -163,6 +164,7 @@ namespace Photon
                 GameMode = mode,
                 SessionName = sessionName,
                 Scene = scene,
+                MatchmakingMode = MatchmakingMode.FillRoom,
                 SceneManager = gameObject.GetOrAddComponent<NetworkSceneManagerDefault>(),
                 PlayerCount = 3,
                 IsVisible = true,
@@ -348,7 +350,7 @@ namespace Photon
 
         #region Network Callback Function
 
-        public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
+        public async void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
             var matchManager = FindObjectOfType<NetworkMatchManager>();
             var data = new UserDataStruct();
@@ -357,7 +359,10 @@ namespace Photon
             {
                 _userData = FindObjectOfType<UserData>();
                 if (_userData == null)
-                    _userData = _runner.Spawn(userDataPrefabRef, Vector3.zero, Quaternion.identity).GetComponent<UserData>();
+                {
+                    var obj = await _runner.SpawnAsync(userDataPrefabRef, Vector3.zero, Quaternion.identity);
+                    _userData = obj.GetComponent<UserData>();
+                }
             }
 
             data.PlayerRef = player;
