@@ -119,7 +119,7 @@ namespace GamePlay.StageLevel
 
         #region Stage Function
 
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsServer)]
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
         public virtual void StageInitRPC() => StageInit();
 
         public virtual void StageInit()
@@ -139,7 +139,7 @@ namespace GamePlay.StageLevel
 
             gameObject.transform.position = MapInfo.pivot;
             stageGameObject.transform.position = MapInfo.pivot;
-            SetActiveRPC(true);
+            stageGameObject.SetActive(true);
 
             if (LootingSystem.Instance.stageLootingItemDictionary.TryGetValue((int)stageLevelInfo.StageLevelType, out var lootingItems))
             {

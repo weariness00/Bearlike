@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 42810327}
   - component: {fileID: 42810328}
   - component: {fileID: 42810329}
+  - component: {fileID: 42810330}
   m_Layer: 0
   m_Name: Destroy Stage
   m_TagString: Untagged
@@ -178,6 +179,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 42810329}
+  - {fileID: 42810330}
   - {fileID: 354704606}
 --- !u!114 &42810329
 MonoBehaviour:
@@ -195,6 +197,18 @@ MonoBehaviour:
   SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0
+--- !u!114 &42810330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 42810325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 155c6172120a428e9bdcb2611c04119c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &320169026
 GameObject:
   m_ObjectHideFlags: 0

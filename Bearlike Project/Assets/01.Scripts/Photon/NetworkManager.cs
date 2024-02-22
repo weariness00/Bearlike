@@ -350,7 +350,7 @@ namespace Photon
 
         #region Network Callback Function
 
-        public async void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
+        public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
             var matchManager = FindObjectOfType<NetworkMatchManager>();
             var data = new UserDataStruct();
@@ -360,7 +360,7 @@ namespace Photon
                 _userData = FindObjectOfType<UserData>();
                 if (_userData == null)
                 {
-                    var obj = await _runner.SpawnAsync(userDataPrefabRef, Vector3.zero, Quaternion.identity);
+                    var obj = _runner.Spawn(userDataPrefabRef, Vector3.zero, Quaternion.identity);
                     _userData = obj.GetComponent<UserData>();
                 }
             }
