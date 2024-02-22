@@ -104,30 +104,32 @@ namespace Manager
             }
 
             await NetworkManager.LoadScene(stage.sceneReference.ScenePath,LoadSceneMode.Additive, LocalPhysicsMode.Physics3D);
-            
-            DebugManager.ToDo("임시 방편으로 0.1초 기다린뒤 초기화를 진행함\n" +
-                              "씬이 모든 클라이언트에서 로드 된 것을 알 수 있게하는 동기화 기법을 사용해야됨");
-            await Task.Delay(100);
-            foreach (var stageLevelBase in FindObjectsOfType<StageLevelBase>())
+            async void OnSceneLoadDoneAction()
             {
-                // 이미 활성화된 스테이지
-                if (stageLevelBase.stageGameObject.activeSelf)
+                foreach (var stageLevelBase in FindObjectsOfType<StageLevelBase>())
                 {
-                    continue;
-                }
-                
-                if (stage.stageLevelInfo.StageLevelType == stageLevelBase.stageLevelInfo.StageLevelType)
-                {
-                    stageLevelBase.MapInfo = await _mapGenerate.FindEmptySpaceSync(stage.MapInfo, defaultStage.MapInfo);
-                    stageLevelBase.StageInitRPC();
-                    
-                    NetworkManager.UnloadScene(stage.sceneReference.ScenePath);
-                    
-                    _mapGenerate.AddMap(stageLevelBase.MapInfo);
-                    stageLevelBase.StageSetting();
-                    break;
+                    // 이미 활성화된 스테이지
+                    if (stageLevelBase.stageGameObject.activeSelf)
+                    {
+                        continue;
+                    }
+
+                    if (stage.stageLevelInfo.StageLevelType == stageLevelBase.stageLevelInfo.StageLevelType)
+                    {
+                        stageLevelBase.MapInfo = await _mapGenerate.FindEmptySpaceSync(stage.MapInfo, defaultStage.MapInfo);
+                        stageLevelBase.StageInitRPC();
+
+                        NetworkManager.UnloadScene(stage.sceneReference.ScenePath);
+
+                        _mapGenerate.AddMap(stageLevelBase.MapInfo);
+                        stageLevelBase.StageSetting();
+
+                        DebugManager.Log($"씬 생성 후 초기화 완료 {stage.sceneReference}");
+                        break;
+                    }
                 }
             }
+            NetworkManager.SceneLoadDoneAction += OnSceneLoadDoneAction;
         }
 
         public void SetStage(int index) => SetStage(stageList.Count < index ? null : stageList[index]);

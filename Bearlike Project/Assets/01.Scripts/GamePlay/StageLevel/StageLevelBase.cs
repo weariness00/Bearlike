@@ -119,7 +119,7 @@ namespace GamePlay.StageLevel
 
         #region Stage Function
 
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All, Channel = RpcChannel.Reliable)]
         public virtual void StageInitRPC() => StageInit();
 
         public virtual void StageInit()
@@ -145,6 +145,8 @@ namespace GamePlay.StageLevel
             {
                 lootingTable.CalLootingItem(lootingItems);
             }
+            
+            DebugManager.Log($"스테이지 초기화 {stageLevelInfo.title}");
         }
 
         public virtual void StageUpdate()

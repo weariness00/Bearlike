@@ -25,7 +25,6 @@ namespace Photon
         private NetworkRunner _runner;
 
         private Action<NetworkObject> _isSetPlayerObjectEvent;
-
         public Action<NetworkObject> IsSetPlayerObjectEvent
         {
             get => _isSetPlayerObjectEvent;
@@ -87,6 +86,33 @@ namespace Photon
 
         #region Scene Static Funtion
 
+        public static Action SceneLoadDoneAction 
+        {
+            get => Instance._sceneLoadDoneAction;
+            set
+            {
+                if (Instance._isLoadDone)
+                {
+                    value?.Invoke();
+                }
+                else
+                {
+                    Instance._sceneLoadDoneAction = value;
+                }
+            }
+            
+        }
+        private Action _sceneLoadDoneAction;
+        private bool _isLoadDone = false;
+        IEnumerator LoadSceneDoneCoroutine()
+        {
+            while (_isLoadDone == false)
+            {
+                yield return null;
+            }
+            SceneLoadDoneAction?.Invoke();
+        }
+        
         public static async Task LoadScene(SceneRef sceneRef, LoadSceneParameters parameters, bool setActiveOnLoad = false)
         {
             if (Instance._runner.IsSceneAuthority)
@@ -459,12 +485,15 @@ namespace Photon
 
         public void OnSceneLoadDone(NetworkRunner runner)
         {
-            DebugManager.Log($"씬 Loading 끝 : {runner.SceneManager.MainRunnerScene.name}");
+            DebugManager.Log($"씬 Loading 끝");
+            _isLoadDone = true;
         }
 
         public void OnSceneLoadStart(NetworkRunner runner)
         {
             DebugManager.Log($"씬 Loading 중");
+            _isLoadDone = false;
+            StartCoroutine(LoadSceneDoneCoroutine());
         }
 
         public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
