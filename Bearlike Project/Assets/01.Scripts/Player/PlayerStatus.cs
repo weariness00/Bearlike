@@ -12,7 +12,7 @@ namespace State.StateClass
     /// <summary>
     /// Player의 State을 나타내는 Class
     /// </summary>
-    public class PlayerStatus : Base.StatusBase
+    public sealed class PlayerStatus : Base.StatusBase
     {
         // Member Variable
         #region Info Perperty

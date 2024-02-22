@@ -89,7 +89,7 @@ namespace Inho_Test_.PhotonPractice
 
             if (Input.GetKey(KeyCode.D))
                 data.direction += Vector3.right;
-
+            
             input.Set(data);
         }
         public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }

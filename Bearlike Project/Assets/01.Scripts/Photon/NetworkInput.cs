@@ -20,5 +20,7 @@ namespace Script.Photon
         public NetworkBool ChangeWeapon0;
 
         public NetworkBool Cursor;
+
+        public NetworkBool FirstSkill;
     }
 }

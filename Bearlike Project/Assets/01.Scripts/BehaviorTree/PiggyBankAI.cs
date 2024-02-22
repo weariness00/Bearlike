@@ -8,7 +8,7 @@ using UnityEngine;
 namespace BehaviorTree
 {
     [RequireComponent(typeof(Animator))]
-    public class PiggyBankAI : NetworkBehaviour
+    public sealed class PiggyBankAI : NetworkBehaviour
     {
         [Header("Movement")] 
         [SerializeField] private float movementSpeed = 5.0f;
@@ -94,7 +94,13 @@ namespace BehaviorTree
             
             return INode.NodeState.Failure;
         }
-            
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void PiggyBankWalkRPC()
+        {
+            var rb = GetComponent<Rigidbody>();
+        }
+        
         #endregion
     }
 }

@@ -50,17 +50,17 @@ namespace State.StateClass.Base
 
         #region HP Function
 
-        [Rpc(RpcSources.All, RpcTargets.All)]
+        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
         public virtual void ApplyDamageRPC(float damage, CrowdControl enemyProperty, RpcInfo info = default)
         {
             ApplyDamage(damage, enemyProperty);
             
             // TODO : Dubug
-            DebugManager.ToDo("asdkasl");
+            // DebugManager.ToDo("asdkasl");
             ShowInfo();
         }
         
-        public abstract void ApplyDamage(float damage, CrowdControl enemyProperty); // MonsterRef instigator,
+        public abstract void ApplyDamage(float damage, CrowdControl enemyProperty);
 
         #endregion
 
