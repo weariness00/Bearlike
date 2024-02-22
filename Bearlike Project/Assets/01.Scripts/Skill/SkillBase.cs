@@ -17,8 +17,8 @@ namespace Skill
             set => _coolTime = value;
         }
 
-        private StatusValue<float> _duration;
-        private StatusValue<float> _coolTime;
+        private StatusValue<float> _duration = new StatusValue<float>();
+        private StatusValue<float> _coolTime = new StatusValue<float>();
 
         public abstract void MainLoop();
         public abstract void Run();

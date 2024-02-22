@@ -536,6 +536,7 @@ GameObject:
   - component: {fileID: -4627320855333868288}
   - component: {fileID: -8376342315293501503}
   - component: {fileID: 3591252219797454216}
+  - component: {fileID: 5159996301078376767}
   m_Layer: 0
   m_Name: Player 3
   m_TagString: Player
@@ -582,6 +583,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  skillSystem: {fileID: 0}
   simpleKcc: {fileID: 0}
   rotateSpeed: 500
 --- !u!114 &8389592379722413424
@@ -621,6 +623,7 @@ MonoBehaviour:
   - {fileID: -4627320855333868288}
   - {fileID: -8376342315293501503}
   - {fileID: 3591252219797454216}
+  - {fileID: 5159996301078376767}
 --- !u!54 &7507528767881361376
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -664,7 +667,7 @@ MonoBehaviour:
   TotalWords: 5
   ApplyTiming: 2
   SyncSettings: 79
-  StateHashes: 000000006bd5a32d398fdc0428a981077af3fe2e8527350b827885c8
+  StateHashes: 000000006bd5a32d398fdc0428a981077af3fe2e8527350bd77d4a22827885c8
   TriggerHashes: 0000000026c7b5ec
 --- !u!114 &-4627320855333868288
 MonoBehaviour:
@@ -806,6 +809,18 @@ MonoBehaviour:
     isMax: 0
   experienceAmountList: 
   immortalDurationAfterSpawn: 2
+--- !u!114 &5159996301078376767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4910098564648988719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55b3a2546ea4412285d29960407696f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5293648659765142871
 GameObject:
   m_ObjectHideFlags: 0

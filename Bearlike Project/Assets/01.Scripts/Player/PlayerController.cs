@@ -148,7 +148,8 @@ namespace Player
 
         void SkillControl(PlayerInputData data)
         {
-            if (data.FirstSkill)
+            if(Input.GetKeyDown(KeyCode.F1))
+            // if (data.FirstSkill)
             {
                 skillSystem.skillList[0].Run();
             }

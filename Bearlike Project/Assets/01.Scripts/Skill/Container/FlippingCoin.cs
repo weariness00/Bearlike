@@ -1,6 +1,7 @@
 ﻿using System;
 using Fusion;
 using Manager;
+using Scripts.State.GameStatus;
 using State.StateClass;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -31,13 +32,19 @@ namespace Skill.Container
         
         public FlippingCoin()
         {
-            CoolTime.Max =  30.0f;
-            CoolTime.Min = CoolTime.Current = 0.0f;
+            var tempCoolTime = new StatusValue<float>();
+            tempCoolTime.Max = 30.0f;
+            tempCoolTime.Min = tempCoolTime.Current = 0.0f;
 
-            Duration.Max = 10.0f;
-            Duration.Min = Duration.Current = 0.0f;
+            CoolTime = tempCoolTime;
+
+            var tempDuration = new StatusValue<float>();
+            tempDuration.Max = 10.0f;
+            tempDuration.Min = tempDuration.Current = 0.0f;
+
+            Duration = tempDuration;
             
-            _gm = GameObject.Find("GameManage").GetComponent<GameManager>();
+            _gm = GameObject.Find("GameManager").GetComponent<GameManager>();
         }
         
         public override void MainLoop()
@@ -49,9 +56,10 @@ namespace Skill.Container
             CoolTime.Current -= _deltaPlayTime;
             Duration.Current -= _deltaPlayTime;
 
-            if (Mathf.Round((Duration.Current - Duration.Min) * 10) * 0.1f < 0f)
+            // 한 번만 remove하게 해줘야 한다.
+            if (Mathf.Round((Duration.Current - Duration.Min) * 10) * 0.1f <= 0f)
             {
-                var playerState = GameObject.Find("LocalPlayer").GetComponent<PlayerStatus>();
+                var playerState = GameObject.Find("Local Player").GetComponent<PlayerStatus>();
                 RemoveBuffRPC(playerState);
             }
             
@@ -62,9 +70,9 @@ namespace Skill.Container
         {
             // 둘중 하나 채택
             // if(Math.Abs(CoolTime.Current - CoolTime.Min) < 1E-6)
-            if (Mathf.Round((CoolTime.Current - CoolTime.Min) * 10) * 0.1f < 0f)
+            if (Mathf.Round((CoolTime.Current - CoolTime.Min) * 10) * 0.1f <= 0f)
             {
-                var playerState = GameObject.Find("LocalPlayer").GetComponent<PlayerStatus>();
+                var playerState = GameObject.Find("Local Player").GetComponent<PlayerStatus>();
                 _type = Random.Range(0, 2);
                 ApplyBuffRPC(playerState);
             }
