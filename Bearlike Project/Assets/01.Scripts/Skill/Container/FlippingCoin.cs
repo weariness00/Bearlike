@@ -26,7 +26,10 @@ namespace Skill.Container
 
         #region property
 
-        private int _type;
+        private int _type;              // 동전 앞뒷면
+        private bool _bOn;              // 현재 발동 중인지 판단하는 bool
+
+        private float _difference;      // 차이 값 
 
         #endregion
         
@@ -45,6 +48,9 @@ namespace Skill.Container
             Duration = tempDuration;
             
             _gm = GameObject.Find("GameManager").GetComponent<GameManager>();
+
+            _bOn = false;
+            _difference = 0;
         }
         
         public override void MainLoop()
@@ -57,7 +63,7 @@ namespace Skill.Container
             Duration.Current -= _deltaPlayTime;
 
             // 한 번만 remove하게 해줘야 한다.
-            if (Mathf.Round((Duration.Current - Duration.Min) * 10) * 0.1f <= 0f)
+            if (_bOn && Mathf.Round((Duration.Current - Duration.Min) * 10) * 0.1f <= 0f)
             {
                 var playerState = GameObject.Find("Local Player").GetComponent<PlayerStatus>();
                 RemoveBuffRPC(playerState);
@@ -70,7 +76,7 @@ namespace Skill.Container
         {
             // 둘중 하나 채택
             // if(Math.Abs(CoolTime.Current - CoolTime.Min) < 1E-6)
-            if (Mathf.Round((CoolTime.Current - CoolTime.Min) * 10) * 0.1f <= 0f)
+            if (_bOn == false && Mathf.Round((CoolTime.Current - CoolTime.Min) * 10) * 0.1f <= 0f)
             {
                 var playerState = GameObject.Find("Local Player").GetComponent<PlayerStatus>();
                 _type = Random.Range(0, 2);
@@ -84,15 +90,19 @@ namespace Skill.Container
         {
             if (_type == 0)
             {
-                playerStatus.attackSpeed.Current *= 1.5f;
+                _difference = playerStatus.attackSpeed.Current * 0.5f;
+                playerStatus.attackSpeed.Current += _difference;
             }
             else
             {
-                playerStatus.attack.Current = (int)(playerStatus.attack.Current * 1.2f);
+                _difference = playerStatus.attack.Current * 0.2f;
+                playerStatus.attack.Current += (int)_difference;
             }
 
             Duration.Current = Duration.Max;
             CoolTime.Current = CoolTime.Max;
+
+            _bOn = true;
         }
 
         [Rpc(RpcSources.All, RpcTargets.All)]
@@ -100,14 +110,16 @@ namespace Skill.Container
         {
             if (_type == 0)
             {
-                playerStatus.attackSpeed.Current /= 1.5f;
+                playerStatus.attackSpeed.Current -= _difference;
             }
             else
             {
-                playerStatus.attack.Current = (int)(playerStatus.attack.Current / 1.2f);
+                playerStatus.attack.Current -= (int)_difference;
             }
 
             Duration.Current = Duration.Min;
+            _bOn = false;
+            // _difference = 0; // 굳이 필요 없을듯
         }
     }
 }

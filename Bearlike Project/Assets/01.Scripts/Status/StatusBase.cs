@@ -23,7 +23,7 @@ namespace State.StateClass.Base
     {
         #region Member Variable
 
-        public StatusValue<int> _hp = new StatusValue<int>();                              // 체력        
+        public StatusValue<int> _hp = new StatusValue<int>();                   // 체력        
         public StatusValue<int> attack = new StatusValue<int>();               // 공격력
         public StatusValue<int> defence = new StatusValue<int>();              // 방어력
         public StatusValue<float> avoid = new StatusValue<float>();           // 회피
