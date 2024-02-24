@@ -4,7 +4,7 @@ using Unity.Jobs;
 
 namespace BehaviorTree.Base
 {
-    public class BehaviorTreeRunner
+    public struct BehaviorTreeRunner
     {
         private INode _rootNode;
 

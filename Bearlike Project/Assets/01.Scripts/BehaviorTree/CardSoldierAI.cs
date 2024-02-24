@@ -19,7 +19,7 @@ namespace BehaviorTree
         #region Property
 
         private Vector3 _originPos = default;
-        private BehaviorTreeRunner _BTRunner = null;
+        private BehaviorTreeRunner _BTRunner;
         private Transform _detectedPlayer = null;
         private Animator _animator = null;
 

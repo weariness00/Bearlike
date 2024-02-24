@@ -2,13 +2,17 @@ using System;
 using System.Collections.Generic;
 using BehaviorTree.Base;
 using Fusion;
+using Fusion.Addons.SimpleKCC;
+using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using UnityEngine;
+using Allocator = Unity.Collections.Allocator;
 
 namespace BehaviorTree
 {
     [RequireComponent(typeof(Animator))]
-    public sealed class PiggyBankAI : NetworkBehaviour
+    public sealed class PiggyBankAI : MonoBehaviour
     {
         [Header("Movement")] 
         [SerializeField] private float movementSpeed = 5.0f;
@@ -16,8 +20,9 @@ namespace BehaviorTree
         #region Property
 
         private Rigidbody _rb;
-        private BehaviorTreeRunner _btRunner = null;
+        private BehaviorTreeRunner _btRunner;
         private Animator _animator = null;
+        // private SimpleKCC _simpleKcc;
 
         #endregion
 
@@ -25,6 +30,7 @@ namespace BehaviorTree
 
         private struct BTJob : IJob
         {
+            // private NativeArray<BehaviorTreeRunner> _jobBTRuner;
             private BehaviorTreeRunner _jobBTRuner;
 
             public BTJob(BehaviorTreeRunner btRunner)
@@ -50,22 +56,27 @@ namespace BehaviorTree
 
         private void Start()
         {
-            btJob = new BTJob(_btRunner);
+            // btJob = new BTJob(_btRunner);
         }
 
         private void Update()
         {
-            var handle = btJob.Schedule();
-
-            handle.Complete();
+            // var handle = btJob.Schedule();
+            //
+            // handle.Complete();  // 몇 프레임 뒤에 호출할까? 고민해보자
+            _btRunner.Operator();
         }
+
+        // private void LateUpdate()
+        // {
+        //     handle.Complete();
+        // }
 
         INode SettingBT()
         {
             return new SelectorNode(
                 new List<INode>()
                 {
-                    
                     // 마지막 행동
                     new ActionNode(WalkAround)
                 }
@@ -87,18 +98,49 @@ namespace BehaviorTree
             return false;
         }
 
+        #region Attack
+
+        /// <summary>
+        /// 돼지저금통이 공격을 하는중인지 판단하는 함수
+        /// </summary>
+        INode.NodeState CheckAttackAction()
+        {
+            if (IsAnimationRunning("piggy_attack"))
+            {
+                return INode.NodeState.Running;
+            }
+
+            return INode.NodeState.Success;
+        }
+
+        // INode.NodeState 
+        
+        #endregion
+
+        #region Patrol
+
+        INode.NodeState LookAround()
+        {
+            
+            return INode.NodeState.Success;
+        }
+
+        #endregion
+        
         #region Walk
 
         INode.NodeState WalkAround()
         {
-            
-            return INode.NodeState.Failure;
+            PiggyBankWalkRPC();
+            return INode.NodeState.Success;
         }
 
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void PiggyBankWalkRPC()
         {
             var rb = GetComponent<Rigidbody>();
+            
+            rb.AddForce(new Vector3(movementSpeed, 0, 0));
         }
         
         #endregion

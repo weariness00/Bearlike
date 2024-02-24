@@ -26,6 +26,8 @@ namespace Skill.Container
 
         #region property
 
+        private PlayerStatus _playerStatus;
+        
         private int _type;              // 동전 앞뒷면
         private bool _bOn;              // 현재 발동 중인지 판단하는 bool
 
@@ -49,6 +51,8 @@ namespace Skill.Container
             
             _gm = GameObject.Find("GameManager").GetComponent<GameManager>();
 
+            _playerStatus = GameObject.Find("Local Player").GetComponent<PlayerStatus>();
+            
             _bOn = false;
             _difference = 0;
         }
@@ -65,8 +69,7 @@ namespace Skill.Container
             // 한 번만 remove하게 해줘야 한다.
             if (_bOn && Mathf.Round((Duration.Current - Duration.Min) * 10) * 0.1f <= 0f)
             {
-                var playerState = GameObject.Find("Local Player").GetComponent<PlayerStatus>();
-                RemoveBuffRPC(playerState);
+                RemoveBuffRPC(_playerStatus);
             }
             
             _previousPlayTime = _currentPlayTime;
@@ -78,9 +81,8 @@ namespace Skill.Container
             // if(Math.Abs(CoolTime.Current - CoolTime.Min) < 1E-6)
             if (_bOn == false && Mathf.Round((CoolTime.Current - CoolTime.Min) * 10) * 0.1f <= 0f)
             {
-                var playerState = GameObject.Find("Local Player").GetComponent<PlayerStatus>();
                 _type = Random.Range(0, 2);
-                ApplyBuffRPC(playerState);
+                ApplyBuffRPC(_playerStatus);
             }
         }
 
