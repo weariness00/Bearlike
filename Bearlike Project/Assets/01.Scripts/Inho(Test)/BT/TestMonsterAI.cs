@@ -16,7 +16,7 @@ namespace Inho_Test_.BT
         [SerializeField] private float _movementSpeed = 10.0f;
 
         private Vector3 _originPos = default;
-        private BehaviorTreeRunner _BTRunner = null;
+        private BehaviorTreeRunner _BTRunner;
         private Transform _detectedPlayer = null;
         private Animator _animator = null;
 
@@ -55,7 +55,7 @@ namespace Inho_Test_.BT
                     (
                         new List<INode>()
                         {
-                            new ActionNode(CheckDetectEnemy),
+                            // new ActionNode(CheckDetectEnemy),
                             new ActionNode(MoveToDetectEnemy),
                         }
                     ),
@@ -122,21 +122,21 @@ namespace Inho_Test_.BT
         #region Detect & Move Node
         
         // 적을 발견 했는지 판단하는 함수
-        INode.NodeState CheckDetectEnemy()
-        {
-            var overlapColliders = Physics.OverlapSphere(transform.position, _detectRange, LayerMask.GetMask("Player"));
+        // INode.NodeState CheckDetectEnemy()
+        // {
+            // var overlapColliders = Physics.OverlapSphere(transform.position, _detectRange, LayerMask.GetMask("Player"));
 
-            if (overlapColliders != null && overlapColliders.Length > 0)
-            {
-                _detectedPlayer = overlapColliders[0].transform;
-
-                return INode.NodeState.Success;
-            }
-
-            _detectedPlayer = null;
-
-            return INode.NodeState.Failure;
-        }
+            // if (overlapColliders != null && overlapColliders.Length > 0)
+            // {
+            //     _detectedPlayer = overlapColliders[0].transform;
+            //
+            //     return INode.NodeState.Success;
+            // }
+            //
+            // _detectedPlayer = null;
+            //
+            // return INode.NodeState.Failure;
+        // }
 
         // 적에게 이동하는 함수
         INode.NodeState MoveToDetectEnemy()

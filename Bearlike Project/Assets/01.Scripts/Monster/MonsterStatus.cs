@@ -17,7 +17,7 @@ namespace State.StateClass
         {
             _hp.Max = 100;
             _hp.Min = 0;
-            _hp.Current = 1000;
+            _hp.Current = 100;
 
             attack.Max = 100;
             attack.Min = 1;

@@ -23,7 +23,7 @@ namespace State.StateClass.Base
     {
         #region Member Variable
 
-        public StatusValue<int> _hp = new StatusValue<int>();                              // 체력        
+        public StatusValue<int> _hp = new StatusValue<int>();                   // 체력        
         public StatusValue<int> attack = new StatusValue<int>();               // 공격력
         public StatusValue<int> defence = new StatusValue<int>();              // 방어력
         public StatusValue<float> avoid = new StatusValue<float>();           // 회피
@@ -50,17 +50,17 @@ namespace State.StateClass.Base
 
         #region HP Function
 
-        [Rpc(RpcSources.All, RpcTargets.All)]
+        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
         public virtual void ApplyDamageRPC(float damage, CrowdControl enemyProperty, RpcInfo info = default)
         {
             ApplyDamage(damage, enemyProperty);
             
             // TODO : Dubug
-            DebugManager.ToDo("asdkasl");
+            // DebugManager.ToDo("asdkasl");
             ShowInfo();
         }
         
-        public abstract void ApplyDamage(float damage, CrowdControl enemyProperty); // MonsterRef instigator,
+        public abstract void ApplyDamage(float damage, CrowdControl enemyProperty);
 
         #endregion
 

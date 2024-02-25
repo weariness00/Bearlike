@@ -7,8 +7,11 @@ using Script.Manager;
 using Script.Photon;
 using Script.Weapon.Gun;
 using Scripts.State.GameStatus;
+using Skill;
+using Skill.Container;
 using State.StateClass;
 using Unity.Mathematics;
+using State.StateClass.Base;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -21,6 +24,8 @@ namespace Player
 
         public IEquipment equipment;
         public StatusValue<int> ammo = new StatusValue<int>();
+
+        public SkillSystem skillSystem;
 
         [Header("아이템")] 
         public Dictionary<int, ItemBase> itemList = new Dictionary<int, ItemBase>();
@@ -42,6 +47,7 @@ namespace Player
             equipment = GetComponentInChildren<IEquipment>();
             status = gameObject.GetOrAddComponent<PlayerStatus>();
             _networkAnimator = GetComponent<NetworkMecanimAnimator>();
+            skillSystem = gameObject.GetOrAddComponent<SkillSystem>();
         }
 
         public override void Spawned()
@@ -78,6 +84,7 @@ namespace Player
                 MouseRotateControl(data.MouseAxis);
                 MoveControl(data);
                 WeaponControl(data);
+                SkillControl(data);
             }
         }
 
@@ -153,6 +160,15 @@ namespace Player
             {
                 var gun = equipment as GunBase;
                 gun.ReLoadBullet();
+            }
+        }
+
+        void SkillControl(PlayerInputData data)
+        {
+            if(Input.GetKeyDown(KeyCode.F1))
+            // if (data.FirstSkill)
+            {
+                skillSystem.skillList[0].Run();
             }
         }
     }

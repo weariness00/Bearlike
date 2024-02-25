@@ -1,18 +1,27 @@
-﻿using System;
-using Skill.SkillClass.FirstDoll;
+﻿using System.Collections.Generic;
+using Fusion;
+using Skill.Container;
+using State.StateClass;
 using UnityEngine;
 
-namespace Inho.Scripts.Skill.System
+namespace Skill
 {
-    public class SkillSystem : MonoBehaviour
+    public class SkillSystem : NetworkBehaviour
     {
+        public List<SkillBase> skillList = new List<SkillBase>(); 
         
         private void Start()
         {
+            // HACK : 테스트용
+            skillList.Add(new FlippingCoin());
         }
 
-        private void Update()
+        public override void FixedUpdateNetwork()
         {
+            skillList[0].MainLoop();
+
+            var ps = GameObject.Find("Local Player").GetComponent<PlayerStatus>();
+            ps.ShowInfo();
         }
     }
 }
