@@ -27,6 +27,7 @@ namespace GamePlay.StageLevel
 
         [Header("스테이지 기본 정보")] 
         public StageLevelInfo stageLevelInfo;
+        public Texture2D image;
         public bool isStageClear = false;
         public bool isStageOver = false;
         [HideInInspector] [Tooltip("보상 루팅 테이블")] public LootingTable lootingTable;
@@ -44,6 +45,7 @@ namespace GamePlay.StageLevel
         [Header("몬스터 정보")] 
         public List<NetworkSpawner> monsterSpawnerList = new List<NetworkSpawner>();
         public StatusValue<int> monsterKillCount = new StatusValue<int>(); // 몬스터를 소멸 시킨 수
+        public StatusValue<int> aliveMonsterCount = new StatusValue<int>(); // 최대 몇마리 살아있게 할 것인지
 
         public string goalInfo;
         public string awardInfo;
@@ -60,7 +62,7 @@ namespace GamePlay.StageLevel
 
         private void Start()
         {
-            stageLevelInfo.AliveMonsterCount.isOverMax = true;
+            aliveMonsterCount.isOverMax = true;
         }
 
         public override void FixedUpdateNetwork()
@@ -85,12 +87,12 @@ namespace GamePlay.StageLevel
         {
             foreach (var monsterSpawner in monsterSpawnerList)
             {
-                if (stageLevelInfo.AliveMonsterCount.isMax)
+                if (aliveMonsterCount.isMax)
                 {
                     break;
                 }
 
-                stageLevelInfo.AliveMonsterCount.Current += monsterSpawner.spawnCount.Max;
+                aliveMonsterCount.Current += monsterSpawner.spawnCount.Max;
                 monsterSpawner.SpawnSuccessAction += (obj) =>
                 {
                     // obj.transform.SetParent(monsterParentTransform);
@@ -98,7 +100,7 @@ namespace GamePlay.StageLevel
                     var monster = obj.GetComponent<MonsterBase>();
                     monster.DieAction += () =>
                     {
-                        --stageLevelInfo.AliveMonsterCount.Current;
+                        --aliveMonsterCount.Current;
                         --monsterSpawner.spawnCount.Current;
                         ++monsterKillCount.Current;
                     };

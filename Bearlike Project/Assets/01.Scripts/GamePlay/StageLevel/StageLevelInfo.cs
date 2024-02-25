@@ -10,9 +10,5 @@ namespace GamePlay.StageLevel
         public StageLevelType StageLevelType;
         public string title;
         public string explain;
-
-        public Texture2D image;
-        
-        public StatusValue<int> AliveMonsterCount;
     }
 }

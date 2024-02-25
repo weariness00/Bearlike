@@ -18,10 +18,10 @@ namespace Skill
 
         public override void FixedUpdateNetwork()
         {
-            skillList[0].MainLoop();
-
-            var ps = GameObject.Find("Local Player").GetComponent<PlayerStatus>();
-            ps.ShowInfo();
+            foreach (var skill in skillList)
+            {
+                skill.MainLoop();
+            }
         }
     }
 }

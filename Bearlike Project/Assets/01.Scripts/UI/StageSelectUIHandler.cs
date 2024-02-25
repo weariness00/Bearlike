@@ -16,7 +16,7 @@ namespace UI
 
         public void Setting(StageLevelInfo stageInfo)
         {
-            image.texture = stageInfo.image;
+            // image.texture = stageInfo.image;
             
             titleText.text = stageInfo.title;
             explainText.text = stageInfo.explain;
