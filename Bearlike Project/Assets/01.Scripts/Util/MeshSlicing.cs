@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Util
 {
@@ -9,12 +12,20 @@ namespace Util
         /// <summary>
         /// 쪼개진 mesh 정보들을 담을 클래스
         /// </summary>
-        class SliceInfo
+        public class SliceInfo
         {
             public List<Vector3> vertices = new List<Vector3>();
             public List<Vector3> normals = new List<Vector3>();
             public List<Vector2> uv = new List<Vector2>();
             public List<int> triangles = new List<int>();
+
+            public void AddRange([NotNull] SliceInfo other)
+            {
+                vertices.AddRange(other.vertices);
+                normals.AddRange(other.normals);
+                uv.AddRange(other.uv);
+                triangles.AddRange(other.triangles);
+            }
         }
 
         /// <summary>
@@ -171,26 +182,158 @@ namespace Util
                 }
             }
 
+            createdSliceInfo.vertices = SortVertices(createdSliceInfo.vertices);
+            var capSliceInfos = MakeCap(sliceNormal,createdSliceInfo.vertices);
+            
+            // 최종적으로 사용할 메쉬
+            var finalSliceInfos = new[] { new SliceInfo(), new SliceInfo() };
+            for (int i = 0; i < 2; i++)
+            {
+                finalSliceInfos[i].AddRange(sliceInfos[i]);
+                finalSliceInfos[i].AddRange(capSliceInfos[i]);
+            }
+            
+            var targetMeshRenderer = targetObject.GetComponent<MeshRenderer>();
             // 새로운 오브젝트 생성
             for (int i = 0; i < 2; i++)
             {
                 Mesh mesh = new Mesh
                 {
+                    subMeshCount = targetMeshRenderer.sharedMaterials.Length + 1,
                     name = targetMesh.name + "_Slicing",
-                    vertices = sliceInfos[i].vertices.ToArray(),
-                    normals = sliceInfos[i].normals.ToArray(),
-                    uv = sliceInfos[i].uv.ToArray()
+                    vertices = finalSliceInfos[i].vertices.ToArray(),
+                    normals = finalSliceInfos[i].normals.ToArray(),
+                    uv = finalSliceInfos[i].uv.ToArray()
                 };
                 mesh.SetTriangles(sliceInfos[i].triangles, 0);
+                mesh.SetTriangles(capSliceInfos[i].triangles, targetMeshRenderer.sharedMaterials.Length);
 
                 GameObject sliceGameObject = new GameObject(targetObject.name + "_Slicing", typeof(MeshFilter), typeof(MeshRenderer));
                 sliceGameObject.GetComponent<MeshFilter>().sharedMesh = mesh;
-                sliceGameObject.GetComponent<MeshRenderer>().sharedMaterials = targetObject.GetComponent<MeshRenderer>().sharedMaterials;
+                sliceGameObject.GetComponent<MeshRenderer>().sharedMaterials = targetMeshRenderer.sharedMaterials;
                 sliceGameObject.transform.position = targetObject.transform.position;
                 sliceGameObject.transform.rotation = targetObject.transform.rotation;
                 sliceGameObject.transform.localScale = targetObject.transform.localScale;
             }
             targetObject.SetActive(false);
+        }
+
+        public static SliceInfo[] MakeCap(Vector3 sliceNormal, List<Vector3> relatedVertices)
+        {
+            SliceInfo[] sliceInfos = new []{new SliceInfo(), new SliceInfo()};
+            sliceInfos[0].vertices.AddRange(relatedVertices);
+            sliceInfos[1].vertices.AddRange(relatedVertices);
+            if (relatedVertices.Count < 2)
+            {
+                return sliceInfos;
+            }
+
+            Vector3 center = Vector3.zero;
+            foreach (var vertex in relatedVertices)
+            {
+                center += vertex;
+            }
+            center /= relatedVertices.Count;
+            sliceInfos[0].vertices.Add(center);
+            sliceInfos[1].vertices.Add(center);
+
+            //Calculate cap data
+            //Normal
+            for (int i = 0; i < relatedVertices.Count; i++)  
+            {
+                sliceInfos[0].normals.Add(sliceNormal);
+                sliceInfos[1].normals.Add(-sliceNormal);
+            }
+            //Uv
+            //Basis on sliced plane
+            Vector3 forward = Vector3.zero;
+            forward.x = sliceNormal.y;
+            forward.y = -sliceNormal.x;
+            forward.z = sliceNormal.z;
+            Vector3 left = Vector3.Cross(forward, sliceNormal);
+            for (int i = 0; i < relatedVertices.Count; i++)
+            {
+                Vector3 dir = relatedVertices[i] - center;
+                Vector2 relatedUV = Vector2.zero;
+                relatedUV.x = 0.5f + Vector3.Dot(dir, left);
+                relatedUV.y = 0.5f + Vector3.Dot(dir, forward);
+                sliceInfos[0].uv.Add(relatedUV);
+                sliceInfos[1].uv.Add(relatedUV);
+            }
+            sliceInfos[0].uv.Add(new Vector2(0.5f, 0.5f));
+            sliceInfos[1].uv.Add(new Vector2(0.5f, 0.5f));
+            //Triangle
+            int centerIdx = sliceInfos[0].vertices.Count - 1;
+            //Check first triangle face where
+            float faceDir = Vector3.Dot(sliceNormal, Vector3.Cross(relatedVertices[0] - center, relatedVertices[1] - relatedVertices[0]));
+            //Store tris
+            for (int i = 0; i < sliceInfos[0].vertices.Count - 1; i++)
+            {
+                int idx0 = i;
+                int idx1 = (i + 1) % (sliceInfos[0].vertices.Count - 1);
+                if (faceDir < 0)
+                {
+                    sliceInfos[0].triangles.Add(centerIdx);
+                    sliceInfos[0].triangles.Add(idx1);
+                    sliceInfos[0].triangles.Add(idx0);
+
+                    sliceInfos[1].triangles.Add(centerIdx);
+                    sliceInfos[1].triangles.Add(idx0);
+                    sliceInfos[1].triangles.Add(idx1);
+                }
+                else
+                {
+                    sliceInfos[0].triangles.Add(centerIdx);
+                    sliceInfos[0].triangles.Add(idx0);
+                    sliceInfos[0].triangles.Add(idx1);
+
+                    sliceInfos[1].triangles.Add(centerIdx);
+                    sliceInfos[1].triangles.Add(idx1);
+                    sliceInfos[1].triangles.Add(idx0);
+                }
+            }
+
+            for (int i = 0; i < 2; i++)
+            {
+                for (int j = 0; j < sliceInfos[i].triangles.Count; j++)
+                {
+                    sliceInfos[i].triangles[j] += relatedVertices.Count;
+                }
+            }
+
+            return sliceInfos;
+        }
+
+        public static List<Vector3> SortVertices(List<Vector3> vertices)
+        {
+            var result = new List<Vector3>();
+            result.Add(vertices[0]);
+            result.Add(vertices[1]);
+
+            int compareCount = vertices.Count / 2;
+            for (int i = 0; i < compareCount -1; i++)
+            {
+                for (int j = i + 1; j < compareCount; j++)
+                {
+                    if (vertices[i * 2 + 1] == vertices[j * 2])
+                    {
+                        result.Add(vertices[j * 2 + 1]);
+                        vertices.TrySwap(i * 2 + 2, j * 2 , out var e1);
+                        vertices.TrySwap(i * 2 + 3, j * 2 + 1 , out var e2);
+                    }
+                    else if (vertices[i * 2 + 1] == vertices[j * 2 + 1])
+                    {
+                        result.Add(vertices[j * 2]);
+                        vertices.TrySwap(i * 2 + 2, j * 2 + 1, out var e1);
+                        vertices.TrySwap(i * 2 + 3, j * 2 , out var e2);
+                    }
+                }
+            }
+            if (result.First() == result.Last())
+            {
+                result.RemoveAt(result.Count - 1);
+            }
+            return result;
         }
     }
 }
