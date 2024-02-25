@@ -13,15 +13,20 @@ namespace Skill
         private void Start()
         {
             // HACK : 테스트용
-            skillList.Add(new FlippingCoin());
+            skillList.Add(new FlippingCoin(gameObject.GetComponent<PlayerStatus>()));
         }
 
         public override void FixedUpdateNetwork()
         {
-            skillList[0].MainLoop();
+            foreach (var skill in skillList)
+            {
+                skill.MainLoop();
+            }
 
             var ps = GameObject.Find("Local Player").GetComponent<PlayerStatus>();
             ps.ShowInfo();
+            // ps = GameObject.Find("Remote Player").GetComponent<PlayerStatus>();
+            // ps.ShowInfo();
         }
     }
 }

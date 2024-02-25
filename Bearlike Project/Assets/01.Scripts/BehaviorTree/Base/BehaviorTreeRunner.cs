@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using Unity.Collections;
 using Unity.Jobs;
+using UnityEngine;
 
 namespace BehaviorTree.Base
 {
@@ -12,6 +13,7 @@ namespace BehaviorTree.Base
 
         public void Operator()
         {
+            // Debug.Log(_rootNode.Evaluate());
             _rootNode.Evaluate();
         }
     }

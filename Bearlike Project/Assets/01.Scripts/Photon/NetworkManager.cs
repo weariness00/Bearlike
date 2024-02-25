@@ -411,6 +411,9 @@ namespace Photon
             if (KeyManager.InputAction(KeyToAction.Attack))
                 playerInputData.Attack = true;
 
+            if (KeyManager.InputAction(KeyToAction.FirstSkill))
+                playerInputData.FirstSkill = true;
+
             if (KeyManager.InputActionDown(KeyToAction.Esc))
                 OnPlayerLeft(runner, runner.LocalPlayer);
             

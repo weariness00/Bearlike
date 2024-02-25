@@ -1566,7 +1566,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1662219605
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1742,7 +1742,8 @@ MonoBehaviour:
   isStageClear: 0
   stageGameObject: {fileID: 962364570}
   _mapInfoMono: {fileID: 1763687601}
-  monsterSpawnerList: []
+  monsterSpawnerList:
+  - {fileID: 1662219606}
   monsterParentTransform: {fileID: 0}
   destroyTimeLimit:
     _min: 0

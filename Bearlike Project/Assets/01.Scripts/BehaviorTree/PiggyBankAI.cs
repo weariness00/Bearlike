@@ -15,14 +15,13 @@ namespace BehaviorTree
     public sealed class PiggyBankAI : MonoBehaviour
     {
         [Header("Movement")] 
-        [SerializeField] private float movementSpeed = 5.0f;
+        [SerializeField] private float movementSpeed = 1.0f;
         
         #region Property
 
         private Rigidbody _rb;
         private BehaviorTreeRunner _btRunner;
         private Animator _animator = null;
-        // private SimpleKCC _simpleKcc;
 
         #endregion
 
@@ -74,11 +73,18 @@ namespace BehaviorTree
 
         INode SettingBT()
         {
-            return new SelectorNode(
+            return new SequenceNode(
                 new List<INode>()
                 {
-                    // 마지막 행동
-                    new ActionNode(WalkAround)
+                    new SequenceNode
+                    (
+                        new List<INode>()
+                        {
+                            new ActionNode(CheckAttackAction),
+                            new ActionNode(StartAttack),
+                        }
+                    ),
+                    new ActionNode(WalkAround),
                 }
             );
         }
@@ -94,7 +100,6 @@ namespace BehaviorTree
                     return normalizedTime != 0 && normalizedTime < 1f;
                 }
             }
-            
             return false;
         }
 
@@ -110,6 +115,12 @@ namespace BehaviorTree
                 return INode.NodeState.Running;
             }
 
+            return INode.NodeState.Success;
+        }
+
+        INode.NodeState StartAttack()
+        {
+            _animator.SetTrigger("tAttack");
             return INode.NodeState.Success;
         }
 
@@ -140,7 +151,7 @@ namespace BehaviorTree
         {
             var rb = GetComponent<Rigidbody>();
             
-            rb.AddForce(new Vector3(movementSpeed, 0, 0));
+            rb.AddForce(new Vector3(0, 0, -movementSpeed));
         }
         
         #endregion

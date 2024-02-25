@@ -68,7 +68,7 @@ namespace Player
                 simpleKcc.SetPosition(spawnPosition[0]); 
                 UserData.SetTeleportPosition(Runner.LocalPlayer, null);
             }
-
+            
             if (GetInput(out PlayerInputData data))
             {       
                 if(data.Cursor)
@@ -148,8 +148,7 @@ namespace Player
 
         void SkillControl(PlayerInputData data)
         {
-            if(Input.GetKeyDown(KeyCode.F1))
-            // if (data.FirstSkill)
+            if (data.FirstSkill)
             {
                 skillSystem.skillList[0].Run();
             }
