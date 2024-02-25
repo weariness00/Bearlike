@@ -76,7 +76,6 @@ namespace Script.Manager
 
         public void Load(string fileName)
         {
-            KeyCode.Alpha0
             JsonConvertExtension.Load(fileName, (data) =>
             {
                 var keyDictData = JsonConvert.DeserializeObject<Dictionary<KeyToAction, string>>(data); 
