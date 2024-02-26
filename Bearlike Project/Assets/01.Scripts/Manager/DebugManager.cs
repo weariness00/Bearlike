@@ -1,11 +1,10 @@
 ﻿using UnityEngine;
+using Util;
 
 namespace Script.Manager
 {
-    public class DebugManager : MonoBehaviour
+    public class DebugManager : Singleton<DebugManager>
     {
-        public static DebugManager Instance;
-
         public bool isDebug;
         public bool log;
         public bool logWaring;
@@ -14,11 +13,6 @@ namespace Script.Manager
 
         [Header("TO DO")] 
         public bool isToDo;
-
-        private void Awake()
-        {
-            if (Instance == null) Instance = this;
-        }
 
         #region Log
 

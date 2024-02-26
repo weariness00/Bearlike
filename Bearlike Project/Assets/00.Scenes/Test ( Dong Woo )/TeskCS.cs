@@ -6,12 +6,12 @@ namespace _00.Scenes.Test___Dong_Woo__
 {
     public class TeskCS : MonoBehaviour
     {
-        public void OnCollisionEnter(Collision other)
+        private void Start()
         {
-            if (other.gameObject.CompareTag("Slice"))
-            {
-                MeshSlicing.Slice(other.gameObject, Vector3.right, gameObject.transform.position);
-            }
+            MeshSlicing.SliceBoxRange(
+                gameObject, Vector3.zero, 0.5f, 0.5f, Vector3.forward
+            );
+            // MeshSlicing.Slice(gameObject, new Vector3(0.5f,0.5f,0f), gameObject.transform.position);
         }
     }
 }
