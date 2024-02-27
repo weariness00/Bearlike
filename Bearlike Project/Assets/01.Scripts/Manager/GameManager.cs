@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Fusion;
-using Fusion.Addons.SimpleKCC;
 using GamePlay.StageLevel;
 using Photon;
 using Script.Data;
 using Script.GamePlay;
 using Script.Manager;
-using Script.Photon;
 using Scripts.State.GameStatus;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Util;
 using Util.Map;
 using Random = UnityEngine.Random;
 
@@ -20,19 +16,21 @@ namespace Manager
 {
     public class GameManager : NetworkSingleton<GameManager>
     {
+        #region Network Variable
+        
+        [Networked] public float PlayTimer { get; set; }
+        [Networked] public float AlivePlayerCount { get; set; }
+        
+        #endregion
+
         [SerializeField]private SpawnPlace _spawnPlace = new SpawnPlace();
 
         private MapGenerate _mapGenerate = new MapGenerate();
-        
+
         [Header("스테이지")]
         public StageLevelBase defaultStage;
         public List<StageLevelBase> stageList = new List<StageLevelBase>();
         public StatusValue<int> stageCount = new StatusValue<int>();// 현재 몇번째 스테이지 인지
-
-        #region Data Property
-        [Networked] public float PlayTimer { get; set; }
-
-        #endregion
 
         #region Unity Event Function
         protected override void Awake()
@@ -82,6 +80,7 @@ namespace Manager
                 {
                     // var playerController = Runner.FindObject(user.NetworkId).GetComponent<PlayerController>();
                     UserData.SetTeleportPosition(key, _spawnPlace.GetRandomSpot().position);
+                    AlivePlayerCount++;
                 }
             }
         }
@@ -105,30 +104,32 @@ namespace Manager
             }
 
             await NetworkManager.LoadScene(stage.sceneReference.ScenePath,LoadSceneMode.Additive, LocalPhysicsMode.Physics3D);
-            
-            DebugManager.ToDo("임시 방편으로 0.1초 기다린뒤 초기화를 진행함\n" +
-                              "씬이 모든 클라이언트에서 로드 된 것을 알 수 있게하는 동기화 기법을 사용해야됨");
-            await Task.Delay(100);
-            foreach (var stageLevelBase in FindObjectsOfType<StageLevelBase>())
+            async void OnSceneLoadDoneAction()
             {
-                // 이미 활성화된 스테이지
-                if (stageLevelBase.stageGameObject.activeSelf)
+                foreach (var stageLevelBase in FindObjectsOfType<StageLevelBase>())
                 {
-                    continue;
-                }
-                
-                if (stage.stageLevelInfo.StageLevelType == stageLevelBase.stageLevelInfo.StageLevelType)
-                {
-                    stageLevelBase.MapInfo = await _mapGenerate.FindEmptySpaceSync(stage.MapInfo, defaultStage.MapInfo);
-                    stageLevelBase.StageInitRPC();
-                    
-                    NetworkManager.UnloadScene(stage.sceneReference.ScenePath);
-                    
-                    _mapGenerate.AddMap(stageLevelBase.MapInfo);
-                    stageLevelBase.StageSetting();
-                    break;
+                    // 이미 활성화된 스테이지
+                    if (stageLevelBase.stageGameObject.activeSelf)
+                    {
+                        continue;
+                    }
+
+                    if (stage.stageLevelInfo.StageLevelType == stageLevelBase.stageLevelInfo.StageLevelType)
+                    {
+                        stageLevelBase.MapInfo = await _mapGenerate.FindEmptySpaceSync(stage.MapInfo, defaultStage.MapInfo);
+                        stageLevelBase.StageInitRPC();
+
+                        NetworkManager.UnloadScene(stage.sceneReference.ScenePath);
+
+                        _mapGenerate.AddMap(stageLevelBase.MapInfo);
+                        stageLevelBase.StageSetting();
+
+                        DebugManager.Log($"씬 생성 후 초기화 완료 {stage.sceneReference}");
+                        break;
+                    }
                 }
             }
+            NetworkManager.SceneLoadDoneAction += OnSceneLoadDoneAction;
         }
 
         public void SetStage(int index) => SetStage(stageList.Count < index ? null : stageList[index]);

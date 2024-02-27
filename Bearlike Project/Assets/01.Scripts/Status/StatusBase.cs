@@ -50,12 +50,12 @@ namespace State.StateClass.Base
 
         #region HP Function
 
-        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+        [Rpc(RpcSources.All, RpcTargets.All)]
         public virtual void ApplyDamageRPC(float damage, CrowdControl enemyProperty, RpcInfo info = default)
         {
             ApplyDamage(damage, enemyProperty);
             
-            // TODO : Dubug
+            // TODO : Dubug 
             // DebugManager.ToDo("asdkasl");
             ShowInfo();
         }

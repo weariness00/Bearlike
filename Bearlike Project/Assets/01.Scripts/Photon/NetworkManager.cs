@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Fusion;
 using Fusion.Addons.Physics;
+using Fusion.Photon.Realtime;
 using Fusion.Sockets;
 using Script.Data;
 using Script.Manager;
@@ -20,14 +21,10 @@ namespace Photon
         public static NetworkRunner Runner => Instance._runner;
         public static int PlayerCount => Runner.ActivePlayers.ToArray().Length;
 
-        public NetworkPrefabRef userDataPrefabRef;
-        private UserData _userData;
-
         private string[] _sessionNames;
         private NetworkRunner _runner;
 
         private Action<NetworkObject> _isSetPlayerObjectEvent;
-
         public Action<NetworkObject> IsSetPlayerObjectEvent
         {
             get => _isSetPlayerObjectEvent;
@@ -89,6 +86,33 @@ namespace Photon
 
         #region Scene Static Funtion
 
+        public static Action SceneLoadDoneAction 
+        {
+            get => Instance._sceneLoadDoneAction;
+            set
+            {
+                if (Instance._isLoadDone)
+                {
+                    value?.Invoke();
+                }
+                else
+                {
+                    Instance._sceneLoadDoneAction = value;
+                }
+            }
+            
+        }
+        private Action _sceneLoadDoneAction;
+        private bool _isLoadDone = false;
+        IEnumerator LoadSceneDoneCoroutine()
+        {
+            while (_isLoadDone == false)
+            {
+                yield return null;
+            }
+            SceneLoadDoneAction?.Invoke();
+        }
+        
         public static async Task LoadScene(SceneRef sceneRef, LoadSceneParameters parameters, bool setActiveOnLoad = false)
         {
             if (Instance._runner.IsSceneAuthority)
@@ -148,7 +172,7 @@ namespace Photon
             gameObject.GetOrAddComponent<RunnerSimulatePhysics3D>();
             _runner = gameObject.GetOrAddComponent<NetworkRunner>();
             _runner.ProvideInput = true;
-
+            
             // Create the NetworkSceneInfo from the current scene
             var scene = SceneRef.FromIndex((int)SceneType.Matching);
             var sceneInfo = new NetworkSceneInfo();
@@ -163,6 +187,7 @@ namespace Photon
                 GameMode = mode,
                 SessionName = sessionName,
                 Scene = scene,
+                MatchmakingMode = MatchmakingMode.FillRoom,
                 SceneManager = gameObject.GetOrAddComponent<NetworkSceneManagerDefault>(),
                 PlayerCount = 3,
                 IsVisible = true,
@@ -350,29 +375,14 @@ namespace Photon
 
         public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
-            var matchManager = FindObjectOfType<NetworkMatchManager>();
-            var data = new UserDataStruct();
-
-            if (_userData == null)
-            {
-                _userData = FindObjectOfType<UserData>();
-                if (_userData == null)
-                    _userData = _runner.Spawn(userDataPrefabRef, Vector3.zero, Quaternion.identity).GetComponent<UserData>();
-            }
-
-            data.PlayerRef = player;
-            data.Name = player.ToString();
-            data.PrefabRef = matchManager.PlayerPrefabRefs[0]; // 임시 : 나중에는 유저가 선택하면 바꿀 수 있거나 아니면 이전 정보를 가져와 그 캐릭터로 잡아줌
-
-            _userData.InsertUserData(player, data);
-            matchManager.DataUpdate();
+  
         }
 
         public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
         {
             DebugManager.Log($"종료 : {player}");
 
-            _userData.UserDictionary.Remove(player);
+            UserData.Instance.UserDictionary.Remove(player);
         }
 
         public void OnInput(NetworkRunner runner, NetworkInput input)
@@ -432,11 +442,12 @@ namespace Photon
             var player = runner.LocalPlayer;
             DebugManager.Log($"강제 종료 : {runner.LocalPlayer}");
 
-            _userData.UserDictionary.Remove(runner.LocalPlayer);
+            UserData.Instance.UserDictionary.Remove(runner.LocalPlayer);
         }
 
         public void OnConnectedToServer(NetworkRunner runner)
         {
+
             DebugManager.Log("서버 연결 성공\n" +
                              $"세션 이름 : {runner.SessionInfo.Name}");
         }
@@ -477,12 +488,15 @@ namespace Photon
 
         public void OnSceneLoadDone(NetworkRunner runner)
         {
-            DebugManager.Log($"씬 Loading 끝 : {runner.SceneManager.MainRunnerScene.name}");
+            DebugManager.Log($"씬 Loading 끝");
+            _isLoadDone = true;
         }
 
         public void OnSceneLoadStart(NetworkRunner runner)
         {
             DebugManager.Log($"씬 Loading 중");
+            _isLoadDone = false;
+            StartCoroutine(LoadSceneDoneCoroutine());
         }
 
         public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)

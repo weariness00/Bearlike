@@ -1,115 +1,82 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Fusion;
+using Item.Looting;
 using Manager;
+using Photon;
 using Script.Manager;
 using Script.Monster;
 using Script.Photon;
 using Scripts.State.GameStatus;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
 using Util.Map;
 
 namespace GamePlay.StageLevel
 {
-    public class StageLevelBase : NetworkBehaviour
+    public class StageLevelBase : NetworkBehaviourEx
     {
-        public static Action stageClearAction = null; // 모든 스테이지에서 공통적으로 쓰이기 떄문에 전역으로 처리함
+        #region Static Variable
+
+        public static Action<NetworkRunner> StageClearAction;
+
+        #endregion
         
         public SceneReference sceneReference;
-        private Action _stageUpdateAction = null;
-        
-        #region Stage Info Variable
 
-        [Header("스테이지 정보")]
+        [Header("스테이지 기본 정보")] 
         public StageLevelInfo stageLevelInfo;
+        public Texture2D image;
         public bool isStageClear = false;
+        public bool isStageOver = false;
+        [HideInInspector] [Tooltip("보상 루팅 테이블")] public LootingTable lootingTable;
 
-        [Header("맵 정보")] 
+        [Header("맵 정보")]
         public GameObject stageGameObject;
         [SerializeField] private MapInfoMono _mapInfoMono;
+
         public MapInfo MapInfo
         {
             get => _mapInfoMono.info;
             set => _mapInfoMono.info = value;
         }
 
-        [Header("몬스터 정보")]
+        [Header("몬스터 정보")] 
         public List<NetworkSpawner> monsterSpawnerList = new List<NetworkSpawner>();
-        public Transform monsterParentTransform = null;
+        public StatusValue<int> monsterKillCount = new StatusValue<int>(); // 몬스터를 소멸 시킨 수
+        public StatusValue<int> aliveMonsterCount = new StatusValue<int>(); // 최대 몇마리 살아있게 할 것인지
 
-        #endregion
-        
-        #region Destroy Variable
-
-        public StatusValue<float> destroyTimeLimit = new StatusValue<float>();
-        public StatusValue<int> monsterKillCount = new StatusValue<int>();
-
-        #endregion
-        
-        public string goalInfo; 
+        public string goalInfo;
         public string awardInfo;
         public string difficultInfo;
 
         #region Unity Event Function
 
-        private void Awake()
+        public void Awake()
         {
+            lootingTable = gameObject.GetOrAddComponent<LootingTable>();
             stageGameObject.SetActive(false);
-            StageMemoryOptimize();
-            switch (stageLevelInfo.StageLevelType)
-            {
-                case StageLevelType.Destroy:
-                    DestroyInit();
-                    _stageUpdateAction = DestroyUpdate;
-                    break;
-            }
+            monsterKillCount.isOverMax = true;
         }
 
         private void Start()
         {
-            stageLevelInfo.AliveMonsterCount.isOverMax = true;
-            if (monsterParentTransform == null) { monsterParentTransform = gameObject.transform; }
-
-            stageClearAction += StopMonsterSpawn;
+            aliveMonsterCount.isOverMax = true;
         }
 
         public override void FixedUpdateNetwork()
         {
-            _stageUpdateAction?.Invoke();
+            if (isStageClear == false && isStageOver == false)
+            {
+                StageUpdate();
+            }
         }
 
         #endregion
 
         #region Defualt Function
 
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsServer)]
-        public void StageInitRPC() => StageInit();
-        public void StageInit()
-        {
-           if(stageGameObject.GetComponentInChildren<EventSystem>() != null){Destroy(stageGameObject.GetComponentInChildren<EventSystem>().gameObject);}
-            if(stageGameObject.GetComponentInChildren<Camera>() != null){Destroy(stageGameObject.GetComponentInChildren<Camera>().gameObject);}
-            
-            Runner.MoveGameObjectToSameScene(gameObject, GameManager.Instance.gameObject);
-            Runner.MoveGameObjectToSameScene(stageGameObject, GameManager.Instance.gameObject);
-            
-            gameObject.transform.position = MapInfo.pivot;
-            stageGameObject.transform.position = MapInfo.pivot;
-            stageGameObject.SetActive(true);
-        }
-
-        // 스테이지 타입에 맞지 않는 멥버 변수 메모리 해제
-        void StageMemoryOptimize()
-        {
-            if (stageLevelInfo.StageLevelType != StageLevelType.Destroy)
-            {
-                destroyTimeLimit = null;
-                monsterKillCount = null;
-            }
-        }
-        
         // 스테이지에 들어서면 정보에 맞춰 해당 스테이지를 셋팅 해준다.
         public void StageSetting()
         {
@@ -120,19 +87,20 @@ namespace GamePlay.StageLevel
         {
             foreach (var monsterSpawner in monsterSpawnerList)
             {
-                if (stageLevelInfo.AliveMonsterCount.isMax)
+                if (aliveMonsterCount.isMax)
                 {
                     break;
                 }
-                stageLevelInfo.AliveMonsterCount.Current += monsterSpawner.spawnCount.Max;
+
+                aliveMonsterCount.Current += monsterSpawner.spawnCount.Max;
                 monsterSpawner.SpawnSuccessAction += (obj) =>
-                {   
-                    obj.transform.parent = monsterParentTransform;
-                    
+                {
+                    // obj.transform.SetParent(monsterParentTransform);
+
                     var monster = obj.GetComponent<MonsterBase>();
                     monster.DieAction += () =>
                     {
-                        --stageLevelInfo.AliveMonsterCount.Current;
+                        --aliveMonsterCount.Current;
                         --monsterSpawner.spawnCount.Current;
                         ++monsterKillCount.Current;
                     };
@@ -149,49 +117,73 @@ namespace GamePlay.StageLevel
             }
         }
 
-        void StageClear()
-        {
-            
-        }
-        
         #endregion
 
-        #region Destroy Function
+        #region Stage Function
 
-        void DestroyInit()
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All, Channel = RpcChannel.Reliable)]
+        public virtual void StageInitRPC() => StageInit();
+
+        public virtual void StageInit()
         {
-            monsterKillCount.isOverMax = true;
+            if (stageGameObject.GetComponentInChildren<EventSystem>() != null)
+            {
+                Destroy(stageGameObject.GetComponentInChildren<EventSystem>().gameObject);
+            }
+
+            if (stageGameObject.GetComponentInChildren<Camera>() != null)
+            {
+                Destroy(stageGameObject.GetComponentInChildren<Camera>().gameObject);
+            }
+
+            Runner.MoveGameObjectToSameScene(gameObject, GameManager.Instance.gameObject);
+            Runner.MoveGameObjectToSameScene(stageGameObject, GameManager.Instance.gameObject);
+
+            gameObject.transform.position = MapInfo.pivot;
+            stageGameObject.transform.position = MapInfo.pivot;
+            stageGameObject.SetActive(true);
+
+            if (LootingSystem.Instance.stageLootingItemDictionary.TryGetValue((int)stageLevelInfo.StageLevelType, out var lootingItems))
+            {
+                lootingTable.CalLootingItem(lootingItems);
+            }
+            
+            DebugManager.Log($"스테이지 초기화 {stageLevelInfo.title}");
         }
 
-        void DestroyUpdate()
+        public virtual void StageUpdate()
         {
-            destroyTimeLimit.Current += Runner.DeltaTime;
-            if (monsterKillCount.isMax)
+            if (GameManager.Instance.AlivePlayerCount <= 0)
             {
-                DebugManager.Log("스테이지 클리어\n" +
-                                 $"스테이지 모드 :{stageLevelInfo.StageLevelType}");
-                isStageClear = true;
-                _stageUpdateAction -= DestroyUpdate;
-                DestroyClear();
-                
-                stageClearAction?.Invoke();
+                StageOver();
             }
-            else if (destroyTimeLimit.isMax)
+        }
+
+        public virtual void StageClear()
+        {
+            if (isStageClear)
             {
-                DestroyOver();
-                _stageUpdateAction = null;
                 return;
             }
+            
+            isStageClear = true;
+            
+            lootingTable.SpawnDropItem();
+            DebugManager.ToDo("임시적으로 모든 아이템을 드랍하게 함");
+            
+            StageClearAction?.Invoke(Runner);
+            DebugManager.Log("스테이지 클리어\n" +
+                             $"스테이지 모드 :{stageLevelInfo.StageLevelType}");
         }
 
-        void DestroyClear()
+        public virtual void StageOver()
         {
+            if (isStageOver)
+            {
+                return;
+            }
             
-        }
-
-        void DestroyOver()
-        {
-            
+            isStageOver = true;
         }
 
         #endregion

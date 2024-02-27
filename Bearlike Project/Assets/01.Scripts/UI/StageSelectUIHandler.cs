@@ -16,12 +16,12 @@ namespace UI
 
         public void Setting(StageLevelInfo stageInfo)
         {
-            image.texture = stageInfo.image;
+            // image.texture = stageInfo.image;
             
             titleText.text = stageInfo.title;
             explainText.text = stageInfo.explain;
 
-            explainText.rectTransform.position = new Vector3(0, explainText.preferredHeight, 0);
+            explainText.rectTransform.position += new Vector3(0, explainText.preferredHeight, 0);
         }
     }
 }

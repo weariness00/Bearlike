@@ -21,6 +21,7 @@ namespace Script.Photon
         public bool isRandomObject = false; // 랜덤한 객체를 소환할 것인지
         public bool isRandomPlace = false; // 랜덤한 위치에 소환할 것인지
         public bool isRandomInterval = false; // 랜덤한 간격에 소환할 것인지
+        public Transform parentTransform; // 소환된 객체가 갈 부모 객체 ( 하이어라키에서 관리 편의성을 위해 사용 )
         public StatusValue<int> spawnCount = new StatusValue<int>(); // 현재 스폰된 갯수
         
         public List<NetworkPrefabRef> spawnObjectList = new List<NetworkPrefabRef>();
@@ -155,6 +156,7 @@ namespace Script.Photon
         async Task SpawnTask()
         {
             var obj = await Runner.SpawnAsync(_currentSpawnObjectOrder, _currentSpawnPlace.position);
+            SetParentRPC(obj.Id);
             SpawnSuccessAction?.Invoke(obj.gameObject);
             NextObject();
             NextPlace();
@@ -162,6 +164,21 @@ namespace Script.Photon
             
             DebugManager.Log("네트워크 객체 소환\n" +
                              $"이름 : {obj.name}");
+        }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        public void SetParentRPC(NetworkId networkID)
+        {
+            if (parentTransform == null)
+            {
+                return;
+            }
+            
+            var newParentNetworkObject = Runner.FindObject(networkID);
+            if (newParentNetworkObject != null)
+            {
+                newParentNetworkObject.transform.SetParent(parentTransform);
+            }
         }
 
         private IEnumerator SpawnCoroutine()

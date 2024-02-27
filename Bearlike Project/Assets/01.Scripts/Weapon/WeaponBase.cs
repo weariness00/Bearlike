@@ -46,6 +46,14 @@ public class WeaponBase : NetworkBehaviour, IEquipment
     public bool IsGun { get; set; }
     public virtual void Equip()
     {
+        if (HasInputAuthority)
+        {
+            gameObject.layer = LayerMask.NameToLayer("Weapon"); 
+        }
+        else
+        {
+            gameObject.layer = 0;
+        }
     }
 }
 

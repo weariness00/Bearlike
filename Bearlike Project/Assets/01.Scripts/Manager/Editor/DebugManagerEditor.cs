@@ -13,6 +13,7 @@ namespace Script.Manager.Editor
         private SerializedProperty IsLog;
         private SerializedProperty IsLogWaring;
         private SerializedProperty IsLogError;
+        private SerializedProperty IsToDo;
         private SerializedProperty IsDrawRay;
         
         #endregion
@@ -23,6 +24,7 @@ namespace Script.Manager.Editor
             IsLog = serializedObject.FindProperty("log");
             IsLogWaring = serializedObject.FindProperty("logWaring");
             IsLogError = serializedObject.FindProperty("logError");
+            IsToDo = serializedObject.FindProperty("isToDo");
             IsDrawRay = serializedObject.FindProperty("drawRay");
         }
 
@@ -34,8 +36,9 @@ namespace Script.Manager.Editor
             if (IsAllDebug.boolValue)
             {
                 EditorGUILayout.PropertyField(IsLog);
-                EditorGUILayout.PropertyField(IsLogWaring);
+                EditorGUILayout.PropertyField(IsLogWaring); 
                 EditorGUILayout.PropertyField(IsLogError);
+                EditorGUILayout.PropertyField(IsToDo);
                 EditorGUILayout.PropertyField(IsDrawRay);
             }
 

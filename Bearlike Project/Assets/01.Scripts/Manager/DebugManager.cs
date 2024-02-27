@@ -1,11 +1,10 @@
 ﻿using UnityEngine;
+using Util;
 
 namespace Script.Manager
 {
-    public class DebugManager : MonoBehaviour
+    public class DebugManager : Singleton<DebugManager>
     {
-        public static DebugManager Instance;
-
         public bool isDebug;
         public bool log;
         public bool logWaring;
@@ -13,13 +12,7 @@ namespace Script.Manager
         public bool drawRay;
 
         [Header("TO DO")] 
-        public bool isAllToDo;
         public bool isToDo;
-
-        private void Awake()
-        {
-            if (Instance == null) Instance = this;
-        }
 
         #region Log
 
@@ -45,7 +38,7 @@ namespace Script.Manager
 
         public static void ToDo(object massage)
         {
-            if (!DebugManager.Instance.isDebug || !DebugManager.Instance.isAllToDo || !DebugManager.Instance.isToDo) return;
+            if (!DebugManager.Instance.isDebug || !DebugManager.Instance.isToDo) return;
             Debug.Log("TO DO List\n" + massage);
         }
 

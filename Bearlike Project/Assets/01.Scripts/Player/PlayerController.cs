@@ -10,6 +10,7 @@ using Scripts.State.GameStatus;
 using Skill;
 using Skill.Container;
 using State.StateClass;
+using Unity.Mathematics;
 using State.StateClass.Base;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -31,6 +32,14 @@ namespace Player
         
         [HideInInspector] public SimpleKCC simpleKcc;
         private NetworkMecanimAnimator _networkAnimator;
+
+        #region Animation Parametar
+
+        private readonly int _aniShoot = Animator.StringToHash("tShoot");
+        private readonly int _aniFrontMove = Animator.StringToHash("fFrontMove");
+        private readonly int _aniSideMove = Animator.StringToHash("fSideMove");
+
+        #endregion
         private void Awake()
         {
             // 임시로 장비 착용
@@ -50,11 +59,9 @@ namespace Player
                 name = "Local Player";
 
                 Runner.SetPlayerObject(Runner.LocalPlayer, Object);
+                equipment?.Equip();
                 
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
-                DebugManager.ToDo("임시 처방 SetPlayerObject가 안되는 이유 알아내야함");
-                if (Runner.GetPlayerObject(Runner.LocalPlayer) == null)
-                    GetComponent<PlayerCameraController>().SetPlayerCamera(Object);
             }
             else
                 name = "Remote Player";
@@ -88,11 +95,20 @@ namespace Player
             if (data.MoveFront)
                 dir += transform.forward;
             if (data.MoveBack)
+            {
                 dir += -transform.forward;
+            }
             if (data.MoveLeft)
+            {
                 dir += -transform.right;
+            }
             if (data.MoveRight)
+            {
                 dir += transform.right;
+            }
+
+            _networkAnimator.Animator.SetFloat(_aniFrontMove, math.abs(dir.x));
+            _networkAnimator.Animator.SetFloat(_aniSideMove, math.abs(dir.z));
 
             dir *= Runner.DeltaTime * 100f;
             
@@ -136,6 +152,7 @@ namespace Player
             
             if (data.Attack && equipment != null)
             {
+                _networkAnimator.SetTrigger(_aniShoot);
                 equipment.AttackAction?.Invoke();
             }
 

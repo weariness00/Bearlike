@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Threading.Tasks;
 using Fusion;
+using Photon;
 using Script.Manager;
 using UnityEngine;
 
@@ -17,10 +18,8 @@ namespace Script.Data
         [Networked, Capacity(1)]public NetworkLinkedList<Vector3> TeleportPosition { get;}
     }   
 
-    public class UserData : NetworkBehaviour
+    public class UserData : NetworkSingleton<UserData>
     {
-        public static UserData Instance;
-        
         [Networked, Capacity(3)]
         public NetworkDictionary<PlayerRef, UserDataStruct> UserDictionary { get; }
 
@@ -41,21 +40,30 @@ namespace Script.Data
 
         #endregion
         
-        private void Awake()
-        {
-            Instance = this;
-        }
-
         public override void Spawned()
         {
             Runner.MakeDontDestroyOnLoad(gameObject);
+            
+            var data = new UserDataStruct
+            {
+                PlayerRef = Runner.LocalPlayer,
+                Name = Runner.LocalPlayer.ToString()
+            };
+
+            InsertUserDataRPC(Runner.LocalPlayer, data);
         }
 
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void InsertUserDataRPC(PlayerRef playerRef, UserDataStruct userData) => InsertUserData(playerRef, userData);
         public void InsertUserData(PlayerRef playerRef, UserDataStruct userData)
         {
-            DebugManager.Log($"Add Player Data : {userData.Name}");
+            var matchManager = FindObjectOfType<NetworkMatchManager>();
             
+            userData.PrefabRef = matchManager.PlayerPrefabRefs[0]; // 임시 : 나중에는 유저가 선택하면 바꿀 수 있거나 아니면 이전 정보를 가져와 그 캐릭터로 잡아줌
+
             UserDictionary.Add(playerRef, userData);
+            matchManager.DataUpdateRPC();
+            DebugManager.Log($"Add Player Data : {userData.Name}");
         }
 
         public void ChangePlayerRef(PlayerRef playerRef,NetworkPrefabRef prefabRef)
