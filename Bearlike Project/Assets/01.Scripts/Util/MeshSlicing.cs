@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -45,6 +44,9 @@ namespace Util
             public MeshDotData[] Dots;
         }
 
+        /// <summary>
+        /// Mesh의 한 점의 정보를 담는 자료형
+        /// </summary>
         public struct MeshDotData
         {
             public MeshDotData(Vector3 v, Vector3 n, Vector3 u)
@@ -57,24 +59,27 @@ namespace Util
             public Vector3 Normal;
             public Vector2 UV;
         }
-        
+
+        // 선분
         struct Parametric
         {
             public Parametric(Vector3 p1, Vector3 p2)
             {
-                Point1 = p1;
-                Point2 = p2;
+                A = p1;
+                B = p2;
             }
             
-            public Vector3 Point1;
-            public Vector3 Point2;
+            public Vector3 A;
+            public Vector3 B;
+
+            public float Magnitude() => Vector3.Magnitude(B - A);
 
             public bool TryGetPoint(float t, out Vector3 point)
             {
-                Vector3 direction = Point1 - Point2; // 방향 벡터 계산
-                point = Point1 + t * direction; // 파라메트릭 방정식
+                Vector3 direction = A - B; // 방향 벡터 계산
+                point = A + t * direction; // 파라메트릭 방정식
                 
-                if (Point1.x < point.x && point.x < Point2.x)
+                if (A.x < point.x && point.x < B.x)
                     return true;
                 else
                     return false;
@@ -83,7 +88,7 @@ namespace Util
         
         #endregion
 
-        #region Default Function
+        #region Slice Function
         
         /// <summary>
         /// 메쉬를 2개로 잘라준다.
@@ -355,6 +360,8 @@ namespace Util
         
         #endregion
 
+        #region Slice Box Rnage
+        
         /// <summary>
         /// 
         /// </summary>
@@ -370,6 +377,7 @@ namespace Util
         {
             var targetMesh = targetObject.GetComponent<MeshFilter>().sharedMesh;
             SliceInfo[] sliceInfos = new[] { new SliceInfo(), new SliceInfo() };
+            SliceInfo boxInfo = new SliceInfo();
             SliceInfo createdSliceInfo = new SliceInfo();
 
             // rectNormal 벡터가 주어졌을 때, right와 up 벡터 계산
@@ -387,20 +395,17 @@ namespace Util
             };
             var rectNormals = new[] { -right, up, right, -up }; // 왼쪽 위 오른쪽 아래 순
 
-            // 3차원 직선 방정식
+            // 3차원 평면 방정식
             Parametric[] lineSegments = new Parametric[4];
-            lineSegments[0].Point1 = rectPoints[0];
-            lineSegments[0].Point2 = rectPoints[1];
-            lineSegments[1].Point1 = rectPoints[1];
-            lineSegments[1].Point2 = rectPoints[2];
-            lineSegments[2].Point1 = rectPoints[2];
-            lineSegments[2].Point2 = rectPoints[3];
-            lineSegments[3].Point1 = rectPoints[3];
-            lineSegments[3].Point2 = rectPoints[0];
-
-            // 폴리곤의 선분과 rectPoints의 점 2개를 이어 만든 평면이 교차하는지 체크
-            // 교차할 시 rectPoints의 점 2개의 범위 내에 존재하는 점인지 체크
-            // 존재할시 그대로 사용, 존재 안할시 2개의 점 중 1개의 점을 사용
+            lineSegments[0].A = rectPoints[0];
+            lineSegments[0].B = rectPoints[1];
+            lineSegments[1].A = rectPoints[1];
+            lineSegments[1].B = rectPoints[2];
+            lineSegments[2].A = rectPoints[2];
+            lineSegments[2].B = rectPoints[3];
+            lineSegments[3].A = rectPoints[3];
+            lineSegments[3].B = rectPoints[0];
+            
             // 폴리곤 갯수만큼 반복
             int polygonCount = targetMesh.triangles.Length / 3;
             for (int polygonIndex = 0; polygonIndex < polygonCount; polygonIndex++)
@@ -420,22 +425,23 @@ namespace Util
                 // 각 선분마다 검사를 진행 해야됨
                 for (int lineSegmentIndex = 0; lineSegmentIndex < 4; lineSegmentIndex++)
                 {
+                    var lineSegment = lineSegments[lineSegmentIndex];
                     var sliceNormal = rectNormals[lineSegmentIndex];
-                    var slicePoint = lineSegments[lineSegmentIndex].Point1;
+                    var slicePoint = lineSegment.A;
                     for (int i = 0; i < 3; i++)
                     {
                         dots[i] = Vector3.Dot(sliceNormal, polygonData.Dots[i].Vertex - slicePoint);
                     }
 
                     // 단면이 바라보는 반대 방향에 있을떄
-                    if (dots[0] < 0 && dots[1] < 0 && dots[2] < 0) continue;
-                    // 단면이 바라보는 방향에 있을떄
-                    if (dots[0] >= 0 && dots[1] >= 0 && dots[2] >= 0)
+                    if (dots[0] <= 0 && dots[1] <= 0 && dots[2] <= 0) continue;
+                    // 단면이 바라보는 방향에 폴리곤의 정점이 3개 다 있을떄
+                    if (dots[0] > 0 && dots[1] > 0 && dots[2] > 0)
                     {
                         for (int i = 0; i < 3; i++)
                         {
                             sliceInfos[0].DotList.Add(polygonData.Dots[i]);
-                            sliceInfos[0].Triangles.Add(sliceInfos[1].Triangles.Count);
+                            sliceInfos[0].Triangles.Add(sliceInfos[0].DotList.Count - 1);
                         }
                         break;
                     }
@@ -443,7 +449,10 @@ namespace Util
                     else
                     {
                         float epsilon = 1e-5f;
-                        int[] otherVertexIndices = new[]
+                        
+                        // 0 번째 원소 : Rectangle의 한 선분의 Normal 벡터의 반대 방향에 있는 정점
+                        // 1, 2 번째 원소 : Rectangle의 한 선분의 Normal 벡터의 방향에 있는 정점
+                        int[] otherVertexIndices = new[] 
                         {
                             Math.Abs(Mathf.Sign(dots[0]) - Mathf.Sign(dots[1])) < epsilon ? vertexIndices[2] : (Math.Abs(Mathf.Sign(dots[0]) - Mathf.Sign(dots[2])) < epsilon ? vertexIndices[1] : vertexIndices[0]),
                             Math.Abs(Mathf.Sign(dots[0]) - Mathf.Sign(dots[1])) < epsilon ? vertexIndices[0] : (Math.Abs(Mathf.Sign(dots[0]) - Mathf.Sign(dots[2])) < epsilon ? vertexIndices[2] : vertexIndices[1]),
@@ -461,58 +470,86 @@ namespace Util
                             otherToPlaneDistances[j] = Mathf.Abs(Vector3.Dot(sliceNormal, otherPolygonData.Dots[j].Vertex - slicePoint));
                             ratios[j] = otherToPlaneDistances[0] / (otherToPlaneDistances[0] + otherToPlaneDistances[j]);
                         }
-                        
-                        // 단면이 바라보는 방향이 아닌 정점은 무시
-                        SliceInfo subSliceInfo = new SliceInfo();
-                        int inDotCount = 0;
-  
-                        // 슬라이스 메쉬 정보를 추가
+
+                        // Rectangle의 한 선분과 교차하는 정점의 정보를 추가
+                        MeshDotData[] crossDots = new MeshDotData[2];
                         for (int i = 1; i < 3; i++)
                         {
-                            var point = Vector3.Lerp(otherPolygonData.Dots[0].Vertex, otherPolygonData.Dots[i].Vertex, ratios[i]);
-                            createdSliceInfo.DotList.Add(new (
-                                point,
+                            MeshDotData dotData = new MeshDotData(
+                                Vector3.Lerp(otherPolygonData.Dots[0].Vertex, otherPolygonData.Dots[i].Vertex, ratios[i]),
                                 Vector3.Lerp(otherPolygonData.Dots[0].Normal, otherPolygonData.Dots[i].Normal, ratios[i]),
-                                Vector3.Lerp(otherPolygonData.Dots[0].UV, otherPolygonData.Dots[i].UV, ratios[i])));
+                                Vector2.Lerp(otherPolygonData.Dots[0].UV, otherPolygonData.Dots[i].UV, ratios[i]));
                             
-                            subSliceInfo.DotList.Add(createdSliceInfo.DotList.Last());
+                            // createdSliceInfo.DotList.Add(dot);
+                            crossDots[i - 1] = dotData;
                         }
+                        // 폴리곤과 평면의 교차점이 선분을 평면으로 만든 영역에 있는지 체크
+                        if(IsPolygonCrossDotInLineSegmentPlane(crossDots[0].Vertex,crossDots[1].Vertex, lineSegment.A, lineSegment.B)) continue;
+                        
+                        // 정점이 선분의 범위에서 벗어나는지 체크해야됨
+                        var dot = crossDots[0];
+                        var otherDot = crossDots[1];
+                        if (IsInPointFromPlaneLimit(dot.Vertex, lineSegment.A, lineSegment.B, out var newVertex1))
+                        {
+                            var ratio = (dot.Vertex - newVertex1).magnitude / (dot.Vertex - otherDot.Vertex).magnitude;
+                            createdSliceInfo.DotList.Add(new (
+                                newVertex1,
+                                dot.Normal,
+                                Vector2.Lerp(dot.UV, otherDot.UV, ratio)
+                            )); 
+                        }
+                        else
+                            createdSliceInfo.DotList.Add(dot);
+                            
+                        if (IsInPointFromPlaneLimit(otherDot.Vertex, lineSegment.A, lineSegment.B, out var newVertex2))
+                        {
+                            var ratio = (dot.Vertex - newVertex2).magnitude / (dot.Vertex - otherDot.Vertex).magnitude;
+                            createdSliceInfo.DotList.Add(new (
+                                newVertex2,
+                                otherDot.Normal,
+                                Vector2.Lerp(dot.UV, otherDot.UV, ratio)
+                            )); 
+                        }
+                        else
+                            createdSliceInfo.DotList.Add(otherDot);
+                        
                         // 바라보는 점 추가
+                        // 단면이 바라보는 방향이 아닌 정점은 무시
+                        int inDotCount = 0;
                         for (int i = 0; i < 3; i++)
                         {
-                            if (dots[i] >= 0)
+                            if (dots[i] > 0)
                             {
                                 ++inDotCount;
-                                subSliceInfo.DotList.Add(polygonData.Dots[i]);
                             }
                         }
-
+                        
+                        SliceInfo subSliceInfo = new SliceInfo();
                         if (inDotCount == 1)
                         {
-                            subSliceInfo.Triangles.Add(0);
-                            subSliceInfo.Triangles.Add(1);
-                            subSliceInfo.Triangles.Add(2);
+                            subSliceInfo.DotList.Add(otherPolygonData.Dots[0]);
+                            subSliceInfo.DotList.Add(createdSliceInfo.DotList[^2]);
+                            subSliceInfo.DotList.Add(createdSliceInfo.DotList[^1]);
+                            subSliceInfo.Triangles.Add(subSliceInfo.Triangles.Count);
+                            subSliceInfo.Triangles.Add(subSliceInfo.Triangles.Count);
+                            subSliceInfo.Triangles.Add(subSliceInfo.Triangles.Count);
                         }
                         // 바라보는 방향에 점이 2개이면 모든 점의 중심점을 만들고 각 점들을 정렬한 뒤 중심점과 연결된 폴리곤 만들기
-                        if (inDotCount == 2)
+                        else if (inDotCount == 2)
                         {
-                            // 중심 찾기
-                            Vector3 center = subSliceInfo.DotList.Aggregate(Vector3.zero, (acc, data) => acc + data.Vertex) / subSliceInfo.DotList.Count;
-        
-                            // 각도에 따라 점 정렬
-                            subSliceInfo.DotList.Sort((a, b) =>
-                            {
-                                float angleA = Mathf.Atan2(a.Vertex.y - center.y, a.Vertex.x - center.x);
-                                float angleB = Mathf.Atan2(b.Vertex.y - center.y, b.Vertex.x - center.x);
-                                return angleA.CompareTo(angleB);
-                            });
-                            subSliceInfo.Triangles.Clear();
-                            subSliceInfo.Triangles.Add(0);
-                            subSliceInfo.Triangles.Add(1);
-                            subSliceInfo.Triangles.Add(2);
-                            subSliceInfo.Triangles.Add(1);
-                            subSliceInfo.Triangles.Add(2);
-                            subSliceInfo.Triangles.Add(3);
+                            subSliceInfo.DotList.Add(otherPolygonData.Dots[1]);
+                            subSliceInfo.DotList.Add(otherPolygonData.Dots[2]);
+                            subSliceInfo.DotList.Add(createdSliceInfo.DotList[^2]);
+                            subSliceInfo.Triangles.Add(subSliceInfo.Triangles.Count);
+                            subSliceInfo.Triangles.Add(subSliceInfo.Triangles.Count);
+                            subSliceInfo.Triangles.Add(subSliceInfo.Triangles.Count);
+
+                            subSliceInfo.DotList.Add(otherPolygonData.Dots[2]);
+                            subSliceInfo.DotList.Add(createdSliceInfo.DotList[^1]);
+                            subSliceInfo.DotList.Add(createdSliceInfo.DotList[^2]);
+                            subSliceInfo.Triangles.Add(subSliceInfo.Triangles.Count);
+                            subSliceInfo.Triangles.Add(subSliceInfo.Triangles.Count);
+                            subSliceInfo.Triangles.Add(subSliceInfo.Triangles.Count);
                         }
                         
                         sliceInfos[0].AddRange(subSliceInfo);
@@ -561,5 +598,84 @@ namespace Util
 
             return sliceObjects;
         }
+
+        /// <summary>
+        /// 점 2개의 선분 사이의 평면으로 제한된 점을 찾기 위한 함수
+        /// </summary>
+        /// <param name="p"> 평면위의 점 </param>
+        /// <param name="a"> 제한 할 점 A</param>
+        /// <param name="b">제한 할 점 B</param>
+        /// <param name="newPoint"> 점 A,B에 의해 제한되어 재정의 된 p</param>
+        /// <returns>true : 제한됨, false : 제한 안됨</returns>
+        static bool IsInPointFromPlaneLimit(Vector3 p, Vector3 a, Vector3 b, out Vector3 newPoint)
+        {
+            newPoint = Vector3.zero;
+            if (b - a == Vector3.zero)
+                return false;
+            bool isX = b.x - a.x != 0f;
+            bool isY = b.y - a.y != 0f;
+            bool isZ = b.z - a.z != 0f;
+
+            newPoint = p;
+            float min, max;
+            if (isX)
+            {
+                min = a.x > b.x ? b.x : a.x;
+                max = a.x < b.x ? b.x : a.x;
+                newPoint.x = Mathf.Clamp(p.x, min, max);
+            }
+            if (isY)
+            {
+                min = a.y > b.y ? b.y : a.y;
+                max = a.y < b.y ? b.y : a.y;
+                newPoint.y = Mathf.Clamp(p.y, min, max);
+            }
+            if (isZ)
+            {
+                min = a.z > b.z ? b.z : a.z;
+                max = a.z < b.z ? b.z : a.z;
+                newPoint.z = Mathf.Clamp(p.z, min, max);
+            }
+            return newPoint.x != p.x || newPoint.y != p.y || newPoint.z != p.z;
+        }
+
+        /// <summary>
+        /// 슬라이스에 의해 잘린 폴리곤에 생긴 점2개가 선분을 평면으로 만든 영역안에 존재하는지 체크
+        /// </summary>
+        /// <param name="p1">평면과 교차하는 점</param>
+        /// <param name="p2">평면과 교차하는 점</param>
+        /// <param name="a">선분의 점 a</param>
+        /// <param name="b">선분의 점 b</param>
+        /// <returns>True : 선분의 평면 영역 박, False : 선분의 평면 영역 안</returns>
+        static bool IsPolygonCrossDotInLineSegmentPlane(Vector3 p1, Vector3 p2, Vector3 a, Vector3 b)
+        {
+            if (b - a == Vector3.zero)
+                return false;
+            bool isX = b.x - a.x != 0f;
+            bool isY = b.y - a.y != 0f;
+            bool isZ = b.z - a.z != 0f;
+
+            float min, max;
+            if (isX)
+            {
+                min = a.x > b.x ? b.x : a.x;
+                max = a.x < b.x ? b.x : a.x;
+                return (p1.x < min && p2.x < min) || (p1.x > max && p2.x > max);
+            }
+            if (isY)
+            {
+                min = a.y > b.y ? b.y : a.y;
+                max = a.y < b.y ? b.y : a.y;
+                return (p1.y < min && p2.y < min) || (p1.y > max && p2.y > max);
+            }
+            if (isZ)
+            {
+                min = a.z > b.z ? b.z : a.z;
+                max = a.z < b.z ? b.z : a.z;
+                return (p1.z < min && p2.z < min) || (p1.z > max && p2.z > max);
+            }
+            return false;
+        }
+        #endregion
     }
 }
