@@ -79,7 +79,7 @@ namespace Skill.Container
                     playerStatus.Attack = playerStatus.attack.Current;
                 }
                 
-                Debug.Log($"현재 Attack : {playerStatus.Attack}, {playerStatus.attack.Current}, AttackSpeed : {playerStatus.AttackSpeed}, {playerStatus.attackSpeed.Current}");
+                Debug.Log($"현재 Attack : {playerStatus.Attack}, AttackSpeed : {playerStatus.AttackSpeed}");
                 
                 Duration.Current = Duration.Min;
                 _bOn = false;
@@ -115,7 +115,7 @@ namespace Skill.Container
 
                 _bOn = true;
                 
-                Debug.Log($"현재 Attack : {playerStatus.Attack}, {playerStatus.attack.Current}, AttackSpeed : {playerStatus.AttackSpeed}, {playerStatus.attackSpeed.Current}");
+                Debug.Log($"현재 Attack : {playerStatus.Attack}, AttackSpeed : {playerStatus.AttackSpeed}");
             }
             else
             {

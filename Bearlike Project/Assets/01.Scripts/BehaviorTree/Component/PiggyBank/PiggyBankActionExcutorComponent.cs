@@ -1,26 +1,27 @@
-﻿using System;
-using BehaviorTree.Base;
+﻿using BehaviorTree.Base;
 using Fusion;
 using UnityEngine;
 
-namespace BehaviorTree.Component
+namespace BehaviorTree.Component.PiggyBank
 {
-    public class BTActionExcutorComponent : MonoBehaviour
+    public class PiggyBankActionExcutorComponent : MonoBehaviour
     {
         private PiggyBankInfo _info;
-
+        private Animator _animator = null;
+        
         private void Awake()
         {
             _info = GetComponent<PiggyBankInfo>();
+            _animator = GetComponent<Animator>();
         }
 
         bool IsAnimationRunning(string stateName)
         {
-            if (_info.animator != null)
+            if (_animator != null)
             {
-                if (_info.animator.GetCurrentAnimatorStateInfo(0).IsName(stateName))
+                if (_animator.GetCurrentAnimatorStateInfo(0).IsName(stateName))
                 {
-                    var normalizedTime = _info.animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
+                    var normalizedTime = _animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
 
                     return normalizedTime != 0 && normalizedTime < 1f;
                 }
@@ -46,7 +47,7 @@ namespace BehaviorTree.Component
 
         public INode.NodeState StartAttack()
         {
-            _info.animator.SetTrigger("tAttack");
+            _animator.SetTrigger("tAttack");
             return INode.NodeState.Success;
         }
 

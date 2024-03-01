@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BehaviorTree.Base;
 using BehaviorTree.Component;
+using BehaviorTree.Component.PiggyBank;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
@@ -20,7 +21,7 @@ namespace BehaviorTree
         struct UnitData
         {
             public UnitType Type;
-            public PiggyBankInfo.State CurrentState;
+            public PiggyBankInfo.StateType CurrentState;
 
             public INode RootNode;
         }

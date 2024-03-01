@@ -1,13 +1,8 @@
-using System;
 using System.Collections.Generic;
 using BehaviorTree.Base;
 using Fusion;
-using Fusion.Addons.SimpleKCC;
-using Unity.Collections;
-using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using UnityEngine;
-using Allocator = Unity.Collections.Allocator;
 
 namespace BehaviorTree
 {
@@ -114,7 +109,6 @@ namespace BehaviorTree
             {
                 return INode.NodeState.Running;
             }
-
             return INode.NodeState.Success;
         }
 
@@ -132,7 +126,6 @@ namespace BehaviorTree
 
         INode.NodeState LookAround()
         {
-            
             return INode.NodeState.Success;
         }
 
