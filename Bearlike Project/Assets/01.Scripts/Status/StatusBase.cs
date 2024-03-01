@@ -22,8 +22,8 @@ namespace State.StateClass.Base
     public abstract class StatusBase : NetworkBehaviour
     {
         #region Member Variable
-
-        public StatusValue<int> _hp = new StatusValue<int>();                   // 체력        
+        
+        public StatusValue<int> hp = new StatusValue<int>();                   // 체력        
         public StatusValue<int> attack = new StatusValue<int>();               // 공격력
         public StatusValue<int> defence = new StatusValue<int>();              // 방어력
         public StatusValue<float> avoid = new StatusValue<float>();           // 회피
@@ -34,11 +34,36 @@ namespace State.StateClass.Base
         public int condition;                                               // 상태
         public int property;                                                // 속성
 
+        #region 프로퍼티
+        
+        [Networked]
+        public int Hp
+        {
+            get => hp.Current;
+            set => hp.Current = value;
+        }
+
+        [Networked]
+        public int Attack
+        {
+            get => attack.Current;
+            set => attack.Current = value;
+        }
+
+        [Networked]
+        public float AttackSpeed
+        {
+            get => attackSpeed.Current;
+            set => attackSpeed.Current = value;
+        }
+        
+        #endregion
+        
         #endregion
 
         #region Variable Paramiter
         
-        public bool IsDie => _hp.isMin;
+        public bool IsDie => hp.isMin;
 
         #endregion
 

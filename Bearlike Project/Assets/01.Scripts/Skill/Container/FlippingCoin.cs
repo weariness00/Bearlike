@@ -1,5 +1,4 @@
-﻿using System;
-using Fusion;
+﻿using Fusion;
 using Manager;
 using Scripts.State.GameStatus;
 using State.StateClass;
@@ -67,10 +66,20 @@ namespace Skill.Container
             CoolTime.Current -= _deltaPlayTime;
             Duration.Current -= _deltaPlayTime;
 
-            // 한 번만 remove하게 해줘야 한다.
             if (_bOn && Mathf.Round((Duration.Current - Duration.Min) * 10) * 0.1f <= 0f)
             {
-                RemoveBuffRPC(playerStatus, _type);
+                if (_type == 0)
+                {
+                    playerStatus.attackSpeed.Current -= _difference;
+                    playerStatus.AttackSpeed = playerStatus.attackSpeed.Current;
+                }
+                else
+                {
+                    playerStatus.attack.Current -= (int)_difference;
+                    playerStatus.Attack = playerStatus.attack.Current;
+                }
+                
+                Debug.Log($"현재 Attack : {playerStatus.Attack}, {playerStatus.attack.Current}, AttackSpeed : {playerStatus.AttackSpeed}, {playerStatus.attackSpeed.Current}");
                 
                 Duration.Current = Duration.Min;
                 _bOn = false;
@@ -87,49 +96,60 @@ namespace Skill.Container
             if (_bOn == false && Mathf.Round((CoolTime.Current - CoolTime.Min) * 10) * 0.1f <= 0f)
             {
                 _type = Random.Range(0, 2);
-                ApplyBuffRPC(playerStatus, _type);
+
+                if (_type == 0)
+                {
+                    _difference = playerStatus.attackSpeed.Current * 0.5f;
+                    playerStatus.attackSpeed.Current += _difference;
+                    playerStatus.AttackSpeed = playerStatus.attackSpeed.Current;
+                }
+                else
+                {
+                    _difference = playerStatus.attack.Current * 0.2f;
+                    playerStatus.attack.Current += (int)_difference;
+                    playerStatus.Attack = playerStatus.attack.Current;
+                }
                 
                 Duration.Current = Duration.Max;
                 CoolTime.Current = CoolTime.Max;
 
                 _bOn = true;
+                
+                Debug.Log($"현재 Attack : {playerStatus.Attack}, {playerStatus.attack.Current}, AttackSpeed : {playerStatus.AttackSpeed}, {playerStatus.attackSpeed.Current}");
             }
             else
             {
                 Debug.Log($"남은 쿨타임 : {CoolTime.Current}");
             }
         }
-
-        // 다른 클라이언트에는 적용x ==> status를 불러올때 이름을 어떻게 수정해야 할까 ==> class를 인자로 넣으면 안된다.
-        // 서버 클라이언트는 다른 클라이언트 개수만큼 중복 실행됨 ==> 서버 클라이언트는 모든 doll의 stateauthority가 있기 때문 ==> 조작을 json data로 받아오면 완성
         
-        // HACK : 굳이 RPC로 Status을 수정 해야하나? => 어차피 주인 client만 스텟 수정을 하면 상관 없지 않나? 고려 해보자
-        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
-        private void ApplyBuffRPC(PlayerStatus playerStatus, int type, RpcInfo info = default)
-        {
-            if (type == 0)
-            {
-                _difference = playerStatus.attackSpeed.Current * 0.5f;
-                playerStatus.attackSpeed.Current += _difference;
-            }
-            else
-            {
-                _difference = playerStatus.attack.Current * 0.2f;
-                playerStatus.attack.Current += (int)_difference;
-            }
-        }
-
-        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
-        private void RemoveBuffRPC(PlayerStatus playerStatus, int type, RpcInfo info = default)
-        {
-            if (type == 0)
-            {
-                playerStatus.attackSpeed.Current -= _difference;
-            }
-            else
-            {
-                playerStatus.attack.Current -= (int)_difference;
-            }
-        }
+        // // HACK : 굳이 RPC로 Status을 수정 해야하나? => 어차피 주인 client만 스텟 수정을 하면 상관 없지 않나? 고려 해보자
+        // [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+        // private void ApplyBuffRPC(int type, RpcInfo info = default)
+        // {
+        //     if (type == 0)
+        //     {
+        //         _difference = playerStatus.attackSpeed.Current * 0.5f;
+        //         playerStatus.attackSpeed.Current += _difference;
+        //     }
+        //     else
+        //     {
+        //         _difference = playerStatus.attack.Current * 0.2f;
+        //         playerStatus.attack.Current += (int)_difference;
+        //     }
+        // }
+        //
+        // [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+        // private void RemoveBuffRPC(int type, RpcInfo info = default)
+        // {
+        //     if (type == 0)
+        //     {
+        //         playerStatus.attackSpeed.Current -= _difference;
+        //     }
+        //     else
+        //     {
+        //         playerStatus.attack.Current -= (int)_difference;
+        //     }
+        // }
     }
 }

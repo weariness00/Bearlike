@@ -39,14 +39,14 @@ namespace State.StateClass
         // ObjectState abstract class Function
         void Awake()
         {
-            _hp.Max = 100;
-            _hp.Min = 0;
-            _hp.Current = 100;
+            hp.Max = 100;
+            hp.Min = 0;
+            hp.Current = 100;
 
             attack.Max = 100;
             attack.Min = 1;
             attack.Current = 10;
-
+            
             defence.Max = 100;
             defence.Min = 1;
             defence.Current = 1;
@@ -115,12 +115,12 @@ namespace State.StateClass
         // 스킬, 무기, 캐릭터 스텟을 모두 고려한 함수 구현 필요
         public void BePoisoned(int value)
         {
-            _hp.Current -= value;
+            hp.Current -= value;
         }
         
         public override void ApplyDamage(float damage, CrowdControl enemyProperty) // MonsterRef instigator,
         {
-            if (_hp.Current < 0)
+            if (hp.Current < 0)
             {
                 return;
             }
@@ -144,9 +144,9 @@ namespace State.StateClass
                 damageRate *= 1.5f;
             }
 
-            _hp.Current -= (int)(damageRate * damage);
+            hp.Current -= (int)(damageRate * damage);
 
-            if (_hp.Current == _hp.Min)
+            if (hp.Current == hp.Min)
             {
                 // 킬로그 구현할지 고민 (monster -> player)
                 // respawn 시키는 코드 구현
@@ -183,7 +183,7 @@ namespace State.StateClass
         // DeBug Function
         public override void ShowInfo()
         {
-            Debug.Log($"{gameObject.name} - 체력 : " +  _hp.Current + $" 공격력 : " + attack.Current + $" 공격 속도 : " + attackSpeed.Current + $" 상태 : " + (CrowdControl)condition);    // condition이 2개 이상인 경우에는 어떻게 출력?
+            Debug.Log($"{gameObject.name} - 체력 : " +  hp.Current + $" 공격력 : " + Attack + $" 공격 속도 : " + AttackSpeed + $" 상태 : " + (CrowdControl)condition);    // condition이 2개 이상인 경우에는 어떻게 출력?
         }
         
         

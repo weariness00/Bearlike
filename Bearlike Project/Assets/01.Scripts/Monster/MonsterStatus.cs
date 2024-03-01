@@ -15,9 +15,9 @@ namespace State.StateClass
     {
         public void Awake()
         {
-            _hp.Max = 100;
-            _hp.Min = 0;
-            _hp.Current = 100;
+            hp.Max = 100;
+            hp.Min = 0;
+            hp.Current = 100;
 
             attack.Max = 100;
             attack.Min = 1;
@@ -63,12 +63,12 @@ namespace State.StateClass
         
         public void BePoisoned(int value)
         {
-            _hp.Current -= value;
+            hp.Current -= value;
         }
         
         public override void ApplyDamage(float damage, CrowdControl property)
         {
-            if (_hp.isMin)
+            if (hp.isMin)
             {
                 return;
             }
@@ -87,9 +87,9 @@ namespace State.StateClass
                 damageRate *= 1.5f;
             }
 
-            _hp.Current -= (int)(damageRate * damage);
+            hp.Current -= (int)(damageRate * damage);
 
-            if (_hp.Current == _hp.Min)
+            if (hp.Current == hp.Min)
             {
                 // 킬로그 구현할지 고민 (monster -> player)
                 // respawn 시키는 코드 구현
@@ -101,7 +101,7 @@ namespace State.StateClass
         // DeBug Function
         public override void ShowInfo()
         {
-            DebugManager.Log($"체력 : " +  _hp.Current + $" 공격력 : " + attack.Current + $" 공격 속도 : " + attackSpeed.Current + $" 상태 : " + (CrowdControl)condition);    // condition이 2개 이상인 경우에는 어떻게 출력?
+            DebugManager.Log($"체력 : " +  hp.Current + $" 공격력 : " + attack.Current + $" 공격 속도 : " + attackSpeed.Current + $" 상태 : " + (CrowdControl)condition);    // condition이 2개 이상인 경우에는 어떻게 출력?
         }
         
         

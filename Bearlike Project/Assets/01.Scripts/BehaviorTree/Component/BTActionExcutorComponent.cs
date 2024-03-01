@@ -58,7 +58,6 @@ namespace BehaviorTree.Component
 
         public INode.NodeState LookAround()
         {
-            
             return INode.NodeState.Success;
         }
 

@@ -133,7 +133,7 @@ namespace Script.Weapon.Gun
                 return;
             }
             
-            if (enemyState == null || enemyState._hp.isMin)
+            if (enemyState == null || enemyState.hp.isMin)
             {
                 return;
             }

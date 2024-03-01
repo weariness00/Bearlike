@@ -8,25 +8,29 @@ namespace Skill
 {
     public class SkillSystem : NetworkBehaviour
     {
-        public List<SkillBase> skillList = new List<SkillBase>(); 
+        public readonly List<SkillBase> SkillList = new List<SkillBase>();
+
+        private PlayerStatus _playerStatus;
         
         private void Start()
         {
+            _playerStatus = gameObject.GetComponent<PlayerStatus>();
+            
             // HACK : 테스트용
-            skillList.Add(new FlippingCoin(gameObject.GetComponent<PlayerStatus>()));
+            SkillList.Add(new FlippingCoin(_playerStatus));
         }
 
         public override void FixedUpdateNetwork()
         {
-            foreach (var skill in skillList)
+            foreach (var skill in SkillList)
             {
                 skill.MainLoop();
             }
 
             var ps = GameObject.Find("Local Player").GetComponent<PlayerStatus>();
             ps.ShowInfo();
-            // ps = GameObject.Find("Remote Player").GetComponent<PlayerStatus>();
-            // ps.ShowInfo();
+            ps = GameObject.Find("Remote Player").GetComponent<PlayerStatus>();
+            ps.ShowInfo();
         }
     }
 }
