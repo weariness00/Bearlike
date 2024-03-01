@@ -88,6 +88,36 @@ namespace Util
         
         #endregion
 
+        #region Default Function
+
+        static GameObject CreateSliceGameObject(GameObject targetObject, SliceInfo sliceInfo)
+        {
+            var targetMesh = targetObject.GetComponent<MeshFilter>();
+            var targetMeshRenderer = targetObject.GetComponent<MeshRenderer>();
+            Mesh mesh = new Mesh
+            {
+                subMeshCount = targetMeshRenderer.sharedMaterials.Length + 1,
+                name = targetMesh.name + "_Slicing",
+                vertices = sliceInfo.DotList.Select(dot => dot.Vertex).ToArray(),
+                normals = sliceInfo.DotList.Select(dot => dot.Normal).ToArray(),
+                uv = sliceInfo.DotList.Select(dot => dot.UV).ToArray()
+            };
+            mesh.SetTriangles(sliceInfo.Triangles, 0);
+            DebugManager.Log("나중에 subMesh에 포함하는 형식으로 하여 Material 개별 적용 가능하게 바꾸기");
+            // mesh.SetTriangles(capSliceInfos[i].triangles, targetMeshRenderer.sharedMaterials.Length);
+                
+            GameObject sliceGameObject = new GameObject(targetObject.name + "_Slicing", typeof(MeshFilter), typeof(MeshRenderer));
+            sliceGameObject.GetComponent<MeshFilter>().sharedMesh = mesh;
+            sliceGameObject.GetComponent<MeshRenderer>().sharedMaterials = targetMeshRenderer.sharedMaterials;
+            sliceGameObject.transform.position = targetObject.transform.position;
+            sliceGameObject.transform.rotation = targetObject.transform.rotation;
+            sliceGameObject.transform.localScale = targetObject.transform.localScale;
+
+           return sliceGameObject;
+        }
+
+        #endregion
+
         #region Slice Function
         
         /// <summary>
@@ -377,8 +407,8 @@ namespace Util
         {
             var targetMesh = targetObject.GetComponent<MeshFilter>().sharedMesh;
             SliceInfo[] sliceInfos = new[] { new SliceInfo(), new SliceInfo() };
-            SliceInfo boxInfo = new SliceInfo();
-            SliceInfo createdSliceInfo = new SliceInfo();
+            SliceInfo capSliceInfo = new SliceInfo();
+            SliceInfo boxCapSliceInfo = new SliceInfo();
 
             // rectNormal 벡터가 주어졌을 때, right와 up 벡터 계산
             Vector3 up = Vector3.up; // 기본적으로 세계 좌표계의 위쪽 방향을 사용
@@ -492,26 +522,34 @@ namespace Util
                         if (IsInPointFromPlaneLimit(dot.Vertex, lineSegment.A, lineSegment.B, out var newVertex1))
                         {
                             var ratio = (dot.Vertex - newVertex1).magnitude / (dot.Vertex - otherDot.Vertex).magnitude;
-                            createdSliceInfo.DotList.Add(new (
-                                newVertex1,
-                                dot.Normal,
-                                Vector2.Lerp(dot.UV, otherDot.UV, ratio)
-                            )); 
+                            var uv = Vector2.Lerp(dot.UV, otherDot.UV, ratio);
+                            var newDot = new MeshDotData(newVertex1, dot.Normal, uv);
+                            capSliceInfo.DotList.Add(newDot);
+                            boxCapSliceInfo.DotList.Add(newDot);
+                            boxCapSliceInfo.DotList.Add(new (newDot.Vertex, sliceNormal, newDot.UV));
                         }
                         else
-                            createdSliceInfo.DotList.Add(dot);
+                        {
+                            capSliceInfo.DotList.Add(dot);
+                            boxCapSliceInfo.DotList.Add(dot);
+                            boxCapSliceInfo.DotList.Add(new (dot.Vertex, sliceNormal, dot.UV));
+                        }
                             
                         if (IsInPointFromPlaneLimit(otherDot.Vertex, lineSegment.A, lineSegment.B, out var newVertex2))
                         {
                             var ratio = (dot.Vertex - newVertex2).magnitude / (dot.Vertex - otherDot.Vertex).magnitude;
-                            createdSliceInfo.DotList.Add(new (
-                                newVertex2,
-                                otherDot.Normal,
-                                Vector2.Lerp(dot.UV, otherDot.UV, ratio)
-                            )); 
+                            var uv = Vector2.Lerp(dot.UV, otherDot.UV, ratio);
+                            var newDot = new MeshDotData(newVertex2, dot.Normal, uv);
+                            capSliceInfo.DotList.Add(newDot);   
+                            boxCapSliceInfo.DotList.Add(newDot); 
+                            boxCapSliceInfo.DotList.Add(new (newDot.Vertex, sliceNormal, newDot.UV));
                         }
                         else
-                            createdSliceInfo.DotList.Add(otherDot);
+                        {
+                            capSliceInfo.DotList.Add(otherDot);
+                            boxCapSliceInfo.DotList.Add(otherDot);
+                            boxCapSliceInfo.DotList.Add(new (otherDot.Vertex, sliceNormal, otherDot.UV));
+                        }
                         
                         // 바라보는 점 추가
                         // 단면이 바라보는 방향이 아닌 정점은 무시
@@ -528,8 +566,8 @@ namespace Util
                         if (inDotCount == 1)
                         {
                             subSliceInfo.DotList.Add(otherPolygonData.Dots[0]);
-                            subSliceInfo.DotList.Add(createdSliceInfo.DotList[^2]);
-                            subSliceInfo.DotList.Add(createdSliceInfo.DotList[^1]);
+                            subSliceInfo.DotList.Add(capSliceInfo.DotList[^2]);
+                            subSliceInfo.DotList.Add(capSliceInfo.DotList[^1]);
                             subSliceInfo.Triangles.Add(subSliceInfo.Triangles.Count);
                             subSliceInfo.Triangles.Add(subSliceInfo.Triangles.Count);
                             subSliceInfo.Triangles.Add(subSliceInfo.Triangles.Count);
@@ -539,14 +577,14 @@ namespace Util
                         {
                             subSliceInfo.DotList.Add(otherPolygonData.Dots[1]);
                             subSliceInfo.DotList.Add(otherPolygonData.Dots[2]);
-                            subSliceInfo.DotList.Add(createdSliceInfo.DotList[^2]);
+                            subSliceInfo.DotList.Add(capSliceInfo.DotList[^2]);
                             subSliceInfo.Triangles.Add(subSliceInfo.Triangles.Count);
                             subSliceInfo.Triangles.Add(subSliceInfo.Triangles.Count);
                             subSliceInfo.Triangles.Add(subSliceInfo.Triangles.Count);
 
                             subSliceInfo.DotList.Add(otherPolygonData.Dots[2]);
-                            subSliceInfo.DotList.Add(createdSliceInfo.DotList[^1]);
-                            subSliceInfo.DotList.Add(createdSliceInfo.DotList[^2]);
+                            subSliceInfo.DotList.Add(capSliceInfo.DotList[^1]);
+                            subSliceInfo.DotList.Add(capSliceInfo.DotList[^2]);
                             subSliceInfo.Triangles.Add(subSliceInfo.Triangles.Count);
                             subSliceInfo.Triangles.Add(subSliceInfo.Triangles.Count);
                             subSliceInfo.Triangles.Add(subSliceInfo.Triangles.Count);
@@ -560,6 +598,7 @@ namespace Util
             // createdSliceInfo.vertices = SortVertices(createdSliceInfo.vertices);
             // var capSliceInfos = MakeCap(sliceNormal,createdSliceInfo.vertices);
             
+            
             // 최종적으로 사용할 메쉬
             var finalSliceInfos = new[] { new SliceInfo(), new SliceInfo() };
             for (int i = 0; i < 2; i++)
@@ -567,36 +606,111 @@ namespace Util
                 finalSliceInfos[i].AddRange(sliceInfos[i]);
                 // finalSliceInfos[i].AddRange(capSliceInfos[i]);
             }
-            
-            var targetMeshRenderer = targetObject.GetComponent<MeshRenderer>();
-            var sliceObjects = new GameObject[2];
-            // 새로운 오브젝트 생성
-            for (int i = 0; i < 1; i++)
-            {
-                Mesh mesh = new Mesh
-                {
-                    subMeshCount = targetMeshRenderer.sharedMaterials.Length + 1,
-                    name = targetMesh.name + "_Slicing",
-                    vertices = finalSliceInfos[i].DotList.Select(dot => dot.Vertex).ToArray(),
-                    normals = finalSliceInfos[i].DotList.Select(dot => dot.Normal).ToArray(),
-                    uv = finalSliceInfos[i].DotList.Select(dot => dot.UV).ToArray()
-                };
-                mesh.SetTriangles(finalSliceInfos[i].Triangles, 0);
-                DebugManager.Log("나중에 subMesh에 포함하는 형식으로 하여 Material 개별 적용 가능하게 바꾸기");
-                // mesh.SetTriangles(capSliceInfos[i].triangles, targetMeshRenderer.sharedMaterials.Length);
-                
-                GameObject sliceGameObject = new GameObject(targetObject.name + "_Slicing", typeof(MeshFilter), typeof(MeshRenderer));
-                sliceGameObject.GetComponent<MeshFilter>().sharedMesh = mesh;
-                sliceGameObject.GetComponent<MeshRenderer>().sharedMaterials = targetMeshRenderer.sharedMaterials;
-                sliceGameObject.transform.position = targetObject.transform.position;
-                sliceGameObject.transform.rotation = targetObject.transform.rotation;
-                sliceGameObject.transform.localScale = targetObject.transform.localScale;
 
-                sliceObjects[i] = sliceGameObject;
-            }
+            // 새로운 오브젝트 생성
+            GameObject[] sliceObjects = new[]
+            {
+                CreateSliceGameObject(targetObject, finalSliceInfos[0]),
+                CreateSliceGameObject(targetObject, MakeBoxCap(boxCapSliceInfo)), // 새롭게 생긴 정점들로 만들어주는 잘리고 남은 box 메쉬
+            };
             targetObject.SetActive(false);
 
             return sliceObjects;
+        }
+
+        static SliceInfo MakeBoxCap(SliceInfo boxSliceInfo)
+        {
+            GameObject gameObject;
+            SliceInfo sortSliceInfo = new SliceInfo();
+            Dictionary<Vector3, List<MeshDotData>> sameNormalDotDictionary = new Dictionary<Vector3, List<MeshDotData>>();
+            float tolerance = 1E-4f;
+
+            // 같은 평면에 있는 정점끼리 묶기
+            for (var i = 0; i < boxSliceInfo.DotList.Count; i++)
+            {
+                var dot = boxSliceInfo.DotList[i];
+                // 소수점 4자리 부터는 반올림
+                dot.Vertex.x = (float)Math.Round(dot.Vertex.x, 4);
+                dot.Vertex.y = (float)Math.Round(dot.Vertex.y, 4);
+                dot.Vertex.z = (float)Math.Round(dot.Vertex.z, 4);
+                
+                dot.Normal.x = (float)Math.Round(dot.Normal.x, 4);
+                dot.Normal.y = (float)Math.Round(dot.Normal.y, 4);
+                dot.Normal.z = (float)Math.Round(dot.Normal.z, 4);
+
+                if (sameNormalDotDictionary.TryGetValue(dot.Normal, out var meshDotDataList))
+                {
+                    meshDotDataList.Add(dot);
+                }
+                else
+                {
+                    meshDotDataList = new List<MeshDotData>();
+                    meshDotDataList.Add(dot);
+                    sameNormalDotDictionary.Add(dot.Normal, meshDotDataList);
+                }
+            }
+            
+            // 같은 평면 상에 놓인 점들의 중심점을 찾아 정렬한뒤 폴리곤 만들기
+            foreach (var (normal, dotList) in sameNormalDotDictionary)
+            {
+                // vector값이 같은 것들은 제거
+                var dots = dotList.GroupBy(dot => dot.Vertex).Select(group => group.First()).ToList();
+                
+                var subSliceInfo = new SliceInfo();
+                // 중심점 찾기
+                Vector3 center = new Vector3(
+                    dots.Average(point => point.Vertex.x),
+                    dots.Average(point => point.Vertex.y),
+                    dots.Average(point => point.Vertex.z));
+                Vector2 uv = new Vector2(
+                    dots.Average(point => point.UV.x),
+                    dots.Average(point => point.UV.y));
+                var centerDot = new MeshDotData(center, normal, uv);
+
+                // 평면에 대한 로컬 2D 좌표계 생성
+                Vector3 referencePoint = dots[0].Vertex; // 기준점으로 첫 번째 정점을 사용
+                Vector3 arbitraryDirection = (referencePoint - center).normalized;
+                Vector3 u = arbitraryDirection; // 평면에 평행한 첫 번째 방향 벡터
+                Vector3 v = Vector3.Cross(normal, u); // 평면에 평행하고 u에 수직인 두 번째 방향 벡터
+
+                // 2D 투영과 원본 정점의 매핑 생성
+                var mapping = dotList.Select(dot => new {
+                    dot = dot,
+                    Projection = new Vector2(Vector3.Dot(dot.Vertex - center, u), Vector3.Dot(dot.Vertex - center, v))
+                }).ToList();
+
+                // Projection을 기준으로 매핑 정렬
+                var sortedMapping = mapping.OrderBy(item => Mathf.Atan2(item.Projection.y, item.Projection.x)).ToList();
+
+                // 정렬된 매핑에서 원본 3D 정점 추출
+                dots = sortedMapping.Select(item => item.dot).ToList();
+  
+                // center 정점 추가
+                float faceDir = Vector3.Dot(normal, Vector3.Cross(dots[0].Vertex - center, dots[1].Vertex - dots[0].Vertex));
+                for (int i = 0; i < dots.Count; i++)
+                {
+                    int idx0 = i;
+                    int idx1 = (i + 1) % (dots.Count);
+                    if (faceDir < 0)
+                    {
+                        subSliceInfo.Triangles.Add(dots.Count);
+                        subSliceInfo.Triangles.Add(idx1);
+                        subSliceInfo.Triangles.Add(idx0);
+                    }
+                    else
+                    {
+                        subSliceInfo.Triangles.Add(dots.Count);
+                        subSliceInfo.Triangles.Add(idx0);
+                        subSliceInfo.Triangles.Add(idx1);
+                    }
+                }
+                dots.Add(centerDot);
+                subSliceInfo.DotList = dots;
+                
+                sortSliceInfo.AddRange(subSliceInfo);
+            }
+
+            return sortSliceInfo;
         }
 
         /// <summary>
@@ -647,35 +761,35 @@ namespace Util
         /// <param name="a">선분의 점 a</param>
         /// <param name="b">선분의 점 b</param>
         /// <returns>True : 선분의 평면 영역 박, False : 선분의 평면 영역 안</returns>
-        static bool IsPolygonCrossDotInLineSegmentPlane(Vector3 p1, Vector3 p2, Vector3 a, Vector3 b)
-        {
-            if (b - a == Vector3.zero)
-                return false;
-            bool isX = b.x - a.x != 0f;
-            bool isY = b.y - a.y != 0f;
-            bool isZ = b.z - a.z != 0f;
+            static bool IsPolygonCrossDotInLineSegmentPlane(Vector3 p1, Vector3 p2, Vector3 a, Vector3 b)
+            {
+                if (b - a == Vector3.zero)
+                    return false;
+                bool isX = b.x - a.x != 0f;
+                bool isY = b.y - a.y != 0f;
+                bool isZ = b.z - a.z != 0f;
 
-            float min, max;
-            if (isX)
-            {
-                min = a.x > b.x ? b.x : a.x;
-                max = a.x < b.x ? b.x : a.x;
-                return (p1.x < min && p2.x < min) || (p1.x > max && p2.x > max);
+                float min, max;
+                if (isX)
+                {
+                    min = a.x > b.x ? b.x : a.x;
+                    max = a.x < b.x ? b.x : a.x;
+                    return (p1.x <= min && p2.x <= min) || (p1.x >= max && p2.x >= max);
+                }
+                if (isY)
+                {
+                    min = a.y > b.y ? b.y : a.y;
+                    max = a.y < b.y ? b.y : a.y;
+                    return (p1.y <= min && p2.y <= min) || (p1.y >= max && p2.y >= max);
+                }
+                if (isZ)
+                {
+                    min = a.z > b.z ? b.z : a.z;
+                    max = a.z < b.z ? b.z : a.z;
+                    return (p1.z <= min && p2.z <= min) || (p1.z >= max && p2.z >= max);
+                }
+                return false;
             }
-            if (isY)
-            {
-                min = a.y > b.y ? b.y : a.y;
-                max = a.y < b.y ? b.y : a.y;
-                return (p1.y < min && p2.y < min) || (p1.y > max && p2.y > max);
-            }
-            if (isZ)
-            {
-                min = a.z > b.z ? b.z : a.z;
-                max = a.z < b.z ? b.z : a.z;
-                return (p1.z < min && p2.z < min) || (p1.z > max && p2.z > max);
-            }
-            return false;
-        }
         #endregion
     }
 }
