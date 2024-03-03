@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Rendering;
 using DebugManager = Script.Manager.DebugManager;
+using Object = UnityEngine.Object;
 
 namespace Util
 {
@@ -127,12 +128,18 @@ namespace Util
             DebugManager.Log("나중에 subMesh에 포함하는 형식으로 하여 Material 개별 적용 가능하게 바꾸기");
             // mesh.SetTriangles(capSliceInfos[i].triangles, targetMeshRenderer.sharedMaterials.Length);
                 
-            GameObject sliceGameObject = new GameObject(targetObject.name + "_Slicing", typeof(MeshFilter), typeof(MeshRenderer));
+            GameObject sliceGameObject = new GameObject(targetObject.name + "_Slicing", typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider), typeof(Rigidbody));
+            var collider = sliceGameObject.GetComponent<MeshCollider>();
+            collider.convex = true;
+            collider.sharedMesh = mesh;
+            sliceGameObject.GetComponent<Rigidbody>().AddForce(Vector3.up * 5);
             sliceGameObject.GetComponent<MeshFilter>().sharedMesh = mesh;
             sliceGameObject.GetComponent<MeshRenderer>().sharedMaterials = targetMeshRenderer.sharedMaterials;
             sliceGameObject.transform.position = targetObject.transform.position + center;
             sliceGameObject.transform.rotation = targetObject.transform.rotation;
             sliceGameObject.transform.localScale = targetObject.transform.localScale;
+            
+            if(targetObject.transform.parent) sliceGameObject.transform.SetParent(targetObject.transform.parent);
 
            return sliceGameObject;
         }
@@ -273,7 +280,7 @@ namespace Util
             {
                 sliceObjects[i] = CreateSliceGameObject(targetObject, finalSliceInfos[i]);
             }
-            targetObject.SetActive(false);
+            Object.Destroy(targetObject);
 
             return sliceObjects;
         }

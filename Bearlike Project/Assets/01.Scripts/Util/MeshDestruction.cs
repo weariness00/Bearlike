@@ -5,6 +5,7 @@ using Parabox.CSG;
 using Script.Manager;
 using UnityEngine;
 using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 namespace Util
 {
@@ -28,15 +29,18 @@ namespace Util
             GameObject shapeObject = GameObject.CreatePrimitive(shapeType);
             shapeObject.transform.position = position;
             shapeObject.transform.localScale = size;
-
+            
             var name = targetObject.name;
             if (name.Contains("_Destruction") == false) name += "_Destruction";
-            List<Model> modelList = new List<Model>();
             // 겹치는 영역 만들기
             try
             {
                 var intersectModel = CSG.Intersect(targetObject, shapeObject);
-                modelList.Add(intersectModel);
+                var obj = CreateDestructionGameObject(targetObject, intersectModel, name);
+                obj.GetComponent<Rigidbody>().AddForce(Vector3.up);
+                var sliceObjects = MeshSlicing.Slice(obj, Random.onUnitSphere.normalized, position);
+                foreach (var sliceObject in sliceObjects)
+                    destructionObjects.Add(sliceObject);
             }
             catch (Exception e)
             {
@@ -48,47 +52,53 @@ namespace Util
             try
             {
                 var subtractModel = CSG.Subtract(targetObject, shapeObject);
-                modelList.Add(subtractModel);
+                var obj = CreateDestructionGameObject(targetObject, subtractModel, name);
+                
+                destructionObjects.Add(obj);
             }
             catch (Exception e)
             {
                 DebugManager.LogWarning($"Subtract 실패했습니다." +
                                         $"{targetObject.name}와 충돌 {shapeType}의 영역이 충돌하지 않습니다.");
             }
-
-            // Object 만들기
-            foreach (var model in modelList)
-            {
-                var obj = new GameObject(name, typeof(MeshFilter), typeof(MeshRenderer));
-                var centerVertex = new Vector3(
-                    model.mesh.vertices.Average(vertex => vertex.x),
-                    model.mesh.vertices.Average(vertex => vertex.y),
-                    model.mesh.vertices.Average(vertex => vertex.z)
-                );
-                var vertices = model.mesh.vertices;
-                for (var i = 0; i < vertices.Length; i++)
-                    vertices[i] -= centerVertex;
-                model.mesh.vertices = vertices;
-                
-                // Object 생성
-                obj.GetComponent<MeshFilter>().sharedMesh = model.mesh;
-                obj.GetComponent<MeshRenderer>().sharedMaterials = model.materials.ToArray();
-                
-                obj.AddComponent<MeshCollider>();
-                var rigid = obj.AddComponent<Rigidbody>();
-                
-                obj.transform.SetParent(targetObject.transform.parent);
-                obj.tag = "Destruction";
-                
-                destructionObjects.Add(obj);
-            }
-
+            
             if (isTargetDestroy)
             {
                 Object.Destroy(targetObject);
             }
             Object.Destroy(shapeObject);
             return destructionObjects;
+        }
+
+        private static GameObject CreateDestructionGameObject(GameObject targetObject, Model model, string name)
+        {
+            var obj = new GameObject(name, typeof(MeshFilter), typeof(MeshRenderer),typeof(MeshCollider),typeof(Rigidbody));
+            var copyMesh = model.mesh;
+            var centerVertex = new Vector3(
+                copyMesh.vertices.Average(vertex => vertex.x),
+                copyMesh.vertices.Average(vertex => vertex.y),
+                copyMesh.vertices.Average(vertex => vertex.z)
+            );
+            var vertices = copyMesh.vertices;
+            for (var i = 0; i < vertices.Length; i++)
+                vertices[i] -= centerVertex;
+            copyMesh.SetVertices(vertices);
+                
+            // Object 생성
+            obj.GetComponent<MeshFilter>().sharedMesh = copyMesh;
+            obj.GetComponent<MeshRenderer>().sharedMaterials = model.materials.ToArray();
+                
+            var collider = obj.GetComponent<MeshCollider>();
+            var rigid = obj.GetComponent<Rigidbody>();
+
+            collider.convex = true;
+            collider.sharedMesh = copyMesh;
+
+            obj.tag = "Destruction";
+            obj.transform.position += centerVertex;
+            if(targetObject.transform.parent) obj.transform.SetParent(targetObject.transform.parent);
+
+            return obj;
         }
 
         private static Vector3 VectorMultiple(Vector3 a, Vector3 b)
