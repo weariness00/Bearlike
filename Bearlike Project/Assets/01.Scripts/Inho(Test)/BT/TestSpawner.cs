@@ -1,16 +1,26 @@
-using System.Collections;
-using System.Collections.Generic;
+using Monster;
 using UnityEngine;
 
 public class TestSpawner : MonoBehaviour
 {
     public GameObject prefab;
+    // public MonsterManager monsterManager;
 
-    public int Count;
+    public int count;
     
     void Start()
     {
-        for(int i = 0; i < Count; i++)
-            Instantiate(prefab, new Vector3(i * 10, 0, 0), new Quaternion(0, 0, 0, 0));
+        // monsterManager = GameObject.Find("MonsterManager").GetComponent<MonsterManager>();
+        
+        for (var i = 0; i < count; i++)
+        {
+            // for (var j = 0; j < monsterManager.monsterList.Count; ++j)
+            // {
+            //     if (prefab.name == monsterManager.monsterList[j])
+            //         monsterManager.MonsterCountDictionary[prefab.name] += 1;
+            // }
+
+            Instantiate(prefab, new Vector3(i * 10, 3, 0), new Quaternion(0, 0, 0, 0));
+        }
     }
 }

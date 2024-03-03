@@ -1,54 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using BehaviorTree.Base;
-using BehaviorTree.Component;
-using BehaviorTree.Component.PiggyBank;
-using Unity.Collections;
-using Unity.Jobs;
+using Monster;
 using UnityEngine;
-using Allocator = Unity.Collections.Allocator;
-using Fusion;
 
 namespace BehaviorTree
 {
     public class BTManager : MonoBehaviour
     {
-        enum UnitType
-        {
-            PiggyBank,
-        }
-        
-        struct UnitData
-        {
-            public UnitType Type;
-            public PiggyBankInfo.StateType CurrentState;
+        // private MonsterManager _monsterManager;
 
-            public INode RootNode;
-        }
-
-        struct ExcuteBTJob : IJobParallelFor
+        private void Start()
         {
-            public NativeArray<UnitData> UnitDatas;
-            
-            public void Execute(int index)
-            {
-                // UnitDatas[0].
-            }
+            // _monsterManager = GameObject.Find("MonsterManager").GetComponent<MonsterManager>();
         }
 
         private void Update()
         {
-            NativeArray<UnitData> unitData = new NativeArray<UnitData>(1, Allocator.TempJob);
             
-            
-            ExcuteBTJob btJob = new ExcuteBTJob {
-                UnitDatas = unitData
-            };
-
-            JobHandle handle = btJob.Schedule(1, 64);
-            handle.Complete();
-
-            unitData.Dispose();
         }
     }
 }

@@ -1,10 +1,10 @@
 ﻿using Fusion;
 using Inho_Test_.Player;
 using Script.Manager;
-using Scripts.State.GameStatus;
 using State;
 using State.StateClass;
 using State.StateClass.Base;
+using Status;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Weapon.Bullet;

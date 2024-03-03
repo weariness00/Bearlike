@@ -11,10 +11,10 @@ namespace BehaviorTree.Base
 
         public BehaviorTreeRunner(INode rootNode) => _rootNode = rootNode;
 
-        public void Operator()
+        public INode.NodeState Operator()
         {
             // Debug.Log(_rootNode.Evaluate());
-            _rootNode.Evaluate();
+            return _rootNode.Evaluate();
         }
     }
 }

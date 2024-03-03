@@ -1,5 +1,5 @@
 ﻿using Script.Manager;
-using Scripts.State.GameStatus;
+using Status;
 
 namespace GamePlay.StageLevel.Container
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 using Fusion;
-using Scripts.State.GameStatus;
+using Status;
 using UnityEngine;
 
 namespace Weapon.Bullet

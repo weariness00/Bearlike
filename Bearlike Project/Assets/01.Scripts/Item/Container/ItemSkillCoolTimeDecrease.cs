@@ -1,5 +1,5 @@
 ﻿using Player;
-using Scripts.State.GameStatus;
+using Status;
 
 namespace Item.Container
 {

@@ -1,7 +1,7 @@
 ﻿using Fusion;
 using Manager;
-using Scripts.State.GameStatus;
 using State.StateClass;
+using Status;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -71,15 +71,15 @@ namespace Skill.Container
                 if (_type == 0)
                 {
                     playerStatus.attackSpeed.Current -= _difference;
-                    playerStatus.AttackSpeed = playerStatus.attackSpeed.Current;
+                    // playerStatus.AttackSpeed = playerStatus.attackSpeed.Current;
                 }
                 else
                 {
                     playerStatus.attack.Current -= (int)_difference;
-                    playerStatus.Attack = playerStatus.attack.Current;
+                    // playerStatus.Attack = playerStatus.attack.Current;
                 }
                 
-                Debug.Log($"현재 Attack : {playerStatus.Attack}, AttackSpeed : {playerStatus.AttackSpeed}");
+                Debug.Log($"현재 Attack : {playerStatus.attack.Current}, AttackSpeed : {playerStatus.attackSpeed.Current}");
                 
                 Duration.Current = Duration.Min;
                 _bOn = false;
@@ -101,13 +101,13 @@ namespace Skill.Container
                 {
                     _difference = playerStatus.attackSpeed.Current * 0.5f;
                     playerStatus.attackSpeed.Current += _difference;
-                    playerStatus.AttackSpeed = playerStatus.attackSpeed.Current;
+                    // playerStatus.AttackSpeed = playerStatus.attackSpeed.Current;
                 }
                 else
                 {
                     _difference = playerStatus.attack.Current * 0.2f;
                     playerStatus.attack.Current += (int)_difference;
-                    playerStatus.Attack = playerStatus.attack.Current;
+                    // playerStatus.Attack = playerStatus.attack.Current;
                 }
                 
                 Duration.Current = Duration.Max;
@@ -115,7 +115,7 @@ namespace Skill.Container
 
                 _bOn = true;
                 
-                Debug.Log($"현재 Attack : {playerStatus.Attack}, AttackSpeed : {playerStatus.AttackSpeed}");
+                Debug.Log($"현재 Attack : {playerStatus.attack.Current}, AttackSpeed : {playerStatus.attackSpeed.Current}");
             }
             else
             {

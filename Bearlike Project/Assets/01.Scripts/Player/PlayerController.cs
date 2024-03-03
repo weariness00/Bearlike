@@ -6,12 +6,12 @@ using Script.Data;
 using Script.Manager;
 using Script.Photon;
 using Script.Weapon.Gun;
-using Scripts.State.GameStatus;
 using Skill;
 using Skill.Container;
 using State.StateClass;
 using Unity.Mathematics;
 using State.StateClass.Base;
+using Status;
 using Unity.VisualScripting;
 using UnityEngine;
 

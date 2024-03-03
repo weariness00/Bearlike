@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using BehaviorTree.Base;
 using Fusion;
+using State.StateClass;
+using State.StateClass.Base;
+using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 
@@ -17,28 +20,8 @@ namespace BehaviorTree
         private Rigidbody _rb;
         private BehaviorTreeRunner _btRunner;
         private Animator _animator = null;
+        private StatusBase _status;
 
-        #endregion
-
-        #region Job
-
-        private struct BTJob : IJob
-        {
-            // private NativeArray<BehaviorTreeRunner> _jobBTRuner;
-            private BehaviorTreeRunner _jobBTRuner;
-
-            public BTJob(BehaviorTreeRunner btRunner)
-            {
-                _jobBTRuner = btRunner;
-            }
-            
-            public void Execute()
-            {
-                _jobBTRuner.Operator();
-            }
-        }
-
-        private BTJob btJob;
         #endregion
         
         private void Awake()
@@ -46,29 +29,22 @@ namespace BehaviorTree
             _rb = GetComponent<Rigidbody>();
             _animator = GetComponent<Animator>();
             _btRunner = new BehaviorTreeRunner(SettingBT());
+            _status = GetComponent<MonsterStatus>();
         }
 
         private void Start()
         {
-            // btJob = new BTJob(_btRunner);
+            
         }
 
         private void Update()
         {
-            // var handle = btJob.Schedule();
-            //
-            // handle.Complete();  // 몇 프레임 뒤에 호출할까? 고민해보자
             _btRunner.Operator();
         }
 
-        // private void LateUpdate()
-        // {
-        //     handle.Complete();
-        // }
-
         INode SettingBT()
         {
-            return new SequenceNode(
+            return new SelectorNode(
                 new List<INode>()
                 {
                     new SequenceNode
@@ -76,6 +52,7 @@ namespace BehaviorTree
                         new List<INode>()
                         {
                             new ActionNode(CheckAttackAction),
+                            new ActionNode(CheckBoundery),
                             new ActionNode(StartAttack),
                         }
                     ),
@@ -98,6 +75,45 @@ namespace BehaviorTree
             return false;
         }
 
+        #region Walk
+        
+        /// <summary>
+        /// 돼지저금통이 이동하는 함수 ==> 추후에 정밀하게 이동할 예정
+        /// </summary>
+        INode.NodeState WalkAround()
+        {
+            _rb.velocity = new Vector3(0, 0, -movementSpeed);
+            
+            return INode.NodeState.Success;
+        }
+        
+        #endregion
+
+        #region 방어 OR 도주
+
+        private class CheckHpJob : IJob
+        {
+            public NativeArray<float> results = new NativeArray<float>();
+            
+            public void Execute()
+            {
+                
+            }
+        }
+        
+        INode.NodeState CheckHp()
+        {
+            if (_status.hp.Current / _status.hp.Max > 0.5f) // 정밀한 검사 필요 And 잡 시스템으로 변경 필요
+                return INode.NodeState.Success;
+            return INode.NodeState.Failure;
+        }
+        
+        // 방어하는 함수 구현
+        
+        // 도주하는 함수 구현
+
+        #endregion
+        
         #region Attack
 
         /// <summary>
@@ -110,6 +126,11 @@ namespace BehaviorTree
                 return INode.NodeState.Running;
             }
             return INode.NodeState.Success;
+        }
+
+        INode.NodeState CheckBoundery()
+        {
+            return INode.NodeState.Failure;
         }
 
         INode.NodeState StartAttack()
@@ -131,22 +152,6 @@ namespace BehaviorTree
 
         #endregion
         
-        #region Walk
 
-        INode.NodeState WalkAround()
-        {
-            PiggyBankWalkRPC();
-            return INode.NodeState.Success;
-        }
-
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        public void PiggyBankWalkRPC()
-        {
-            var rb = GetComponent<Rigidbody>();
-            
-            rb.AddForce(new Vector3(0, 0, -movementSpeed));
-        }
-        
-        #endregion
     }
 }

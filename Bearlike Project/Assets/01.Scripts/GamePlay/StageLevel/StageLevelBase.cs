@@ -7,7 +7,7 @@ using Monster;
 using Photon;
 using Script.Manager;
 using Script.Photon;
-using Scripts.State.GameStatus;
+using Status;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;

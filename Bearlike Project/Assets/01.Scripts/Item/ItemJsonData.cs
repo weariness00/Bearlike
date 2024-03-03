@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Scripts.State.GameStatus;
+using Status;
 
 namespace Item
 {

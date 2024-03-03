@@ -1,5 +1,5 @@
 ﻿using Fusion;
-using Scripts.State.GameStatus;
+using Status;
 
 namespace Skill
 {
