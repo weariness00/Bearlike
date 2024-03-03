@@ -1,4 +1,5 @@
-﻿using Fusion;
+﻿using System;
+using Fusion;
 using Inho_Test_.Player;
 using Script.Manager;
 using Scripts.State.GameStatus;
@@ -7,6 +8,7 @@ using State.StateClass;
 using State.StateClass.Base;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Util;
 using Weapon.Bullet;
 
 namespace Script.Weapon.Gun
@@ -102,17 +104,28 @@ namespace Script.Weapon.Gun
         {
             Vector3 detination = Vector3.zero;
             Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+            var hitOptions = HitOptions.IncludePhysX | HitOptions.IgnoreInputAuthority;
             DebugManager.DrawRay(ray.origin, ray.direction * int.MaxValue, Color.red, 1.0f);
-            // if (Physics.Raycast(ray, out var hit, float.MaxValue))
-            if(Runner.LagCompensation.Raycast(ray.origin, ray.direction, float.MaxValue, Runner.LocalPlayer, out var hit))
+            if(Runner.LagCompensation.Raycast(ray.origin, ray.direction, float.MaxValue, Object.InputAuthority, out var hit, Int32.MaxValue, hitOptions))
             {
-                DebugManager.Log($"Ray충돌\n총 이름 : {name}\n맞은 대상 : {hit.Hitbox.name}");
-                var hitState = hit.Hitbox.Root.GetComponent<StatusBase>();
-
-                if (hitState != null)
+                DebugManager.Log($"Ray충돌\n총 이름 : {name}\n맞은 대상 : {hit.GameObject.name}");
+                
+                var hitbox = hit.Hitbox;
+                if (hitbox == null)
                 {
-                    // hitState.ApplyDamage(state.attack.Current, (ObjectProperty)state.property); // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
-                    ApplyDamage(hit.Hitbox);
+                    if (hit.GameObject.CompareTag("Destruction"))
+                    {
+                        MeshDestruction.Destruction(hit.GameObject, PrimitiveType.Cube, hit.Point, Vector3.one);
+                    }
+                }
+                else
+                {
+                    var hitState = hitbox.Root.GetComponent<StatusBase>();
+                    if (hitState != null)
+                    {
+                        // hitState.ApplyDamage(state.attack.Current, (ObjectProperty)state.property); // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
+                        ApplyDamage(hitbox);
+                    }
                 }
                 detination = hit.Point;
             }

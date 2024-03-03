@@ -1,26 +1,26 @@
+using System;
 using System.Collections.Generic;
+using Parabox.CSG;
+using Script.Manager;
 using UnityEngine;
+using Util;
+using Object = UnityEngine.Object;
 
 namespace _00.Scenes.Test___Dong_Woo__
 {
     public class Test1 : MonoBehaviour
     {
-        public Vector3[] vertices;
-        public Vector3[] normals;
-        public Vector2[] uv;
+        public GameObject a;
         // Start is called before the first frame update
         void Start()
         {
-            var meshFilter = GetComponent<MeshFilter>();
-            vertices = meshFilter.sharedMesh.vertices;
-            normals = meshFilter.sharedMesh.normals;
-            uv = meshFilter.sharedMesh.uv;
+            MeshDestruction.Destruction(a, PrimitiveType.Cube, Vector3.zero, Vector3.one);
         }
 
         // Update is called once per frame
         void Update()
         {
-        
+            
         }
     }
 }
