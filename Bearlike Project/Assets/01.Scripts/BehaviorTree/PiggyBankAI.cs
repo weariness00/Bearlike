@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using BehaviorTree.Base;
-using Fusion;
 using State.StateClass;
 using State.StateClass.Base;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
+using Allocator = Unity.Collections.Allocator;
 
 namespace BehaviorTree
 {
@@ -47,6 +47,14 @@ namespace BehaviorTree
             return new SelectorNode(
                 new List<INode>()
                 {
+                    new ActionNode(WalkAround),
+                    new SelectorNode
+                    (
+                        new List<INode>()
+                        {
+                            new ActionNode(CheckHp),
+                        }
+                    ),                    
                     new SequenceNode
                     (
                         new List<INode>()
@@ -56,7 +64,6 @@ namespace BehaviorTree
                             new ActionNode(StartAttack),
                         }
                     ),
-                    new ActionNode(WalkAround),
                 }
             );
         }
@@ -91,20 +98,46 @@ namespace BehaviorTree
 
         #region 방어 OR 도주
 
-        private class CheckHpJob : IJob
+        private struct CheckHpJob : IJob
         {
-            public NativeArray<float> results = new NativeArray<float>();
+            public float Current;
+            public float Max;
+            public NativeArray<float> Result;
             
             public void Execute()
             {
-                
+                Result[0] = Current / Max;
             }
         }
         
         INode.NodeState CheckHp()
         {
-            if (_status.hp.Current / _status.hp.Max > 0.5f) // 정밀한 검사 필요 And 잡 시스템으로 변경 필요
+            NativeArray<float> results = new NativeArray<float>(1, Allocator.TempJob);
+            
+            CheckHpJob Job = new CheckHpJob()
+            {
+                Current = _status.hp.Current,
+                Max = _status.hp.Max,
+                Result = results
+            };
+            
+            JobHandle jobHandle = Job.Schedule();
+            
+            jobHandle.Complete();
+            
+            float result = results[0];
+            results.Dispose();
+            
+            if (result > 0.5f) // 정밀한 검사 필요
+            {
                 return INode.NodeState.Success;
+            }
+            
+            // if (_status.hp.Current / _status.hp.Max > 0.5f)
+            // {
+            //     return INode.NodeState.Success;
+            // }
+            
             return INode.NodeState.Failure;
         }
         
