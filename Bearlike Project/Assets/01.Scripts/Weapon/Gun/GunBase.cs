@@ -113,10 +113,10 @@ namespace Script.Weapon.Gun
                 var hitbox = hit.Hitbox;
                 if (hitbox == null)
                 {
-                    if (hit.GameObject.CompareTag("Destruction"))
-                    {
-                        MeshDestruction.Destruction(hit.GameObject, PrimitiveType.Cube, hit.Point, Vector3.one);
-                    }
+                    // if (hit.GameObject.CompareTag("Destruction"))
+                    // {
+                    //     MeshDestruction.Destruction(hit.GameObject, PrimitiveType.Cube, hit.Point, Vector3.one * 2, ray.direction);
+                    // }
                 }
                 else
                 {

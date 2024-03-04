@@ -138,7 +138,7 @@ namespace Player
             xRotate = xRotate + xRotateMove;
 
             xRotate = Mathf.Clamp(xRotate, -90, 90); // 위, 아래 고정
-            var angle = new Vector3(xRotate, yRotate, 0);
+            var angle = new Vector3(-xRotate, yRotate, 0);
             
             simpleKcc.SetLookRotation(angle);
         }

@@ -11,7 +11,7 @@ namespace Util
 {
     public static class MeshDestruction
     {
-        public static List<GameObject> Destruction(GameObject targetObject, PrimitiveType shapeType, Vector3 position , Vector3 size, bool isTargetDestroy = true)
+        public static List<GameObject> Destruction(GameObject targetObject, PrimitiveType shapeType, Vector3 position, Vector3 size, Vector3 force)
         {
             var targetMeshFilter = targetObject.GetComponent<MeshFilter>();
             List<GameObject> destructionObjects = new List<GameObject>();
@@ -24,23 +24,36 @@ namespace Util
             // 메쉬의 크기가 크지 않을 경우는 무시
             var min = VectorMultiple(targetMeshFilter.sharedMesh.bounds.min, targetObject.transform.localScale);
             var max = VectorMultiple(targetMeshFilter.sharedMesh.bounds.max, targetObject.transform.localScale);
-            if ((max - min).magnitude < 1f) return destructionObjects;
+            if ((max - min).magnitude < size.magnitude) return destructionObjects;
+            if ((max - min).magnitude < 5f) // 일정 크기 이하면 slice 하기
+            {
+                var sliceObjects = MeshSlicing.Slice(targetObject, Random.onUnitSphere.normalized, position);
+                return sliceObjects.ToList();
+            }
             
             GameObject shapeObject = GameObject.CreatePrimitive(shapeType);
             shapeObject.transform.position = position;
             shapeObject.transform.localScale = size;
             
-            var name = targetObject.name;
-            if (name.Contains("_Destruction") == false) name += "_Destruction";
             // 겹치는 영역 만들기
             try
             {
                 var intersectModel = CSG.Intersect(targetObject, shapeObject);
-                var obj = CreateDestructionGameObject(targetObject, intersectModel, name);
-                obj.GetComponent<Rigidbody>().AddForce(Vector3.up);
+                var obj = CreateDestructionGameObject(targetObject, intersectModel);
                 var sliceObjects = MeshSlicing.Slice(obj, Random.onUnitSphere.normalized, position);
-                foreach (var sliceObject in sliceObjects)
-                    destructionObjects.Add(sliceObject);
+                if (sliceObjects != Array.Empty<GameObject>())
+                {
+                    destructionObjects.AddRange(MeshSlicing.Slice(sliceObjects[0], Random.onUnitSphere.normalized, position));
+                    destructionObjects.AddRange(MeshSlicing.Slice(sliceObjects[1], Random.onUnitSphere.normalized, position));
+                }
+                else
+                    destructionObjects.AddRange(sliceObjects);
+                
+                // foreach (var destructionObject in destructionObjects)
+                // {
+                //     var rigid = destructionObject.GetComponent<Rigidbody>();
+                //     rigid.AddForce(force);
+                // }
             }
             catch (Exception e)
             {
@@ -52,7 +65,7 @@ namespace Util
             try
             {
                 var subtractModel = CSG.Subtract(targetObject, shapeObject);
-                var obj = CreateDestructionGameObject(targetObject, subtractModel, name);
+                var obj = CreateDestructionGameObject(targetObject, subtractModel);
                 
                 destructionObjects.Add(obj);
             }
@@ -60,19 +73,25 @@ namespace Util
             {
                 DebugManager.LogWarning($"Subtract 실패했습니다." +
                                         $"{targetObject.name}와 충돌 {shapeType}의 영역이 충돌하지 않습니다.");
+                foreach (var destructionObject in destructionObjects)
+                {
+                    Object.Destroy(destructionObject);
+                }
+                destructionObjects.Clear();
+                Object.Destroy(shapeObject);
+                return destructionObjects;
             }
             
-            if (isTargetDestroy)
-            {
-                Object.Destroy(targetObject);
-            }
+            Object.Destroy(targetObject);
             Object.Destroy(shapeObject);
             return destructionObjects;
         }
 
-        private static GameObject CreateDestructionGameObject(GameObject targetObject, Model model, string name)
+        private static GameObject CreateDestructionGameObject(GameObject targetObject, Model model)
         {
-            var obj = new GameObject(name, typeof(MeshFilter), typeof(MeshRenderer),typeof(MeshCollider),typeof(Rigidbody));
+            var name = targetObject.name;
+            if (name.Contains("_Destruction") == false) name += "_Destruction";
+            var obj = new GameObject(name, typeof(MeshFilter), typeof(MeshRenderer),typeof(MeshCollider));
             var copyMesh = model.mesh;
             var centerVertex = new Vector3(
                 copyMesh.vertices.Average(vertex => vertex.x),
@@ -83,13 +102,15 @@ namespace Util
             for (var i = 0; i < vertices.Length; i++)
                 vertices[i] -= centerVertex;
             copyMesh.SetVertices(vertices);
+            copyMesh.RecalculateNormals();
+            copyMesh.RecalculateBounds();
                 
             // Object 생성
             obj.GetComponent<MeshFilter>().sharedMesh = copyMesh;
             obj.GetComponent<MeshRenderer>().sharedMaterials = model.materials.ToArray();
                 
             var collider = obj.GetComponent<MeshCollider>();
-            var rigid = obj.GetComponent<Rigidbody>();
+            // var rigid = obj.GetComponent<Rigidbody>();
 
             collider.convex = true;
             collider.sharedMesh = copyMesh;

@@ -132,9 +132,9 @@ namespace Util
             var collider = sliceGameObject.GetComponent<MeshCollider>();
             collider.convex = true;
             collider.sharedMesh = mesh;
-            sliceGameObject.GetComponent<Rigidbody>().AddForce(Vector3.up * 5);
             sliceGameObject.GetComponent<MeshFilter>().sharedMesh = mesh;
             sliceGameObject.GetComponent<MeshRenderer>().sharedMaterials = targetMeshRenderer.sharedMaterials;
+            sliceGameObject.tag = "Destruction";
             sliceGameObject.transform.position = targetObject.transform.position + center;
             sliceGameObject.transform.rotation = targetObject.transform.rotation;
             sliceGameObject.transform.localScale = targetObject.transform.localScale;
@@ -263,6 +263,7 @@ namespace Util
                     }
                 }
             }
+            if (createdSliceInfo.DotList.Count == 0) return Array.Empty<GameObject>();
 
             createdSliceInfo.DotList = SortVertices(createdSliceInfo.DotList);
             var capSliceInfos = MakeCap(sliceNormal,createdSliceInfo.DotList);

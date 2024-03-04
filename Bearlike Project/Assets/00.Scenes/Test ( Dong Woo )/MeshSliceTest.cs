@@ -18,8 +18,6 @@ public class MeshSliceTest : MonoBehaviour
     {
         if (t == TestType.Slice)
         {
-            if(Input.GetKeyDown(KeyCode.A))
-                MeshSlicing.Slice(gameObject, new Vector3(0.5f, 0.5f,0), slicePoint);
         }
     }
 }
