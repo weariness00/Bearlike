@@ -1702,6 +1702,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a15a4a59a421439ab0de241822ee2f54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _IsSettingUI:
+    _value: 0
   _StageVoteCount: 
   _NetworkStageLevelTypes: 
   _StageChoiceCount: 2
@@ -1801,7 +1803,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   info:
-    pivot: {x: 0, y: 0.5, z: 0}
+    pivot: {x: 0, y: 0, z: 0}
     size: {x: 10, y: 1, z: 10}
 --- !u!114 &1763687602
 MonoBehaviour:
@@ -1816,6 +1818,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _IsStageUnload: []
+  _IsInit:
+    _value: 0
   sceneReference:
     sceneAsset: {fileID: 102900000, guid: e7baadc751a3c7842a48433dc69d5b99, type: 3}
     scenePath: Assets/00.Scenes/Game/Game.unity

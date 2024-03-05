@@ -19,7 +19,7 @@ namespace UI
         #region Network Variable
 
         private ChangeDetector _changeDetector;
-        [Networked] private NetworkBool IsServerSetting { get; set; }
+        [Networked] public NetworkBool IsSettingUI { get; set; }
         [Networked] [Capacity(3)] private NetworkArray<NetworkBool> NetworkReadyArray { get; } // 투표를 마치고 준비가 되었는지
         [Networked] [Capacity(3)] public NetworkArray<int> StageVoteCount { get; }
         [Networked] [Capacity(3)] public NetworkArray<StageLevelType> NetworkStageLevelTypes { get; }
@@ -41,9 +41,8 @@ namespace UI
             
             clientNumber = UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber;
 
-            StageLevelBase.StageClearAction += SettingServer;
+            StageLevelBase.StageClearAction += SettingStageInfo;
             SettingStageInfo();
-            SettingStageUI();
         }
         
         public override void Render()
@@ -55,8 +54,8 @@ namespace UI
                     case nameof(StageVoteCount):
                         UpdateVoteText();
                         break;
-                    case nameof(IsServerSetting):
-                        if (IsServerSetting)
+                    case nameof(IsSettingUI): // 랜덤 스테이지가 정해지면 UI 셋팅
+                        if (IsSettingUI)
                         {
                             SettingStageUI();
                         }
@@ -101,25 +100,19 @@ namespace UI
 
         public void SettingStageInfo()
         {
-            if (Runner.IsServer == false)
+            if (HasStateAuthority == false)
             {
-                for (int i = 0; i < StageChoiceCount; i++)
-                {
-                    var index = i;
-                    var stage = GameManager.Instance.GetRandomStage();
-                    NetworkStageLevelTypes.Set(index, stage.stageLevelInfo.StageLevelType);
-                }
+                return;
             }
-        }
-
-        public void SettingServer(NetworkRunner runner)
-        {
-            if (runner.IsServer == false)
+            
+            for (int i = 0; i < StageChoiceCount; i++)
             {
-                IsServerSetting = false;
-                SettingStageInfo();
-                IsServerSetting = true;
+                var index = i;
+                var stage = GameManager.Instance.GetRandomStage();
+                NetworkStageLevelTypes.Set(index, stage.stageLevelInfo.StageLevelType);
             }
+            
+            SetSettingUIRPC(true);
         }
 
         void SettingStageUI()
@@ -134,7 +127,7 @@ namespace UI
             {
                 var index = i;
                 var stageType = NetworkStageLevelTypes.Get(i);
-                var stage = GameManager.Instance.GetRandomStage();
+                var stage = GameManager.Instance.GetStageIndex((int)stageType);
                 var stageSelectUIObject = Instantiate(stageSelectUIPrefab, stageToggleGroup);
                 var stageSelectUIHandler = stageSelectUIObject.GetComponent<StageSelectUIHandler>();
                 stageSelectUIHandler.toggle.onValueChanged.AddListener((value) =>
@@ -177,6 +170,9 @@ namespace UI
 
         #region Vraiable RPC Function
 
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void SetSettingUIRPC(NetworkBool value) => IsSettingUI = value;
+        
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void FixeVoteCountRPC(int index, bool value)
         {

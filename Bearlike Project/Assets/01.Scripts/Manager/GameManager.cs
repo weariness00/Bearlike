@@ -65,8 +65,8 @@ namespace Manager
 
         void Init()
         {
-            defaultStage.MapInfo = _mapGenerate.FindEmptySpace(defaultStage.MapInfo);
-            defaultStage.StageInitRPC();
+            // defaultStage.MapInfo = _mapGenerate.FindEmptySpace(defaultStage.MapInfo);
+            defaultStage.SetIsInitRPC(true);
             _mapGenerate.AddMap(defaultStage.MapInfo);
         }
         
@@ -77,7 +77,6 @@ namespace Manager
             {
                 foreach (var (key, user) in UserData.Instance.UserDictionary)
                 {
-                    // var playerController = Runner.FindObject(user.NetworkId).GetComponent<PlayerController>();
                     UserData.SetTeleportPosition(key, _spawnPlace.GetRandomSpot().position);
                     AlivePlayerCount++;
                 }
@@ -116,7 +115,7 @@ namespace Manager
                     if (stage.stageLevelInfo.StageLevelType == stageLevelBase.stageLevelInfo.StageLevelType)
                     {
                         stageLevelBase.MapInfo = await _mapGenerate.FindEmptySpaceSync(stage.MapInfo, defaultStage.MapInfo);
-                        stageLevelBase.StageInitRPC();
+                        stageLevelBase.SetIsInitRPC(true);
 
                         _mapGenerate.AddMap(stageLevelBase.MapInfo);
                         stageLevelBase.StageSetting();

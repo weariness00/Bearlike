@@ -21,7 +21,7 @@ namespace GamePlay.StageLevel
     {
         #region Static Variable
 
-        public static Action<NetworkRunner> StageClearAction;
+        public static Action StageClearAction;
 
         #endregion
 
@@ -29,6 +29,7 @@ namespace GamePlay.StageLevel
 
         private ChangeDetector _changeDetector;
         [Networked] [Capacity(3)] public NetworkArray<NetworkBool> IsStageUnload { get; }
+        [Networked] public NetworkBool IsInit { get; set; }
 
         #endregion
         
@@ -51,7 +52,7 @@ namespace GamePlay.StageLevel
             set => _mapInfoMono.info = value;
         }
 
-        [Header("몬스터 정보")] 
+        [Header("몬스터 정보")]
         public List<NetworkSpawner> monsterSpawnerList = new List<NetworkSpawner>();
         public StatusValue<int> monsterKillCount = new StatusValue<int>(); // 몬스터를 소멸 시킨 수
         public StatusValue<int> aliveMonsterCount = new StatusValue<int>(); // 최대 몇마리 살아있게 할 것인지
@@ -77,7 +78,6 @@ namespace GamePlay.StageLevel
         public override void Spawned()
         {
             _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
-            StageInit();
         }
 
         public override void FixedUpdateNetwork()
@@ -90,14 +90,13 @@ namespace GamePlay.StageLevel
 
         public override void Render()
         {
-            if(stageLevelInfo.StageLevelType == StageLevelType.None)
-                return;
-            
             foreach (var change in _changeDetector.DetectChanges(this))
             {
                 switch (change)
                 {
                     case nameof(IsStageUnload): // 스테이지 초기화 되면 스테이지를 부른 Scene을 Unload
+                        if (stageLevelInfo.StageLevelType == StageLevelType.None)
+                            continue;
                         int count = Runner.ActivePlayers.ToArray().Length;
                         foreach (var value in IsStageUnload)
                         {
@@ -107,9 +106,12 @@ namespace GamePlay.StageLevel
                         if (count == 0)
                         {
                             NetworkManager.UnloadScene(sceneReference.ScenePath);
-                            SetIsUnloadRPC(0, false);
-                            SetIsUnloadRPC(1, false);
-                            SetIsUnloadRPC(2, false);
+                        }
+                        break;
+                    case nameof(IsInit): // 스테이지 초기화 동기화를 위해 사용
+                        if (IsInit)
+                        {
+                            StageInit();
                         }
                         break;
                 }
@@ -164,9 +166,6 @@ namespace GamePlay.StageLevel
 
         #region Stage Function
 
-        [Rpc(RpcSources.All, RpcTargets.All, Channel = RpcChannel.Reliable)]
-        public void StageInitRPC() => StageInit();
-
         public virtual void StageInit()
         {
             var childEventSystem = stageGameObject.GetComponentInChildren<EventSystem>();
@@ -217,7 +216,7 @@ namespace GamePlay.StageLevel
             lootingTable.SpawnDropItem();
             DebugManager.ToDo("임시적으로 모든 아이템을 드랍하게 함");
             
-            StageClearAction?.Invoke(Runner);
+            StageClearAction?.Invoke();
             DebugManager.Log("스테이지 클리어\n" +
                              $"스테이지 모드 :{stageLevelInfo.StageLevelType}");
         }
@@ -238,6 +237,9 @@ namespace GamePlay.StageLevel
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void SetIsUnloadRPC(int clientNumber, NetworkBool value) => IsStageUnload.Set(clientNumber, value);
+
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void SetIsInitRPC(bool value) => IsInit = value;
 
         #endregion
     }
