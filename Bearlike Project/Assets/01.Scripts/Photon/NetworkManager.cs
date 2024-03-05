@@ -111,6 +111,7 @@ namespace Photon
                 yield return null;
             }
             SceneLoadDoneAction?.Invoke();
+            SceneLoadDoneAction = null;
         }
         
         public static async Task LoadScene(SceneRef sceneRef, LoadSceneParameters parameters, bool setActiveOnLoad = false)
@@ -185,7 +186,7 @@ namespace Photon
             await _runner.StartGame(new StartGameArgs()
             {
                 GameMode = mode,
-                SessionName = sessionName,
+                SessionName = "sessionName",
                 Scene = scene,
                 MatchmakingMode = MatchmakingMode.FillRoom,
                 SceneManager = gameObject.GetOrAddComponent<NetworkSceneManagerDefault>(),

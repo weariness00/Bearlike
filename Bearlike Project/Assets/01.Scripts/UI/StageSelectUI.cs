@@ -171,7 +171,7 @@ namespace UI
 
                 GameManager.Instance.SetStage(nextStageList[bicSelectIndex]);
             }
-
+            
             gameObject.SetActive(false);
         }
 

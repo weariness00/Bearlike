@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Fusion;
 using Item.Looting;
 using Manager;
 using Photon;
+using Script.Data;
 using Script.Manager;
 using Script.Monster;
 using Script.Photon;
@@ -20,6 +22,13 @@ namespace GamePlay.StageLevel
         #region Static Variable
 
         public static Action<NetworkRunner> StageClearAction;
+
+        #endregion
+
+        #region Networked Variable
+
+        private ChangeDetector _changeDetector;
+        [Networked] [Capacity(3)] public NetworkArray<NetworkBool> IsStageUnload { get; }
 
         #endregion
         
@@ -65,11 +74,45 @@ namespace GamePlay.StageLevel
             aliveMonsterCount.isOverMax = true;
         }
 
+        public override void Spawned()
+        {
+            _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
+            StageInit();
+        }
+
         public override void FixedUpdateNetwork()
         {
             if (isStageClear == false && isStageOver == false)
             {
                 StageUpdate();
+            }
+        }
+
+        public override void Render()
+        {
+            if(stageLevelInfo.StageLevelType == StageLevelType.None)
+                return;
+            
+            foreach (var change in _changeDetector.DetectChanges(this))
+            {
+                switch (change)
+                {
+                    case nameof(IsStageUnload): // 스테이지 초기화 되면 스테이지를 부른 Scene을 Unload
+                        int count = Runner.ActivePlayers.ToArray().Length;
+                        foreach (var value in IsStageUnload)
+                        {
+                            if (value) --count;
+                        }
+
+                        if (count == 0)
+                        {
+                            NetworkManager.UnloadScene(sceneReference.ScenePath);
+                            SetIsUnloadRPC(0, false);
+                            SetIsUnloadRPC(1, false);
+                            SetIsUnloadRPC(2, false);
+                        }
+                        break;
+                }
             }
         }
 
@@ -121,19 +164,20 @@ namespace GamePlay.StageLevel
 
         #region Stage Function
 
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All, Channel = RpcChannel.Reliable)]
-        public virtual void StageInitRPC() => StageInit();
+        [Rpc(RpcSources.All, RpcTargets.All, Channel = RpcChannel.Reliable)]
+        public void StageInitRPC() => StageInit();
 
         public virtual void StageInit()
         {
-            if (stageGameObject.GetComponentInChildren<EventSystem>() != null)
+            var childEventSystem = stageGameObject.GetComponentInChildren<EventSystem>();
+            var childCamera = stageGameObject.GetComponentInChildren<Camera>();
+            if (childEventSystem != null)
             {
-                Destroy(stageGameObject.GetComponentInChildren<EventSystem>().gameObject);
+                Destroy(childEventSystem.gameObject);
             }
-
-            if (stageGameObject.GetComponentInChildren<Camera>() != null)
+            if (childCamera != null)
             {
-                Destroy(stageGameObject.GetComponentInChildren<Camera>().gameObject);
+                Destroy(childCamera.gameObject);
             }
 
             Runner.MoveGameObjectToSameScene(gameObject, GameManager.Instance.gameObject);
@@ -149,6 +193,8 @@ namespace GamePlay.StageLevel
             }
             
             DebugManager.Log($"스테이지 초기화 {stageLevelInfo.title}");
+
+            SetIsUnloadRPC(UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber, true);
         }
 
         public virtual void StageUpdate()
@@ -185,6 +231,13 @@ namespace GamePlay.StageLevel
             
             isStageOver = true;
         }
+
+        #endregion
+
+        #region RPC Function
+
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void SetIsUnloadRPC(int clientNumber, NetworkBool value) => IsStageUnload.Set(clientNumber, value);
 
         #endregion
     }
