@@ -5,21 +5,19 @@ namespace GamePlay.StageLevel.Container
 {
     public class StageDestroy : StageLevelBase
     {
-        public StatusValue<float> destroyTimeLimit = new StatusValue<float>();
-        
+        // public StatusValue<float> destroyTimeLimit = new StatusValue<float>();
+
         public override void StageUpdate()
         {
             base.StageUpdate();
-            destroyTimeLimit.Current += Runner.DeltaTime;
             if (monsterKillCount.isMax)
             {
                 StageClear();
             }
-            else if (destroyTimeLimit.isMax)
-            {
-                StageOver();
-            }
+            
+            // 실패 조건은 모든 플레이어가 죽을 경우
         }
+        
     }
 }
 

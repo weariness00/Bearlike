@@ -37,7 +37,6 @@ namespace GamePlay.StageLevel
 
         [Header("스테이지 기본 정보")] 
         public StageLevelInfo stageLevelInfo;
-        public Texture2D image;
         public bool isStageClear = false;
         public bool isStageOver = false;
         [HideInInspector] [Tooltip("보상 루팅 테이블")] public LootingTable lootingTable;
@@ -53,13 +52,9 @@ namespace GamePlay.StageLevel
         }
 
         [Header("몬스터 정보")]
-        public List<NetworkSpawner> monsterSpawnerList = new List<NetworkSpawner>();
-        public StatusValue<int> monsterKillCount = new StatusValue<int>(); // 몬스터를 소멸 시킨 수
-        public StatusValue<int> aliveMonsterCount = new StatusValue<int>(); // 최대 몇마리 살아있게 할 것인지
-
-        public string goalInfo;
-        public string awardInfo;
-        public string difficultInfo;
+        public List<NetworkSpawner> monsterSpawnerList = new List<NetworkSpawner>(); // 맵에 몬스터 스포너들
+        public StatusValue<int> aliveMonsterCount = new StatusValue<int>(); // 한 맵에 최대 몇마리 살아있게 할 것인지
+        public StatusValue<int> monsterKillCount = new StatusValue<int>(); // 몬스터 소멸 횟수
 
         #region Unity Event Function
 
@@ -67,17 +62,21 @@ namespace GamePlay.StageLevel
         {
             lootingTable = gameObject.GetOrAddComponent<LootingTable>();
             stageGameObject.SetActive(false);
-            monsterKillCount.isOverMax = true;
         }
 
-        private void Start()
+        public virtual void Start()
         {
             aliveMonsterCount.isOverMax = true;
+            monsterKillCount.isOverMax = true;
         }
 
         public override void Spawned()
         {
             _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
+            if (IsInit)
+            {
+                StageInit();
+            }
         }
 
         public override void FixedUpdateNetwork()

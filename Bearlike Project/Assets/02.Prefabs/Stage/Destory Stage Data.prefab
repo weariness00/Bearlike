@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1447030405736922233}
   - component: {fileID: 8025208599522178229}
   - component: {fileID: 1909804824452287708}
+  - component: {fileID: 5293203567891533175}
   m_Layer: 31
   m_Name: Destory Stage Data
   m_TagString: Untagged
@@ -48,6 +49,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b43e242f2884670b92a32f2bacce545, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _IsStageUnload: []
+  _IsInit:
+    _value: 0
   sceneReference:
     sceneAsset: {fileID: 102900000, guid: 7146be2ac2ab9024cba3fc8c22de3ae9, type: 3}
     scenePath: Assets/00.Scenes/Game/Stage/Stage_Destroy.unity
@@ -55,36 +59,25 @@ MonoBehaviour:
     StageLevelType: 0
     title: "\uACA9\uD30C"
     explain: "\uBAA8\uB4E0 \uBAAC\uC2A4\uD130\uB97C \uC12C\uBA78\uD558\uC138\uC694"
-    image: {fileID: 0}
-    AliveMonsterCount:
-      _min: 0
-      _max: 100
-      _current: 0
-      isOverMax: 0
-      isOverMin: 0
-      isMin: 0
-      isMax: 0
+    image: {fileID: 2800000, guid: a508dd2f7a59d2d46af45c9ad37d68dc, type: 3}
   isStageClear: 0
   isStageOver: 0
+  lootingTable: {fileID: 0}
   stageGameObject: {fileID: 0}
   _mapInfoMono: {fileID: 5713381459070474948}
   monsterSpawnerList:
   - {fileID: 0}
-  monsterParentTransform: {fileID: 0}
-  monsterKillCount:
+  aliveMonsterCount:
     _min: 0
-    _max: 2
+    _max: 1
     _current: 0
     isOverMax: 0
     isOverMin: 0
     isMin: 0
     isMax: 0
-  goalInfo: 
-  awardInfo: 
-  difficultInfo: 
-  destroyTimeLimit:
+  monsterKillCount:
     _min: 0
-    _max: 1000
+    _max: 5
     _current: 0
     isOverMax: 0
     isOverMin: 0
@@ -161,3 +154,17 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 8430227219849765713}
   - {fileID: 8025208599522178229}
+--- !u!114 &5293203567891533175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3775322230510242185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb38a8d7b1dd4c17a11def9cd7d7a7a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isDrop: 0
+  _dropItems: []

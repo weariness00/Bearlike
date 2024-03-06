@@ -42,6 +42,14 @@ namespace UI
             clientNumber = UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber;
 
             StageLevelBase.StageClearAction += SettingStageInfo;
+            
+            // 객체 동기화를 위한 함수
+            if (IsSettingUI)
+            {
+                SettingStageUI();
+            }
+            
+            // UI 선택을 위한 정보 초기화
             SettingStageInfo();
         }
         
@@ -146,8 +154,11 @@ namespace UI
             }
 
             gameObject.SetActive(true);
+            
+            DebugManager.Log("스테이지 선택 UI 셋팅");
         }
 
+        // 투표된 스테이지 중 가장 투표수가 많은 스테이지로 시작
         public void SetStage()
         {
             if (Runner.IsServer)
