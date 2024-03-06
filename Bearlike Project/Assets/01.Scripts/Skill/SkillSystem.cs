@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Fusion;
+using Player;
 using Skill.Container;
 using State.StateClass;
 using UnityEngine;

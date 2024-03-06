@@ -1,5 +1,6 @@
 ﻿using Fusion;
 using Manager;
+using Player;
 using State.StateClass;
 using Status;
 using UnityEngine;

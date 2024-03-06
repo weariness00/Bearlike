@@ -14,18 +14,19 @@ using State.StateClass.Base;
 using Status;
 using Unity.VisualScripting;
 using UnityEngine;
+using Weapon;
 
 namespace Player
 {
     public class PlayerController : NetworkBehaviour
     {
-        // public Status status;
         public PlayerStatus status;
 
         public IEquipment equipment;
         public StatusValue<int> ammo = new StatusValue<int>();
 
         public SkillSystem skillSystem;
+        public WeaponSystem weaponSystem;
 
         [Header("아이템")] 
         public Dictionary<int, ItemBase> itemList = new Dictionary<int, ItemBase>();
@@ -48,6 +49,7 @@ namespace Player
             status = gameObject.GetOrAddComponent<PlayerStatus>();
             _networkAnimator = GetComponent<NetworkMecanimAnimator>();
             skillSystem = gameObject.GetOrAddComponent<SkillSystem>();
+            weaponSystem = gameObject.GetComponentInChildren<WeaponSystem>();
         }
 
         public override void Spawned()
@@ -59,7 +61,8 @@ namespace Player
                 name = "Local Player";
 
                 Runner.SetPlayerObject(Runner.LocalPlayer, Object);
-                equipment?.Equip();
+                // equipment?.Equip();
+                weaponSystem.gun?.Equip();
                 
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
             }
@@ -147,18 +150,18 @@ namespace Player
         {
             if (data.ChangeWeapon0)
             {
-                equipment = GetComponentInChildren<WeaponBase>();
-            }
+                weaponSystem.gun = GetComponentInChildren<GunBase>();
+            }  
             
-            if (data.Attack && equipment != null)
+            if (data.Attack && weaponSystem.gun != null)
             {
                 _networkAnimator.SetTrigger(_aniShoot);
-                equipment.AttackAction?.Invoke();
+                weaponSystem.gun.AttackAction?.Invoke();
             }
 
-            if (data.ReLoad && equipment.IsGun)
+            if (data.ReLoad && weaponSystem.gun.IsGun)
             {
-                var gun = equipment as GunBase;
+                var gun = weaponSystem.gun as GunBase;
                 gun.ReLoadBullet();
             }
         }

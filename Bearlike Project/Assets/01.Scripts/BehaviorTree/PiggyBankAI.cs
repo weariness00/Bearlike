@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using BehaviorTree.Base;
+using Manager;
 using State.StateClass;
 using State.StateClass.Base;
 using Unity.Collections;
@@ -15,12 +17,25 @@ namespace BehaviorTree
         [Header("Movement")] 
         [SerializeField] private float movementSpeed = 1.0f;
         
-        #region Property
-
+        #region Component
+        
         private Rigidbody _rb;
         private BehaviorTreeRunner _btRunner;
         private Animator _animator = null;
         private StatusBase _status;
+
+        private GameManager _gameManager;
+        private List<GameObject> _playerPrefabs;
+
+        //[field:SerializeField] // 프로퍼티도 인스펙터에서 보여줌
+
+        #endregion
+
+        #region 속성
+        
+        private float _playerCount;
+        
+        private float _detectingRange;  // 돌진 감지 범위
 
         #endregion
         
@@ -34,7 +49,17 @@ namespace BehaviorTree
 
         private void Start()
         {
+            _gameManager = GameManager.Instance;
+
+            _playerCount = _gameManager.AlivePlayerCount;
             
+            for (var i = 0; i < (int)_playerCount; ++i)
+            {
+                // 플레이어 고유번호 가지고 있어야함
+                // _playerPrefabs[i] = 
+            }
+            
+            _detectingRange = 10;
         }
 
         private void Update()
@@ -44,26 +69,57 @@ namespace BehaviorTree
 
         INode SettingBT()
         {
-            return new SelectorNode(
+            return new SelectorNode
+            (
                 new List<INode>()
                 {
-                    new ActionNode(WalkAround),
+                    new ActionNode(WalkAround),     // Walk
                     new SelectorNode
                     (
                         new List<INode>()
                         {
-                            new ActionNode(CheckHp),
+                            new SequenceNode
+                            (
+                            new List<INode>()
+                            {
+                                new ActionNode(CheckMoreHp),        // Deffence
+                                new ActionNode(CheckDeffenceAction),
+                                new ActionNode(StartDeffence),
+                            }
+                            ),
+                            new SequenceNode
+                            (
+                            new List<INode>()
+                            {
+                                new ActionNode(CheckLessHp),        // Run
+                                new ActionNode(CheckRunAction),
+                                new ActionNode(StartRun),
+                            }
+                            )
                         }
                     ),                    
                     new SequenceNode
                     (
                         new List<INode>()
                         {
-                            new ActionNode(CheckAttackAction),
+                            new ActionNode(CheckAttackAction),      // Kick
                             new ActionNode(CheckBoundery),
                             new ActionNode(StartAttack),
                         }
                     ),
+                    new SelectorNode
+                    (
+                        new List<INode>()
+                        {
+                                        // Rush
+                                        
+                                        // JumpAttack
+                                        
+                                        // fart
+                        }
+                    ),
+                                        // take a rest
+                                        // sleep
                 }
             );
         }
@@ -98,7 +154,9 @@ namespace BehaviorTree
 
         #region 방어 OR 도주
 
-        private struct CheckHpJob : IJob
+        #region HPCheck
+
+         private struct CheckHpJob : IJob
         {
             public float Current;
             public float Max;
@@ -110,7 +168,38 @@ namespace BehaviorTree
             }
         }
         
-        INode.NodeState CheckHp()
+        // TODO: check변수를 두개 만들까 아님 애니메이션 평가하는 함수에 job을 넣을까
+        INode.NodeState CheckMoreHp()
+        {
+            NativeArray<float> results = new NativeArray<float>(1, Allocator.TempJob);
+            
+            CheckHpJob Job = new CheckHpJob()
+            {
+                Current = _status.hp.Current,
+                Max = _status.hp.Max,
+                Result = results
+            };
+            
+            JobHandle jobHandle = Job.Schedule();
+            
+            jobHandle.Complete();
+            
+            float result = results[0];
+            results.Dispose();
+
+            if (result >= 0.5f) // 정밀한 검사 필요
+            {
+                return INode.NodeState.Success;
+            }
+            return INode.NodeState.Failure;
+            
+            // if (_status.hp.Current / _status.hp.Max > 0.5f)
+            // {
+            //     return INode.NodeState.Success;
+            // }
+        }
+        
+        INode.NodeState CheckLessHp()
         {
             NativeArray<float> results = new NativeArray<float>(1, Allocator.TempJob);
             
@@ -128,22 +217,59 @@ namespace BehaviorTree
             float result = results[0];
             results.Dispose();
             
-            if (result > 0.5f) // 정밀한 검사 필요
-            {
+            if (result < 0.5f) 
+            { 
                 return INode.NodeState.Success;
             }
+
+            return INode.NodeState.Failure;
             
             // if (_status.hp.Current / _status.hp.Max > 0.5f)
             // {
             //     return INode.NodeState.Success;
             // }
-            
-            return INode.NodeState.Failure;
+        }
+
+        #endregion
+
+        #region 방어
+
+        INode.NodeState CheckDeffenceAction()
+        {
+            if (IsAnimationRunning("돼지 방어"))
+            {
+                return INode.NodeState.Running;
+            }
+
+            return INode.NodeState.Success;
         }
         
-        // 방어하는 함수 구현
+        INode.NodeState StartDeffence()
+        {
+            _animator.SetTrigger("tDeffence");
+            return INode.NodeState.Success;
+        }
+
+        #endregion
+
+        #region 도주
+
+        INode.NodeState CheckRunAction()
+        {
+            if (IsAnimationRunning("도주 애니메이션"))
+            {
+                return INode.NodeState.Running;
+            }
+            return INode.NodeState.Success;
+        }
+
+        INode.NodeState StartRun()
+        {
+            _animator.SetTrigger("tRun");
+            return INode.NodeState.Success;
+        }
         
-        // 도주하는 함수 구현
+        #endregion
 
         #endregion
         
@@ -163,6 +289,7 @@ namespace BehaviorTree
 
         INode.NodeState CheckBoundery()
         {
+            // TODO : 범위 탐색 코드 구현 필요
             return INode.NodeState.Failure;
         }
 
@@ -171,14 +298,13 @@ namespace BehaviorTree
             _animator.SetTrigger("tAttack");
             return INode.NodeState.Success;
         }
-
-        // INode.NodeState 
         
         #endregion
 
-        #region Patrol
+        #region Rush
 
-        INode.NodeState LookAround()
+        // 거리 체크 
+        INode.NodeState CheckDistance()
         {
             return INode.NodeState.Success;
         }

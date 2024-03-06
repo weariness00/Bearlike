@@ -1,20 +1,20 @@
-using System;
 using System.Collections.Generic;
 using Fusion;
 using Manager;
 using Script.Manager;
+using State;
 using State.StateClass.Base;
 using Status;
 using Unity.Mathematics;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace State.StateClass
+namespace Player
 {
     /// <summary>
     /// Player의 State을 나타내는 Class
     /// </summary>
-    public sealed class PlayerStatus : Base.StatusBase
+    public sealed class PlayerStatus : StatusBase
     {
         // Member Variable
         #region Info Perperty
