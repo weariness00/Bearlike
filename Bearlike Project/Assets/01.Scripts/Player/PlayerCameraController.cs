@@ -1,5 +1,4 @@
 ﻿using Fusion;
-using Photon;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -7,7 +6,9 @@ namespace Player
 {
     public class PlayerCameraController : NetworkBehaviour
     {
-        public Camera targetCamera;
+        public GameObject ownerObject;
+
+        [Header("카메라")] public Camera targetCamera;
         public Camera weaponCamera;
         public Vector3 offset;
 
@@ -19,26 +20,27 @@ namespace Player
                 Destroy(weaponCamera.gameObject);
                 return;
             }
-            
-            if(Camera.main)
+
+            if (Camera.main)
             {
                 Destroy(Camera.main.gameObject);
             }
 
             targetCamera.tag = "MainCamera";
-            
+
             SetPlayerCamera();
             WeaponClipping();
         }
 
         public void SetPlayerCamera()
         {
-            // Local Player에 해당하는 클라이언트인지 확인
-            targetCamera.transform.parent = transform;
-            targetCamera.transform.position = transform.position + offset;
-            targetCamera.transform.rotation = transform.rotation;
-        
-            targetCamera.transform.LookAt(transform.forward + offset);
+            if(ownerObject == null) return;
+            
+            Transform targetCameraTransform = targetCamera.transform;
+            Transform ownerTransform = ownerObject.transform;
+            targetCameraTransform.SetParent(ownerTransform);
+            targetCameraTransform.position = ownerTransform.position + offset;
+            targetCameraTransform.rotation = ownerTransform.rotation;
         }
 
         public void WeaponClipping()

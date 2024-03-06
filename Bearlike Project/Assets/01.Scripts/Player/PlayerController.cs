@@ -17,21 +17,24 @@ using UnityEngine;
 
 namespace Player
 {
+    [RequireComponent(typeof(PlayerCameraController), typeof(PlayerStatus))]
     public class PlayerController : NetworkBehaviour
     {
         // public Status status;
+        [Header("컴포넌트")]
         public PlayerStatus status;
-
+        public PlayerCameraController cameraController;
+        public SkillSystem skillSystem;
+        private NetworkMecanimAnimator _networkAnimator;
+        [HideInInspector] public SimpleKCC simpleKcc;
+        
         public IEquipment equipment;
         public StatusValue<int> ammo = new StatusValue<int>();
 
-        public SkillSystem skillSystem;
-
+        [Tooltip("마우스 움직임에 따라 회전할 오브젝트")] public GameObject mouseRotateObject;
+        
         [Header("아이템")] 
         public Dictionary<int, ItemBase> itemList = new Dictionary<int, ItemBase>();
-        
-        [HideInInspector] public SimpleKCC simpleKcc;
-        private NetworkMecanimAnimator _networkAnimator;
 
         #region Animation Parametar
 
@@ -44,10 +47,12 @@ namespace Player
         {
             // 임시로 장비 착용
             // 상호작용으로 착요하게 바꿀 예정
-            equipment = GetComponentInChildren<IEquipment>();
-            status = gameObject.GetOrAddComponent<PlayerStatus>();
-            _networkAnimator = GetComponent<NetworkMecanimAnimator>();
+            status = gameObject.GetComponent<PlayerStatus>();
+            cameraController = GetComponent<PlayerCameraController>();
             skillSystem = gameObject.GetOrAddComponent<SkillSystem>();
+            
+            equipment = GetComponentInChildren<IEquipment>();
+            _networkAnimator = GetComponent<NetworkMecanimAnimator>();
         }
 
         public override void Spawned()
@@ -80,7 +85,7 @@ namespace Player
             {       
                 if(data.Cursor)
                     return;
-                
+
                 MouseRotateControl(data.MouseAxis);
                 MoveControl(data);
                 WeaponControl(data);
@@ -93,7 +98,9 @@ namespace Player
             Vector3 dir = Vector3.zero;
             Vector3 jumpImpulse = default;
             if (data.MoveFront)
+            {
                 dir += transform.forward;
+            }
             if (data.MoveBack)
             {
                 dir += -transform.forward;
@@ -126,21 +133,15 @@ namespace Player
         float xRotate, yRotate, xRotateMove, yRotateMove;
         public void MouseRotateControl(Vector2 mouseAxis = default)
         {
-            if (mouseAxis == Vector2.zero)
-            {
-                return;
-            }
-            
             xRotateMove = mouseAxis.y * Runner.DeltaTime * rotateSpeed;
             yRotateMove = mouseAxis.x * Runner.DeltaTime * rotateSpeed;
 
-            yRotate = transform.eulerAngles.y + yRotateMove;
-            xRotate = xRotate + xRotateMove;
+            yRotate += yRotateMove;
+            xRotate += xRotateMove;
 
-            xRotate = Mathf.Clamp(xRotate, -90, 90); // 위, 아래 고정
-            var angle = new Vector3(-xRotate, yRotate, 0);
-            
-            simpleKcc.SetLookRotation(angle);
+            xRotate = Mathf.Clamp(xRotate, -30, 30); // 위, 아래 제한 
+            simpleKcc.SetLookRotation(new Vector3(-xRotate, yRotate, 0));
+            mouseRotateObject.transform.localEulerAngles = new Vector3(-xRotate, 0, 0);
         }
 
         void WeaponControl(PlayerInputData data)
