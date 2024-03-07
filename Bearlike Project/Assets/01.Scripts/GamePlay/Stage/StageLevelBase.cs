@@ -13,6 +13,7 @@ using Status;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using Util.Map;
 
 namespace GamePlay.StageLevel
@@ -32,16 +33,18 @@ namespace GamePlay.StageLevel
         [Networked] public NetworkBool IsInit { get; set; }
 
         #endregion
-        
+
         public SceneReference sceneReference;
 
         [Header("스테이지 기본 정보")] 
         public StageLevelInfo stageLevelInfo;
         public bool isStageClear = false;
         public bool isStageOver = false;
-        [HideInInspector] [Tooltip("보상 루팅 테이블")] public LootingTable lootingTable;
 
-        [Header("맵 정보")]
+        [HideInInspector] [Tooltip("보상 루팅 테이블")]
+        public LootingTable lootingTable;
+
+        [Header("맵 정보")] 
         public GameObject stageGameObject;
         [SerializeField] private MapInfoMono _mapInfoMono;
 
@@ -51,11 +54,13 @@ namespace GamePlay.StageLevel
             set => _mapInfoMono.info = value;
         }
 
-        [Header("몬스터 정보")]
-        public List<NetworkSpawner> monsterSpawnerList = new List<NetworkSpawner>(); // 맵에 몬스터 스포너들
+        public Portal prevStagePortal;
+        public Portal nextStagePortal;
+
+        [Header("몬스터 정보")] public List<NetworkSpawner> monsterSpawnerList = new List<NetworkSpawner>(); // 맵에 몬스터 스포너들
         public StatusValue<int> aliveMonsterCount = new StatusValue<int>(); // 한 맵에 최대 몇마리 살아있게 할 것인지
         public StatusValue<int> monsterKillCount = new StatusValue<int>(); // 몬스터 소멸 횟수
-        
+
         #region Unity Event Function
 
         public void Awake()
@@ -106,12 +111,14 @@ namespace GamePlay.StageLevel
                         {
                             NetworkManager.UnloadScene(sceneReference.ScenePath);
                         }
+
                         break;
                     case nameof(IsInit): // 스테이지 초기화 동기화를 위해 사용
                         if (IsInit)
                         {
                             StageInit();
                         }
+
                         break;
                 }
             }
@@ -173,6 +180,7 @@ namespace GamePlay.StageLevel
             {
                 Destroy(childEventSystem.gameObject);
             }
+
             if (childCamera != null)
             {
                 Destroy(childCamera.gameObject);
@@ -189,12 +197,21 @@ namespace GamePlay.StageLevel
             {
                 lootingTable.CalLootingItem(lootingItems);
             }
+
+            // 포탈 연결
+            if (GameManager.Instance.currentStage != null)
+            {
+                var portal = GameManager.Instance.currentStage.nextStagePortal;
+                prevStagePortal.SetPortal(portal);
+                portal.isConnect = true; // 현재 진행중인 스테이지의 포탙 개방
+            }
+            GameManager.Instance.currentStage = this;
             
-            DebugManager.Log($"스테이지 초기화 {stageLevelInfo.title}");
-
             SetIsUnloadRPC(UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber, true);
-        }
 
+            DebugManager.Log($"스테이지 초기화 {stageLevelInfo.title}");
+        }
+        
         public virtual void StageUpdate()
         {
             if (GameManager.Instance.AlivePlayerCount <= 0)
@@ -209,12 +226,12 @@ namespace GamePlay.StageLevel
             {
                 return;
             }
-            
+
             isStageClear = true;
-            
+
             lootingTable.SpawnDropItem();
             DebugManager.ToDo("임시적으로 모든 아이템을 드랍하게 함");
-            
+
             StageClearAction?.Invoke();
             DebugManager.Log("스테이지 클리어\n" +
                              $"스테이지 모드 :{stageLevelInfo.StageLevelType}");
@@ -226,7 +243,7 @@ namespace GamePlay.StageLevel
             {
                 return;
             }
-            
+
             isStageOver = true;
         }
 

@@ -55,9 +55,9 @@ namespace Player
             avoid.Min = 0.0f;
             avoid.Current = 0.0f;
             
-            moveSpeed.Max = 100;
-            moveSpeed.Min = 1;
-            moveSpeed.Current = 1;
+            // moveSpeed.Max = 100;
+            // moveSpeed.Min = 1;
+            // moveSpeed.Current = 1;
 
             attackSpeed.Max = 10.0f;
             attackSpeed.Min = 0.5f;

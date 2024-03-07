@@ -186,7 +186,7 @@ namespace Photon
             await _runner.StartGame(new StartGameArgs()
             {
                 GameMode = mode,
-                SessionName = "sessionName",
+                SessionName = "sss",
                 Scene = scene,
                 MatchmakingMode = MatchmakingMode.FillRoom,
                 SceneManager = gameObject.GetOrAddComponent<NetworkSceneManagerDefault>(),

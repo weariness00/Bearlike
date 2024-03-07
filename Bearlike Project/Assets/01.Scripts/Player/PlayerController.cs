@@ -29,6 +29,7 @@ namespace Player
         public WeaponSystem weaponSystem;
         private NetworkMecanimAnimator _networkAnimator;
         [HideInInspector] public SimpleKCC simpleKcc;
+        [HideInInspector] public Rigidbody rigidBody;
         
         public IEquipment equipment;
         public StatusValue<int> ammo = new StatusValue<int>();
@@ -62,6 +63,7 @@ namespace Player
         {
             Cursor.lockState = CursorLockMode.Locked;
             simpleKcc = gameObject.GetOrAddComponent<SimpleKCC>();
+
             if (HasInputAuthority)
             {
                 name = "Local Player";
@@ -81,7 +83,7 @@ namespace Player
             var spawnPosition = UserData.Instance.UserDictionary[Runner.LocalPlayer].TeleportPosition;
             if (spawnPosition.Count != 0)
             {
-                simpleKcc.SetPosition(spawnPosition[0]); 
+                simpleKcc.SetPosition(spawnPosition[0]);
                 UserData.SetTeleportPosition(Runner.LocalPlayer, null);
             }
             
@@ -126,15 +128,13 @@ namespace Player
             _networkAnimator.Animator.SetFloat(_aniFrontMove, isMoveX ? 1 : 0);
             _networkAnimator.Animator.SetFloat(_aniSideMove, isMoveY ? 1 : 0);
 
-            dir *= Runner.DeltaTime * 100f;
+            dir *= Runner.DeltaTime * status.moveSpeed;
             
             if (data.Jump) 
             {
                 jumpImpulse = Vector3.up * 100;
             }
 
-            transform.position += dir;
-            
             simpleKcc.Move(dir, jumpImpulse);
         }
         

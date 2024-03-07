@@ -30,6 +30,7 @@ namespace Manager
         [Header("스테이지")]
         public StageLevelBase defaultStage;
         public List<StageLevelBase> stageList = new List<StageLevelBase>();
+        public StageLevelBase currentStage;
         public StatusValue<int> stageCount = new StatusValue<int>();// 현재 몇번째 스테이지 인지
 
         #region Unity Event Function
