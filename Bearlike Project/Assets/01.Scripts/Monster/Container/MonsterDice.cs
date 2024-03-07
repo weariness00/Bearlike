@@ -1,7 +1,6 @@
 ﻿using System;
 using BehaviorTree.Base;
-using Script.Monster;
-using Scripts.State.GameStatus;
+using Status;
 using UnityEngine;
 using Util;
 using Random = UnityEngine.Random;

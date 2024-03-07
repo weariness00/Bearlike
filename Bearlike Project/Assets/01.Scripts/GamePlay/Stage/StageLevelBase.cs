@@ -55,7 +55,7 @@ namespace GamePlay.StageLevel
         public List<NetworkSpawner> monsterSpawnerList = new List<NetworkSpawner>(); // 맵에 몬스터 스포너들
         public StatusValue<int> aliveMonsterCount = new StatusValue<int>(); // 한 맵에 최대 몇마리 살아있게 할 것인지
         public StatusValue<int> monsterKillCount = new StatusValue<int>(); // 몬스터 소멸 횟수
-
+        
         #region Unity Event Function
 
         public void Awake()
