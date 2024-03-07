@@ -22,8 +22,8 @@ namespace Script.Monster
             status = gameObject.GetOrAddComponent<MonsterStatus>();
             lootingTable = gameObject.GetOrAddComponent<LootingTable>();
         }
-
-        private void Start()
+        
+        public virtual void Start()
         {
             if (LootingSystem.Instance.monsterLootingItemDictionary.TryGetValue(id, out var lootingItems))
             {
