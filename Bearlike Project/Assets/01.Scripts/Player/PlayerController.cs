@@ -97,25 +97,30 @@ namespace Player
         {
             Vector3 dir = Vector3.zero;
             Vector3 jumpImpulse = default;
+            bool isMoveX= false, isMoveY = false;
             if (data.MoveFront)
             {
                 dir += transform.forward;
+                isMoveX = true;
             }
             if (data.MoveBack)
             {
                 dir += -transform.forward;
+                isMoveX = true;
             }
             if (data.MoveLeft)
             {
                 dir += -transform.right;
+                isMoveY = true;
             }
             if (data.MoveRight)
             {
                 dir += transform.right;
+                isMoveY = true;
             }
 
-            _networkAnimator.Animator.SetFloat(_aniFrontMove, math.abs(dir.x));
-            _networkAnimator.Animator.SetFloat(_aniSideMove, math.abs(dir.z));
+            _networkAnimator.Animator.SetFloat(_aniFrontMove, isMoveX ? 1 : 0);
+            _networkAnimator.Animator.SetFloat(_aniSideMove, isMoveY ? 1 : 0);
 
             dir *= Runner.DeltaTime * 100f;
             

@@ -7,10 +7,10 @@ namespace BehaviorTree.Base
     /// </summary>
     public sealed class SelectorNode : INode
     {
-        private List<INode> _childs;
+        private List<INode> _childs = new List<INode>();
 
         public SelectorNode(List<INode> childs) => _childs = childs;
-        
+
         public INode.NodeState Evaluate()
         {
             if (_childs == null)
