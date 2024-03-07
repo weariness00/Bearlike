@@ -203,13 +203,18 @@ namespace GamePlay.StageLevel
             {
                 var portal = GameManager.Instance.currentStage.nextStagePortal;
                 prevStagePortal.SetPortal(portal);
-                portal.isConnect = true; // 현재 진행중인 스테이지의 포탙 개방
+                portal.IsConnect = true; // 현재 진행중인 스테이지의 포탙 개방
             }
             GameManager.Instance.currentStage = this;
             
             SetIsUnloadRPC(UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber, true);
 
             DebugManager.Log($"스테이지 초기화 {stageLevelInfo.title}");
+        }
+
+        public virtual void StageStart()
+        {
+
         }
         
         public virtual void StageUpdate()
@@ -227,6 +232,7 @@ namespace GamePlay.StageLevel
                 return;
             }
 
+            prevStagePortal.IsConnect = true;
             isStageClear = true;
 
             lootingTable.SpawnDropItem();

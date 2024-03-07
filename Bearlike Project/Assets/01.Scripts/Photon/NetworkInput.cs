@@ -14,6 +14,8 @@ namespace Script.Photon
 
         public NetworkBool Jump;
 
+        public NetworkBool Interact;
+
         public NetworkBool Attack;
         public NetworkBool ReLoad;
 

@@ -4,12 +4,14 @@ using Fusion.Addons.SimpleKCC;
 using Script.GamePlay;
 using Script.Manager;
 using UnityEngine;
+using UnityEngine.Serialization;
+using Util;
 
 namespace GamePlay
 {
     // A에서 B로 넘어갈 수 있는 포털
     [RequireComponent(typeof(BoxCollider))]
-    public class Portal : MonoBehaviour
+    public class Portal : MonoBehaviour, IInteract
     {
         // #region Networked Variable
         //
@@ -20,35 +22,32 @@ namespace GamePlay
         public SpawnPlace spawnPlace = new SpawnPlace();
         public Portal otherPortal; // 다른 포탈
 
-        public LayerMask targetLayerMask; // 넘어갈 수 있는 대상
-        public bool isConnect; // 포털과 연결된 상태인지
+        private bool _isConnect; // 포털과 연결된 상태인지
+        public bool IsConnect
+        {
+            get => _isConnect;
+            set => _isConnect = IsInteract = value;
+        }
 
         private void Start()
         {
+            gameObject.layer = LayerMask.NameToLayer("Portal");
+            
             boxCollider = GetComponent<BoxCollider>();
-            boxCollider.includeLayers = targetLayerMask;
             spawnPlace.Initialize();
-        }
 
-        private void OnCollisionEnter(Collision other)
-        {
-            Teleport(other.gameObject);
+            Action += Teleport;
         }
-
-        private void OnTriggerEnter(Collider other)
-        {
-            Teleport(other.gameObject);
-        }
-
+        
         public void SetPortal(Portal _otherP)
         {
             otherPortal = _otherP;
             _otherP.otherPortal = this;
         }
 
-        private void Teleport(GameObject targetObject)
+        public void Teleport(GameObject targetObject)
         {
-            if (isConnect)
+            if (IsConnect)
             {
                 if (otherPortal == null)
                 {
@@ -70,6 +69,9 @@ namespace GamePlay
                 DebugManager.Log($"{targetObject.name}객체가 {name}에서 {otherPortal.name}으로 이동");
             }
         }
+
+        public bool IsInteract { get; set; }
+        public Action<GameObject> Action { get; set; }
     }
 }
 

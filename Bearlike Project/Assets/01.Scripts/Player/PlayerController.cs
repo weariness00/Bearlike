@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Fusion;
 using Fusion.Addons.SimpleKCC;
 using Item;
@@ -14,6 +15,7 @@ using State.StateClass.Base;
 using Status;
 using Unity.VisualScripting;
 using UnityEngine;
+using Util;
 using Weapon;
 
 namespace Player
@@ -22,22 +24,21 @@ namespace Player
     public class PlayerController : NetworkBehaviour
     {
         // public Status status;
-        [Header("컴포넌트")]
-        public PlayerStatus status;
+        [Header("컴포넌트")] public PlayerStatus status;
         public PlayerCameraController cameraController;
         public SkillSystem skillSystem;
         public WeaponSystem weaponSystem;
         private NetworkMecanimAnimator _networkAnimator;
         [HideInInspector] public SimpleKCC simpleKcc;
         [HideInInspector] public Rigidbody rigidBody;
-        
+
         public IEquipment equipment;
         public StatusValue<int> ammo = new StatusValue<int>();
+        public float interactLength = 1f; // 상호작용 범위
 
         [Tooltip("마우스 움직임에 따라 회전할 오브젝트")] public GameObject mouseRotateObject;
 
-        [Header("아이템")] 
-        public Dictionary<int, ItemBase> itemList = new Dictionary<int, ItemBase>();
+        [Header("아이템")] public Dictionary<int, ItemBase> itemList = new Dictionary<int, ItemBase>();
 
         #region Animation Parametar
 
@@ -46,6 +47,7 @@ namespace Player
         private readonly int _aniSideMove = Animator.StringToHash("fSideMove");
 
         #endregion
+
         private void Awake()
         {
             // 임시로 장비 착용
@@ -55,7 +57,7 @@ namespace Player
             weaponSystem = gameObject.GetComponentInChildren<WeaponSystem>();
             skillSystem = gameObject.GetOrAddComponent<SkillSystem>();
             _networkAnimator = GetComponent<NetworkMecanimAnimator>();
-            
+
             equipment = GetComponentInChildren<IEquipment>();
         }
 
@@ -71,7 +73,7 @@ namespace Player
                 Runner.SetPlayerObject(Runner.LocalPlayer, Object);
                 // equipment?.Equip();
                 weaponSystem.gun?.Equip();
-                
+
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
             }
             else
@@ -86,10 +88,10 @@ namespace Player
                 simpleKcc.SetPosition(spawnPosition[0]);
                 UserData.SetTeleportPosition(Runner.LocalPlayer, null);
             }
-            
+
             if (GetInput(out PlayerInputData data))
-            {       
-                if(data.Cursor)
+            {
+                if (data.Cursor)
                     return;
 
                 MouseRotateControl(data.MouseAxis);
@@ -97,28 +99,33 @@ namespace Player
                 WeaponControl(data);
                 SkillControl(data);
             }
+
+            CheckInteract();
         }
 
         private void MoveControl(PlayerInputData data = default)
         {
             Vector3 dir = Vector3.zero;
             Vector3 jumpImpulse = default;
-            bool isMoveX= false, isMoveY = false;
+            bool isMoveX = false, isMoveY = false;
             if (data.MoveFront)
             {
                 dir += transform.forward;
                 isMoveX = true;
             }
+
             if (data.MoveBack)
             {
                 dir += -transform.forward;
                 isMoveX = true;
             }
+
             if (data.MoveLeft)
             {
                 dir += -transform.right;
                 isMoveY = true;
             }
+
             if (data.MoveRight)
             {
                 dir += transform.right;
@@ -129,17 +136,18 @@ namespace Player
             _networkAnimator.Animator.SetFloat(_aniSideMove, isMoveY ? 1 : 0);
 
             dir *= Runner.DeltaTime * status.moveSpeed;
-            
-            if (data.Jump) 
+
+            if (data.Jump)
             {
                 jumpImpulse = Vector3.up * 100;
             }
 
             simpleKcc.Move(dir, jumpImpulse);
         }
-        
+
         public float rotateSpeed = 500.0f;
         float xRotate, yRotate, xRotateMove, yRotateMove;
+
         public void MouseRotateControl(Vector2 mouseAxis = default)
         {
             xRotateMove = mouseAxis.y * Runner.DeltaTime * rotateSpeed;
@@ -153,13 +161,31 @@ namespace Player
             mouseRotateObject.transform.localEulerAngles = new Vector3(-xRotate, 0, 0);
         }
 
+        // 상호 작용
+        void CheckInteract()
+        {
+            Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+            var hitOptions = HitOptions.IncludePhysX | HitOptions.IgnoreInputAuthority;
+            DebugManager.DrawRay(ray.origin, ray.direction * interactLength, Color.red, 1.0f);
+            if (Runner.LagCompensation.Raycast(ray.origin, ray.direction, interactLength, Object.InputAuthority, out var hit, Int32.MaxValue, hitOptions))
+            {
+                var interact = hit.GameObject.GetComponent<IInteract>();
+                if (interact is { IsInteract: false }) return;
+                if (KeyManager.InputActionDown(KeyToAction.Interact))
+                {
+                    interact.Action?.Invoke(gameObject);
+                }
+                DebugManager.ToDo("상호작용이 가능할 경우 상호작용 키 UI 띄어주기");
+            }
+        }
+
         void WeaponControl(PlayerInputData data)
         {
             if (data.ChangeWeapon0)
             {
                 weaponSystem.gun = GetComponentInChildren<GunBase>();
-            }  
-            
+            }
+
             if (data.Attack && weaponSystem.gun != null)
             {
                 _networkAnimator.SetTrigger(_aniShoot);

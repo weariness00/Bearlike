@@ -19,6 +19,8 @@ namespace Script.Manager
         
         Jump,
         
+        Interact,
+        
         Attack,
         ReLoad,
         
