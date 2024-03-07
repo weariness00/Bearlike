@@ -6,7 +6,7 @@ using Photon;
 using Script.Data;
 using Script.GamePlay;
 using Script.Manager;
-using Scripts.State.GameStatus;
+using Status;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Util.Map;

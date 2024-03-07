@@ -18,7 +18,7 @@ namespace Weapon.Gun
         {
             base.Start();
 
-            // shootSound = transform.GetChild(0).GetComponent<AudioSource>();
+            shootSound = transform.GetChild(0).GetComponent<AudioSource>();
             // reloadSound = transform.GetChild(1).GetComponent<AudioSource>();
             // emptyAmmoSound = transform.GetChild(2).GetComponent<AudioSource>();
             

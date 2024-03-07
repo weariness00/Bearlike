@@ -2,12 +2,10 @@
 using Fusion;
 using Item.Looting;
 using Script.Manager;
-using Script.Util;
-using Scripts.State.GameStatus;
 using State.StateClass;
 using Unity.VisualScripting;
 
-namespace Script.Monster
+namespace Monster
 {
     public class MonsterBase : NetworkBehaviour
     {

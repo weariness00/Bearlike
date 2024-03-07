@@ -1,4 +1,5 @@
-﻿using State;
+﻿using Player;
+using State;
 using State.StateClass;
 using UnityEngine;
 

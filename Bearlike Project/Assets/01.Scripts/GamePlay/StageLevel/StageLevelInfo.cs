@@ -1,5 +1,4 @@
 ﻿using Fusion;
-using Scripts.State.GameStatus;
 using UnityEngine;
 
 namespace GamePlay.StageLevel

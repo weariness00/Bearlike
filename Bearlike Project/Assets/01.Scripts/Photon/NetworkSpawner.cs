@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Fusion;
 using Script.GamePlay;
 using Script.Manager;
-using Scripts.State.GameStatus;
+using Status;
 using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;

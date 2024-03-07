@@ -3,7 +3,7 @@ using System.IO;
 using Newtonsoft.Json;
 using Script.Data;
 using Script.Manager;
-using Scripts.State.GameStatus;
+using Status;
 using UnityEngine;
 
 namespace Item

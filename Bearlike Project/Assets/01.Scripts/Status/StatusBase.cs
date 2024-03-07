@@ -1,6 +1,6 @@
 using Fusion;
 using Script.Manager;
-using Scripts.State.GameStatus;
+using Status;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -22,23 +22,45 @@ namespace State.StateClass.Base
     public abstract class StatusBase : NetworkBehaviour
     {
         #region Member Variable
-
-        public StatusValue<int> _hp = new StatusValue<int>();                   // 체력        
-        public StatusValue<int> attack = new StatusValue<int>();               // 공격력
-        public StatusValue<int> defence = new StatusValue<int>();              // 방어력
+        
+        public StatusValue<int> hp = new StatusValue<int>();                  // 체력        
+        public StatusValue<int> attack = new StatusValue<int>();              // 공격력
+        public StatusValue<int> defence = new StatusValue<int>();             // 방어력
         public StatusValue<float> avoid = new StatusValue<float>();           // 회피
-        public StatusValue<int> moveSpeed = new StatusValue<int>();          // 이동 속도
+        public StatusValue<int> moveSpeed = new StatusValue<int>();           // 이동 속도
         public StatusValue<float> attackSpeed = new StatusValue<float>();     // 공격 속도
 
         public StatusValue<int> force = new StatusValue<int>();               // 힘
-        public int condition;                                               // 상태
-        public int property;                                                // 속성
+        public int condition;                                                 // 상태
+        public int property;                                                  // 속성
 
+        #region 프로퍼티
+        
+        // [Networked]
+        // public int Hp
+        // {
+        //     get => hp.Current;
+        //     set => hp.Current = value;
+        // }
+        //
+        // [Networked] public int Attack { get; set; }
+        // // 스텟 전체를 업데이트 ==>
+        // // 
+        //
+        // [Networked]
+        // public float AttackSpeed
+        // {
+        //     get => attackSpeed.Current;
+        //     set => attackSpeed.Current = value;
+        // }
+        
+        #endregion
+        
         #endregion
 
         #region Variable Paramiter
         
-        public bool IsDie => _hp.isMin;
+        public bool IsDie => hp.isMin;
 
         #endregion
 

@@ -6,14 +6,15 @@ using Script.Data;
 using Script.Manager;
 using Script.Photon;
 using Script.Weapon.Gun;
-using Scripts.State.GameStatus;
 using Skill;
 using Skill.Container;
 using State.StateClass;
 using Unity.Mathematics;
 using State.StateClass.Base;
+using Status;
 using Unity.VisualScripting;
 using UnityEngine;
+using Weapon;
 
 namespace Player
 {
@@ -25,6 +26,7 @@ namespace Player
         public PlayerStatus status;
         public PlayerCameraController cameraController;
         public SkillSystem skillSystem;
+        public WeaponSystem weaponSystem;
         private NetworkMecanimAnimator _networkAnimator;
         [HideInInspector] public SimpleKCC simpleKcc;
         
@@ -32,7 +34,7 @@ namespace Player
         public StatusValue<int> ammo = new StatusValue<int>();
 
         [Tooltip("마우스 움직임에 따라 회전할 오브젝트")] public GameObject mouseRotateObject;
-        
+
         [Header("아이템")] 
         public Dictionary<int, ItemBase> itemList = new Dictionary<int, ItemBase>();
 
@@ -49,10 +51,11 @@ namespace Player
             // 상호작용으로 착요하게 바꿀 예정
             status = gameObject.GetComponent<PlayerStatus>();
             cameraController = GetComponent<PlayerCameraController>();
+            weaponSystem = gameObject.GetComponentInChildren<WeaponSystem>();
             skillSystem = gameObject.GetOrAddComponent<SkillSystem>();
+            _networkAnimator = GetComponent<NetworkMecanimAnimator>();
             
             equipment = GetComponentInChildren<IEquipment>();
-            _networkAnimator = GetComponent<NetworkMecanimAnimator>();
         }
 
         public override void Spawned()
@@ -64,7 +67,8 @@ namespace Player
                 name = "Local Player";
 
                 Runner.SetPlayerObject(Runner.LocalPlayer, Object);
-                equipment?.Equip();
+                // equipment?.Equip();
+                weaponSystem.gun?.Equip();
                 
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
             }
@@ -80,7 +84,7 @@ namespace Player
                 simpleKcc.SetPosition(spawnPosition[0]); 
                 UserData.SetTeleportPosition(Runner.LocalPlayer, null);
             }
-
+            
             if (GetInput(out PlayerInputData data))
             {       
                 if(data.Cursor)
@@ -153,28 +157,27 @@ namespace Player
         {
             if (data.ChangeWeapon0)
             {
-                equipment = GetComponentInChildren<WeaponBase>();
-            }
+                weaponSystem.gun = GetComponentInChildren<GunBase>();
+            }  
             
-            if (data.Attack && equipment != null)
+            if (data.Attack && weaponSystem.gun != null)
             {
                 _networkAnimator.SetTrigger(_aniShoot);
-                equipment.AttackAction?.Invoke();
+                weaponSystem.gun.AttackAction?.Invoke();
             }
 
-            if (data.ReLoad && equipment.IsGun)
+            if (data.ReLoad && weaponSystem.gun.IsGun)
             {
-                var gun = equipment as GunBase;
+                var gun = weaponSystem.gun as GunBase;
                 gun.ReLoadBullet();
             }
         }
 
         void SkillControl(PlayerInputData data)
         {
-            if(Input.GetKeyDown(KeyCode.F1))
-            // if (data.FirstSkill)
+            if (data.FirstSkill)
             {
-                skillSystem.skillList[0].Run();
+                skillSystem.SkillList[0].Run();
             }
         }
     }

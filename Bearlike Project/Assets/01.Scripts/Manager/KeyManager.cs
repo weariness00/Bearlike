@@ -21,8 +21,9 @@ namespace Script.Manager
         
         Attack,
         ReLoad,
+        
         FirstSkill,
-            
+        
         Esc,
     }
     

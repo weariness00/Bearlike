@@ -1,8 +1,8 @@
-﻿using System;
-using Fusion;
+﻿using Fusion;
 using Manager;
-using Scripts.State.GameStatus;
+using Player;
 using State.StateClass;
+using Status;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -26,7 +26,7 @@ namespace Skill.Container
 
         #region property
 
-        private PlayerStatus _playerStatus;
+        public PlayerStatus playerStatus;
         
         private int _type;              // 동전 앞뒷면
         private bool _bOn;              // 현재 발동 중인지 판단하는 bool
@@ -35,7 +35,7 @@ namespace Skill.Container
 
         #endregion
         
-        public FlippingCoin()
+        public FlippingCoin(PlayerStatus status)
         {
             var tempCoolTime = new StatusValue<float>();
             tempCoolTime.Max = 30.0f;
@@ -51,7 +51,8 @@ namespace Skill.Container
             
             _gm = GameObject.Find("GameManager").GetComponent<GameManager>();
 
-            _playerStatus = GameObject.Find("Local Player").GetComponent<PlayerStatus>();
+            // playerStatus = GameObject.Find("Local Player").GetComponent<PlayerStatus>();
+            playerStatus = status;
             
             _bOn = false;
             _difference = 0;
@@ -66,10 +67,24 @@ namespace Skill.Container
             CoolTime.Current -= _deltaPlayTime;
             Duration.Current -= _deltaPlayTime;
 
-            // 한 번만 remove하게 해줘야 한다.
             if (_bOn && Mathf.Round((Duration.Current - Duration.Min) * 10) * 0.1f <= 0f)
             {
-                RemoveBuffRPC(_playerStatus);
+                if (_type == 0)
+                {
+                    playerStatus.attackSpeed.Current -= _difference;
+                    // playerStatus.AttackSpeed = playerStatus.attackSpeed.Current;
+                }
+                else
+                {
+                    playerStatus.attack.Current -= (int)_difference;
+                    // playerStatus.Attack = playerStatus.attack.Current;
+                }
+                
+                Debug.Log($"현재 Attack : {playerStatus.attack.Current}, AttackSpeed : {playerStatus.attackSpeed.Current}");
+                
+                Duration.Current = Duration.Min;
+                _bOn = false;
+                // _difference = 0; // 굳이 필요 없을듯
             }
             
             _previousPlayTime = _currentPlayTime;
@@ -82,46 +97,60 @@ namespace Skill.Container
             if (_bOn == false && Mathf.Round((CoolTime.Current - CoolTime.Min) * 10) * 0.1f <= 0f)
             {
                 _type = Random.Range(0, 2);
-                ApplyBuffRPC(_playerStatus);
-            }
-        }
 
-        // HACK : 굳이 RPC로 Status을 수정 해야하나? => 어차피 주인 client만 스텟 수정을 하면 상관 없지 않나? 고려 해보자
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void ApplyBuffRPC(PlayerStatus playerStatus)
-        {
-            if (_type == 0)
-            {
-                _difference = playerStatus.attackSpeed.Current * 0.5f;
-                playerStatus.attackSpeed.Current += _difference;
-            }
-            else
-            {
-                _difference = playerStatus.attack.Current * 0.2f;
-                playerStatus.attack.Current += (int)_difference;
-            }
+                if (_type == 0)
+                {
+                    _difference = playerStatus.attackSpeed.Current * 0.5f;
+                    playerStatus.attackSpeed.Current += _difference;
+                    // playerStatus.AttackSpeed = playerStatus.attackSpeed.Current;
+                }
+                else
+                {
+                    _difference = playerStatus.attack.Current * 0.2f;
+                    playerStatus.attack.Current += (int)_difference;
+                    // playerStatus.Attack = playerStatus.attack.Current;
+                }
+                
+                Duration.Current = Duration.Max;
+                CoolTime.Current = CoolTime.Max;
 
-            Duration.Current = Duration.Max;
-            CoolTime.Current = CoolTime.Max;
-
-            _bOn = true;
-        }
-
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void RemoveBuffRPC(PlayerStatus playerStatus)
-        {
-            if (_type == 0)
-            {
-                playerStatus.attackSpeed.Current -= _difference;
+                _bOn = true;
+                
+                Debug.Log($"현재 Attack : {playerStatus.attack.Current}, AttackSpeed : {playerStatus.attackSpeed.Current}");
             }
             else
             {
-                playerStatus.attack.Current -= (int)_difference;
+                Debug.Log($"남은 쿨타임 : {CoolTime.Current}");
             }
-
-            Duration.Current = Duration.Min;
-            _bOn = false;
-            // _difference = 0; // 굳이 필요 없을듯
         }
+        
+        // // HACK : 굳이 RPC로 Status을 수정 해야하나? => 어차피 주인 client만 스텟 수정을 하면 상관 없지 않나? 고려 해보자
+        // [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+        // private void ApplyBuffRPC(int type, RpcInfo info = default)
+        // {
+        //     if (type == 0)
+        //     {
+        //         _difference = playerStatus.attackSpeed.Current * 0.5f;
+        //         playerStatus.attackSpeed.Current += _difference;
+        //     }
+        //     else
+        //     {
+        //         _difference = playerStatus.attack.Current * 0.2f;
+        //         playerStatus.attack.Current += (int)_difference;
+        //     }
+        // }
+        //
+        // [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+        // private void RemoveBuffRPC(int type, RpcInfo info = default)
+        // {
+        //     if (type == 0)
+        //     {
+        //         playerStatus.attackSpeed.Current -= _difference;
+        //     }
+        //     else
+        //     {
+        //         playerStatus.attack.Current -= (int)_difference;
+        //     }
+        // }
     }
 }
