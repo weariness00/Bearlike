@@ -37,14 +37,14 @@ namespace Monster.Container
             _isCollide = false;
         }
 
-        // private INode InitBT()
-        // {
-        //     var sqeunce = new SequenceNode(
-        //         new ActionNode()
-        //         );
-        //
-        //     return sqeunce;
-        // }
+        private INode InitBT()
+        {
+            var sqeunce = new SequenceNode(
+                new ActionNode()
+                );
+        
+            return sqeunce;
+        }
 
         #region Function
 
@@ -91,7 +91,6 @@ namespace Monster.Container
             if (_isCollide && moveDelay.isMax)
             {
                 moveDelay.Current = moveDelay.Min;
-                
                 _rigidbody.AddTorque(_rigidbody.mass * 110 * moveDirection);
             }
         }

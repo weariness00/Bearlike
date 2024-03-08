@@ -31,11 +31,7 @@ namespace Weapon.Gun
         public override void BulletInit()
         {
             ammo.Max = ammo.Current = 48;
-            
-            magazine.Max = magazine.Current = 6;
 
-            bulletFirePerMinute = 6000;
-            
             fireLateSecond.Max = 60 / bulletFirePerMinute;
             fireLateSecond.Current = float.MaxValue;
         }

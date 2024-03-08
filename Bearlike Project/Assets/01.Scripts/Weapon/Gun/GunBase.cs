@@ -64,14 +64,8 @@ namespace Script.Weapon.Gun
             }
             
             base.FixedUpdateNetwork();
-            if (fireLateSecond.isMax == false)
-            {
-                fireLateSecond.Current += Runner.DeltaTime;
-            }
-            if (reloadLateSecond.isMax == false)
-            {
-                reloadLateSecond.Current += Runner.DeltaTime;
-            }
+            fireLateSecond.Current += Runner.DeltaTime;
+            reloadLateSecond.Current += Runner.DeltaTime;
         }
 
         public virtual void Shoot()
@@ -79,11 +73,8 @@ namespace Script.Weapon.Gun
             if (fireLateSecond.isMax)
             {
                 fireLateSecond.Current = fireLateSecond.Min;
-                
                 if (magazine.Current != 0)
                 {
-                    fireLateSecond.Current = fireLateSecond.Min;
-                
                     var dst = CheckRay();
 
                     bullet.destination = dst;
