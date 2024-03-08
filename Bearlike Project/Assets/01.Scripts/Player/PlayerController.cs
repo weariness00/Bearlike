@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using Data;
 using Fusion;
 using Fusion.Addons.SimpleKCC;
 using Item;
+using Photon;
 using Script.Data;
 using Script.Manager;
 using Script.Photon;

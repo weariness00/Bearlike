@@ -53,7 +53,7 @@ BlendTree:
     m_CycleOffset: 0
     m_DirectBlendParameter: attack_blend
     m_Mirror: 0
-  m_BlendParameter: attack_blend
+  m_BlendParameter: Attack_Type
   m_BlendParameterY: Blend
   m_MinThreshold: 0
   m_MaxThreshold: 4
@@ -94,20 +94,8 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 3
-    m_ConditionEvent: attack_blend
-    m_EventTreshold: 0
-  - m_ConditionMode: 3
-    m_ConditionEvent: attack_blend
-    m_EventTreshold: 1
-  - m_ConditionMode: 3
-    m_ConditionEvent: attack_blend
-    m_EventTreshold: 2
-  - m_ConditionMode: 3
-    m_ConditionEvent: attack_blend
-    m_EventTreshold: 3
-  - m_ConditionMode: 3
-    m_ConditionEvent: attack_blend
-    m_EventTreshold: 4
+    m_ConditionEvent: Attack_Type
+    m_EventTreshold: -1
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -311190921092357855}
   m_Solo: 0
@@ -176,7 +164,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: attack_blend
+  m_Name: Attack_Blend
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -224,7 +212,7 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: attack_blend
+  - m_Name: Attack_Type
     m_Type: 1
     m_DefaultFloat: 4
     m_DefaultInt: 0
@@ -266,7 +254,7 @@ AnimatorStateMachine:
     m_Position: {x: 30, y: 290, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 2016958129348196932}
-    m_Position: {x: 310, y: 260, z: 0}
+    m_Position: {x: 310, y: 290, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -461,6 +449,20 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!1109 &6208059101544200402
+AnimatorTransition:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_Conditions: []
+  m_DstStateMachine: {fileID: 0}
+  m_DstState: {fileID: 2016958129348196932}
+  m_Solo: 0
+  m_Mute: 0
+  m_IsExit: 0
+  serializedVersion: 1
 --- !u!1102 &9063477106944681702
 AnimatorState:
   serializedVersion: 6

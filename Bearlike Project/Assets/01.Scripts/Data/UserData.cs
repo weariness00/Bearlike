@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Fusion;
 using Photon;
 using Script.Manager;
 using UnityEngine;
 
-namespace Script.Data
+namespace Data
 {
     public struct UserDataStruct : INetworkStruct
     {
@@ -24,7 +22,7 @@ namespace Script.Data
         public NetworkDictionary<PlayerRef, UserDataStruct> UserDictionary { get; }
 
         #region Static Function
-
+        
         public static void SetTeleportPosition(PlayerRef key, Vector3? value)
         {
             var data = Instance.UserDictionary[key];

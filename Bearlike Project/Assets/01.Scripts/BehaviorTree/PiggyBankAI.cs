@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using BehaviorTree.Base;
+using Data;
 using Manager;
 using State.StateClass;
 using State.StateClass.Base;
@@ -25,6 +26,7 @@ namespace BehaviorTree
         private StatusBase _status;
 
         private GameManager _gameManager;
+        private UserData _userData;
         private List<GameObject> _playerPrefabs;
 
         //[field:SerializeField] // 프로퍼티도 인스펙터에서 보여줌
@@ -36,6 +38,11 @@ namespace BehaviorTree
         private float _playerCount;
         
         private float _detectingRange;  // 돌진 감지 범위
+        
+        private static readonly int IsWalk = Animator.StringToHash("IsWalk");
+        private static readonly int IsDead = Animator.StringToHash("IsDead");
+        private static readonly int IsRest = Animator.StringToHash("IsRest");
+        private static readonly int AttackType = Animator.StringToHash("Attack_Blend");
 
         #endregion
         
@@ -50,8 +57,22 @@ namespace BehaviorTree
         private void Start()
         {
             _gameManager = GameManager.Instance;
-
             _playerCount = _gameManager.AlivePlayerCount;
+
+            // TODO : foreach문에서 조건문을 계속 호출해서 성능 저하가 일어나는지 테스트 필요
+            var players = GameObject.FindGameObjectsWithTag("Player");
+            var index = 0;
+            
+            foreach (var player in players)
+            {
+                _playerPrefabs[index++] = player;
+            }
+            
+            // _userData = UserData.Instance;
+            // foreach (var userData in _userData.UserDictionary)
+            // {
+            //     // _playerPrefabs[userData.Value.ClientNumber] = userData.Value.PrefabRef;
+            // }
             
             for (var i = 0; i < (int)_playerCount; ++i)
             {
@@ -69,7 +90,7 @@ namespace BehaviorTree
 
         INode SettingBT()
         {
-            return new SelectorNode
+            return new SequenceNode
             (
                 new List<INode>()
                 {
@@ -90,9 +111,8 @@ namespace BehaviorTree
                             new SequenceNode
                             (
                             new List<INode>()
-                            {
-                                new ActionNode(CheckLessHp),        // Run
-                                new ActionNode(CheckRunAction),
+                            {        
+                                new ActionNode(CheckRunAction),        // Run
                                 new ActionNode(StartRun),
                             }
                             )
@@ -131,7 +151,7 @@ namespace BehaviorTree
                 if (_animator.GetCurrentAnimatorStateInfo(0).IsName(stateName))
                 {
                     var normalizedTime = _animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
-
+                    
                     return normalizedTime != 0 && normalizedTime < 1f;
                 }
             }
@@ -145,6 +165,7 @@ namespace BehaviorTree
         /// </summary>
         INode.NodeState WalkAround()
         {
+            _animator.SetBool(IsWalk, true);
             _rb.velocity = new Vector3(0, 0, -movementSpeed);
             
             return INode.NodeState.Success;
@@ -191,37 +212,6 @@ namespace BehaviorTree
             {
                 return INode.NodeState.Success;
             }
-            return INode.NodeState.Failure;
-            
-            // if (_status.hp.Current / _status.hp.Max > 0.5f)
-            // {
-            //     return INode.NodeState.Success;
-            // }
-        }
-        
-        INode.NodeState CheckLessHp()
-        {
-            NativeArray<float> results = new NativeArray<float>(1, Allocator.TempJob);
-            
-            CheckHpJob Job = new CheckHpJob()
-            {
-                Current = _status.hp.Current,
-                Max = _status.hp.Max,
-                Result = results
-            };
-            
-            JobHandle jobHandle = Job.Schedule();
-            
-            jobHandle.Complete();
-            
-            float result = results[0];
-            results.Dispose();
-            
-            if (result < 0.5f) 
-            { 
-                return INode.NodeState.Success;
-            }
-
             return INode.NodeState.Failure;
             
             // if (_status.hp.Current / _status.hp.Max > 0.5f)
@@ -295,7 +285,7 @@ namespace BehaviorTree
 
         INode.NodeState StartAttack()
         {
-            _animator.SetTrigger("tAttack");
+            _animator.SetInteger(AttackType, 0);
             return INode.NodeState.Success;
         }
         

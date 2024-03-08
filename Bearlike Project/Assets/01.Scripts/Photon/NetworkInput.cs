@@ -1,7 +1,7 @@
 ﻿using Fusion;
 using UnityEngine;
 
-namespace Script.Photon
+namespace Photon
 {
     public struct PlayerInputData : INetworkInput
     {
@@ -16,6 +16,7 @@ namespace Script.Photon
 
         public NetworkBool Attack;
         public NetworkBool ReLoad;
+        public NetworkBool Interact;
 
         public NetworkBool ChangeWeapon0;
 
