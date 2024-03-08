@@ -80,19 +80,22 @@ namespace Script.Manager
         {
             JsonConvertExtension.Load(fileName, (data) =>
             {
-                var keyDictData = JsonConvert.DeserializeObject<Dictionary<KeyToAction, string>>(data); 
+                var keyDictData = JsonConvert.DeserializeObject<Dictionary<string, string>>(data); 
             
                 keyDictionary.Clear();
                 mouseDictionary.Clear();
                 foreach (var (action, value) in keyDictData)
                 {
-                    if (Enum.TryParse(value, out KeyCode keyCode))
+                    if(Enum.TryParse(action, out KeyToAction keyToAction))
                     {
-                        keyDictionary.Add(action, keyCode);
-                    }
-                    else if(Enum.TryParse(value, out MouseButton mouseButton))
-                    {
-                        mouseDictionary.Add(action, mouseButton);
+                        if (Enum.TryParse(value, out KeyCode keyCode))
+                        {
+                            keyDictionary.Add(keyToAction, keyCode);
+                        }
+                        else if(Enum.TryParse(value, out MouseButton mouseButton))
+                        {
+                            mouseDictionary.Add(keyToAction, mouseButton);
+                        }
                     }
                 }
             });
