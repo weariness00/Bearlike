@@ -197,90 +197,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 29046342}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &109300601
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 109300602}
-  - component: {fileID: 109300603}
-  - component: {fileID: 109300604}
-  m_Layer: 0
-  m_Name: Monster Spawner
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &109300602
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 109300601}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1776461680}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &109300603
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 109300601}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cee097a6de9140a5a4efef8c767d3366, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isStartSpawn: 1
-  isLoop: 1
-  isRandomObject: 0
-  isRandomPlace: 0
-  isRandomInterval: 0
-  parentTransform: {fileID: 897065705}
-  spawnCount:
-    _min: 0
-    _max: 1
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  spawnObjectList:
-  - RawGuidValue: f8ef412af506096419c9bfc7727f9940
-  spawnObjectOrders: 
-  spawnPlace:
-    _spotList: []
-  spawnPlaceOrders: 
-  spawnIntervals: []
---- !u!114 &109300604
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 109300601}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SortKey: 1191627854
-  ObjectInterest: 1
-  Flags: 262145
-  NestedObjects: []
-  NetworkedBehaviours:
-  - {fileID: 109300603}
 --- !u!1 &897065704
 GameObject:
   m_ObjectHideFlags: 0
@@ -612,14 +528,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 043c334dcb694849a87b4c0d44248443, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boxCollider: {fileID: 0}
   spawnPlace:
     _spotList:
     - {fileID: 1243412667}
   otherPortal: {fileID: 0}
-  targetLayerMask:
-    serializedVersion: 2
-    m_Bits: 4096
-  isConnect: 0
 --- !u!65 &1136499895
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -641,6 +554,37 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 10, y: 10, z: 1}
   m_Center: {x: 0, y: 5, z: 0}
+--- !u!1 &1158925623
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1158925624}
+  m_Layer: 0
+  m_Name: Monster Spawner Group
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1158925624
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1158925623}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1776461680}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1160291432
 GameObject:
   m_ObjectHideFlags: 0
@@ -915,9 +859,14 @@ PrefabInstance:
       objectReference: {fileID: 1776461677}
     - target: {fileID: 238595165733266923, guid: 101bc9cd97923c245984784c4a880499,
         type: 3}
+      propertyPath: monsterSpawnerList.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 238595165733266923, guid: 101bc9cd97923c245984784c4a880499,
+        type: 3}
       propertyPath: monsterSpawnerList.Array.data[0]
       value: 
-      objectReference: {fileID: 109300603}
+      objectReference: {fileID: 0}
     - target: {fileID: 2883367473362974006, guid: 101bc9cd97923c245984784c4a880499,
         type: 3}
       propertyPath: SortKey
@@ -977,11 +926,11 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 897065705}
-  - {fileID: 109300602}
   - {fileID: 2017309389}
   - {fileID: 1013842077}
   - {fileID: 1242328574}
   - {fileID: 1918499643}
+  - {fileID: 1158925624}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1776461681
@@ -999,8 +948,7 @@ MonoBehaviour:
   SortKey: 14723193
   ObjectInterest: 1
   Flags: 262145
-  NestedObjects:
-  - {fileID: 109300604}
+  NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 1776461682}
 --- !u!114 &1776461682
@@ -1167,14 +1115,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 043c334dcb694849a87b4c0d44248443, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boxCollider: {fileID: 0}
   spawnPlace:
     _spotList:
     - {fileID: 1160291433}
   otherPortal: {fileID: 0}
-  targetLayerMask:
-    serializedVersion: 2
-    m_Bits: 4096
-  isConnect: 0
 --- !u!65 &2091827529
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -170,12 +170,12 @@ namespace Player
             if (Runner.LagCompensation.Raycast(ray.origin, ray.direction, interactLength, Object.InputAuthority, out var hit, Int32.MaxValue, hitOptions))
             {
                 var interact = hit.GameObject.GetComponent<IInteract>();
-                if (interact is { IsInteract: false }) return;
-                if (KeyManager.InputActionDown(KeyToAction.Interact))
+                if (interact is { IsInteract: true } && 
+                    KeyManager.InputActionDown(KeyToAction.Interact))
                 {
                     interact.Action?.Invoke(gameObject);
+                    DebugManager.ToDo("상호작용이 가능할 경우 상호작용 키 UI 띄어주기");
                 }
-                DebugManager.ToDo("상호작용이 가능할 경우 상호작용 키 UI 띄어주기");
             }
         }
 

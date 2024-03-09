@@ -94,9 +94,6 @@ namespace _00.Scenes.Test___Dong_Woo__.MonsterDice
         public Vector3 SetMoveDir(Vector3 destinationPosition)
         {
             var destinationDir = (transform.position - destinationPosition);
-            if (destinationDir.magnitude < 2f)
-                return Vector3.zero;
-            
             var normalize = destinationDir.normalized;
             
             Tuple<float, Vector3>[] angles = new []
@@ -122,6 +119,8 @@ namespace _00.Scenes.Test___Dong_Woo__.MonsterDice
             Coordinate coordinate = new Coordinate();
             coordinate.forward = min.Item2;
             coordinate.CalFromForward();
+            coordinate.right.y = 0;
+            coordinate.right.Normalize();
             
             return coordinate.right;
         }

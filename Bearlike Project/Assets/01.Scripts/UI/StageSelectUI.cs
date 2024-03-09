@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Fusion;
 using GamePlay.StageLevel;
 using Manager;
@@ -133,9 +131,17 @@ namespace UI
             stageSelectUIHandlerList.Clear();
             for (int i = 0; i < StageChoiceCount; i++)
             {
+                StageLevelBase stage;
+                if (NetworkManager.Instance.isTest)
+                {
+                    stage = GameManager.Instance.GetStageIndex(i);
+                }
+                else
+                {
+                    var stageType = NetworkStageLevelTypes.Get(i);
+                    stage = GameManager.Instance.GetStageIndex((int)stageType);
+                }
                 var index = i;
-                var stageType = NetworkStageLevelTypes.Get(i);
-                var stage = GameManager.Instance.GetStageIndex((int)stageType);
                 var stageSelectUIObject = Instantiate(stageSelectUIPrefab, stageToggleGroup);
                 var stageSelectUIHandler = stageSelectUIObject.GetComponent<StageSelectUIHandler>();
                 stageSelectUIHandler.toggle.onValueChanged.AddListener((value) =>

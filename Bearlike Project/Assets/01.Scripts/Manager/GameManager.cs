@@ -119,7 +119,6 @@ namespace Manager
                         stageLevelBase.SetIsInitRPC(true);
 
                         _mapGenerate.AddMap(stageLevelBase.MapInfo);
-                        stageLevelBase.StageSetting();
 
                         DebugManager.Log($"씬 생성 후 초기화 완료 {stage.sceneReference}");
                         break;

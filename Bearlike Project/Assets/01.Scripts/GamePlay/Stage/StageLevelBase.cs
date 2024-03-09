@@ -109,6 +109,7 @@ namespace GamePlay.StageLevel
 
                         if (count == 0)
                         {
+                            StageSetting();
                             NetworkManager.UnloadScene(sceneReference.ScenePath);
                         }
 
@@ -138,6 +139,7 @@ namespace GamePlay.StageLevel
         {
             foreach (var monsterSpawner in monsterSpawnerList)
             {
+                if(monsterSpawner == null){ continue;}
                 if (aliveMonsterCount.isMax)
                 {
                     break;

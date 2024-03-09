@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace BehaviorTree.Base
 {
@@ -10,6 +11,7 @@ namespace BehaviorTree.Base
         private List<INode> _childs;
 
         public SequenceNode(List<INode> childs) => _childs = childs;
+        public SequenceNode(params INode[] children) => _childs = children.ToList();
         
         public INode.NodeState Evaluate()
         {

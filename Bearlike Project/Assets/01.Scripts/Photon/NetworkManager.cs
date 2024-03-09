@@ -21,6 +21,8 @@ namespace Photon
         public static NetworkRunner Runner => Instance._runner;
         public static int PlayerCount => Runner.ActivePlayers.ToArray().Length;
 
+        public bool isTest = true; // 현재 테스트 상황인지
+        
         private string[] _sessionNames;
         private NetworkRunner _runner;
 

@@ -166,7 +166,7 @@ namespace Script.Photon
                              $"이름 : {obj.name}");
         }
 
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void SetParentRPC(NetworkId networkID)
         {
             if (parentTransform == null)
