@@ -238,7 +238,7 @@ namespace BehaviorTree
         {
             if (IsAnimationRunning("돼지 방어"))
             {
-                return INode.NodeState.Running;
+                return INode.NodeState.Break;
             }
 
             return INode.NodeState.Success;
@@ -258,7 +258,7 @@ namespace BehaviorTree
         {
             if (IsAnimationRunning("도주 애니메이션"))
             {
-                return INode.NodeState.Running;
+                return INode.NodeState.Break;
             }
             return INode.NodeState.Success;
         }
@@ -282,7 +282,7 @@ namespace BehaviorTree
         {
             if (IsAnimationRunning("piggy_attack"))
             {
-                return INode.NodeState.Running;
+                return INode.NodeState.Break;
             }
             return INode.NodeState.Success;
         }

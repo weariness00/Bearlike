@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using Newtonsoft.Json;
 using Script.Data;
 using Script.Manager;
 using UnityEngine;
@@ -11,12 +13,16 @@ namespace ProjectUpdate
     {
         private readonly string _sessionLobby = "session-lobby";
         private readonly string _json = "bearlike-json";
-        
 
+        
+        public readonly string downloadList = "Download_List";
+        public readonly string serverInfo = "Server Information"; // 서버의 정보를 담고 있다.
         public readonly string monsterLootingTableList = "Monster Looting Table List.json";
         public readonly string stageLootingTableList = "Stage Looting Table List.json";
 
-
+        public readonly WebManager.WebDownInfo download = new WebManager.WebDownInfo("DownloadList", "");
+        public List<DownloadInfo> DownloadInfoList = new List<DownloadInfo>();
+        
         #region Static Function
 
         public static void DownLoadToStorage(string bucketName, string fileName, string savePath)
@@ -59,10 +65,27 @@ namespace ProjectUpdate
 
         void Start()
         {
-            DownLoadJsonToStorage("DefaultKeyData.json");
-            DownLoadJsonToStorage(monsterLootingTableList);
-            DownLoadJsonToStorage(stageLootingTableList);
-            // GoogleStorageManager.DownloadFile(_json, monsterLootingTableList, $"{Application.dataPath}/Json/Monster Looting Table List");
+            DownLoadJsonToStorage(serverInfo); // 스토리지에서 웹 서버 정보 가져오기
+            JsonConvertExtension.Load(serverInfo, (data) =>
+            {
+                // 웹 서버 정보를 토대로 다운 받아야할 json 데이터들 다운 받기
+                WebManager.Instance.webServerInfo = JsonConvert.DeserializeObject<WebManager.WebServerInfo>(data);
+                WebManager.DownloadJson(download, (json) =>
+                {
+                    DownloadInfoList = JsonConvert.DeserializeObject<List<DownloadInfo>>(json);
+                    foreach (var downloadInfo in DownloadInfoList)
+                    {
+                        WebManager.DownloadJson(downloadInfo.URL, downloadInfo.Name, json =>{}, true, true);
+                    }
+                }, true);
+            });
+        }
+
+        public struct DownloadInfo
+        {
+            [JsonProperty("URL")] public string URL;
+            [JsonProperty("JsonName")] public string Name;
+            [JsonProperty("Explain")] public string Explain;
         }
     }
 }

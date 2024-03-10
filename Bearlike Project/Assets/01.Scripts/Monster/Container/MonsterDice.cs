@@ -1,6 +1,9 @@
 ﻿using System;
 using BehaviorTree.Base;
+using Fusion;
 using Script.Data;
+using Script.Manager;
+using State.StateClass.Base;
 using Status;
 using UnityEngine;
 using UnityEngine.AI;
@@ -13,9 +16,9 @@ namespace Monster.Container
     public class MonsterDice : MonsterBase
     {
         private BehaviorTreeRunner _behaviorTreeRunner;
-        private bool _isCollide = false; // 현재 충돌 중인지
+        private bool _isCollide = true; // 현재 충돌 중인지
         public StatusValue<float> moveDelay = new StatusValue<float>(); // 몇초에 한번씩 움직일지 ( 자연스러운 움직임 구현을 위해 사용 )
-
+        
         public override void Start()
         {
             base.Start();
@@ -41,7 +44,7 @@ namespace Monster.Container
         {
             var sqeunce = new SequenceNode(
                 new ActionNode(FindTarget),
-                new ActionNode(Move)
+                new ActionNode(DecisionNextAct)
                 );
         
             return sqeunce;
@@ -79,6 +82,26 @@ namespace Monster.Container
             coordinate.right.Normalize();
             
             return coordinate.right.normalized;
+        }
+
+        /// <summary>
+        /// Target과의 거리를 알려주는 함수
+        /// </summary>
+        /// <param name="targetPositoin"> Target의 위치 </param>
+        /// <returns></returns>
+        private float DistanceFromTarget(Vector3 targetPosition)
+        {
+            var path = new NavMeshPath();
+            var dis = 0f;
+            if (NavMesh.CalculatePath(transform.position, targetPosition, NavMesh.AllAreas, path))
+            {
+                for (int i = 0; i < path.corners.Length - 1; i++)
+                {
+                    dis += Vector3.Distance(path.corners[i], path.corners[i + 1]);
+                }
+            }
+
+            return dis;
         }
 
         #endregion
@@ -135,6 +158,29 @@ namespace Monster.Container
             return INode.NodeState.Success; 
         }
 
+        // Target과의 거리에 따라 다음 행동 판단
+        private INode.NodeState DecisionNextAct()
+        {
+            if (targetTransform == null)
+            {
+                return Move();
+            }
+            else
+            {
+                var dis = DistanceFromTarget(targetTransform.position);
+                if (dis < status.attackRange.Current) // 기본 공격
+                {
+                    return Attack();
+                }
+                else
+                {
+                    return Move();
+                }
+            }
+            
+            return INode.NodeState.Success;
+        }
+
         private INode.NodeState Move()
         {
             moveDelay.Current += Runner.DeltaTime;
@@ -153,7 +199,7 @@ namespace Monster.Container
                     filter.areaMask = 1 << NavMesh.GetAreaFromName("Walkable");
                     if (NavMesh.CalculatePath(transform.position, targetTransform.position, NavMesh.AllAreas, path))
                     {
-                        dir = SetRotateDir(path.corners[0]);
+                        dir = SetRotateDir(path.corners[1]);
                     }
                 }
 
@@ -163,7 +209,25 @@ namespace Monster.Container
                 moveDelay.Current = moveDelay.Min;
                 return INode.NodeState.Success; 
             }
-            return INode.NodeState.Running;
+            return INode.NodeState.Break;
+        }
+
+        private INode.NodeState Attack()
+        {
+            var dir = (transform.position - targetTransform.position).normalized;
+            var layerMaks = LayerMask.GetMask("Player");
+            var hitOptions = HitOptions.IncludePhysX | HitOptions.IgnoreInputAuthority;
+            DebugManager.DrawRay(transform.position, dir * int.MaxValue, Color.red, 1.0f);
+            
+            // Player 만 Raycast 되도록 함
+            if (Runner.LagCompensation.Raycast(transform.position, dir, status.attackRange, Object.InputAuthority, out var hit, layerMaks, hitOptions))
+            {
+                if (hit.Hitbox == null) return INode.NodeState.Failure;
+                var hitStatus = hit.GameObject.GetComponent<StatusBase>();
+                hitStatus.ApplyDamageRPC(status.attack.Current, CrowdControl.Normality);
+            }
+
+            return INode.NodeState.Success;
         }
 
         #endregion

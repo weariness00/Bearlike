@@ -18,10 +18,6 @@ namespace Weapon.Gun
         {
             base.Start();
 
-            shootSound = transform.GetChild(0).GetComponent<AudioSource>();
-            // reloadSound = transform.GetChild(1).GetComponent<AudioSource>();
-            // emptyAmmoSound = transform.GetChild(2).GetComponent<AudioSource>();
-            
             attack.Max = attack.Current = 10;
             property = (int)CrowdControl.Normality;
         } 
@@ -30,10 +26,7 @@ namespace Weapon.Gun
 
         public override void BulletInit()
         {
-            ammo.Max = ammo.Current = 48;
-
-            fireLateSecond.Max = 60 / bulletFirePerMinute;
-            fireLateSecond.Current = float.MaxValue;
+            magazine.Max = magazine.Current = 6;
         }
         
         #endregion

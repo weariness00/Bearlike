@@ -22,11 +22,17 @@ namespace Script.Manager
         Interact,
         
         Attack,
-        ReLoad,
+        Reload,
         
         FirstSkill,
         
         Esc,
+    }
+
+    public struct KeyMapping
+    {
+        [JsonProperty("Action")] public string Action;
+        [JsonProperty("Key")] public string Key;
     }
     
     public class KeyManager : MonoBehaviour
@@ -78,27 +84,29 @@ namespace Script.Manager
 
         public void Load(string fileName)
         {
-            JsonConvertExtension.Load(fileName, (data) =>
+            StartCoroutine(JsonConvertExtension.LoadCoroutine(fileName, (data) =>
             {
-                var keyDictData = JsonConvert.DeserializeObject<Dictionary<string, string>>(data); 
+                var keyMapping = JsonConvert.DeserializeObject<KeyMapping[]>(data); 
             
                 keyDictionary.Clear();
                 mouseDictionary.Clear();
-                foreach (var (action, value) in keyDictData)
+                foreach (var mapping in keyMapping)
                 {
+                    var action = mapping.Action;
+                    var key = mapping.Key;
                     if(Enum.TryParse(action, out KeyToAction keyToAction))
                     {
-                        if (Enum.TryParse(value, out KeyCode keyCode))
+                        if (Enum.TryParse(key, out KeyCode keyCode))
                         {
                             keyDictionary.Add(keyToAction, keyCode);
                         }
-                        else if(Enum.TryParse(value, out MouseButton mouseButton))
+                        else if(Enum.TryParse(key, out MouseButton mouseButton))
                         {
                             mouseDictionary.Add(keyToAction, mouseButton);
                         }
                     }
                 }
-            });
+            }));
         }
 
         void DefaultLoad() => Load("DefaultKeyData");

@@ -45,6 +45,10 @@ namespace Status
         void CheckCurrent()
         {
             isMin = isMax = false;
+            if (_min.CompareTo(_max) == 0)
+            {
+                isMin = isMax = true;
+            }
             if (_current.CompareTo(_min) <= 0)
             {
                 if(isOverMin == false) {_current = _min;}

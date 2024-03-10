@@ -418,7 +418,7 @@ namespace Photon
                 playerInputData.Jump = true;
             }
             
-            if (KeyManager.InputActionDown(KeyToAction.ReLoad))
+            if (KeyManager.InputActionDown(KeyToAction.Reload))
                 playerInputData.ReLoad = true;
             
             if (KeyManager.InputAction(KeyToAction.Attack))

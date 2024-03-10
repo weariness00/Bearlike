@@ -29,7 +29,8 @@ namespace State.StateClass.Base
         public StatusValue<float> avoid = new StatusValue<float>();           // 회피
         public StatusValue<int> moveSpeed = new StatusValue<int>();           // 이동 속도
         public StatusValue<float> attackSpeed = new StatusValue<float>();     // 공격 속도
-
+        public StatusValue<float> attackRange = new StatusValue<float>();
+        
         public StatusValue<int> force = new StatusValue<int>();               // 힘
         public int condition;                                                 // 상태
         public int property;                                                  // 속성

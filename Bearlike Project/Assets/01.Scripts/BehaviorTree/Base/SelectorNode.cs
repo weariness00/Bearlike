@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEditor.VersionControl;
+using UnityEngine;
 
 namespace BehaviorTree.Base
 {
@@ -7,9 +11,11 @@ namespace BehaviorTree.Base
     /// </summary>
     public sealed class SelectorNode : INode
     {
+        private INode.NodeState _state;
         private List<INode> _childs = new List<INode>();
 
         public SelectorNode(List<INode> childs) => _childs = childs;
+        public SelectorNode(params INode[] children) => _childs = children.ToList();
 
         public INode.NodeState Evaluate()
         {
@@ -22,8 +28,8 @@ namespace BehaviorTree.Base
             {
                 switch (child.Evaluate())
                 {
-                    case INode.NodeState.Running:
-                        return INode.NodeState.Running;
+                    case INode.NodeState.Break:
+                        return INode.NodeState.Break;
                     case INode.NodeState.Success:
                         return INode.NodeState.Success;
                     // 생략

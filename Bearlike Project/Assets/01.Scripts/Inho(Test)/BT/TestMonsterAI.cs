@@ -86,7 +86,7 @@ namespace Inho_Test_.BT
         {
             if (IsAnimationRunning(_ATTACK_ANIM_STATE_NAME))
             {
-                return INode.NodeState.Running;
+                return INode.NodeState.Break;
             }
 
             return INode.NodeState.Success;
@@ -150,7 +150,7 @@ namespace Inho_Test_.BT
 
                 transform.position = Vector3.MoveTowards(transform.position, _detectedPlayer.position, Time.deltaTime * _movementSpeed);
 
-                return INode.NodeState.Running;
+                return INode.NodeState.Break;
             }
 
             return INode.NodeState.Failure;
@@ -170,7 +170,7 @@ namespace Inho_Test_.BT
             else
             {
                 transform.position = Vector3.MoveTowards(transform.position, _originPos, Time.deltaTime * _movementSpeed);
-                return INode.NodeState.Running;
+                return INode.NodeState.Break;
             }
         }
         

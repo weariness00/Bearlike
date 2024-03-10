@@ -13,7 +13,7 @@ namespace BehaviorTree.Base
         public SequenceNode(List<INode> childs) => _childs = childs;
         public SequenceNode(params INode[] children) => _childs = children.ToList();
         
-        public INode.NodeState Evaluate()
+        public INode.NodeState Evaluate()   
         {
             if (_childs == null || _childs.Count == 0)
             {
@@ -24,8 +24,8 @@ namespace BehaviorTree.Base
             {
                 switch (child.Evaluate())
                 {
-                    case INode.NodeState.Running:
-                        return INode.NodeState.Running;
+                    case INode.NodeState.Break:
+                        return INode.NodeState.Break;
                     case INode.NodeState.Success:
                         continue;
                     case INode.NodeState.Failure:

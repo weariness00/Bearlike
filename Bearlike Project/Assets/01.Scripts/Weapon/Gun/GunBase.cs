@@ -2,13 +2,11 @@
 using Fusion;
 using Inho_Test_.Player;
 using Script.Manager;
-using State;
-using State.StateClass;
 using State.StateClass.Base;
 using Status;
 using UnityEngine;
-using UnityEngine.Serialization;
-using Util;
+using UnityEngine.VFX;
+using Weapon;
 using Weapon.Bullet;
 
 namespace Script.Weapon.Gun
@@ -17,7 +15,8 @@ namespace Script.Weapon.Gun
     {
         public static StatusValue<int> ammo = new StatusValue<int>(){Max = 100, Current = int.MaxValue};
 
-        [Header("이펙트")]
+        [Header("총 이펙트")] 
+        public VisualEffect shootEffect; // 발사 이펙트
         
         [Header("사운드")]
         public AudioSource shootSound;
@@ -35,7 +34,6 @@ namespace Script.Weapon.Gun
         [Header("성능")] 
         public StatusValue<int> attack = new StatusValue<int>();     // 공격력
         public int property;                // 속성
-        
         
         public override void Awake()
         {
@@ -76,7 +74,8 @@ namespace Script.Weapon.Gun
                 if (magazine.Current != 0)
                 {
                     var dst = CheckRay();
-
+                    
+                    if(shootEffect != null) shootEffect.Play();
                     bullet.destination = dst;
                     Instantiate(bullet.gameObject, transform.position, transform.rotation);
                 
@@ -101,23 +100,20 @@ namespace Script.Weapon.Gun
             {
                 DebugManager.Log($"Ray충돌\n총 이름 : {name}\n맞은 대상 : {hit.GameObject.name}");
                 
-                var hitbox = hit.Hitbox;
-                if (hitbox == null)
+                if (hit.Hitbox != null)
                 {
-                    // if (hit.GameObject.CompareTag("Destruction"))
-                    // {
-                    //     MeshDestruction.Destruction(hit.GameObject, PrimitiveType.Cube, hit.Point, Vector3.one * 2, ray.direction);
-                    // }
-                }
-                else
-                {
+                    var hitbox = hit.Hitbox;
                     var hitState = hitbox.Root.GetComponent<StatusBase>();
                     if (hitState != null)
                     {
                         // hitState.ApplyDamage(state.attack.Current, (ObjectProperty)state.property); // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
                         ApplyDamage(hitbox);
+                        var hitEffectObject = Instantiate(hitEffect.gameObject, hit.Point, Quaternion.identity, transform);
+                        hitEffectObject.transform.LookAt(hit.Normal);
+                        Destroy(hitEffectObject, 5f);
                     }
                 }
+                
                 detination = hit.Point;
             }
             else
