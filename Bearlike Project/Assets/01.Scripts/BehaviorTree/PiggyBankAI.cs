@@ -330,7 +330,7 @@ namespace BehaviorTree
         {
             if (IsAnimationRunning("piggy_defence"))
             {
-                return INode.NodeState.Break;
+                return INode.NodeState.Running;
             }
             _animator.Animator.SetTrigger(Defence);
             return INode.NodeState.Success;
@@ -402,7 +402,7 @@ namespace BehaviorTree
         {
             if (IsAnimationRunning("Attack_Blend"))
             {
-                return INode.NodeState.Break;
+                return INode.NodeState.Running;
             }
             return INode.NodeState.Success;
         }

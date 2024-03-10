@@ -7,7 +7,7 @@
     {
         public enum NodeState
         {
-            Break,
+            Running,
             Success,
             Failure,
         }

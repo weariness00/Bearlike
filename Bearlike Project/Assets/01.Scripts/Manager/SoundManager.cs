@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Script.Manager;
+using Manager;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Audio;

@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Fusion;
+using Manager;
 using Photon;
-using Script.Manager;
 using UnityEngine;
 
 namespace Data

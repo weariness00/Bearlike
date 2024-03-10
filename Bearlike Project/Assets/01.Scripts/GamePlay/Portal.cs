@@ -1,8 +1,8 @@
 ﻿using System;
 using Fusion;
 using Fusion.Addons.SimpleKCC;
+using Manager;
 using Script.GamePlay;
-using Script.Manager;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Util;

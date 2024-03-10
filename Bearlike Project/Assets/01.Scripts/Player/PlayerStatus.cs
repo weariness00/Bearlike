@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Fusion;
 using Manager;
-using Script.Manager;
 using State;
 using State.StateClass.Base;
 using Status;

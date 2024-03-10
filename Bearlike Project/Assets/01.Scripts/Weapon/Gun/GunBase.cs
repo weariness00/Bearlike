@@ -1,7 +1,7 @@
 ﻿using System;
 using Fusion;
 using Inho_Test_.Player;
-using Script.Manager;
+using Manager;
 using State.StateClass.Base;
 using Status;
 using UnityEngine;

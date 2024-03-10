@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Manager;
 using Newtonsoft.Json;
 using ProjectUpdate;
-using Script.Manager;
 using UnityEngine;
 using Util;
 

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Manager;
 using Parabox.CSG;
-using Script.Manager;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;

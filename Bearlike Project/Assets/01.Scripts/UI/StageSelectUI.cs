@@ -7,7 +7,6 @@ using GamePlay.StageLevel;
 using Manager;
 using Photon;
 using Script.Data;
-using Script.Manager;
 using UnityEngine;
 using UnityEngine.UI;
 

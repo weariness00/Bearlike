@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Manager;
 using Newtonsoft.Json;
-using Script.Manager;
 using UnityEngine;
 
 namespace Item.Looting

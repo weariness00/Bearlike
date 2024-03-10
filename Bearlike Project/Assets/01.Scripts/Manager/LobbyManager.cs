@@ -1,15 +1,16 @@
-﻿using System;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
-
-public class LobbyManager : MonoBehaviour
+namespace Manager
 {
-    public AudioClip BGM;
-    public TMP_InputField userID;
-
-    private void Start()
+    public class LobbyManager : MonoBehaviour
     {
-        SoundManager.Play(BGM, SoundManager.SoundType.BGM);
+        public AudioClip BGM;
+        public TMP_InputField userID;
+
+        private void Start()
+        {
+            SoundManager.Play(BGM, SoundManager.SoundType.BGM);
+        }
     }
 }

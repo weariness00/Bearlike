@@ -8,7 +8,6 @@ using Manager;
 using Monster;
 using Photon;
 using Script.Data;
-using Script.Manager;
 using Script.Photon;
 using Status;
 using Unity.VisualScripting;

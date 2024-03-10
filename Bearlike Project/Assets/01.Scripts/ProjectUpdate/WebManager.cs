@@ -2,8 +2,8 @@
 using System.Collections;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Manager;
 using Newtonsoft.Json;
-using Script.Manager;
 using UnityEngine.Networking;
 using Util;
 

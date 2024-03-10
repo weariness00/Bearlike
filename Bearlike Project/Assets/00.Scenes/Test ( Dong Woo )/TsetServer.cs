@@ -6,7 +6,6 @@ using Fusion;
 using Fusion.Addons.Physics;
 using Fusion.Photon.Realtime;
 using Fusion.Sockets;
-using Script.Manager;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;

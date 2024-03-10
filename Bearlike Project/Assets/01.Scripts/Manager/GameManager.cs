@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using Data;
 using Fusion;
 using GamePlay.StageLevel;
 using Photon;
-using Script.Data;
 using Script.GamePlay;
-using Script.Manager;
 using Status;
 using UnityEngine;
 using UnityEngine.SceneManagement;

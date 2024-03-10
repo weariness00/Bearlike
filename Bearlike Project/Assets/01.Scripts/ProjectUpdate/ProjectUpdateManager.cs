@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using Manager;
 using Newtonsoft.Json;
 using Script.Data;
-using Script.Manager;
 using UnityEngine;
 using Util;
 

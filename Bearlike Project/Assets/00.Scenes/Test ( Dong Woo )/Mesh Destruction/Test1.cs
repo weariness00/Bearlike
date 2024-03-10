@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Parabox.CSG;
-using Script.Manager;
 using UnityEngine;
 using Util;
 using Object = UnityEngine.Object;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
+using Manager;
 using Newtonsoft.Json;
-using Script.Manager;
 
 namespace Script.Data
 {

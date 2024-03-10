@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.IO;
-using Script.Manager;
+using Manager;
 using UnityEngine;
 
 namespace Util

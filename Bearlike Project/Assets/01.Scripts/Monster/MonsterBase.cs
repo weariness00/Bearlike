@@ -1,7 +1,7 @@
 ﻿using System;
 using Fusion;
 using Item.Looting;
-using Script.Manager;
+using Manager;
 using State.StateClass;
 using Unity.VisualScripting;
 using UnityEngine;

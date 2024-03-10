@@ -18,7 +18,6 @@ namespace Photon
 
         public NetworkBool Attack;
         public NetworkBool ReLoad;
-        public NetworkBool Interact;
 
         public NetworkBool ChangeWeapon0;
 

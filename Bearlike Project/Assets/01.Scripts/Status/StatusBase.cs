@@ -1,5 +1,4 @@
 using Fusion;
-using Script.Manager;
 using Status;
 using UnityEngine;
 using UnityEngine.Serialization;

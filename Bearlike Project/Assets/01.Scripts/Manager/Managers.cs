@@ -1,7 +1,6 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Script.Manager
+namespace Manager
 {
     public class Managers : MonoBehaviour
     {

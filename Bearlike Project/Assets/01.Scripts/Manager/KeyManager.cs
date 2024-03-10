@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using Newtonsoft.Json;
-using ProjectUpdate;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Util;
 
-namespace Script.Manager
+namespace Manager
 {
     [System.Serializable]
     public enum KeyToAction
@@ -23,7 +21,6 @@ namespace Script.Manager
         
         Attack,
         Reload,
-        Interact,
         
         FirstSkill,
         

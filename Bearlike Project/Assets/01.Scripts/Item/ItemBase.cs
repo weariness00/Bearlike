@@ -2,7 +2,6 @@
 using System.IO;
 using Newtonsoft.Json;
 using Script.Data;
-using Script.Manager;
 using Status;
 using UnityEngine;
 

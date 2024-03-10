@@ -1,8 +1,8 @@
 ﻿using System;
 using BehaviorTree.Base;
+using Data;
 using Fusion;
-using Script.Data;
-using Script.Manager;
+using Manager;
 using State.StateClass.Base;
 using Status;
 using UnityEngine;
@@ -209,7 +209,7 @@ namespace Monster.Container
                 moveDelay.Current = moveDelay.Min;
                 return INode.NodeState.Success; 
             }
-            return INode.NodeState.Break;
+            return INode.NodeState.Running;
         }
 
         private INode.NodeState Attack()

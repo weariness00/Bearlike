@@ -1,6 +1,6 @@
 using System;
 using Fusion;
-using Script.Manager;
+using Manager;
 using State.StateClass.Base;
 using Unity.VisualScripting;
 using UnityEngine;

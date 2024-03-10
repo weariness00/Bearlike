@@ -4,7 +4,6 @@ using Data;
 using Fusion;
 using GamePlay.StageLevel;
 using Script.Data;
-using Script.Manager;
 using Script.Photon;
 using TMPro;
 using UnityEngine;

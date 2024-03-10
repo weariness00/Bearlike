@@ -4,7 +4,7 @@ using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Rendering;
-using DebugManager = Script.Manager.DebugManager;
+using DebugManager = Manager.DebugManager;
 using Object = UnityEngine.Object;
 
 namespace Util

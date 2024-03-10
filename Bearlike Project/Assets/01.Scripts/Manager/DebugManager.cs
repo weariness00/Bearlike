@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Util;
 
-namespace Script.Manager
+namespace Manager
 {
     public class DebugManager : Singleton<DebugManager>
     {
