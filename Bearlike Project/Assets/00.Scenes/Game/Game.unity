@@ -1346,6 +1346,7 @@ Transform:
   m_Children:
   - {fileID: 1247885454}
   - {fileID: 1965290067}
+  - {fileID: 1662219607}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &962364572
@@ -1379,7 +1380,8 @@ MonoBehaviour:
   SortKey: 4000847924
   ObjectInterest: 1
   Flags: 786433
-  NestedObjects: []
+  NestedObjects:
+  - {fileID: 1662219605}
   NetworkedBehaviours:
   - {fileID: 962364572}
 --- !u!1 &1011999826
@@ -1819,7 +1821,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1662219605
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1855,6 +1857,7 @@ MonoBehaviour:
   isRandomObject: 0
   isRandomPlace: 0
   isRandomInterval: 0
+  parentTransform: {fileID: 0}
   spawnCount:
     _min: 0
     _max: 0
@@ -1864,7 +1867,7 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   spawnObjectList:
-  - RawGuidValue: f8ef412af506096419c9bfc7727f9940
+  - RawGuidValue: 4d9a8e2cb506a9d4e9a99814933f74c1
   spawnObjectOrders: 00000000
   spawnPlace:
     _spotList:
@@ -1994,8 +1997,7 @@ MonoBehaviour:
   _mapInfoMono: {fileID: 1763687601}
   monsterSpawnerList:
   - {fileID: 1662219606}
-  monsterParentTransform: {fileID: 0}
-  destroyTimeLimit:
+  aliveMonsterCount:
     _min: 0
     _max: 0
     _current: 0
