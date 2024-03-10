@@ -8,21 +8,31 @@ namespace BehaviorTree.Base
     public sealed class SelectorNode : INode
     {
         private List<INode> _childs = new List<INode>();
+        private INode _checkPointChild = null;
 
         public SelectorNode(List<INode> childs) => _childs = childs;
 
         public INode.NodeState Evaluate()
         {
-            if (_childs == null)
+            if (_childs == null || _childs.Count == 0)
             {
                 return INode.NodeState.Failure;
             }
-
+            
             foreach (var child in _childs)
             {
+                if (_checkPointChild != null)
+                {
+                    if (child != _checkPointChild)
+                    {
+                        continue;
+                    }
+                    _checkPointChild = null;
+                }
                 switch (child.Evaluate())
                 {
                     case INode.NodeState.Running:
+                        _checkPointChild = child;
                         return INode.NodeState.Running;
                     case INode.NodeState.Success:
                         return INode.NodeState.Success;
@@ -31,6 +41,7 @@ namespace BehaviorTree.Base
                     //     continue;
                 }
             }
+            
 
             return INode.NodeState.Failure;
         }

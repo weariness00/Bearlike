@@ -13,7 +13,6 @@ namespace BehaviorTree.Base
 
         public INode.NodeState Operator()
         {
-            // Debug.Log(_rootNode.Evaluate());
             return _rootNode.Evaluate();
         }
     }

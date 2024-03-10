@@ -12,21 +12,20 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Allocator = Unity.Collections.Allocator;
 
 namespace BehaviorTree
 {
     [RequireComponent(typeof(Animator))]
-    public sealed class PiggyBankAI : MonoBehaviour
+    public sealed class PiggyBankAI : NetworkBehaviour
     {
-        [Header("Movement")] [SerializeField] private float movementSpeed = 1.0f;
+        [SerializeField] private float movementSpeed = 1.0f;
 
         #region Component
 
         private Rigidbody _rb;
         private BehaviorTreeRunner _btRunner;
-        private Animator _animator = null;
+        private NetworkMecanimAnimator _animator = null;
         private StatusBase _status;
 
         private GameManager _gameManager;
@@ -45,10 +44,13 @@ namespace BehaviorTree
         [SerializeField] private float attackRange = 3; // 발차기 감지 범위
         [SerializeField] private float rushRange = 10; // 돌진 감지 범위
 
-        private static readonly int IsWalk = Animator.StringToHash("isWalk");
-        private static readonly int IsDead = Animator.StringToHash("isDead");
-        private static readonly int IsRest = Animator.StringToHash("isRest");
-        private static readonly int IsDefence = Animator.StringToHash("isDefence");
+        private static readonly int Walk = Animator.StringToHash("isWalk");
+        
+        private static readonly int Dead = Animator.StringToHash("Dead");
+        private static readonly int Rest = Animator.StringToHash("Rest");
+        private static readonly int Defence = Animator.StringToHash("Defence");
+        private static readonly int Attack = Animator.StringToHash("Attack");
+        
         private static readonly int AttackType = Animator.StringToHash("Attack_Type");
 
         #endregion
@@ -56,7 +58,7 @@ namespace BehaviorTree
         private void Awake()
         {
             _rb = GetComponent<Rigidbody>();
-            _animator = GetComponent<Animator>();
+            _animator = GetComponent<NetworkMecanimAnimator>();
             _btRunner = new BehaviorTreeRunner(SettingBT());
             _status = GetComponent<MonsterStatus>();
         }
@@ -73,14 +75,44 @@ namespace BehaviorTree
             // {
             //     _playerPrefabs.Add(player);
             // }
-            _animator.SetFloat(AttackType, -1);
-            attackRange = 3;
-            rushRange = 10;
+            attackRange = 20;
+            rushRange = 100;
+            
+            _animator.Animator.SetFloat(AttackType, 0);
+            _animator.Animator.SetBool(Walk, true);
+            
+            StartCoroutine(WalkCorutine(0.5f));
+            // StartCoroutine(BTCorutine(5.0f));
         }
 
         private void Update()
         {
             _btRunner.Operator();
+        }
+
+        // IEnumerator BTCorutine(float waitTime)
+        // {
+        //     while (true)
+        //     {
+        //         _btRunner.Operator();
+        //         yield return new WaitForSeconds(waitTime);
+        //     }
+        // }
+
+        IEnumerator WalkCorutine(float waitTime)
+        {
+            while (true)
+            {
+                if (IsAnimationRunning("piggy_walk"))
+                {
+                    _rb.velocity = new Vector3(0, 0, -movementSpeed);
+                }
+                else
+                {
+                    _rb.velocity = new Vector3(0, 0, 0);
+                }
+                yield return new WaitForSeconds(waitTime);
+            }
         }
 
         INode SettingBT()
@@ -89,9 +121,9 @@ namespace BehaviorTree
             (
                 new List<INode>()
                 {
-                    new ActionNode(WalkAround), // Walk
-                    new ActionNode(StopWalk),
-                    
+                    // new ActionNode(WalkAround), // Walk
+                    // // new ActionNode(StopWalk),
+                    // new ActionNode(CheckWalkAction),
                     new SelectorNode
                     (
                         new List<INode>()
@@ -100,8 +132,7 @@ namespace BehaviorTree
                             new SequenceNode
                             (
                                 new List<INode>()
-                                {
-                                    new ActionNode(CheckDefenceAction),     // Deffence
+                                {   // Deffence
                                     new ActionNode(CheckMoreHp), 
                                     new ActionNode(StartDefence),
                                 }
@@ -123,7 +154,7 @@ namespace BehaviorTree
                             new ActionNode(CheckAttackAction), // Kick
                             new ActionNode(CheckAttackDistance),
                             new ActionNode(StartAttack),
-                            // new ActionNode(ReleaseInteger),
+                            new ActionNode(TermFuction),
                         }
                     ),
                     new SelectorNode
@@ -136,29 +167,29 @@ namespace BehaviorTree
                                     new ActionNode(CheckRushAction), // Rush
                                     new ActionNode(CheckRushDistance),
                                     new ActionNode(StartRush),
-                                    // new ActionNode(ReleaseInteger),
+                                    new ActionNode(TermFuction),
                                 }
                             ),
-                            new SequenceNode
-                            (
-                                new List<INode>()
-                                {
-                                    new ActionNode(CheckJumpAttackAction), // JumpAttack
-                                    new ActionNode(StartJumpAttack),
-                                    // new ActionNode(ReleaseInteger),
-                                }
-                            )
+                            // new SequenceNode
+                            // (
+                            //     new List<INode>()
+                            //     {
+                            //         new ActionNode(CheckJumpAttackAction), // JumpAttack
+                            //         new ActionNode(StartJumpAttack),
+                            //         // new ActionNode(ReleaseInteger),
+                            //     }
+                            // )
                         }
                     ),
-                    new SequenceNode
-                    (
-                        new List<INode>()
-                        {
-                            new ActionNode(CheckFartAction), // fart
-                            new ActionNode(StartFart),
-                            // new ActionNode(ReleaseInteger),
-                        }
-                    ),
+                    // new SequenceNode
+                    // (
+                    //     new List<INode>()
+                    //     {
+                    //         new ActionNode(CheckFartAction), // fart
+                    //         new ActionNode(StartFart),
+                    //         // new ActionNode(ReleaseInteger),
+                    //     }
+                    // ),
                     // take a rest
                     // sleep
                 }
@@ -169,10 +200,12 @@ namespace BehaviorTree
         {
             if (_animator != null)
             {
-                if (_animator.GetCurrentAnimatorStateInfo(0).IsName(stateName))
+                if (_animator.Animator.GetCurrentAnimatorStateInfo(0).IsName(stateName))
                 {
-                    var normalizedTime = _animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
+                    var normalizedTime = _animator.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
 
+                    // DebugManager.ToDo($"{stateName}진행 시간 : {normalizedTime}");
+                    
                     return normalizedTime != 0 && normalizedTime < 1f;
                 }
             }
@@ -180,6 +213,15 @@ namespace BehaviorTree
             return false;
         }
 
+        INode.NodeState TermFuction()
+        {
+            if (_gameManager.PlayTimer - _durationTime > 5.0f)
+            {
+                return INode.NodeState.Success;
+            }
+            return INode.NodeState.Running;
+        }
+        
         #region Walk
 
         /// <summary>
@@ -189,10 +231,10 @@ namespace BehaviorTree
         {
             if (IsAnimationRunning("piggy_idle"))
             {
-                _animator.SetBool(IsWalk, true);
+                _animator.Animator.SetBool(Walk, true);
                 _rb.velocity = new Vector3(0, 0, -movementSpeed);
                 
-                // StartCoroutine(WalkAnimationWait(3.0f));
+                StartCoroutine(WalkAnimationWait(3.0f));
             }
 
             return INode.NodeState.Success;
@@ -201,8 +243,18 @@ namespace BehaviorTree
         IEnumerator WalkAnimationWait(float waitTime)
         {
             yield return new WaitForSeconds(waitTime);
-            _animator.SetBool(IsWalk, false);
+            _animator.Animator.SetBool(Walk, false);
             _rb.velocity = new Vector3(0, 0, 0);
+        }
+
+        INode.NodeState CheckWalkAction()
+        {
+            if (IsAnimationRunning("piggy_walk"))
+            {
+                return INode.NodeState.Running;
+            }
+
+            return INode.NodeState.Success;
         }
         
 
@@ -210,7 +262,7 @@ namespace BehaviorTree
         {
             if (IsAnimationRunning("piggy_walk"))
             {
-                _animator.SetBool(IsWalk, false);
+                _animator.Animator.SetBool(Walk, false);
                 _rb.velocity = new Vector3(0, 0, 0);
                 return INode.NodeState.Success;
             }
@@ -274,34 +326,14 @@ namespace BehaviorTree
 
         #region 방어
 
-        INode.NodeState CheckDefenceAction()
+        INode.NodeState StartDefence()
         {
-            if (IsAnimationRunning("piggy_defence") || _animator.GetBool(IsDefence))
+            if (IsAnimationRunning("piggy_defence"))
             {
                 return INode.NodeState.Running;
             }
-
+            _animator.Animator.SetTrigger(Defence);
             return INode.NodeState.Success;
-        }
-
-        INode.NodeState StartDefence()
-        {
-            if (!_animator.GetBool(IsDefence))
-            {
-                _durationTime = _gameManager.PlayTimer;
-                _animator.SetBool(IsDefence, true);
-                
-                StartCoroutine(DefenceAnimationWait(3.0f));
-            }
-            
-            return INode.NodeState.Success;
-        }
-        
-        IEnumerator DefenceAnimationWait(float waitTime)
-        {
-            yield return new WaitForSeconds(waitTime);
-            _animator.Play("piggy_idle");
-            _animator.SetBool(IsDefence, false);
         }
 
         // INode.NodeState StopDefence()
@@ -316,7 +348,7 @@ namespace BehaviorTree
         //     return INode.NodeState.Failure;
         // }
 
-    #endregion
+        #endregion
 
         #region 도주
 
@@ -368,9 +400,8 @@ namespace BehaviorTree
         /// </summary>
         INode.NodeState CheckAttackAction()
         {
-            if (IsAnimationRunning("Attack_Blend") && _animator.GetFloat(AttackType) == 0)
+            if (IsAnimationRunning("Attack_Blend"))
             {
-                Log.Debug($"CheckHP : {_animator.GetFloat(AttackType)}");
                 return INode.NodeState.Running;
             }
             return INode.NodeState.Success;
@@ -380,11 +411,21 @@ namespace BehaviorTree
         {
             // TODO : 범위 탐색 코드 구현 필요
             // TODO : NativeArraty를 계속 사용하면 성능 저하 가능성 있으니, 일반 멤버변수로 만드는 방법으로 벤치마킹 해보자.
-            NativeArray<bool> results = new NativeArray<bool>((int)_playerCount, Allocator.TempJob);
-            NativeArray<Vector3> playerPosition = new NativeArray<Vector3>((int)_playerCount, Allocator.TempJob);
+
+            // NativeArray<bool> results = new NativeArray<bool>((int)_playerCount, Allocator.TempJob);
+            // NativeArray<Vector3> playerPosition = new NativeArray<Vector3>((int)_playerCount, Allocator.TempJob);
+            
+            NativeArray<bool> results = new NativeArray<bool>(1, Allocator.TempJob);
+            NativeArray<Vector3> playerPosition = new NativeArray<Vector3>(1, Allocator.TempJob);
+
             Vector3 piggyPosition = transform.position;
 
-            for (int index = 0; index < (int)_playerCount; index++)
+            // for (int index = 0; index < (int)_playerCount; index++)
+            // {
+            //     playerPosition[index] = _players[index].transform.position;
+            // }
+            
+            for (int index = 0; index < 1; index++)
             {
                 playerPosition[index] = _players[index].transform.position;
             }
@@ -398,8 +439,8 @@ namespace BehaviorTree
             };
             
             // TODO : 배치크기는 어떻게해야 가장 효율이 좋을까?
-            JobHandle jobHandle = job.Schedule((int)_playerCount, 3);
-            
+            // JobHandle jobHandle = job.Schedule((int)_playerCount, 3);
+            JobHandle jobHandle = job.Schedule(1, 3);
             jobHandle.Complete();
 
             bool checkResult = false;
@@ -422,17 +463,12 @@ namespace BehaviorTree
 
         INode.NodeState StartAttack()
         {
-            _animator.SetFloat(AttackType, 0.0f);
-            StartCoroutine(AttackAnimationWait(3.0f));
+            _animator.Animator.SetFloat(AttackType, 0.0f);
+            // 바로 넘어가면서 값이 변한다. ==> 사이에 간격을 띄우자
+            _animator.Animator.SetTrigger(Attack);
+            _durationTime = _gameManager.PlayTimer;
             
             return INode.NodeState.Success;
-        }
-        
-        IEnumerator AttackAnimationWait(float waitTime)
-        {
-            yield return new WaitForSeconds(waitTime);
-            _animator.Play("piggy_idle");
-            _animator.SetFloat(AttackType, -1.0f);
         }
 
         // INode.NodeState ReleaseInteger()
@@ -440,7 +476,6 @@ namespace BehaviorTree
         //     _animator.SetFloat(AttackType, -1.0f);
         //     return INode.NodeState.Success;
         // }
-            
         
         #endregion
 
@@ -458,8 +493,12 @@ namespace BehaviorTree
         // 거리 체크 
         INode.NodeState CheckRushDistance()
         {
-            NativeArray<bool> results = new NativeArray<bool>((int)_playerCount, Allocator.TempJob);
-            NativeArray<Vector3> playerPosition = new NativeArray<Vector3>((int)_playerCount, Allocator.TempJob);
+            // NativeArray<bool> results = new NativeArray<bool>((int)_playerCount, Allocator.TempJob);
+            // NativeArray<Vector3> playerPosition = new NativeArray<Vector3>((int)_playerCount, Allocator.TempJob);
+            
+            NativeArray<bool> results = new NativeArray<bool>(1, Allocator.TempJob);
+            NativeArray<Vector3> playerPosition = new NativeArray<Vector3>(1, Allocator.TempJob);
+            
             Vector3 piggyPosition = transform.position;
 
             for (int index = 0; index < (int)_playerCount; index++)
@@ -476,7 +515,9 @@ namespace BehaviorTree
             };
             
             // TODO : 배치크기는 어떻게해야 가장 효율이 좋을까?
-            JobHandle jobHandle = job.Schedule((int)_playerCount, 3);
+            // JobHandle jobHandle = job.Schedule((int)_playerCount, 3);            
+            JobHandle jobHandle = job.Schedule(1, 3);
+
             
             jobHandle.Complete();
 
@@ -500,7 +541,10 @@ namespace BehaviorTree
         
         INode.NodeState StartRush()
         {
-            _animator.SetFloat(AttackType, 3);
+            _animator.Animator.SetFloat(AttackType, 3);
+            _animator.Animator.SetTrigger(Attack);
+            _durationTime = _gameManager.PlayTimer;
+            
             return INode.NodeState.Success;
         }
 
@@ -520,7 +564,7 @@ namespace BehaviorTree
         
         INode.NodeState StartJumpAttack()
         {
-            _animator.SetInteger(AttackType, 2);
+            _animator.Animator.SetInteger(AttackType, 2);
             return INode.NodeState.Success;
         }
 
@@ -540,7 +584,7 @@ namespace BehaviorTree
         
         INode.NodeState StartFart()
         {
-            _animator.SetFloat(AttackType, 4);
+            _animator.Animator.SetFloat(AttackType, 4);
             return INode.NodeState.Success;
         }
 

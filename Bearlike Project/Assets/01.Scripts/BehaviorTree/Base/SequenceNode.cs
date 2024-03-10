@@ -8,7 +8,8 @@ namespace BehaviorTree.Base
     public sealed class SequenceNode : INode
     {
         private List<INode> _childs;
-
+        private INode _checkPointChild = null;
+        
         public SequenceNode(List<INode> childs) => _childs = childs;
         
         public INode.NodeState Evaluate()
@@ -20,9 +21,18 @@ namespace BehaviorTree.Base
 
             foreach (var child in _childs)
             {
+                if (_checkPointChild != null)
+                {
+                    if (child != _checkPointChild)
+                    {
+                        continue;
+                    }
+                    _checkPointChild = null;
+                }
                 switch (child.Evaluate())
                 {
                     case INode.NodeState.Running:
+                        _checkPointChild = child;
                         return INode.NodeState.Running;
                     case INode.NodeState.Success:
                         continue;
