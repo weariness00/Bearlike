@@ -23,6 +23,7 @@ namespace Script.Manager
         
         Attack,
         Reload,
+        Interact,
         
         FirstSkill,
         

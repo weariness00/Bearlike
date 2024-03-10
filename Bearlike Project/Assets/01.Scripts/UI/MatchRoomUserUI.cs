@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Data;
 using Fusion;
 using GamePlay.StageLevel;
 using Script.Data;
