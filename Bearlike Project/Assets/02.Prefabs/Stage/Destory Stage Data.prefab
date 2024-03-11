@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 8025208599522178229}
   - component: {fileID: 1909804824452287708}
   - component: {fileID: 5293203567891533175}
-  m_Layer: 31
+  - component: {fileID: 690899805091252174}
+  m_Layer: 0
   m_Name: Destory Stage Data
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -49,6 +50,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _IsStageUnload: []
   _IsInit:
+    _value: 0
+  _IsStart:
     _value: 0
   sceneReference:
     sceneAsset: {fileID: 102900000, guid: 7146be2ac2ab9024cba3fc8c22de3ae9, type: 3}
@@ -131,3 +134,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isDrop: 0
   _dropItems: []
+--- !u!65 &690899805091252174
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3775322230510242185}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 4096
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 1073744823
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 50, y: 30, z: 50}
+  m_Center: {x: 0, y: 15, z: 0}

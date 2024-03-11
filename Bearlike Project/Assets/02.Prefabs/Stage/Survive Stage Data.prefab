@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 238595165733266923}
   - component: {fileID: 8148620261442689294}
   - component: {fileID: 2883367473362974006}
-  m_Layer: 31
+  - component: {fileID: 2253607829557828854}
+  m_Layer: 0
   m_Name: Survive Stage Data
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48,6 +49,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _IsStageUnload: []
   _IsInit:
+    _value: 0
+  _IsStart:
     _value: 0
   sceneReference:
     sceneAsset: {fileID: 102900000, guid: 201860442af9b874e8797792194a8828, type: 3}
@@ -123,3 +126,24 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 238595165733266923}
   - {fileID: 8148620261442689294}
+--- !u!65 &2253607829557828854
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5828818035008608910}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 4096
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 1073744823
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 50, y: 30, z: 50}
+  m_Center: {x: 0, y: 15, z: 0}

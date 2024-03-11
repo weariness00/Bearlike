@@ -29,16 +29,16 @@ namespace GamePlay
             set => _isConnect = IsInteract = value;
         }
 
-        private void Start()
+        private void Awake()
         {
-            gameObject.layer = LayerMask.NameToLayer("Portal");
-            
             boxCollider = GetComponent<BoxCollider>();
+            
+            gameObject.layer = LayerMask.NameToLayer("Portal");
             spawnPlace.Initialize();
 
             Action += Teleport;
         }
-        
+
         public void SetPortal(Portal _otherP)
         {
             otherPortal = _otherP;

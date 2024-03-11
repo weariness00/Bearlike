@@ -61,7 +61,8 @@ namespace Player
         {
             Cursor.lockState = CursorLockMode.Locked;
             simpleKcc = gameObject.GetOrAddComponent<SimpleKCC>();
-
+            simpleKcc.Collider.tag = "Player";
+            
             if (HasInputAuthority)
             {
                 name = "Local Player";

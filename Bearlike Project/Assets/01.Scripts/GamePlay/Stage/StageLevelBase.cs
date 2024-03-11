@@ -31,7 +31,8 @@ namespace GamePlay.StageLevel
         private ChangeDetector _changeDetector;
         [Networked] [Capacity(3)] public NetworkArray<NetworkBool> IsStageUnload { get; }
         [Networked] public NetworkBool IsInit { get; set; }
-
+        [Networked] public NetworkBool IsStart { get; set; }
+        
         #endregion
 
         public SceneReference sceneReference;
@@ -66,6 +67,21 @@ namespace GamePlay.StageLevel
         {
             aliveMonsterCount.isOverMax = true;
             monsterKillCount.isOverMax = true;
+        }
+
+        public void OnTriggerEnter(Collider other)
+        {
+            if (IsStart)
+            {
+                return;
+            }
+            // 플레이어가 스테이지에 입장하면 스테이지 시작
+            // 한번 시작하고 다른 플레이어의 충돌을 체크하지 않기 위해 본래의 컴포넌트를 비활성화
+            if (other.gameObject.CompareTag("Player"))
+            {
+                StageStart();
+                Destroy(GetComponent<BoxCollider>());
+            }
         }
 
         public override void Spawned()
@@ -158,7 +174,7 @@ namespace GamePlay.StageLevel
         }
 
         #endregion
-
+        
         #region Stage Function
 
         public virtual void StageInit()
@@ -203,7 +219,10 @@ namespace GamePlay.StageLevel
 
         public virtual void StageStart()
         {
+            DebugManager.Log($"스테이지 시작\n" +
+                             $"스테이지 모드 :{stageLevelInfo.title}");
             
+            SetIsStartRPC(true);
             StartMonsterSpawn();
         }
         
@@ -241,6 +260,9 @@ namespace GamePlay.StageLevel
                 return;
             }
             
+            DebugManager.Log($"스테이지 실패\n" +
+                             $"스테이지 모드 :{stageLevelInfo.title}");
+            
             StopMonsterSpawn();
             isStageOver = true;
         }
@@ -254,6 +276,9 @@ namespace GamePlay.StageLevel
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void SetIsInitRPC(bool value) => IsInit = value;
+
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void SetIsStartRPC(NetworkBool value) => IsStart = value;
 
         #endregion
     }
