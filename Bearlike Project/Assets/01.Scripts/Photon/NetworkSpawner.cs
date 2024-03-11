@@ -99,7 +99,7 @@ namespace Script.Photon
             int length = 0;
             
             // 길이 할당
-            if(spawnPlaceOrders != null)
+            if (spawnPlaceOrders.Length != 0)
             {
                 length = spawnPlaceOrders.Length;
             }
@@ -112,10 +112,6 @@ namespace Script.Photon
             if (isRandomPlace)
             {
                 _spawnPlaceCount = Random.Range(0, length);
-            }
-            if (length - 1 < _spawnPlaceCount)
-            {
-                _spawnPlaceCount = 0;
             }
             
             // 위치 할당

@@ -23,8 +23,6 @@ namespace Manager
 
         [SerializeField]private SpawnPlace _spawnPlace = new SpawnPlace();
 
-        private MapGenerate _mapGenerate = new MapGenerate();
-
         [Header("스테이지")]
         public StageLevelBase defaultStage;
         public List<StageLevelBase> stageList = new List<StageLevelBase>();
@@ -66,7 +64,6 @@ namespace Manager
         {
             // defaultStage.MapInfo = _mapGenerate.FindEmptySpace(defaultStage.MapInfo);
             defaultStage.SetIsInitRPC(true);
-            _mapGenerate.AddMap(defaultStage.MapInfo);
         }
         
         async void UserInit()
@@ -113,10 +110,7 @@ namespace Manager
 
                     if (stage.stageLevelInfo.StageLevelType == stageLevelBase.stageLevelInfo.StageLevelType)
                     {
-                        stageLevelBase.MapInfo = await _mapGenerate.FindEmptySpaceSync(stage.MapInfo, defaultStage.MapInfo);
                         stageLevelBase.SetIsInitRPC(true);
-
-                        _mapGenerate.AddMap(stageLevelBase.MapInfo);
 
                         DebugManager.Log($"씬 생성 후 초기화 완료 {stage.sceneReference}");
                         break;

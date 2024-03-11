@@ -50,7 +50,7 @@ MonoBehaviour:
   BoxExtents: {x: 0.5, y: 0.5, z: 0.5}
   CapsuleHeight: 0
   Offset: {x: 0, y: 0, z: 0}
-  Root: {fileID: 3899718777837856231}
+  Root: {fileID: 3635762867072103890}
   GizmosColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!1 &6861792332672070755
 GameObject:
@@ -67,10 +67,10 @@ GameObject:
   - component: {fileID: 7131952482437218469}
   - component: {fileID: 4865503929779812662}
   - component: {fileID: 6924352842537914840}
-  - component: {fileID: 1908304576643412934}
   - component: {fileID: 6127177547575174562}
   - component: {fileID: 4274755995059418682}
-  - component: {fileID: 3899718777837856231}
+  - component: {fileID: 9220168649676207693}
+  - component: {fileID: 3635762867072103890}
   m_Layer: 0
   m_Name: Dice
   m_TagString: Monster
@@ -235,25 +235,9 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 4865503929779812662}
-  - {fileID: 1908304576643412934}
   - {fileID: 6127177547575174562}
-  - {fileID: 3899718777837856231}
---- !u!114 &1908304576643412934
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6861792332672070755}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SyncScale: 0
-  SyncParent: 0
-  _autoAOIOverride: 1
-  DisableSharedModeInterpolation: 0
+  - {fileID: 9220168649676207693}
+  - {fileID: 3635762867072103890}
 --- !u!114 &6127177547575174562
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -314,6 +298,14 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  attackRange:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
   force:
     _min: 0
     _max: 0
@@ -338,7 +330,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isDrop: 0
   _dropItems: []
---- !u!114 &3899718777837856231
+--- !u!114 &9220168649676207693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6861792332672070755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a591d221a634417e9827eb58e17de84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncScale: 0
+  SyncParent: 1
+  _interpolationTarget: {fileID: 0}
+  UsePreciseRotation: 0
+  UseRenderSleepThresholds: 1
+  RenderThresholds:
+    UseEnergy: 1
+    Position: 0.01
+    Rotation: 0.01
+    Scale: 0.01
+--- !u!114 &3635762867072103890
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -351,7 +365,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Config: 3
-  BroadRadius: 0
+  BroadRadius: 0.8660254
   Offset: {x: 0, y: 0, z: 0}
   GizmosColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   Hitboxes:

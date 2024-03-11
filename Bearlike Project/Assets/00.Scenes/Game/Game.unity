@@ -1346,8 +1346,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1247885454}
-  - {fileID: 1965290067}
   - {fileID: 1662219607}
+  - {fileID: 1482980320}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &962364572
@@ -1749,7 +1749,6 @@ MonoBehaviour:
     - {fileID: 1999057086}
     - {fileID: 1108002951}
   otherPortal: {fileID: 0}
-  isConnect: 0
 --- !u!65 &1532899793
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1932,7 +1931,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1662219605
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2108,8 +2107,7 @@ MonoBehaviour:
   _mapInfoMono: {fileID: 1763687601}
   prevStagePortal: {fileID: 0}
   nextStagePortal: {fileID: 1532899792}
-  monsterSpawnerList:
-  - {fileID: 1662219606}
+  monsterSpawnerList: []
   aliveMonsterCount:
     _min: 0
     _max: 1

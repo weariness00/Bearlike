@@ -487,11 +487,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1447030405736922233, guid: fe48cae74f1bd2a4d9af117ca76f8e11,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 1909804824452287708, guid: fe48cae74f1bd2a4d9af117ca76f8e11,
         type: 3}
       propertyPath: SortKey
@@ -519,17 +514,7 @@ PrefabInstance:
       objectReference: {fileID: 42810325}
     - target: {fileID: 8430227219849765713, guid: fe48cae74f1bd2a4d9af117ca76f8e11,
         type: 3}
-      propertyPath: monsterSpawnerList.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8430227219849765713, guid: fe48cae74f1bd2a4d9af117ca76f8e11,
-        type: 3}
       propertyPath: monsterSpawnerList.Array.data[0]
-      value: 
-      objectReference: {fileID: 541677324}
-    - target: {fileID: 8430227219849765713, guid: fe48cae74f1bd2a4d9af117ca76f8e11,
-        type: 3}
-      propertyPath: monsterSpawnerList.Array.data[1]
       value: 
       objectReference: {fileID: 541677324}
     m_RemovedComponents: []
@@ -581,7 +566,7 @@ MonoBehaviour:
   isStartSpawn: 0
   isLoop: 1
   isRandomObject: 0
-  isRandomPlace: 0
+  isRandomPlace: 1
   isRandomInterval: 0
   parentTransform: {fileID: 2096895239}
   spawnCount:
@@ -598,6 +583,8 @@ MonoBehaviour:
   spawnPlace:
     _spotList:
     - {fileID: 1317244736}
+    - {fileID: 541825733}
+    - {fileID: 791632805}
   spawnPlaceOrders: 
   spawnIntervals:
   - 2
@@ -615,7 +602,40 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1317244736}
+  - {fileID: 541825733}
+  - {fileID: 791632805}
   m_Father: {fileID: 222850944}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &541825732
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 541825733}
+  m_Layer: 0
+  m_Name: Place (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &541825733
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 541825732}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.95, y: 0.43, z: -14.51}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 541677325}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &718548880
 GameObject:
@@ -754,6 +774,37 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!1 &791632804
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 791632805}
+  m_Layer: 0
+  m_Name: Place (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &791632805
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 791632804}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 20.95, y: 10.54, z: 5.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 541677325}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &838622475
 GameObject:
   m_ObjectHideFlags: 0
@@ -1422,7 +1473,7 @@ Transform:
   m_GameObject: {fileID: 1317244735}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 18.959, y: 3.667, z: -4.475}
+  m_LocalPosition: {x: 11.19, y: 0.43, z: 3.94}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -46,13 +46,6 @@ namespace GamePlay.StageLevel
 
         [Header("맵 정보")] 
         public GameObject stageGameObject;
-        [SerializeField] private MapInfoMono _mapInfoMono;
-
-        public MapInfo MapInfo
-        {
-            get => _mapInfoMono.info;
-            set => _mapInfoMono.info = value;
-        }
 
         public Portal prevStagePortal;
         public Portal nextStagePortal;
@@ -109,7 +102,6 @@ namespace GamePlay.StageLevel
 
                         if (count == 0)
                         {
-                            StageSetting();
                             NetworkManager.UnloadScene(sceneReference.ScenePath);
                         }
 
@@ -130,11 +122,6 @@ namespace GamePlay.StageLevel
         #region Defualt Function
 
         // 스테이지에 들어서면 정보에 맞춰 해당 스테이지를 셋팅 해준다.
-        public void StageSetting()
-        {
-            StartMonsterSpawn();
-        }
-
         public void StartMonsterSpawn()
         {
             foreach (var monsterSpawner in monsterSpawnerList)
@@ -191,8 +178,8 @@ namespace GamePlay.StageLevel
             Runner.MoveGameObjectToSameScene(gameObject, GameManager.Instance.gameObject);
             Runner.MoveGameObjectToSameScene(stageGameObject, GameManager.Instance.gameObject);
 
-            gameObject.transform.position = MapInfo.pivot;
-            stageGameObject.transform.position = MapInfo.pivot;
+            stageGameObject.transform.position = new Vector3(0,(FindObjectsOfType<StageLevelBase>().Length - 1) * 100,0);
+            
             stageGameObject.SetActive(true);
 
             if (LootingSystem.Instance.stageLootingItemDictionary.TryGetValue((int)stageLevelInfo.StageLevelType, out var lootingItems))
@@ -216,7 +203,8 @@ namespace GamePlay.StageLevel
 
         public virtual void StageStart()
         {
-
+            
+            StartMonsterSpawn();
         }
         
         public virtual void StageUpdate()
@@ -233,6 +221,7 @@ namespace GamePlay.StageLevel
             {
                 return;
             }
+            StopMonsterSpawn();
 
             prevStagePortal.IsConnect = true;
             isStageClear = true;
@@ -251,7 +240,8 @@ namespace GamePlay.StageLevel
             {
                 return;
             }
-
+            
+            StopMonsterSpawn();
             isStageOver = true;
         }
 
