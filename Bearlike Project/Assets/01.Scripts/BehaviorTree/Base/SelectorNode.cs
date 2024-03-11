@@ -15,6 +15,7 @@ namespace BehaviorTree.Base
     {
         private INode.NodeState _state;
         private INode[] _children;
+        private INode _checkPointChild;
         private bool _isRandom;
 
         public SelectorNode(bool isRandom = false, params INode[] children)
@@ -47,7 +48,6 @@ namespace BehaviorTree.Base
                     //     continue;
                 }
             }
-            
 
             return INode.NodeState.Failure;
         }

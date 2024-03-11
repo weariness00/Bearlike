@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Storage.v1;
-using Script.Manager;
+using Manager;
 using UnityEngine;
 using Util;
 using Object = Google.Apis.Storage.v1.Data.Object;

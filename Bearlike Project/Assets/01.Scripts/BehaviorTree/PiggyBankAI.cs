@@ -126,26 +126,24 @@ namespace BehaviorTree
                     // new ActionNode(CheckWalkAction),
                     new SelectorNode
                     (
-                        new List<INode>()
-                        {
-                            // new ActionNode(StopDefence),
-                            new SequenceNode
-                            (
-                                new List<INode>()
-                                {   // Deffence
-                                    new ActionNode(CheckMoreHp), 
-                                    new ActionNode(StartDefence),
-                                }
-                            ),
-                            new SequenceNode
-                            (
-                                new List<INode>()
-                                {
-                                    new ActionNode(CheckRunAction), // Run
-                                    new ActionNode(StartRun),
-                                }
-                            )
-                        }
+                        false,
+                        // new ActionNode(StopDefence),
+                        new SequenceNode
+                        (
+                            new List<INode>()
+                            {   // Deffence
+                                new ActionNode(CheckMoreHp), 
+                                new ActionNode(StartDefence),
+                            }
+                        ),
+                        new SequenceNode
+                        (
+                            new List<INode>()
+                            {
+                                new ActionNode(CheckRunAction), // Run
+                                new ActionNode(StartRun),
+                            }
+                        )
                     ),
                     new SequenceNode
                     (
