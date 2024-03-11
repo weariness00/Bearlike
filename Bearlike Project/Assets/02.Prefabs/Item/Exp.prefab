@@ -44,13 +44,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83503d060d3647fbbbcf63ad468c4bc9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 0
-  itemName: a
+  id: 1
+  itemName: Experience
   icon: {fileID: 0}
   amount:
     _min: 0
     _max: 0
     _current: 0
+    isOverMax: 0
+    isOverMin: 0
     isMin: 0
     isMax: 0
   explain: 
@@ -58,5 +60,7 @@ MonoBehaviour:
     _min: 0
     _max: 0
     _current: 0
+    isOverMax: 0
+    isOverMin: 0
     isMin: 0
     isMax: 0

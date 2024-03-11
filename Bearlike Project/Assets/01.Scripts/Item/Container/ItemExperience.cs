@@ -1,5 +1,6 @@
 ﻿using Player;
 using Status;
+using UnityEngine;
 
 namespace Item.Container
 {
@@ -7,14 +8,12 @@ namespace Item.Container
     {
         public StatusValue<int> experienceAmount = new StatusValue<int>();
 
-        public override void GetItem<T>(T target)
+        public override void GetItem(GameObject targetObject)
         {
-            if (target is PlayerController)
+            base.GetItem(targetObject);
+            if (targetObject.TryGetComponent(out PlayerController pc))
             {
-                var pc = (PlayerController)(object)target;
                 pc.status.IncreaseExp(experienceAmount);
-
-                Destroy(gameObject);
             }
         }
 

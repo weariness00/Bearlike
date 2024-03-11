@@ -1,5 +1,6 @@
 ﻿using Player;
 using Status;
+using UnityEngine;
 
 namespace Item.Container
 {
@@ -11,12 +12,11 @@ namespace Item.Container
     {
         public StatusValue<float> decreasePercentage = new StatusValue<float>();
 
-        public override void GetItem<T>(T target)
+        public override void GetItem(GameObject targetObject)
         {
-            base.GetItem(target);
-            if (target is PlayerController)
+            base.GetItem(targetObject);
+            if (targetObject.TryGetComponent(out PlayerController pc))
             {
-                var pc = (PlayerController)(object)target;
                 if (pc.itemList.TryGetValue(id, out var item))
                 {
                     item.amount.Current += amount.Current;
