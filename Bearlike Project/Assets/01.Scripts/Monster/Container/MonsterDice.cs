@@ -12,7 +12,6 @@ using Random = UnityEngine.Random;
 
 namespace Monster.Container
 {
-    [RequireComponent(typeof(BoxCollider))]
     public class MonsterDice : MonsterBase
     {
         private BehaviorTreeRunner _behaviorTreeRunner;
@@ -37,6 +36,7 @@ namespace Monster.Container
 
         public override void FixedUpdateNetwork()
         {
+            base.FixedUpdateNetwork();
             _behaviorTreeRunner.Operator();
         }
 
@@ -199,7 +199,10 @@ namespace Monster.Container
                     filter.areaMask = 1 << NavMesh.GetAreaFromName("Walkable");
                     if (NavMesh.CalculatePath(transform.position, targetTransform.position, NavMesh.AllAreas, path))
                     {
-                        dir = SetRotateDir(path.corners[1]);
+                        if (path.corners.Length > 1)
+                        {
+                            dir = SetRotateDir(path.corners[1]);
+                        }
                     }
                 }
 

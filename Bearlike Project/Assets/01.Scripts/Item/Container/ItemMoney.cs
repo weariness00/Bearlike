@@ -17,9 +17,9 @@ namespace Item.Container
             transform.Rotate(0, Time.deltaTime * 360f,0);
         }
 
-        public void OnCollisionEnter(Collision other)
+        private void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.CompareTag("Player") && other.gameObject.name == "Local Player")
+            if (other.gameObject.CompareTag("Player") && other.transform.parent.name == "Local Player")
             {
                 foreach (var sphereCollider in GetComponents<SphereCollider>())
                 {

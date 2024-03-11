@@ -13,11 +13,6 @@ namespace Item.Looting
 
         [SerializeField] private LootingItem[] _dropItems = Array.Empty<LootingItem>();
         
-        private void OnDestroy()
-        {
-            if (!isDrop) { SpawnDropItem();}
-        }
-
         // 어떤 아이템을 드랍하게 될지 계산
         /// <summary>
         /// 

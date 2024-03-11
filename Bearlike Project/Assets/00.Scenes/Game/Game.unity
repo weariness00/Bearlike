@@ -2015,7 +2015,7 @@ GameObject:
   - component: {fileID: 1763687600}
   - component: {fileID: 1763687599}
   - component: {fileID: 1763687604}
-  m_Layer: 31
+  m_Layer: 0
   m_Name: Game Stage Data
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2032,12 +2032,12 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4096
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1073744823
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -2092,6 +2092,8 @@ MonoBehaviour:
   _IsStageUnload: []
   _IsInit:
     _value: 0
+  _IsStart:
+    _value: 0
   sceneReference:
     sceneAsset: {fileID: 102900000, guid: e7baadc751a3c7842a48433dc69d5b99, type: 3}
     scenePath: Assets/00.Scenes/Game/Game.unity
@@ -2104,13 +2106,12 @@ MonoBehaviour:
   isStageOver: 0
   lootingTable: {fileID: 0}
   stageGameObject: {fileID: 962364570}
-  _mapInfoMono: {fileID: 1763687601}
   prevStagePortal: {fileID: 0}
   nextStagePortal: {fileID: 1532899792}
   monsterSpawnerList: []
   aliveMonsterCount:
     _min: 0
-    _max: 1
+    _max: 0
     _current: 0
     isOverMax: 0
     isOverMin: 0

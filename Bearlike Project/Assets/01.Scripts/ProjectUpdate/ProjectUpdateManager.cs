@@ -11,7 +11,6 @@ namespace ProjectUpdate
     [DefaultExecutionOrder((int)DefaultExecutionOrderType.LobbySceneStart)]
     public class ProjectUpdateManager : Singleton<ProjectUpdateManager>
     {
-        private readonly string _sessionLobby = "session-lobby";
         private readonly string _json = "bearlike-json";
 
         public TextAsset serverInfoJson;

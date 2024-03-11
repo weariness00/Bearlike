@@ -57,7 +57,7 @@ namespace Item
                 if (time > 2f)
                     break;
 
-                rigidbody.AddForce(dir * Time.deltaTime);
+                rigidbody.AddForce(Time.deltaTime * 2f * dir);
                 yield return null;
             }
         }
@@ -69,7 +69,7 @@ namespace Item
             while (true)
             {
                 var dis = Vector3.Distance(targetTransform.position, transform.position);
-                if (dis < 1f)
+                if (dis < 0.1f)
                 {
                     break;
                 }

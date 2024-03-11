@@ -22,7 +22,6 @@ namespace ProjectUpdate
         protected override void Awake()
         {
             base.Awake();
-            SetTemporaryEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "C:\\path\\to\\your\\service-account-file.json");
             var credential = GoogleCredential.FromFile($"{Application.dataPath}/{_jsonKeyFilePath}").CreateScoped(StorageService.Scope.CloudPlatform);
             _storageService = new StorageService(new BaseClientService.Initializer
             {

@@ -100,18 +100,15 @@ namespace Script.Weapon.Gun
             {
                 DebugManager.Log($"Ray충돌\n총 이름 : {name}\n맞은 대상 : {hit.GameObject.name}");
                 
-                if (hit.Hitbox != null)
+
+                var hitState = hit.GameObject.GetComponent<StatusBase>();
+                if (hitState != null)
                 {
-                    var hitbox = hit.Hitbox;
-                    var hitState = hitbox.Root.GetComponent<StatusBase>();
-                    if (hitState != null)
-                    {
-                        // hitState.ApplyDamage(state.attack.Current, (ObjectProperty)state.property); // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
-                        ApplyDamage(hitbox);
-                        var hitEffectObject = Instantiate(hitEffect.gameObject, hit.Point, Quaternion.identity, transform);
-                        hitEffectObject.transform.LookAt(hit.Normal);
-                        Destroy(hitEffectObject, 5f);
-                    }
+                    // hitState.ApplyDamage(state.attack.Current, (ObjectProperty)state.property); // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
+                    hitState.ApplyDamageRPC(status.attack.Current, (CrowdControl)status.property);
+                    var hitEffectObject = Instantiate(hitEffect.gameObject, hit.Point, Quaternion.identity);
+                    hitEffectObject.transform.LookAt(hit.Normal);
+                    Destroy(hitEffectObject, 5f);
                 }
                 
                 detination = hit.Point;

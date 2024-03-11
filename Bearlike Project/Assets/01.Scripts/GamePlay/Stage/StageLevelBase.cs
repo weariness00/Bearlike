@@ -71,15 +71,14 @@ namespace GamePlay.StageLevel
 
         public void OnTriggerEnter(Collider other)
         {
-            if (IsStart)
-            {
-                return;
-            }
             // 플레이어가 스테이지에 입장하면 스테이지 시작
             // 한번 시작하고 다른 플레이어의 충돌을 체크하지 않기 위해 본래의 컴포넌트를 비활성화
             if (other.gameObject.CompareTag("Player"))
             {
-                StageStart();
+                if (IsStart == false)
+                {
+                    StageStart();
+                }
                 Destroy(GetComponent<BoxCollider>());
             }
         }
@@ -194,7 +193,9 @@ namespace GamePlay.StageLevel
             Runner.MoveGameObjectToSameScene(gameObject, GameManager.Instance.gameObject);
             Runner.MoveGameObjectToSameScene(stageGameObject, GameManager.Instance.gameObject);
 
-            stageGameObject.transform.position = new Vector3(0,(FindObjectsOfType<StageLevelBase>().Length - 1) * 100,0);
+            var pos = new Vector3(0,(FindObjectsOfType<StageLevelBase>().Length - 1) * 100,0);
+            transform.position = pos;
+            stageGameObject.transform.position = pos;
             
             stageGameObject.SetActive(true);
 
