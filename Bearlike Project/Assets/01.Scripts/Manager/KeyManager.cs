@@ -84,29 +84,29 @@ namespace Script.Manager
 
         public void Load(string fileName)
         {
-            StartCoroutine(JsonConvertExtension.LoadCoroutine(fileName, (data) =>
+            JsonConvertExtension.Load(fileName, (data) =>
             {
-                var keyMapping = JsonConvert.DeserializeObject<KeyMapping[]>(data); 
-            
+                var keyMapping = JsonConvert.DeserializeObject<KeyMapping[]>(data);
+
                 keyDictionary.Clear();
                 mouseDictionary.Clear();
                 foreach (var mapping in keyMapping)
                 {
                     var action = mapping.Action;
                     var key = mapping.Key;
-                    if(Enum.TryParse(action, out KeyToAction keyToAction))
+                    if (Enum.TryParse(action, out KeyToAction keyToAction))
                     {
                         if (Enum.TryParse(key, out KeyCode keyCode))
                         {
                             keyDictionary.Add(keyToAction, keyCode);
                         }
-                        else if(Enum.TryParse(key, out MouseButton mouseButton))
+                        else if (Enum.TryParse(key, out MouseButton mouseButton))
                         {
                             mouseDictionary.Add(keyToAction, mouseButton);
                         }
                     }
                 }
-            }));
+            });
         }
 
         void DefaultLoad() => Load("DefaultKeyData");
