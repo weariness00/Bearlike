@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.VersionControl;
 using UnityEngine;
+using Random = System.Random;
 
 namespace BehaviorTree.Base
 {
@@ -12,20 +14,18 @@ namespace BehaviorTree.Base
     public sealed class SelectorNode : INode
     {
         private INode.NodeState _state;
-        private List<INode> _childs = new List<INode>();
-        private INode _checkPointChild = null;
+        private INode[] _children;
+        private bool _isRandom;
 
-        public SelectorNode(List<INode> childs) => _childs = childs;
-        public SelectorNode(params INode[] children) => _childs = children.ToList();
+        public SelectorNode(bool isRandom = false, params INode[] children)
+        {
+            _children = children;
+            _isRandom = isRandom;
+        }
 
         public INode.NodeState Evaluate()
         {
-            if (_childs == null || _childs.Count == 0)
-            {
-                return INode.NodeState.Failure;
-            }
-            
-            foreach (var child in _childs)
+            foreach (var child in _isRandom ? Shuffle(_children) : _children)
             {
                 if (_checkPointChild != null)
                 {
@@ -50,6 +50,20 @@ namespace BehaviorTree.Base
             
 
             return INode.NodeState.Failure;
+        }
+        
+        private INode[] Shuffle(INode[] array)
+        {
+            Random rng = new Random();
+            INode[] copyArray = array.ToArray();
+            int n = array.Length;
+            while (n > 1)
+            {
+                int k = rng.Next(n--);
+                (copyArray[n], copyArray[k]) = (copyArray[k], copyArray[n]);
+            }
+
+            return copyArray;
         }
     }
 }

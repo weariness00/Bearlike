@@ -157,7 +157,7 @@ namespace BehaviorTree
                             new ActionNode(TermFuction),
                         }
                     ),
-                    new SelectorNode
+                    new SequenceNode
                     (
                         new List<INode>()
                         {

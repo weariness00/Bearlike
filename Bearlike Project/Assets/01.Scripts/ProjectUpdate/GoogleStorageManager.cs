@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Storage.v1;
+using Script.Manager;
 using UnityEngine;
 using Util;
 using Object = Google.Apis.Storage.v1.Data.Object;
@@ -20,6 +22,7 @@ namespace ProjectUpdate
         protected override void Awake()
         {
             base.Awake();
+            SetTemporaryEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "C:\\path\\to\\your\\service-account-file.json");
             var credential = GoogleCredential.FromFile($"{Application.dataPath}/{_jsonKeyFilePath}").CreateScoped(StorageService.Scope.CloudPlatform);
             _storageService = new StorageService(new BaseClientService.Initializer
             {
@@ -28,7 +31,33 @@ namespace ProjectUpdate
             });
 
         }
+        
+        public static void SetTemporaryEnvironmentVariable(string key, string value)
+        {
+            // 환경 변수 설정
+            Environment.SetEnvironmentVariable(key, value, EnvironmentVariableTarget.Process);
+        }
 
+        public static async Task<bool> IsConnect(string bucketName)
+        {
+            try
+            {
+                // StorageService 객체와 bucketName을 사용하여 버킷의 메타데이터 요청
+                var bucket = await Instance._storageService.Buckets.Get(bucketName).ExecuteAsync();
+        
+                // 요청이 성공적으로 반환되면, 연결 및 인증이 성공적임을 의미
+                return bucket != null;
+            }
+            catch (Exception e)
+            {
+                // 요청 중 에러 발생 (인증 실패, 연결 문제 등) 시
+                DebugManager.LogError($"구글 스토리지에 연결을 실패했습니다.\n" +
+                                      $"Bucket Name : {bucketName}\n" +
+                                      $"Error : {e}");
+                return false;
+            }
+        }
+        
         public static bool UploadFile(string bucketName, string filePath, string objectName, string contentType = "application/octet-stream")
         {
             filePath = Path.Combine(filePath, objectName);
@@ -53,17 +82,22 @@ namespace ProjectUpdate
 
         public static bool UploadJsonFile(string bucketName, string filePath, string objectName) => UploadFile(bucketName, filePath, objectName, "application/json");
 
-        public static bool DownloadFile(string bucketName, string objectName, string destinationPath)
+        public static async Task<bool> DownloadFile(string bucketName, string objectName, string destinationPath)
         {
+            if (await IsConnect(bucketName) == false)
+            {
+                return false;
+            }
+            
             var fileName = Path.Combine(destinationPath, objectName);
             var request = Instance._storageService.Objects.Get(bucketName, objectName);
             if (Directory.Exists(destinationPath) == false)
             {
                 Directory.CreateDirectory(destinationPath);
             }
-            if (File.Exists(fileName) && IsFileVersionDifferent(request.Execute(), fileName) == false) { return true; }
+            if (File.Exists(fileName) && IsFileVersionDifferent(await request.ExecuteAsync(), fileName) == false) { return true; }
             
-            using var stream = new FileStream(fileName, FileMode.OpenOrCreate);
+            await using var stream = new FileStream(fileName, FileMode.OpenOrCreate);
             request.Download(stream);
             return true;
         }

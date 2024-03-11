@@ -35,9 +35,6 @@ namespace BehaviorTree
         INode SettingBT()
         {
             return new SelectorNode(
-                new List<INode>()
-                {
-                }
             );
         }
 

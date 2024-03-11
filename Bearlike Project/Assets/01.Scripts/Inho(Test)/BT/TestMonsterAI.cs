@@ -40,8 +40,7 @@ namespace Inho_Test_.BT
         INode SettingBT()
         {
             return new SelectorNode(
-                new List<INode>()
-                {
+                false,
                     new SequenceNode
                     (
                         new List<INode>()
@@ -60,7 +59,6 @@ namespace Inho_Test_.BT
                         }
                     ),
                     new ActionNode(MoveToOriginPosition)
-                }
             );
         }
 

@@ -14,6 +14,7 @@ namespace ProjectUpdate
         private readonly string _sessionLobby = "session-lobby";
         private readonly string _json = "bearlike-json";
 
+        public TextAsset serverInfoJson;
         
         public readonly string downloadList = "Download_List";
         public readonly string serverInfo = "Server Information"; // 서버의 정보를 담고 있다.
@@ -65,7 +66,8 @@ namespace ProjectUpdate
 
         void Start()
         {
-            DownLoadJsonToStorage(serverInfo); // 스토리지에서 웹 서버 정보 가져오기
+            // DownLoadJsonToStorage(serverInfo); // 스토리지에서 웹 서버 정보 가져오기
+            JsonConvertExtension.Save(serverInfoJson.text, serverInfoJson.name);
             JsonConvertExtension.Load(serverInfo, (data) =>
             {
                 // 웹 서버 정보를 토대로 다운 받아야할 json 데이터들 다운 받기
