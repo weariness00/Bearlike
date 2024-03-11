@@ -71,56 +71,50 @@ namespace BehaviorTree
         {
             return new SelectorNode
             (
-                new List<INode>()
-                {
-                    new ActionNode(WalkAround),     // Walk
-                    new SelectorNode
-                    (
-                        new List<INode>()
-                        {
-                            new SequenceNode
-                            (
-                            new List<INode>()
-                            {
-                                new ActionNode(CheckMoreHp),        // Deffence
-                                new ActionNode(CheckDeffenceAction),
-                                new ActionNode(StartDeffence),
-                            }
-                            ),
-                            new SequenceNode
-                            (
-                            new List<INode>()
-                            {
-                                new ActionNode(CheckLessHp),        // Run
-                                new ActionNode(CheckRunAction),
-                                new ActionNode(StartRun),
-                            }
-                            )
-                        }
-                    ),                    
+                false,
+                new ActionNode(WalkAround),     // Walk
+                new SelectorNode
+                (
+                    false,
                     new SequenceNode
                     (
                         new List<INode>()
                         {
-                            new ActionNode(CheckAttackAction),      // Kick
-                            new ActionNode(CheckBoundery),
-                            new ActionNode(StartAttack),
+                            new ActionNode(CheckMoreHp),        // Deffence
+                            new ActionNode(CheckDeffenceAction),
+                            new ActionNode(StartDeffence),
                         }
                     ),
-                    new SelectorNode
+                    new SequenceNode
                     (
                         new List<INode>()
                         {
-                                        // Rush
-                                        
-                                        // JumpAttack
-                                        
-                                        // fart
+                            new ActionNode(CheckLessHp),        // Run
+                            new ActionNode(CheckRunAction),
+                            new ActionNode(StartRun),
                         }
-                    ),
-                                        // take a rest
-                                        // sleep
-                }
+                    )
+                ),                    
+                new SequenceNode
+                (
+                    new List<INode>()
+                    {
+                        new ActionNode(CheckAttackAction),      // Kick
+                        new ActionNode(CheckBoundery),
+                        new ActionNode(StartAttack),
+                    }
+                ),
+                new SelectorNode
+                (
+                    false
+                    // Rush
+                                        
+                    // JumpAttack
+                                        
+                    // fart
+                )
+                // take a rest
+                // sleep
             );
         }
         
