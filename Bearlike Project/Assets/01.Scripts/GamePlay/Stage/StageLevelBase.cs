@@ -7,14 +7,11 @@ using Item.Looting;
 using Manager;
 using Monster;
 using Photon;
-using Script.Data;
 using Script.Photon;
 using Status;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
-using Util.Map;
 
 namespace GamePlay.StageLevel
 {
@@ -22,6 +19,7 @@ namespace GamePlay.StageLevel
     {
         #region Static Variable
 
+        public static Action StageInitAction;
         public static Action StageClearAction;
 
         #endregion
@@ -31,7 +29,7 @@ namespace GamePlay.StageLevel
         private ChangeDetector _changeDetector;
         [Networked] [Capacity(3)] public NetworkArray<NetworkBool> IsStageUnload { get; }
         [Networked] public NetworkBool IsInit { get; set; }
-        [Networked] public NetworkBool IsStart { get; set; }
+        [Networked] public NetworkBool IsStageStart { get; set; }
         
         #endregion
 
@@ -75,12 +73,15 @@ namespace GamePlay.StageLevel
             // 한번 시작하고 다른 플레이어의 충돌을 체크하지 않기 위해 본래의 컴포넌트를 비활성화
             if (other.gameObject.CompareTag("Player"))
             {
-                if (IsStart == false)
-                {
-                    StageStart();
-                }
+                SetIsStartRPC(true);
                 Destroy(GetComponent<BoxCollider>());
             }
+        }
+
+        public void OnApplicationQuit()
+        {
+            StageInitAction = null;
+            StageClearAction = null;
         }
 
         public override void Spawned()
@@ -94,7 +95,7 @@ namespace GamePlay.StageLevel
 
         public override void FixedUpdateNetwork()
         {
-            if (isStageClear == false && isStageOver == false)
+            if (IsStageStart &&isStageClear == false && isStageOver == false)
             {
                 StageUpdate();
             }
@@ -126,7 +127,12 @@ namespace GamePlay.StageLevel
                         {
                             StageInit();
                         }
-
+                        break;
+                    case nameof(IsStageStart):
+                        if (IsStageStart)
+                        {
+                            StageStart();
+                        }
                         break;
                 }
             }
@@ -192,7 +198,7 @@ namespace GamePlay.StageLevel
 
             Runner.MoveGameObjectToSameScene(gameObject, GameManager.Instance.gameObject);
             Runner.MoveGameObjectToSameScene(stageGameObject, GameManager.Instance.gameObject);
-
+            
             var pos = new Vector3(0,(FindObjectsOfType<StageLevelBase>().Length - 1) * 100,0);
             transform.position = pos;
             stageGameObject.transform.position = pos;
@@ -213,8 +219,13 @@ namespace GamePlay.StageLevel
             }
             GameManager.Instance.currentStage = this;
             
+            // 물리 엔진 초기화
+            Physics.SyncTransforms();
+            
             SetIsUnloadRPC(UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber, true);
 
+            StageInitAction?.Invoke();
+            
             DebugManager.Log($"스테이지 초기화 {stageLevelInfo.title}");
         }
 
@@ -223,7 +234,6 @@ namespace GamePlay.StageLevel
             DebugManager.Log($"스테이지 시작\n" +
                              $"스테이지 모드 :{stageLevelInfo.title}");
             
-            SetIsStartRPC(true);
             StartMonsterSpawn();
         }
         
@@ -279,7 +289,7 @@ namespace GamePlay.StageLevel
         public void SetIsInitRPC(bool value) => IsInit = value;
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-        public void SetIsStartRPC(NetworkBool value) => IsStart = value;
+        public void SetIsStartRPC(NetworkBool value) => IsStageStart = value;
 
         #endregion
     }

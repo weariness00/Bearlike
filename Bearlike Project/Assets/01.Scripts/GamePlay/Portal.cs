@@ -18,6 +18,7 @@ namespace GamePlay
         // [Networked] public NetworkBool IsConnect { get; set; } // 포탈과 연결 되었는지
         //
         // #endregion
+
         [HideInInspector]public BoxCollider boxCollider;
         public SpawnPlace spawnPlace = new SpawnPlace();
         public Portal otherPortal; // 다른 포탈
@@ -60,10 +61,12 @@ namespace GamePlay
                 {
                     var simpleKCC = targetObject.transform.root.GetComponent<SimpleKCC>();
                     simpleKCC.SetPosition(spot.position);
+                    simpleKCC.SetLookRotation(spot.forward);
                 }
                 else
                 {
                     targetObject.transform.position = spot.position;
+                    targetObject.transform.rotation = spot.rotation;
                 }
                 
                 DebugManager.Log($"{targetObject.name}객체가 {name}에서 {otherPortal.name}으로 이동");

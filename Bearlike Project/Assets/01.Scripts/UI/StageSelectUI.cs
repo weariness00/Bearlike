@@ -67,6 +67,10 @@ namespace UI
                         {
                             SettingStageUI();
                         }
+                        else
+                        {
+                            gameObject.SetActive(false);
+                        }
                         break;
                     case nameof(NetworkReadyArray):
                         var readyCount = 0;
@@ -76,7 +80,6 @@ namespace UI
                             {
                                 continue;
                             }
-
                             ++readyCount;
                         }
 
@@ -101,23 +104,32 @@ namespace UI
         // 투표를 마쳤다는 표시
         public void Ready()
         {
-            ReadyRPC(clientNumber);
+            var readyValue = NetworkReadyArray.Get(clientNumber);
+            ReadyRPC(clientNumber, !readyValue);
             
             DebugManager.ToDo("투표 관련 UI도 만들어주고 업데이트 해줘야한다.");
         }
 
         public void SettingStageInfo()
         {
+            gameObject.SetActive(true);
             if (HasStateAuthority == false)
             {
                 return;
             }
-            
+
             for (int i = 0; i < StageChoiceCount; i++)
             {
                 var index = i;
                 var stage = GameManager.Instance.GetRandomStage();
                 NetworkStageLevelTypes.Set(index, stage.stageLevelInfo.StageLevelType);
+            }
+
+            // Vote, Ready UI 초기화
+            for (int i = 0; i < 3; i++)
+            {
+                ReadyRPC(i, false);
+                SetVoteCountRPC(i, 0);
             }
             
             SetSettingUIRPC(true);
@@ -125,9 +137,9 @@ namespace UI
 
         void SettingStageUI()
         {
-            foreach (var toggleObject in stageSelectUIHandlerList)
+            foreach (var selectHandler in stageSelectUIHandlerList)
             {
-                Destroy(toggleObject);
+                Destroy(selectHandler.gameObject);
             }
 
             stageSelectUIHandlerList.Clear();
@@ -180,11 +192,11 @@ namespace UI
                         bicSelectIndex = i;
                     }
                 }
+                
+                SetSettingUIRPC(false);
 
                 GameManager.Instance.SetStage(nextStageList[bicSelectIndex]);
             }
-            
-            gameObject.SetActive(false);
         }
 
         #region Vraiable RPC Function
@@ -207,11 +219,10 @@ namespace UI
         }
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-        public void ReadyRPC(int index)
-        {
-            var value = NetworkReadyArray.Get(index);
-            NetworkReadyArray.Set(index, !value);
-        }
+        public void SetVoteCountRPC(int index, int value) => StageVoteCount.Set(index, value);
+
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void ReadyRPC(int index, NetworkBool value) =>NetworkReadyArray.Set(index, value);
 
         #endregion
     }

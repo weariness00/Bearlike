@@ -37,6 +37,7 @@ namespace Script.Photon
         public float[] spawnIntervals; // 스폰 간격, 1개일 경우 반복 여러개일 경우 순차적으로 실행
         private int _spawnIntervalCount;
         [Networked] private TickTimer CurrentSpawnInterval { get; set; } // 현재 스폰 간격
+        [Networked] public NetworkBool IsSpawn { get; set; } // 현재 스폰중인지
         
         public Action<GameObject> SpawnSuccessAction; // 스폰 되면 실행하는 이벤트
         private Coroutine _currentSpawnCoroutine = null; // 스폰 코루틴
@@ -64,6 +65,12 @@ namespace Script.Photon
                 DebugManager.LogWarning($"{name}에 스폰할 네트워크 객체가 없습니다.");
                 return;
             }
+            if (IsSpawn)
+            {
+                return;
+            }
+
+            SetIsSpawnRPC(true);
             
             spawnPlace.Initialize();
 
@@ -82,6 +89,7 @@ namespace Script.Photon
         // 스폰 정지
         public void SpawnStop()
         {
+            SetIsSpawnRPC(false);
             if(_currentSpawnCoroutine != null) StopCoroutine(_currentSpawnCoroutine);
         }
 
@@ -199,6 +207,13 @@ namespace Script.Photon
                 ++spawnCount.Current;
             }
         }
+
+        #region RPC Function
+
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void SetIsSpawnRPC(NetworkBool value) => IsSpawn = value;
+
+        #endregion
     }
 }
 

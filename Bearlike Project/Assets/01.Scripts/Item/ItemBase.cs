@@ -33,7 +33,8 @@ namespace Item
         public void Awake()
         {
             rigidbody = GetComponent<Rigidbody>();
-            
+
+            gameObject.layer = LayerMask.NameToLayer("Item");
             tag = "Item";
         }
 

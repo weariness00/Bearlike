@@ -15,6 +15,11 @@ namespace UI
         public void Update()
         {
             timeText.text = TimeString((int)stage.timeLimit.Current);
+
+            if (stage.isStageClear)
+            {
+                Destroy(gameObject);
+            }
         }
 
         string TimeString(int minute)

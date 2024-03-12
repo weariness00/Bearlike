@@ -129,7 +129,7 @@ namespace Photon
                 {
                     await Instance._runner.LoadScene(sceneRef, parameters, setActiveOnLoad);
                 }
-
+                
                 DebugManager.Log($"씬 불러오기 성공 : {sceneRef}");
             }
         }
@@ -189,7 +189,7 @@ namespace Photon
             await _runner.StartGame(new StartGameArgs()
             {
                 GameMode = mode,
-                SessionName = "sss",
+                SessionName = "ssssss",
                 Scene = scene,
                 MatchmakingMode = MatchmakingMode.FillRoom,
                 SceneManager = gameObject.GetOrAddComponent<NetworkSceneManagerDefault>(),
@@ -387,6 +387,11 @@ namespace Photon
             DebugManager.Log($"종료 : {player}");
 
             UserData.Instance.UserDictionary.Remove(player);
+
+            if (runner.ActivePlayers.ToList().Count == 0)
+            {
+                runner.Shutdown();
+            }
         }
 
         public void OnInput(NetworkRunner runner, NetworkInput input)

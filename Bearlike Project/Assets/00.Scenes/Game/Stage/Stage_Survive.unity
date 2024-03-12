@@ -777,13 +777,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1243412666}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 1.07, z: -5.23}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1136499893}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1001 &1724630862
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -844,6 +844,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 238595165733266923, guid: 101bc9cd97923c245984784c4a880499,
         type: 3}
+      propertyPath: timeLimit._max
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 238595165733266923, guid: 101bc9cd97923c245984784c4a880499,
+        type: 3}
       propertyPath: nextStagePortal
       value: 
       objectReference: {fileID: 2091827528}
@@ -857,6 +862,11 @@ PrefabInstance:
       propertyPath: stageGameObject
       value: 
       objectReference: {fileID: 1776461677}
+    - target: {fileID: 2253607829557828854, guid: 101bc9cd97923c245984784c4a880499,
+        type: 3}
+      propertyPath: m_ExcludeLayers.m_Bits
+      value: 1073753015
+      objectReference: {fileID: 0}
     - target: {fileID: 2883367473362974006, guid: 101bc9cd97923c245984784c4a880499,
         type: 3}
       propertyPath: SortKey

@@ -27,6 +27,11 @@ namespace UI
                 killText.text = stage.monsterKillCount.Current.ToString();
                 _killCount = stage.monsterKillCount.Current;
             }
+
+            if (stage.isStageClear)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }
