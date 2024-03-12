@@ -9,8 +9,8 @@ using Fusion.Addons.Physics;
 using Fusion.Photon.Realtime;
 using Fusion.Sockets;
 using Manager;
-using Script.Data;
-using Script.Photon;
+using Newtonsoft.Json;
+using ProjectUpdate;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -47,20 +47,20 @@ namespace Photon
 
         #region Session Info
 
-        struct SessionInfo : IEnumerable<SessionInfo>
+        public struct RoomInfo : IEnumerable<RoomInfo>
         {
-            public string Name;
-            public int PlayerCount;
-            public bool IsStart;
+            [JsonProperty("Session Name")]public string Name;
+            [JsonProperty("Player Count")]public int PlayerCount;
+            [JsonProperty("Is Game Start")]public bool IsGameStart;
 
-            public SessionInfo(string name)
+            public RoomInfo(string name)
             {
                 Name = name;
                 PlayerCount = 1;
-                IsStart = false;
+                IsGameStart = false;
             }
 
-            public IEnumerator<SessionInfo> GetEnumerator()
+            public IEnumerator<RoomInfo> GetEnumerator()
             {
                 yield return this;
             }
@@ -184,7 +184,7 @@ namespace Photon
             {
                 sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
             }
-
+            
             // Start or join (depends on gamemode) a session with a specific name   
             await _runner.StartGame(new StartGameArgs()
             {
@@ -209,50 +209,15 @@ namespace Photon
                               "세션에 인원이 없으면 들어 갈 수 있게 해야됨\n" +
                               "누군가가 세션을 나가면 정보 업데이트 해줘야함\n" +
                               "세션에 한명도 없으면 json에 세션 지워줘야함");
-            // var fileName = "Lobby Session";
-            // string createSessionName = null;
-            // while (true)
+            await Matching(GameMode.AutoHostOrClient, "asd");
+            
+            // WebManager.DownloadJson(WebURL.RoomURL, "", async (json) =>
             // {
-            //     createSessionName = null;
-            //     var sessionNames = GoogleStorageManager.FileListFromBucket(fileName);
-            //     for (var i = 0; i < sessionNames.Length; i++)
-            //     {
-            //         if (sessionNames[i].Equals())
-            //         {
-            //             createSessionName = sessionInfos[i].Name;
-            //             ++sessionInfos[i].PlayerCount;
-            //             break;
-            //         }
-            //     }
-            //     JsonConvertExtension.Load(fileName, (data) =>
-            //     {
-            //         var sessionInfos = JsonConvert.DeserializeObject<SessionInfo[]>(data);
-            //
-            //
-            //         if (createSessionName == null)
-            //         {
-            //             var sessionNames = sessionInfos.Select(info => info.Name).ToArray();
-            //             createSessionName = GetRandomSessionName(sessionNames);
-            //             var newSessionInfo = new SessionInfo(createSessionName);
-            //             sessionInfos.AddRange(newSessionInfo);
-            //         }
-            //
-            //         JsonConvertExtension.Save(JsonConvert.SerializeObject(sessionInfos), fileName);
-            //     });
-            //     if (ProjectUpdateManager.UploadJsonToStorage(fileName))
-            //     {
-            //         break;
-            //     }
-            // }
-            //
-            // if (createSessionName == null)
-            // {
-            //     DebugManager.LogError("서버와의 연결 상태가 좋지 않습니다. 다시 시도해주세요");
-            //     return;
-            // }
-            //
-            // await Matching(GameMode.AutoHostOrClient, createSessionName);
-            await Matching(GameMode.AutoHostOrClient, "a");
+            //     RoomInfo[] roomInfos = JsonConvert.DeserializeObject<RoomInfo[]>(json);
+            //     var sessionNames = roomInfos.Select(room => room.Name).ToArray();
+            //     var sessionName = GetRandomSessionName(sessionNames);
+            //     await Matching(GameMode.AutoHostOrClient, sessionName);
+            // }, false, false);
         }
 
         async Task MakeRoom()

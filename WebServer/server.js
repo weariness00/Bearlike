@@ -8,18 +8,30 @@ app.listen(PORT, '0.0.0.0',() => {
 });
 
 const length = 4;
+const MatachingRunning = false;
 
 const DonwloadList = '/DownloadList';
 const DefaultKeySetting = '/KeySetting/Default';
 const StageLootingTable = '/LootingTable/Stage';
 const MonsterLootingTable = '/LootingTable/Monster';
-const URLList = [DonwloadList, DefaultKeySetting, StageLootingTable, MonsterLootingTable]
+const MathcingRoom = "/Room Information"
+const URLList = [DonwloadList, DefaultKeySetting, StageLootingTable, MonsterLootingTable, MathcingRoom]
 
 const DonwloadListQuery = query("SELECT * FROM bearlike.download");
 const KeySettingQuery = query("SELECT * FROM bearlike.keysetting");
 const MonsterLootingTableQuery = query("SELECT * FROM bearlike.monster_looting_table");
 const StageLootingTableQuery = query("SELECT * FROM bearlike.stage_looting_table");
-const QueryList = [DonwloadListQuery, KeySettingQuery, MonsterLootingTableQuery, StageLootingTableQuery]
+const MatchingRoomQuery = () => {
+    if(MatachingRunning)
+    {
+        return MatachingRunning
+    }
+    else
+    {
+        return query("SELECT * FROM bearlike.Matching Room");
+    }
+}
+const QueryList = [DonwloadListQuery, KeySettingQuery, MonsterLootingTableQuery, StageLootingTableQuery, MatchingRoomQuery]
 
 for (let i = 0; i < length; i++) {
     app.get(URLList[i], async (req,res) => await LoadSQL(req,res, QueryList[i]));

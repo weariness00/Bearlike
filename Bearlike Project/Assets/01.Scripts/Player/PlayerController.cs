@@ -96,7 +96,6 @@ namespace Player
                 WeaponControl(data);
                 SkillControl(data);
             }
-
             CheckInteract();
         }
 
@@ -161,6 +160,11 @@ namespace Player
         // 상호 작용
         void CheckInteract()
         {
+            if (HasInputAuthority == false)
+            {
+                return;
+            }
+            
             Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
             var hitOptions = HitOptions.IncludePhysX | HitOptions.IgnoreInputAuthority;
             DebugManager.DrawRay(ray.origin, ray.direction * interactLength, Color.red, 1.0f);
