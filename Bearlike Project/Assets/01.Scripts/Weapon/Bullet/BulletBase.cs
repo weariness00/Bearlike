@@ -22,7 +22,7 @@ namespace Weapon.Bullet
             transform.position += transform.forward * speed * Time.deltaTime;
         }
 
-        private void OnCollisionEnter(Collision other)
+        private void OnTriggerEnter(Collider other)
         {
             // if (other.gameObject.CompareTag("Destruction"))
             // {

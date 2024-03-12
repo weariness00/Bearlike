@@ -26,6 +26,7 @@ namespace Weapon.Gun
 
         public override void BulletInit()
         {
+            base.BulletInit();
             magazine.Max = magazine.Current = 6;
         }
         

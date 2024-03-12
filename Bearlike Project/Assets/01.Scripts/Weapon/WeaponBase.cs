@@ -21,7 +21,8 @@ namespace Weapon
     public class WeaponBase : NetworkBehaviour, IEquipment
     {
         public StatusBase status;
-
+        public LayerMask includeCollide;
+        
         [Header("기본 이펙트")]
         public VisualEffect hitEffect; // 타격 이펙트
 
