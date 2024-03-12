@@ -40,6 +40,7 @@ namespace BehaviorTree
 
         private float _playerCount;
         private float _durationTime;
+        private int _targetPlayerIndex;
 
         [SerializeField] private float attackRange = 3; // 발차기 감지 범위
         [SerializeField] private float rushRange = 10; // 돌진 감지 범위
@@ -82,22 +83,12 @@ namespace BehaviorTree
             _animator.Animator.SetBool(Walk, true);
             
             StartCoroutine(WalkCorutine(0.5f));
-            // StartCoroutine(BTCorutine(5.0f));
         }
 
         private void Update()
         {
             _btRunner.Operator();
         }
-
-        // IEnumerator BTCorutine(float waitTime)
-        // {
-        //     while (true)
-        //     {
-        //         _btRunner.Operator();
-        //         yield return new WaitForSeconds(waitTime);
-        //     }
-        // }
 
         IEnumerator WalkCorutine(float waitTime)
         {
@@ -128,33 +119,38 @@ namespace BehaviorTree
                     (
                         new List<INode>()
                         {
-                            // new ActionNode(StopDefence),
                             new SequenceNode
                             (
                                 new List<INode>()
                                 {   // Deffence
                                     new ActionNode(CheckMoreHp), 
                                     new ActionNode(StartDefence),
+                                    new ActionNode(TermFuction),
                                 }
                             ),
                             new SequenceNode
                             (
                                 new List<INode>()
-                                {
-                                    new ActionNode(CheckRunAction), // Run
+                                {   // Run
                                     new ActionNode(StartRun),
+                                    new ActionNode(TermFuction),
                                 }
                             )
                         }
                     ),
-                    new SequenceNode
-                    (
-                        new List<INode>()
-                        {
-                            new ActionNode(CheckAttackAction), // Kick
-                            new ActionNode(CheckAttackDistance),
-                            new ActionNode(StartAttack),
-                            new ActionNode(TermFuction),
+                    new SelectorNode(
+                        new List<INode>(){
+                            new SequenceNode
+                            (
+                                new List<INode>()
+                                {
+                                    new ActionNode(CheckAttackAction), // Kick
+                                    new ActionNode(CheckAttackDistance),
+                                    new ActionNode(StartAttack),
+                                    new ActionNode(TermFuction),
+                                }
+                            ),
+                            new ActionNode(SuccessFunction),
                         }
                     ),
                     new SelectorNode
@@ -170,26 +166,26 @@ namespace BehaviorTree
                                     new ActionNode(TermFuction),
                                 }
                             ),
-                            // new SequenceNode
-                            // (
-                            //     new List<INode>()
-                            //     {
-                            //         new ActionNode(CheckJumpAttackAction), // JumpAttack
-                            //         new ActionNode(StartJumpAttack),
-                            //         // new ActionNode(ReleaseInteger),
-                            //     }
-                            // )
+                            new SequenceNode
+                            (
+                                new List<INode>()
+                                {
+                                    new ActionNode(CheckJumpAttackAction), // JumpAttack
+                                    new ActionNode(StartJumpAttack),
+                                    new ActionNode(TermFuction),
+                                }
+                            )
                         }
                     ),
-                    // new SequenceNode
-                    // (
-                    //     new List<INode>()
-                    //     {
-                    //         new ActionNode(CheckFartAction), // fart
-                    //         new ActionNode(StartFart),
-                    //         // new ActionNode(ReleaseInteger),
-                    //     }
-                    // ),
+                    new SequenceNode
+                    (
+                        new List<INode>()
+                        {
+                            new ActionNode(CheckFartAction), // fart
+                            new ActionNode(StartFart),
+                            new ActionNode(TermFuction),
+                        }
+                    ),
                     // take a rest
                     // sleep
                 }
@@ -220,6 +216,11 @@ namespace BehaviorTree
                 return INode.NodeState.Success;
             }
             return INode.NodeState.Running;
+        }
+
+        INode.NodeState SuccessFunction()
+        {
+            return INode.NodeState.Success;
         }
         
         #region Walk
@@ -288,7 +289,6 @@ namespace BehaviorTree
             }
         }
 
-        // TODO: check변수를 두개 만들까 아님 애니메이션 평가하는 함수에 job을 넣을까
         INode.NodeState CheckMoreHp()
         {
             NativeArray<float> results = new NativeArray<float>(1, Allocator.TempJob);
@@ -333,38 +333,25 @@ namespace BehaviorTree
                 return INode.NodeState.Running;
             }
             _animator.Animator.SetTrigger(Defence);
+            _durationTime = _gameManager.PlayTimer;
+            
             return INode.NodeState.Success;
         }
-
-        // INode.NodeState StopDefence()
-        // {
-        //     if (_gameManager.PlayTimer - _durationTime > 3.0f && _animator.GetBool(IsDefence))
-        //     {
-        //         _animator.SetBool(IsDefence, false);
-        //         _durationTime = 0;
-        //         return INode.NodeState.Success;
-        //     }
-        //
-        //     return INode.NodeState.Failure;
-        // }
 
         #endregion
 
         #region 도주
 
-        INode.NodeState CheckRunAction()
-        {
-            // TODO : 도주는 어떻게 해야될까? Walk로 해야하나?
-            // if (IsAnimationRunning("도주 애니메이션"))
-            // {
-            //     return INode.NodeState.Running;
-            // }
-            return INode.NodeState.Success;
-        }
-
         INode.NodeState StartRun()
         {
-            // _animator.SetTrigger("tRun");
+            if (IsAnimationRunning("piggy_run"))
+            {
+                return INode.NodeState.Running;
+            }
+            
+            _animator.SetTrigger("Run");
+            _durationTime = _gameManager.PlayTimer;
+            
             return INode.NodeState.Success;
         }
         
@@ -381,17 +368,25 @@ namespace BehaviorTree
         
         private struct CheckDistanceJob : IJobParallelFor
         {
-            public NativeArray<bool> Result;
+            public NativeArray<bool> Results;
+            public NativeArray<float> Distances;
             public NativeArray<Vector3> PlayerPosition;
             public Vector3 PiggyPosition;
             public float DetectingRange;
             
             public void Execute(int index)
             {
-                if (FastDistance(PiggyPosition, PlayerPosition[index]) < DetectingRange)
-                    Result[index] = true;
+                var distance = FastDistance(PiggyPosition, PlayerPosition[index]);
+                if ( distance < DetectingRange)
+                {
+                    Results[index] = true;
+                }
                 else
-                    Result[index] = false;
+                {
+                    Results[index] = false;
+                }
+                
+                Distances[index] = distance;
             }
         }
         
@@ -413,17 +408,14 @@ namespace BehaviorTree
             // TODO : NativeArraty를 계속 사용하면 성능 저하 가능성 있으니, 일반 멤버변수로 만드는 방법으로 벤치마킹 해보자.
 
             // NativeArray<bool> results = new NativeArray<bool>((int)_playerCount, Allocator.TempJob);
+            // NativeArray<float> distances = new NativeArray<float>((int)_playerCount, Allocator.TempJob);
             // NativeArray<Vector3> playerPosition = new NativeArray<Vector3>((int)_playerCount, Allocator.TempJob);
             
             NativeArray<bool> results = new NativeArray<bool>(1, Allocator.TempJob);
+            NativeArray<float> distances = new NativeArray<float>(1, Allocator.TempJob);
             NativeArray<Vector3> playerPosition = new NativeArray<Vector3>(1, Allocator.TempJob);
 
             Vector3 piggyPosition = transform.position;
-
-            // for (int index = 0; index < (int)_playerCount; index++)
-            // {
-            //     playerPosition[index] = _players[index].transform.position;
-            // }
             
             for (int index = 0; index < 1; index++)
             {
@@ -432,7 +424,8 @@ namespace BehaviorTree
             
             CheckDistanceJob job = new CheckDistanceJob()
             {
-                Result = results,
+                Results = results,
+                Distances = distances,
                 PlayerPosition = playerPosition,
                 PiggyPosition = piggyPosition,
                 DetectingRange = attackRange
@@ -444,13 +437,20 @@ namespace BehaviorTree
             jobHandle.Complete();
 
             bool checkResult = false;
-            
-            foreach (var result in results)
-            {
-                checkResult |= result;
-            }
+            float maxDistance = attackRange;
 
+            for (int index = 0; index < (int)_playerCount; ++index)
+            {
+                if (results[index] && (distances[index] < maxDistance))
+                {
+                    checkResult |= results[index];
+                    maxDistance = distances[index];
+                    _targetPlayerIndex = index;
+                }
+            }
+            
             results.Dispose();
+            distances.Dispose();
             playerPosition.Dispose();
             
             if (checkResult)
@@ -464,18 +464,13 @@ namespace BehaviorTree
         INode.NodeState StartAttack()
         {
             _animator.Animator.SetFloat(AttackType, 0.0f);
-            // 바로 넘어가면서 값이 변한다. ==> 사이에 간격을 띄우자
             _animator.Animator.SetTrigger(Attack);
             _durationTime = _gameManager.PlayTimer;
             
+            _rb.transform.LookAt(_players[_targetPlayerIndex].transform);
+            
             return INode.NodeState.Success;
         }
-
-        // INode.NodeState ReleaseInteger()
-        // {
-        //     _animator.SetFloat(AttackType, -1.0f);
-        //     return INode.NodeState.Success;
-        // }
         
         #endregion
 
@@ -490,15 +485,18 @@ namespace BehaviorTree
             return INode.NodeState.Success;
         }
         
+        // TODO : 러쉬의 범위를 제안하면 점프 공격의 패턴이 거의 안나올 가능성이 있기에 러쉬의 범위제한을 없애는 방향으로 가거나, 점프공격을 포물선으로 움직이게 하면 되지 않을까
         // 거리 체크 
         INode.NodeState CheckRushDistance()
         {
             // NativeArray<bool> results = new NativeArray<bool>((int)_playerCount, Allocator.TempJob);
+            // NativeArray<float> distances = new NativeArray<float>((int)_playerCount, Allocator.TempJob);
             // NativeArray<Vector3> playerPosition = new NativeArray<Vector3>((int)_playerCount, Allocator.TempJob);
             
             NativeArray<bool> results = new NativeArray<bool>(1, Allocator.TempJob);
+            NativeArray<float> distances = new NativeArray<float>(1, Allocator.TempJob);
             NativeArray<Vector3> playerPosition = new NativeArray<Vector3>(1, Allocator.TempJob);
-            
+   
             Vector3 piggyPosition = transform.position;
 
             for (int index = 0; index < (int)_playerCount; index++)
@@ -508,7 +506,8 @@ namespace BehaviorTree
             
             CheckDistanceJob job = new CheckDistanceJob()
             {
-                Result = results,
+                Results = results,
+                Distances = distances,
                 PlayerPosition = playerPosition,
                 PiggyPosition = piggyPosition,
                 DetectingRange = rushRange
@@ -522,13 +521,20 @@ namespace BehaviorTree
             jobHandle.Complete();
 
             bool checkResult = false;
-            
-            foreach (var result in results)
-            {
-                checkResult |= result;
-            }
+            float maxDistance = rushRange;
 
+            for (int index = 0; index < (int)_playerCount; ++index)
+            {
+                if (results[index] && (distances[index] < maxDistance))
+                {
+                    checkResult |= results[index];
+                    maxDistance = distances[index];
+                    _targetPlayerIndex = index;
+                }
+            }
+            
             results.Dispose();
+            distances.Dispose();
             playerPosition.Dispose();
 
             if (checkResult)
@@ -544,6 +550,8 @@ namespace BehaviorTree
             _animator.Animator.SetFloat(AttackType, 3);
             _animator.Animator.SetTrigger(Attack);
             _durationTime = _gameManager.PlayTimer;
+            
+            _rb.transform.LookAt(_players[_targetPlayerIndex].transform);
             
             return INode.NodeState.Success;
         }
