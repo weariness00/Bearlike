@@ -16,8 +16,8 @@ namespace Player
         {
             if (HasInputAuthority == false)
             {
-                Destroy(targetCamera.gameObject);
-                Destroy(weaponCamera.gameObject);
+                Destroy(targetCamera);
+                Destroy(weaponCamera);
                 return;
             }
 

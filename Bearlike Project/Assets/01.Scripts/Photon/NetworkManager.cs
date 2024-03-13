@@ -288,43 +288,6 @@ namespace Photon
             await Matching(GameMode.Client, "a");
         }
 
-        private string GetRandomSessionName(string[] sessionNames)
-        {
-            string randomName;
-
-            bool isSuccess = false;
-            while (true)
-            {
-                randomName = RandomString("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890", 6);
-                isSuccess = true;
-                foreach (var sessionName in sessionNames)
-                {
-                    if (randomName.Equals(sessionName))
-                    {
-                        isSuccess = false;
-                        break;
-                    }
-                }
-
-                if (isSuccess)
-                {
-                    break;
-                }
-            }
-
-            return randomName;
-        }
-
-        private string RandomString(string text, int length)
-        {
-            System.Random random = new System.Random();
-            string randomString = new string(Enumerable.Repeat(text, length)
-                .Select(s => s[random.Next(s.Length)])
-                .ToArray());
-
-            return randomString;
-        }
-
         private bool IsValidSessionName(string[] sessionNames, string searchSessionName)
         {
             foreach (var sessionName in sessionNames)

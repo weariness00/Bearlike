@@ -2,6 +2,7 @@ const express = require('express')
 const app = express();
 const { query } = require('./db');
 const PORT = process.env.PORT || 3000;
+import * as matching from './MatchingRoom.js';
 
 app.listen(PORT, '0.0.0.0',() => {
   console.log(`Server is running on http://localhost:${PORT}`);
@@ -36,6 +37,8 @@ const QueryList = [DonwloadListQuery, KeySettingQuery, MonsterLootingTableQuery,
 for (let i = 0; i < length; i++) {
     app.get(URLList[i], async (req,res) => await LoadSQL(req,res, QueryList[i]));
 }
+
+setInterval(matching.GCMathcingRoom, 10000);
 
 async function LoadSQL (req, res, q)
 {
