@@ -27,6 +27,7 @@ namespace BehaviorTree
         private BehaviorTreeRunner _btRunner;
         private NetworkMecanimAnimator _animator = null;
         private StatusBase _status;
+        private ParticleSystem _particleSystem;
 
         private GameManager _gameManager;
         private UserData _userData;
@@ -39,11 +40,22 @@ namespace BehaviorTree
         #region 속성
 
         private float _playerCount;
-        private float _durationTime;
-        private int _targetPlayerIndex;
+        private float _durationTime;                        // Action간의 딜레이 시간
+        private int _targetPlayerIndex;                     // target으로 지정되는 Player의 index
 
-        [SerializeField] private float attackRange = 3; // 발차기 감지 범위
-        [SerializeField] private float rushRange = 10; // 돌진 감지 범위
+        #region 회전
+
+        private const float RotationDuration = 1.0f;
+
+        private Quaternion _targetRotation; // 목표 회전값
+        private float _timePassed = 0f; // 회전 보간에 사용될 시간 변수
+
+        private float _rotationlastTime;
+
+        #endregion
+        
+        [SerializeField] private float attackRange = 20;    // 발차기 감지 범위
+        [SerializeField] private float rushRange = 100;     // 돌진 감지 범위
 
         private static readonly int Walk = Animator.StringToHash("isWalk");
         
@@ -62,6 +74,7 @@ namespace BehaviorTree
             _animator = GetComponent<NetworkMecanimAnimator>();
             _btRunner = new BehaviorTreeRunner(SettingBT());
             _status = GetComponent<MonsterStatus>();
+            _particleSystem = GetComponentInChildren<ParticleSystem>();
         }
 
         private void Start()
@@ -85,7 +98,7 @@ namespace BehaviorTree
             StartCoroutine(WalkCorutine(0.5f));
         }
 
-        private void Update()
+        public override void FixedUpdateNetwork()
         {
             _btRunner.Operator();
         }
@@ -112,9 +125,6 @@ namespace BehaviorTree
             (
                 new List<INode>()
                 {
-                    // new ActionNode(WalkAround), // Walk
-                    // // new ActionNode(StopWalk),
-                    // new ActionNode(CheckWalkAction),
                     new SelectorNode
                     (
                         new List<INode>()
@@ -147,6 +157,7 @@ namespace BehaviorTree
                                 {
                                     new ActionNode(CheckAttackAction), // Kick
                                     new ActionNode(CheckAttackDistance),
+                                    new ActionNode(StartRotate),
                                     new ActionNode(StartAttack),
                                     new ActionNode(TermFuction),
                                 }
@@ -154,60 +165,63 @@ namespace BehaviorTree
                             new ActionNode(SuccessFunction),
                         }
                     ),
-                    new SelectorNode
-                    (
-                        new List<INode>()
-                        {
-                            new SequenceNode(
-                                new List<INode>()
-                                {
-                                    new ActionNode(CheckRushAction), // Rush
-                                    new ActionNode(CheckRushDistance),
-                                    new ActionNode(StartRush),
-                                    new ActionNode(TermFuction),
-                                }
-                            ),
-                            new SequenceNode
-                            (
-                                new List<INode>()
-                                {
-                                    new ActionNode(CheckJumpAttackAction), // JumpAttack
-                                    new ActionNode(StartJumpAttack),
-                                    new ActionNode(TermFuction),
-                                }
-                            )
-                        }
-                    ),
-                    new SequenceNode
-                    (
-                        new List<INode>()
-                        {
-                            new ActionNode(CheckFartAction), // fart
-                            new ActionNode(StartFart),
-                            new ActionNode(TermFuction),
-                        }
-                    ),
-                    new SequenceNode
-                    (    // take a rest
-                        new List<INode>()
-                        {
-                            new ActionNode(CheckRestAction),
-                            new ActionNode(CheckRestHp),
-                            new ActionNode(StartRest),
-                            new ActionNode(TermFuction),
-                        }
-                    ),
-                    new SequenceNode
-                    (   // CoinAttack
-                        new List<INode>()
-                        {
-                            
-                            new ActionNode(StartCoinAttack),
-                            new ActionNode(TermFuction),
-                        }
-                    ),
-                    
-                    // sleep
+                    // new SelectorNode
+                    // (
+                    //     new List<INode>()
+                    //     {
+                    //         new SequenceNode(
+                    //             new List<INode>()
+                    //             {
+                    //                 new ActionNode(CheckRushAction), // Rush
+                    //                 new ActionNode(CheckRushDistance),
+                    //                 new ActionNode(StartRotate),
+                    //                 new ActionNode(StartRush),
+                    //                 new ActionNode(TermFuction),
+                    //             }
+                    //         ),
+                    //         new SequenceNode
+                    //         (
+                    //             new List<INode>()
+                    //             {
+                    //                 new ActionNode(CheckJumpAttackAction), // JumpAttack
+                    //                 new ActionNode(StartRotate),
+                    //                 new ActionNode(StartJumpAttack),
+                    //                 new ActionNode(TermFuction),
+                    //             }
+                    //         )
+                    //     }
+                    // ),
+                    // new SequenceNode
+                    // (
+                    //     new List<INode>()
+                    //     {
+                    //         new ActionNode(CheckFartAction), // fart
+                    //         new ActionNode(StartFart),
+                    //         new ActionNode(TermFuction),
+                    //     }
+                    // ),
+                    // new SequenceNode
+                    // (    // take a rest
+                    //     new List<INode>()
+                    //     {
+                    //         new ActionNode(CheckRestAction),
+                    //         new ActionNode(CheckRestHp),
+                    //         new ActionNode(StartRest),
+                    //         new ActionNode(TermFuction),
+                    //     }
+                    // ),
+                    // new SequenceNode
+                    // (   // CoinAttack
+                    //     new List<INode>()
+                    //     {
+                    //         new ActionNode(CheckCoinAttackAction),
+                    //         new ActionNode(CheckCoinAttackDistance),
+                    //         new ActionNode(StartCoinAttack),
+                    //         new ActionNode(TermFuction),
+                    //     }
+                    // ),
+                    //
+                    // // sleep
                 }
             );
         }
@@ -233,6 +247,7 @@ namespace BehaviorTree
         {
             if (_gameManager.PlayTimer - _durationTime > 5.0f)
             {
+                _particleSystem.Stop();
                 return INode.NodeState.Success;
             }
             return INode.NodeState.Running;
@@ -352,6 +367,7 @@ namespace BehaviorTree
             {
                 return INode.NodeState.Running;
             }
+            _particleSystem.Play();
             _animator.Animator.SetTrigger(Defence);
             _durationTime = _gameManager.PlayTimer;
             
@@ -482,19 +498,39 @@ namespace BehaviorTree
             
             if (checkResult)
             {
+                Vector3 targetDirection = _players[_targetPlayerIndex].transform.position - transform.position;
+                _targetRotation = Quaternion.LookRotation(targetDirection);
+                
+                _rotationlastTime = _gameManager.PlayTimer;
+                
                 return INode.NodeState.Success;
             }
             
             return INode.NodeState.Failure;
         }
 
+        INode.NodeState StartRotate()
+        {
+            _timePassed += _gameManager.PlayTimer - _rotationlastTime;
+            
+            transform.rotation = Quaternion.Slerp(transform.rotation, _targetRotation, _timePassed / RotationDuration);
+            
+            if (_timePassed >= RotationDuration)
+            {
+                _timePassed = 0.0f;
+                return INode.NodeState.Success;
+            }
+
+            _rotationlastTime = _gameManager.PlayTimer;
+            
+            return INode.NodeState.Running;
+        }
+        
         INode.NodeState StartAttack()
         {
             _animator.Animator.SetFloat(AttackType, 0.0f);
             _animator.Animator.SetTrigger(Attack);
             _durationTime = _gameManager.PlayTimer;
-            
-            _rb.transform.LookAt(_players[_targetPlayerIndex].transform);
             
             return INode.NodeState.Success;
         }
@@ -566,6 +602,11 @@ namespace BehaviorTree
 
             if (checkResult)
             {
+                Vector3 targetDirection = _players[_targetPlayerIndex].transform.position - transform.position;
+                _targetRotation = Quaternion.LookRotation(targetDirection);
+                
+                _rotationlastTime = _gameManager.PlayTimer;
+                
                 return INode.NodeState.Success;
             }
             
@@ -578,15 +619,13 @@ namespace BehaviorTree
             _animator.Animator.SetTrigger(Attack);
             _durationTime = _gameManager.PlayTimer;
             
-            _rb.transform.LookAt(_players[_targetPlayerIndex].transform);
-            
             return INode.NodeState.Success;
         }
 
         #endregion
 
         #region JumpAttack
-
+        
         INode.NodeState CheckJumpAttackAction()
         {
             if (IsAnimationRunning("Attack_Blend"))
@@ -597,9 +636,65 @@ namespace BehaviorTree
             return INode.NodeState.Success;
         }
         
+        INode.NodeState CheckJumpAttackDistance()
+        {
+            NativeArray<bool> results = new NativeArray<bool>((int)_playerCount, Allocator.TempJob);
+            NativeArray<float> distances = new NativeArray<float>((int)_playerCount, Allocator.TempJob);
+            NativeArray<Vector3> playerPosition = new NativeArray<Vector3>((int)_playerCount, Allocator.TempJob);
+            
+            // NativeArray<bool> results = new NativeArray<bool>(1, Allocator.TempJob);
+            // NativeArray<float> distances = new NativeArray<float>(1, Allocator.TempJob);
+            // NativeArray<Vector3> playerPosition = new NativeArray<Vector3>(1, Allocator.TempJob);
+   
+            Vector3 piggyPosition = transform.position;
+
+            for (int index = 0; index < (int)_playerCount; index++)
+            {
+                playerPosition[index] = _players[index].transform.position;
+            }
+            
+            CheckDistanceJob job = new CheckDistanceJob()
+            {
+                Results = results,
+                Distances = distances,
+                PlayerPosition = playerPosition,
+                PiggyPosition = piggyPosition,
+                DetectingRange = rushRange
+            };
+            
+            // TODO : 배치크기는 어떻게해야 가장 효율이 좋을까?
+            // JobHandle jobHandle = job.Schedule((int)_playerCount, 3);            
+            JobHandle jobHandle = job.Schedule(1, 3);
+            
+            jobHandle.Complete();
+
+            float maxDistance = 999.0f;
+
+            for (int index = 0; index < (int)_playerCount; ++index)
+            {
+                if (distances[index] < maxDistance)
+                {
+                    maxDistance = distances[index];
+                    _targetPlayerIndex = index;
+                }
+            }
+            
+            results.Dispose();
+            distances.Dispose();
+            playerPosition.Dispose();
+            
+            Vector3 targetDirection = _players[_targetPlayerIndex].transform.position - transform.position;
+            _targetRotation = Quaternion.LookRotation(targetDirection);
+                
+            _rotationlastTime = _gameManager.PlayTimer;
+
+            return INode.NodeState.Success;
+        }
+        
         INode.NodeState StartJumpAttack()
         {
             _animator.Animator.SetInteger(AttackType, 2);
+            
             return INode.NodeState.Success;
         }
 
@@ -674,6 +769,74 @@ namespace BehaviorTree
 
         #region CoinAttack
 
+        INode.NodeState CheckCoinAttackAction()
+        {
+            if (IsAnimationRunning("Attack_Blend"))
+            {
+                return INode.NodeState.Running;
+            }
+
+            return INode.NodeState.Success;
+        }
+
+        INode.NodeState CheckCoinAttackDistance()
+        {
+            NativeArray<bool> results = new NativeArray<bool>((int)_playerCount, Allocator.TempJob);
+            NativeArray<float> distances = new NativeArray<float>((int)_playerCount, Allocator.TempJob);
+            NativeArray<Vector3> playerPosition = new NativeArray<Vector3>((int)_playerCount, Allocator.TempJob);
+            
+            // NativeArray<bool> results = new NativeArray<bool>(1, Allocator.TempJob);
+            // NativeArray<float> distances = new NativeArray<float>(1, Allocator.TempJob);
+            // NativeArray<Vector3> playerPosition = new NativeArray<Vector3>(1, Allocator.TempJob);
+   
+            Vector3 piggyPosition = transform.position;
+
+            for (int index = 0; index < (int)_playerCount; index++)
+            {
+                playerPosition[index] = _players[index].transform.position;
+            }
+            
+            CheckDistanceJob job = new CheckDistanceJob()
+            {
+                Results = results,
+                Distances = distances,
+                PlayerPosition = playerPosition,
+                PiggyPosition = piggyPosition,
+                DetectingRange = rushRange
+            };
+            
+            // TODO : 배치크기는 어떻게해야 가장 효율이 좋을까?
+            // JobHandle jobHandle = job.Schedule((int)_playerCount, 3);            
+            JobHandle jobHandle = job.Schedule(1, 3);
+
+            
+            jobHandle.Complete();
+
+            bool checkResult = false;
+            float maxDistance = rushRange;
+
+            for (int index = 0; index < (int)_playerCount; ++index)
+            {
+                if (results[index] && (distances[index] < maxDistance))
+                {
+                    checkResult |= results[index];
+                    maxDistance = distances[index];
+                    _targetPlayerIndex = index;
+                }
+            }
+            
+            results.Dispose();
+            distances.Dispose();
+            playerPosition.Dispose();
+
+            if (checkResult)
+            {
+                return INode.NodeState.Success;
+            }
+            
+            return INode.NodeState.Failure;
+        }
+        
         // TODO : CoinAttack의 패턴 조건은 무엇으로 할까.
         INode.NodeState StartCoinAttack()
         {
