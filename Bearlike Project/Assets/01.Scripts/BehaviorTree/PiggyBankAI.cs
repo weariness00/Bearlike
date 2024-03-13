@@ -134,6 +134,7 @@ namespace BehaviorTree
                                 {   // Run
                                     new ActionNode(StartRun),
                                     new ActionNode(TermFuction),
+                                    new ActionNode(StopRun),
                                 }
                             )
                         }
@@ -186,7 +187,26 @@ namespace BehaviorTree
                             new ActionNode(TermFuction),
                         }
                     ),
-                    // take a rest
+                    new SequenceNode
+                    (    // take a rest
+                        new List<INode>()
+                        {
+                            new ActionNode(CheckRestAction),
+                            new ActionNode(CheckRestHp),
+                            new ActionNode(StartRest),
+                            new ActionNode(TermFuction),
+                        }
+                    ),
+                    new SequenceNode
+                    (   // CoinAttack
+                        new List<INode>()
+                        {
+                            
+                            new ActionNode(StartCoinAttack),
+                            new ActionNode(TermFuction),
+                        }
+                    ),
+                    
                     // sleep
                 }
             );
@@ -354,6 +374,13 @@ namespace BehaviorTree
             
             return INode.NodeState.Success;
         }
+
+        INode.NodeState StopRun()
+        {
+            _animator.Animator.Play("piggy_idle");
+
+            return INode.NodeState.Success;
+        }
         
         #endregion
 
@@ -485,17 +512,17 @@ namespace BehaviorTree
             return INode.NodeState.Success;
         }
         
-        // TODO : 러쉬의 범위를 제안하면 점프 공격의 패턴이 거의 안나올 가능성이 있기에 러쉬의 범위제한을 없애는 방향으로 가거나, 점프공격을 포물선으로 움직이게 하면 되지 않을까
+        // TODO : 러쉬의 범위를 제안하면 점프 공격의 패턴이 거의 안나올 가능성이 있기에 러쉬의 범위제한을 없애는 방향으로 가거나 점프공격을 포물선으로 움직이게 하면 되지 않을까
         // 거리 체크 
         INode.NodeState CheckRushDistance()
         {
-            // NativeArray<bool> results = new NativeArray<bool>((int)_playerCount, Allocator.TempJob);
-            // NativeArray<float> distances = new NativeArray<float>((int)_playerCount, Allocator.TempJob);
-            // NativeArray<Vector3> playerPosition = new NativeArray<Vector3>((int)_playerCount, Allocator.TempJob);
+            NativeArray<bool> results = new NativeArray<bool>((int)_playerCount, Allocator.TempJob);
+            NativeArray<float> distances = new NativeArray<float>((int)_playerCount, Allocator.TempJob);
+            NativeArray<Vector3> playerPosition = new NativeArray<Vector3>((int)_playerCount, Allocator.TempJob);
             
-            NativeArray<bool> results = new NativeArray<bool>(1, Allocator.TempJob);
-            NativeArray<float> distances = new NativeArray<float>(1, Allocator.TempJob);
-            NativeArray<Vector3> playerPosition = new NativeArray<Vector3>(1, Allocator.TempJob);
+            // NativeArray<bool> results = new NativeArray<bool>(1, Allocator.TempJob);
+            // NativeArray<float> distances = new NativeArray<float>(1, Allocator.TempJob);
+            // NativeArray<Vector3> playerPosition = new NativeArray<Vector3>(1, Allocator.TempJob);
    
             Vector3 piggyPosition = transform.position;
 
@@ -593,6 +620,66 @@ namespace BehaviorTree
         INode.NodeState StartFart()
         {
             _animator.Animator.SetFloat(AttackType, 4);
+            return INode.NodeState.Success;
+        }
+
+        #endregion
+
+        #region Rest
+
+        INode.NodeState CheckRestAction()
+        {
+            if (IsAnimationRunning("piggy_rest"))
+            {
+                return INode.NodeState.Running;
+            }
+
+            return INode.NodeState.Success;
+        }
+        
+        INode.NodeState CheckRestHp()
+        {
+            NativeArray<float> results = new NativeArray<float>(1, Allocator.TempJob);
+
+            CheckHpJob Job = new CheckHpJob()
+            {
+                Current = _status.hp.Current,
+                Max = _status.hp.Max,
+                Result = results
+            };
+
+            JobHandle jobHandle = Job.Schedule();
+
+            jobHandle.Complete();
+
+            float result = results[0];
+            results.Dispose();
+
+            if (result <= 0.5f) // 정밀한 검사 필요
+            {
+                return INode.NodeState.Success;
+            }
+
+            return INode.NodeState.Failure;
+        }
+        
+        INode.NodeState StartRest()
+        {
+            _animator.Animator.SetTrigger(Rest);
+
+            return INode.NodeState.Success;
+        }
+
+        #endregion
+
+        #region CoinAttack
+
+        // TODO : CoinAttack의 패턴 조건은 무엇으로 할까.
+        INode.NodeState StartCoinAttack()
+        {
+            _animator.Animator.SetTrigger(Attack);
+            _animator.Animator.SetFloat(AttackType, 1);
+
             return INode.NodeState.Success;
         }
 
