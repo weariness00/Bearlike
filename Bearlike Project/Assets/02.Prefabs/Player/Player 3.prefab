@@ -246,12 +246,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Weight: 1
   m_Data:
-    m_ConstrainedObject: {fileID: 0}
+    m_ConstrainedObject: {fileID: 63170840848993537}
     m_SourceObjects:
-      m_Length: 0
+      m_Length: 1
       m_Item0:
-        transform: {fileID: 0}
-        weight: 0
+        transform: {fileID: 2941348180688335052}
+        weight: 1
       m_Item1:
         transform: {fileID: 0}
         weight: 0
@@ -273,9 +273,9 @@ MonoBehaviour:
       m_Item7:
         transform: {fileID: 0}
         weight: 0
-    m_Offset: {x: 0, y: 0, z: 0}
-    m_MinLimit: -180
-    m_MaxLimit: 180
+    m_Offset: {x: 0, y: 35, z: 0}
+    m_MinLimit: -60
+    m_MaxLimit: 60
     m_AimAxis: 4
     m_UpAxis: 2
     m_WorldUpType: 0
@@ -1561,7 +1561,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 63170840848993537}
-  - component: {fileID: 712100366175922076}
   m_Layer: 0
   m_Name: "\uBA38\uB9AC"
   m_TagString: Untagged
@@ -1586,28 +1585,6 @@ Transform:
   - {fileID: 8092966103560474968}
   m_Father: {fileID: 6873415420095817130}
   m_LocalEulerAnglesHint: {x: -0.005959169, y: 0.43488356, z: 0.7851293}
---- !u!114 &712100366175922076
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7797262244898891050}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad91edbe3ef34b7bab3715a0d9d0a50a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weight: 0.811
-  targetTransform: {fileID: 6198660998370685422}
-  range:
-    _min: -30
-    _max: 30
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
 --- !u!1 &8339735508567356426
 GameObject:
   m_ObjectHideFlags: 0
