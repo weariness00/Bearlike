@@ -12,6 +12,7 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.VFX;
 using Allocator = Unity.Collections.Allocator;
 
@@ -55,8 +56,10 @@ namespace BehaviorTree
 
         #endregion
         
-        [SerializeField] private float attackRange = 20;    // 발차기 감지 범위
-        [SerializeField] private float rushRange = 100;     // 돌진 감지 범위
+        [SerializeField] private float attackRange = 20;        // 발차기 감지 범위
+        [SerializeField] private float rushRange = 100;         // 돌진 감지 범위
+        [SerializeField] private float coinAtaackMinRange = 50;   // 코인 공격 최소 감지 범위
+        [SerializeField] private float coinAtaackMaxRange = 150;   // 코인 공격 최대 감지 범위
 
         private static readonly int Walk = Animator.StringToHash("isWalk");
         
@@ -87,6 +90,8 @@ namespace BehaviorTree
             
             attackRange = 20;
             rushRange = 100;
+            coinAtaackMinRange = 50;
+            coinAtaackMaxRange = 150;
             
             _animator.Animator.SetFloat(AttackType, 0);
             _animator.Animator.SetBool(Walk, true);
@@ -761,10 +766,31 @@ namespace BehaviorTree
             return INode.NodeState.Success;
         }
 
+        private struct CheckCoinAttackDistanceJob : IJobParallelFor
+        {
+            public NativeArray<bool> Results;
+            public NativeArray<Vector3> PlayerPosition;
+            public Vector3 PiggyPosition;
+            public float DetectingMaxRange;
+            public float DetectingMinRange;
+            
+            public void Execute(int index)
+            {
+                var distance = FastDistance(PiggyPosition, PlayerPosition[index]);
+                if (DetectingMinRange <= distance && distance <= DetectingMaxRange)
+                {
+                    Results[index] = true;
+                }
+                else
+                {
+                    Results[index] = false;
+                }
+            }
+        }
+        
         INode.NodeState CheckCoinAttackDistance()
         {
             NativeArray<bool> results = new NativeArray<bool>((int)_playerCount, Allocator.TempJob);
-            NativeArray<float> distances = new NativeArray<float>((int)_playerCount, Allocator.TempJob);
             NativeArray<Vector3> playerPosition = new NativeArray<Vector3>((int)_playerCount, Allocator.TempJob);
    
             Vector3 piggyPosition = transform.position;
@@ -774,13 +800,13 @@ namespace BehaviorTree
                 playerPosition[index] = _players[index].transform.position;
             }
             
-            CheckDistanceJob job = new CheckDistanceJob()
+            CheckCoinAttackDistanceJob job = new CheckCoinAttackDistanceJob()
             {
                 Results = results,
-                Distances = distances,
                 PlayerPosition = playerPosition,
                 PiggyPosition = piggyPosition,
-                DetectingRange = rushRange
+                DetectingMaxRange = coinAtaackMaxRange,
+                DetectingMinRange = coinAtaackMinRange,
             };
             
             // TODO : 배치크기는 어떻게해야 가장 효율이 좋을까?
@@ -789,20 +815,13 @@ namespace BehaviorTree
             jobHandle.Complete();
 
             bool checkResult = false;
-            float maxDistance = rushRange;
 
-            for (int index = 0; index < (int)_playerCount; ++index)
+            foreach (var result in results)
             {
-                if (results[index] && (distances[index] < maxDistance))
-                {
-                    checkResult |= results[index];
-                    maxDistance = distances[index];
-                    _targetPlayerIndex = index;
-                }
+                checkResult |= result;
             }
             
             results.Dispose();
-            distances.Dispose();
             playerPosition.Dispose();
 
             if (checkResult)

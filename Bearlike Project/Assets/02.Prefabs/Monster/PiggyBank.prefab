@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5482712788491506339}
   - component: {fileID: 6047216710551401663}
   m_Layer: 0
-  m_Name: vfx
+  m_Name: shield_vfx
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -598,6 +598,8 @@ MonoBehaviour:
   movementSpeed: 1
   attackRange: 3
   rushRange: 10
+  coinAtaackMinRange: 50
+  coinAtaackMaxRange: 150
 --- !u!114 &-8839284892445065463
 MonoBehaviour:
   m_ObjectHideFlags: 0
