@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Data;
 using Fusion;
+using GamePlay;
 using GamePlay.StageLevel;
 using Manager;
 using Photon;
@@ -15,22 +16,20 @@ namespace UI
     public class StageSelectUI : NetworkBehaviour
     {
         private int clientNumber = -1;
-
+        
         #region Network Variable
 
         private ChangeDetector _changeDetector;
         [Networked] public NetworkBool IsSettingUI { get; set; }
         [Networked] [Capacity(3)] private NetworkArray<NetworkBool> NetworkReadyArray { get; } // 투표를 마치고 준비가 되었는지
-        [Networked] [Capacity(3)] public NetworkArray<int> StageVoteCount { get; }
-        [Networked] [Capacity(3)] public NetworkArray<StageLevelType> NetworkStageLevelTypes { get; }
-        [Networked] [Tooltip("스테이지 선택지 개수")] public int StageChoiceCount { get; set; } = 2;
+        [Networked] [Capacity(2)] public NetworkArray<int> StageVoteCount { get; }
+        [Networked] [Capacity(2)] public NetworkArray<StageLevelType> NetworkStages { get; }
 
         #endregion
 
-        public List<StageLevelBase> nextStageList = new List<StageLevelBase>();
+        public List<StageData> nextStageList = new List<StageData>();
 
         [Header("스테이지 선택 버튼")] public Button selectButton;
-
         [Header("스테이지 정보 그룹")] public Transform stageToggleGroup;
         public GameObject stageSelectUIPrefab;
         private List<StageSelectUIHandler> stageSelectUIHandlerList = new List<StageSelectUIHandler>();
@@ -94,7 +93,7 @@ namespace UI
         
         public void UpdateVoteText()
         {
-            for (int i = 0; i < StageChoiceCount; i++)
+            for (int i = 0; i < NetworkStages.Length; i++)
             {
                 int stageVoteCount = StageVoteCount.Get(i);
                 stageSelectUIHandlerList[i].voteText.text = stageVoteCount.ToString();
@@ -118,19 +117,19 @@ namespace UI
                 return;
             }
 
-            for (int i = 0; i < StageChoiceCount; i++)
+            // 스테이지 최대치이면 보스 스테이지로 가도록 하기
+            NetworkStages.Clear();
+            for (int i = 0; i < NetworkStages.Length; i++)
             {
-                var index = i;
-                var stage = GameManager.Instance.GetRandomStage();
-                NetworkStageLevelTypes.Set(index, stage.stageLevelInfo.StageLevelType);
+                var stageData = GameManager.Instance.GetRandomStage();
+                NetworkStages.Set(i, stageData.info.StageLevelType);
             }
-
-            // Vote, Ready UI 초기화
-            for (int i = 0; i < 3; i++)
-            {
-                ReadyRPC(i, false);
-                SetVoteCountRPC(i, 0);
-            }
+            
+            // Vote 초기화
+            StageVoteCount.Clear();
+            
+            // Ready 초기화
+            NetworkReadyArray.Clear();
             
             SetSettingUIRPC(true);
         }
@@ -143,17 +142,21 @@ namespace UI
             }
 
             stageSelectUIHandlerList.Clear();
-            for (int i = 0; i < StageChoiceCount; i++)
+            for (int i = 0; i < NetworkStages.Length; i++)
             {
-                StageLevelBase stage;
-                if (NetworkManager.Instance.isTest)
+                StageData stageData;
+                if (GameManager.Instance.stageCount.isMax)
                 {
-                    stage = GameManager.Instance.GetStageIndex(i);
+                    stageData = GameManager.Instance.GetBossStage();
+                }
+                else if (NetworkManager.Instance.isTest)
+                {
+                    stageData = GameManager.Instance.GetStageIndex(i);
                 }
                 else
                 {
-                    var stageType = NetworkStageLevelTypes.Get(i);
-                    stage = GameManager.Instance.GetStageIndex((int)stageType);
+                    var stageType = NetworkStages.Get(i);
+                    stageData = GameManager.Instance.GetStageIndex((int)stageType);
                 }
                 var index = i;
                 var stageSelectUIObject = Instantiate(stageSelectUIPrefab, stageToggleGroup);
@@ -163,14 +166,14 @@ namespace UI
                     FixeVoteCountRPC(index, value);
                 });
                 stageSelectUIHandler.gameObject.SetActive(true);
-                stageSelectUIHandler.Setting(stage.stageLevelInfo);
+                stageSelectUIHandler.Setting(stageData.info);
                 
-                if (nextStageList.Count >= StageChoiceCount)
+                if (nextStageList.Count >= NetworkStages.Length)
                 {
                     nextStageList.Clear();
                 }
                 stageSelectUIHandlerList.Add(stageSelectUIHandler);
-                nextStageList.Add(stage);
+                nextStageList.Add(stageData);
             }
 
             gameObject.SetActive(true);

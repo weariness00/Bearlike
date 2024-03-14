@@ -6,6 +6,6 @@ namespace Util
     public interface IInteract
     {
         public bool IsInteract { get; set; }
-        public Action<GameObject> Action { get; set; }
+        public Action<GameObject> InteractAction { get; set; }
     }
 }

@@ -251,6 +251,8 @@ namespace GamePlay.StageLevel
             {
                 return;
             }
+
+            GameManager.Instance.stageCount.Current++;
             StopMonsterSpawn();
 
             prevStagePortal.IsConnect = true;

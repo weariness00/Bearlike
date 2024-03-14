@@ -174,7 +174,7 @@ namespace Player
                 if (interact is { IsInteract: true } && 
                     KeyManager.InputActionDown(KeyToAction.Interact))
                 {
-                    interact.Action?.Invoke(gameObject);
+                    interact.InteractAction?.Invoke(gameObject);
                     DebugManager.ToDo("상호작용이 가능할 경우 상호작용 키 UI 띄어주기");
                 }
             }

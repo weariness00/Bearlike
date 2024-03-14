@@ -42,10 +42,16 @@ namespace Monster.Container
 
         private INode InitBT()
         {
+            var move = new ActionNode(Move);
+            var attack = new ActionNode(Attack);
+            
             var sqeunce = new SequenceNode(
                 new ActionNode(FindTarget),
-                new ActionNode(DecisionNextAct)
-                );
+                new SelectorNode(
+                    false,
+                    new Detector(() => CheckTargetDis(3f), attack),
+                    move
+                ));
         
             return sqeunce;
         }
@@ -103,6 +109,17 @@ namespace Monster.Container
 
             return dis;
         }
+        
+        /// <summary>
+        /// 타겟과의 거리를 판단하여 인자로 넣은 값과 비교해 거리가 인자보다 낮으면 true
+        /// </summary>
+        /// <param name="checkDis">이 거리보다 낮으면 True, 높으면 False</param>
+        /// <returns></returns>
+        private bool CheckTargetDis(float checkDis)
+        {
+            var dis = DistanceFromTarget(targetTransform.position);
+            return dis < checkDis;
+        }
 
         #endregion
 
@@ -158,29 +175,6 @@ namespace Monster.Container
             return INode.NodeState.Success; 
         }
 
-        // Target과의 거리에 따라 다음 행동 판단
-        private INode.NodeState DecisionNextAct()
-        {
-            if (targetTransform == null)
-            {
-                return Move();
-            }
-            else
-            {
-                var dis = DistanceFromTarget(targetTransform.position);
-                if (dis < status.attackRange.Current) // 기본 공격
-                {
-                    return Attack();
-                }
-                else
-                {
-                    return Move();
-                }
-            }
-            
-            return INode.NodeState.Success;
-        }
-
         private INode.NodeState Move()
         {
             moveDelay.Current += Runner.DeltaTime;
@@ -203,6 +197,10 @@ namespace Monster.Container
                         {
                             dir = SetRotateDir(path.corners[1]);
                         }
+                    }
+                    else
+                    {
+                        dir = SetRotateDir(targetTransform.position);
                     }
                 }
 
@@ -231,6 +229,11 @@ namespace Monster.Container
             }
 
             return INode.NodeState.Success;
+        }
+
+        private INode.NodeState JumpAttack()
+        {
+            return INode.NodeState.Failure;
         }
 
         #endregion

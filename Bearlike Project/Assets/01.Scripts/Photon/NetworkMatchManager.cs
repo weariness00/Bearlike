@@ -13,14 +13,6 @@ namespace Photon
 
         public List<NetworkPrefabRef> PlayerPrefabRefs;
 
-        [Rpc(RpcSources.All,RpcTargets.All)]
-        public void DataUpdateRPC() => DataUpdate();
-        public void DataUpdate()
-        {
-            var items = NetworkUtil.DictionaryItems(UserData.Instance.UserDictionary);
-            roomUserUI.UpdateData(items);
-        }
-
         public void NextPlayerPrefab()
         {
             var userData = FindObjectOfType<UserData>();

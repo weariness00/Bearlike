@@ -23,6 +23,7 @@ namespace Photon
         public static int PlayerCount => Runner.ActivePlayers.ToArray().Length;
 
         public bool isTest = true; // 현재 테스트 상황인지
+        public SceneReference lobbyScene;
         
         private string[] _sessionNames;
         private NetworkRunner _runner;
@@ -315,7 +316,8 @@ namespace Photon
             DebugManager.Log($"종료 : {player}");
 
             UserData.Instance.UserDictionary.Remove(player);
-
+            UserData.Instance.UserLeftRPC(player);
+            
             if (runner.ActivePlayers.ToList().Count == 0)
             {
                 runner.Shutdown();
@@ -377,14 +379,15 @@ namespace Photon
         public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
         {
             var player = runner.LocalPlayer;
-            DebugManager.Log($"강제 종료 : {runner.LocalPlayer}");
+            DebugManager.Log($"서버 종료 : {runner.LocalPlayer}");
+
+            SceneManager.LoadScene(lobbyScene.ScenePath);
 
             UserData.Instance.UserDictionary.Remove(runner.LocalPlayer);
         }
 
         public void OnConnectedToServer(NetworkRunner runner)
         {
-
             DebugManager.Log("서버 연결 성공\n" +
                              $"세션 이름 : {runner.SessionInfo.Name}");
         }

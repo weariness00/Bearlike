@@ -1,22 +1,55 @@
 ﻿using System;
-using System.Collections.Generic;
 using Data;
 using Fusion;
-using GamePlay.StageLevel;
-using Script.Data;
-using Script.Photon;
+using Photon;
+using Script.Util;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class MatchRoomUserUI : MonoBehaviour
+public class MatchRoomUserUI : NetworkBehaviour
 {
     public TMP_Text[] users_Text;
+    public Button exitButton;
 
+    private void Awake()
+    {
+        exitButton.onClick.AddListener(OnExit);
+        UserData.Instance.UserJoinAction += (playerRef) => DataUpdateRPC();
+        UserData.Instance.UserLeftAction += (playerRef) => DataUpdateRPC();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            OnExit();
+        }
+    }
+    
+    [Rpc(RpcSources.All,RpcTargets.All)]
+    public void DataUpdateRPC() => DataUpdate();
+    public void DataUpdate()
+    {
+        var items = NetworkUtil.DictionaryItems(UserData.Instance.UserDictionary);
+        UpdateData(items);
+    }
+    
     public void UpdateData(UserDataStruct[] dataList)
     {
-        for (int i = 0; i < NetworkProjectConfig.Global.Simulation.PlayerCount && i < dataList.Length; i++)
+        for (int i = 0; i < 3; i++)
+        {
+            users_Text[i].text = "Unknown";
+        }
+
+        for (int i = 0; i < dataList.Length; i++)
         {
             users_Text[i].text = dataList[i].Name.ToString();
         }
+    }
+
+    public void OnExit()
+    {
+        NetworkManager.Runner.Shutdown();
     }
 }

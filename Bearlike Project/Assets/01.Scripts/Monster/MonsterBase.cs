@@ -13,6 +13,7 @@ namespace Monster
     public class MonsterBase : NetworkBehaviour
     {
         [HideInInspector] public Rigidbody rigidbody;
+        [HideInInspector] public NetworkMecanimAnimator networkAnimator;
         
         public int id = 0;
         public MonsterStatus status;
@@ -25,6 +26,7 @@ namespace Monster
         private void Awake()
         {
             rigidbody = GetComponent<Rigidbody>();
+            networkAnimator = GetComponent<NetworkMecanimAnimator>();
             
             status = gameObject.GetOrAddComponent<MonsterStatus>();
             lootingTable = gameObject.GetOrAddComponent<LootingTable>();

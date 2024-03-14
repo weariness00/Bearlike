@@ -304,6 +304,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _PlayTimer: 0
   _AlivePlayerCount: 0
+  _IsClearBossStage:
+    _value: 0
   _spawnPlace:
     _spotList:
     - {fileID: 1433198482}
@@ -313,12 +315,13 @@ MonoBehaviour:
     - {fileID: 1108002951}
   defaultStage: {fileID: 1763687602}
   stageList:
-  - {fileID: 8430227219849765713, guid: fe48cae74f1bd2a4d9af117ca76f8e11, type: 3}
-  - {fileID: 238595165733266923, guid: 101bc9cd97923c245984784c4a880499, type: 3}
+  - {fileID: 11400000, guid: 0554b3b4afaea5e49bf7caf67fb0debf, type: 2}
+  - {fileID: 11400000, guid: 14b41a720c17a6d4988dec80528b9eeb, type: 2}
+  - {fileID: 11400000, guid: e3922e8a7cc97b64286b73f31d4a0ebf, type: 2}
   currentStage: {fileID: 0}
   stageCount:
     _min: 0
-    _max: 0
+    _max: 1
     _current: 0
     isOverMax: 0
     isOverMin: 0
@@ -1890,8 +1893,7 @@ MonoBehaviour:
   _IsSettingUI:
     _value: 0
   _StageVoteCount: 
-  _NetworkStageLevelTypes: 
-  _StageChoiceCount: 2
+  _NetworkStages: 
   nextStageList: []
   selectButton: {fileID: 794771046}
   stageToggleGroup: {fileID: 34028900}
@@ -1986,6 +1988,8 @@ MonoBehaviour:
   spawnPlaceOrders: 
   spawnIntervals:
   - 3
+  _IsSpawn:
+    _value: 0
 --- !u!4 &1662219607
 Transform:
   m_ObjectHideFlags: 0
@@ -2092,7 +2096,7 @@ MonoBehaviour:
   _IsStageUnload: []
   _IsInit:
     _value: 0
-  _IsStart:
+  _IsStageStart:
     _value: 0
   sceneReference:
     sceneAsset: {fileID: 102900000, guid: e7baadc751a3c7842a48433dc69d5b99, type: 3}

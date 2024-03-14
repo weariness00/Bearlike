@@ -1,4 +1,5 @@
-﻿using Fusion;
+﻿using System;
+using Fusion;
 
 namespace Script.Util
 {
@@ -6,6 +7,7 @@ namespace Script.Util
     {
         public static TItem[] DictionaryItems<TKey, TItem>(NetworkDictionary<TKey, TItem> dictionary)
         {
+            if (dictionary.Count == 0) return Array.Empty<TItem>();
             TItem[] items = new TItem[dictionary.Count];
 
             int i = 0;
