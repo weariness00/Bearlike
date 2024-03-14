@@ -12,6 +12,7 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.VFX;
 using Allocator = Unity.Collections.Allocator;
 
 namespace BehaviorTree
@@ -27,7 +28,7 @@ namespace BehaviorTree
         private BehaviorTreeRunner _btRunner;
         private NetworkMecanimAnimator _animator = null;
         private StatusBase _status;
-        private ParticleSystem _particleSystem;
+        private VisualEffect _visualEffect;
 
         private GameManager _gameManager;
         private UserData _userData;
@@ -74,7 +75,7 @@ namespace BehaviorTree
             _animator = GetComponent<NetworkMecanimAnimator>();
             _btRunner = new BehaviorTreeRunner(SettingBT());
             _status = GetComponent<MonsterStatus>();
-            _particleSystem = GetComponentInChildren<ParticleSystem>();
+            _visualEffect = GetComponentInChildren<VisualEffect>();
         }
 
         private void Start()
@@ -83,12 +84,7 @@ namespace BehaviorTree
             _playerCount = _gameManager.AlivePlayerCount;
 
             _players = GameObject.FindGameObjectsWithTag("Player");
-
-            // TODO : foreach문에서 조건문을 계속 호출해서 성능 저하가 일어나는지 테스트 필요
-            // foreach (var player in _players)
-            // {
-            //     _playerPrefabs.Add(player);
-            // }
+            
             attackRange = 20;
             rushRange = 100;
             
@@ -102,7 +98,7 @@ namespace BehaviorTree
         {
             _btRunner.Operator();
         }
-
+        
         IEnumerator WalkCorutine(float waitTime)
         {
             while (true)
@@ -165,62 +161,62 @@ namespace BehaviorTree
                             new ActionNode(SuccessFunction),
                         }
                     ),
-                    // new SelectorNode
-                    // (
-                    //     new List<INode>()
-                    //     {
-                    //         new SequenceNode(
-                    //             new List<INode>()
-                    //             {
-                    //                 new ActionNode(CheckRushAction), // Rush
-                    //                 new ActionNode(CheckRushDistance),
-                    //                 new ActionNode(StartRotate),
-                    //                 new ActionNode(StartRush),
-                    //                 new ActionNode(TermFuction),
-                    //             }
-                    //         ),
-                    //         new SequenceNode
-                    //         (
-                    //             new List<INode>()
-                    //             {
-                    //                 new ActionNode(CheckJumpAttackAction), // JumpAttack
-                    //                 new ActionNode(StartRotate),
-                    //                 new ActionNode(StartJumpAttack),
-                    //                 new ActionNode(TermFuction),
-                    //             }
-                    //         )
-                    //     }
-                    // ),
-                    // new SequenceNode
-                    // (
-                    //     new List<INode>()
-                    //     {
-                    //         new ActionNode(CheckFartAction), // fart
-                    //         new ActionNode(StartFart),
-                    //         new ActionNode(TermFuction),
-                    //     }
-                    // ),
-                    // new SequenceNode
-                    // (    // take a rest
-                    //     new List<INode>()
-                    //     {
-                    //         new ActionNode(CheckRestAction),
-                    //         new ActionNode(CheckRestHp),
-                    //         new ActionNode(StartRest),
-                    //         new ActionNode(TermFuction),
-                    //     }
-                    // ),
-                    // new SequenceNode
-                    // (   // CoinAttack
-                    //     new List<INode>()
-                    //     {
-                    //         new ActionNode(CheckCoinAttackAction),
-                    //         new ActionNode(CheckCoinAttackDistance),
-                    //         new ActionNode(StartCoinAttack),
-                    //         new ActionNode(TermFuction),
-                    //     }
-                    // ),
-                    //
+                    new SelectorNode
+                    (
+                        new List<INode>()
+                        {
+                            new SequenceNode(
+                                new List<INode>()
+                                {
+                                    new ActionNode(CheckRushAction), // Rush
+                                    new ActionNode(CheckRushDistance),
+                                    new ActionNode(StartRotate),
+                                    new ActionNode(StartRush),
+                                    new ActionNode(TermFuction),
+                                }
+                            ),
+                            new SequenceNode
+                            (
+                                new List<INode>()
+                                {
+                                    new ActionNode(CheckJumpAttackAction), // JumpAttack
+                                    new ActionNode(StartRotate),
+                                    new ActionNode(StartJumpAttack),
+                                    new ActionNode(TermFuction),
+                                }
+                            )
+                        }
+                    ),
+                    new SequenceNode
+                    (
+                        new List<INode>()
+                        {
+                            new ActionNode(CheckFartAction), // fart
+                            new ActionNode(StartFart),
+                            new ActionNode(TermFuction),
+                        }
+                    ),
+                    new SequenceNode
+                    (    // take a rest
+                        new List<INode>()
+                        {
+                            new ActionNode(CheckRestAction),
+                            new ActionNode(CheckRestHp),
+                            new ActionNode(StartRest),
+                            new ActionNode(TermFuction),
+                        }
+                    ),
+                    new SequenceNode
+                    (   // CoinAttack
+                        new List<INode>()
+                        {
+                            new ActionNode(CheckCoinAttackAction),
+                            new ActionNode(CheckCoinAttackDistance),
+                            new ActionNode(StartCoinAttack),
+                            new ActionNode(TermFuction),
+                        }
+                    ),
+                    
                     // // sleep
                 }
             );
@@ -247,7 +243,9 @@ namespace BehaviorTree
         {
             if (_gameManager.PlayTimer - _durationTime > 5.0f)
             {
-                _particleSystem.Stop();
+                _visualEffect.Stop();
+                _animator.Animator.Play("piggy_walk");
+                
                 return INode.NodeState.Success;
             }
             return INode.NodeState.Running;
@@ -367,7 +365,7 @@ namespace BehaviorTree
             {
                 return INode.NodeState.Running;
             }
-            _particleSystem.Play();
+            _visualEffect.Play();
             _animator.Animator.SetTrigger(Defence);
             _durationTime = _gameManager.PlayTimer;
             
@@ -450,13 +448,9 @@ namespace BehaviorTree
             // TODO : 범위 탐색 코드 구현 필요
             // TODO : NativeArraty를 계속 사용하면 성능 저하 가능성 있으니, 일반 멤버변수로 만드는 방법으로 벤치마킹 해보자.
 
-            // NativeArray<bool> results = new NativeArray<bool>((int)_playerCount, Allocator.TempJob);
-            // NativeArray<float> distances = new NativeArray<float>((int)_playerCount, Allocator.TempJob);
-            // NativeArray<Vector3> playerPosition = new NativeArray<Vector3>((int)_playerCount, Allocator.TempJob);
-            
-            NativeArray<bool> results = new NativeArray<bool>(1, Allocator.TempJob);
-            NativeArray<float> distances = new NativeArray<float>(1, Allocator.TempJob);
-            NativeArray<Vector3> playerPosition = new NativeArray<Vector3>(1, Allocator.TempJob);
+            NativeArray<bool> results = new NativeArray<bool>((int)_playerCount, Allocator.TempJob);
+            NativeArray<float> distances = new NativeArray<float>((int)_playerCount, Allocator.TempJob);
+            NativeArray<Vector3> playerPosition = new NativeArray<Vector3>((int)_playerCount, Allocator.TempJob);
 
             Vector3 piggyPosition = transform.position;
             
@@ -475,8 +469,7 @@ namespace BehaviorTree
             };
             
             // TODO : 배치크기는 어떻게해야 가장 효율이 좋을까?
-            // JobHandle jobHandle = job.Schedule((int)_playerCount, 3);
-            JobHandle jobHandle = job.Schedule(1, 3);
+            JobHandle jobHandle = job.Schedule((int)_playerCount, 3);
             jobHandle.Complete();
 
             bool checkResult = false;
@@ -555,10 +548,6 @@ namespace BehaviorTree
             NativeArray<bool> results = new NativeArray<bool>((int)_playerCount, Allocator.TempJob);
             NativeArray<float> distances = new NativeArray<float>((int)_playerCount, Allocator.TempJob);
             NativeArray<Vector3> playerPosition = new NativeArray<Vector3>((int)_playerCount, Allocator.TempJob);
-            
-            // NativeArray<bool> results = new NativeArray<bool>(1, Allocator.TempJob);
-            // NativeArray<float> distances = new NativeArray<float>(1, Allocator.TempJob);
-            // NativeArray<Vector3> playerPosition = new NativeArray<Vector3>(1, Allocator.TempJob);
    
             Vector3 piggyPosition = transform.position;
 
@@ -577,9 +566,7 @@ namespace BehaviorTree
             };
             
             // TODO : 배치크기는 어떻게해야 가장 효율이 좋을까?
-            // JobHandle jobHandle = job.Schedule((int)_playerCount, 3);            
-            JobHandle jobHandle = job.Schedule(1, 3);
-
+            JobHandle jobHandle = job.Schedule((int)_playerCount, 3);          
             
             jobHandle.Complete();
 
@@ -641,10 +628,6 @@ namespace BehaviorTree
             NativeArray<bool> results = new NativeArray<bool>((int)_playerCount, Allocator.TempJob);
             NativeArray<float> distances = new NativeArray<float>((int)_playerCount, Allocator.TempJob);
             NativeArray<Vector3> playerPosition = new NativeArray<Vector3>((int)_playerCount, Allocator.TempJob);
-            
-            // NativeArray<bool> results = new NativeArray<bool>(1, Allocator.TempJob);
-            // NativeArray<float> distances = new NativeArray<float>(1, Allocator.TempJob);
-            // NativeArray<Vector3> playerPosition = new NativeArray<Vector3>(1, Allocator.TempJob);
    
             Vector3 piggyPosition = transform.position;
 
@@ -663,8 +646,7 @@ namespace BehaviorTree
             };
             
             // TODO : 배치크기는 어떻게해야 가장 효율이 좋을까?
-            // JobHandle jobHandle = job.Schedule((int)_playerCount, 3);            
-            JobHandle jobHandle = job.Schedule(1, 3);
+            JobHandle jobHandle = job.Schedule((int)_playerCount, 3);         
             
             jobHandle.Complete();
 
@@ -784,10 +766,6 @@ namespace BehaviorTree
             NativeArray<bool> results = new NativeArray<bool>((int)_playerCount, Allocator.TempJob);
             NativeArray<float> distances = new NativeArray<float>((int)_playerCount, Allocator.TempJob);
             NativeArray<Vector3> playerPosition = new NativeArray<Vector3>((int)_playerCount, Allocator.TempJob);
-            
-            // NativeArray<bool> results = new NativeArray<bool>(1, Allocator.TempJob);
-            // NativeArray<float> distances = new NativeArray<float>(1, Allocator.TempJob);
-            // NativeArray<Vector3> playerPosition = new NativeArray<Vector3>(1, Allocator.TempJob);
    
             Vector3 piggyPosition = transform.position;
 
@@ -806,9 +784,7 @@ namespace BehaviorTree
             };
             
             // TODO : 배치크기는 어떻게해야 가장 효율이 좋을까?
-            // JobHandle jobHandle = job.Schedule((int)_playerCount, 3);            
-            JobHandle jobHandle = job.Schedule(1, 3);
-
+            JobHandle jobHandle = job.Schedule((int)_playerCount, 3);     
             
             jobHandle.Complete();
 
