@@ -12,6 +12,7 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Serialization;
 using UnityEngine.VFX;
 using Allocator = Unity.Collections.Allocator;
@@ -30,6 +31,7 @@ namespace BehaviorTree
         private NetworkMecanimAnimator _animator = null;
         private StatusBase _status;
         private VisualEffect _visualEffect;
+        private NavMeshAgent _agent;
 
         private GameManager _gameManager;
         private UserData _userData;
@@ -79,6 +81,7 @@ namespace BehaviorTree
             _btRunner = new BehaviorTreeRunner(SettingBT());
             _status = GetComponent<MonsterStatus>();
             _visualEffect = GetComponentInChildren<VisualEffect>();
+            _agent = GetComponent<NavMeshAgent>();
         }
 
         private void Start()
@@ -244,6 +247,38 @@ namespace BehaviorTree
             return false;
         }
 
+        #region VFX Function
+
+        void PlayVFX(string vfxName)
+        {
+            GameObject targetObject = transform.Find(vfxName).gameObject;
+
+            if (targetObject != null)
+            {
+                _visualEffect = targetObject.GetComponent<VisualEffect>();
+                if (_visualEffect != null)
+                {
+                    _visualEffect.Play();
+                }
+            }
+        }
+        
+        void StopVFX(string vfxName)
+        {
+            GameObject targetObject = transform.Find(vfxName).gameObject;
+
+            if (targetObject != null)
+            {
+                _visualEffect = targetObject.GetComponent<VisualEffect>();
+                if (_visualEffect != null)
+                {
+                    _visualEffect.Stop();
+                }
+            }
+        }
+
+        #endregion
+        
         INode.NodeState TermFuction()
         {
             if (_gameManager.PlayTimer - _durationTime > 5.0f)
@@ -266,49 +301,59 @@ namespace BehaviorTree
         /// <summary>
         /// 돼지저금통이 이동하는 함수 ==> 추후에 정밀하게 이동할 예정
         /// </summary>
-        INode.NodeState WalkAround()
+        // INode.NodeState WalkAround()
+        // {
+        //     if (IsAnimationRunning("piggy_idle"))
+        //     {
+        //         _animator.Animator.SetBool(Walk, true);
+        //         _rb.velocity = new Vector3(0, 0, -movementSpeed);
+        //         
+        //         StartCoroutine(WalkAnimationWait(3.0f));
+        //     }
+        //
+        //     return INode.NodeState.Success;
+        // }
+        //
+        // IEnumerator WalkAnimationWait(float waitTime)
+        // {
+        //     yield return new WaitForSeconds(waitTime);
+        //     _animator.Animator.SetBool(Walk, false);
+        //     _rb.velocity = new Vector3(0, 0, 0);
+        // }
+        //
+        // INode.NodeState CheckWalkAction()
+        // {
+        //     if (IsAnimationRunning("piggy_walk"))
+        //     {
+        //         return INode.NodeState.Running;
+        //     }
+        //
+        //     return INode.NodeState.Success;
+        // }
+        //
+        //
+        // INode.NodeState StopWalk()
+        // {
+        //     if (IsAnimationRunning("piggy_walk"))
+        //     {
+        //         _animator.Animator.SetBool(Walk, false);
+        //         _rb.velocity = new Vector3(0, 0, 0);
+        //         return INode.NodeState.Success;
+        //     }
+        //
+        //     return INode.NodeState.Failure;
+        // }
+
+        INode.NodeState StartWalk()
         {
-            if (IsAnimationRunning("piggy_idle"))
-            {
-                _animator.Animator.SetBool(Walk, true);
-                _rb.velocity = new Vector3(0, 0, -movementSpeed);
-                
-                StartCoroutine(WalkAnimationWait(3.0f));
-            }
+            //TODO : 플레이어의 거리를 측정하거나 랜덤한 좌표에 가는 코드를 구현해야한다
+            // 그러려면 target을 가까운 플레이어나 유리한 위치를 찾는 알고리즘이 필요하다.
+            // GameObject target = 
+            // _agent.SetDestination(target.position);
 
             return INode.NodeState.Success;
         }
         
-        IEnumerator WalkAnimationWait(float waitTime)
-        {
-            yield return new WaitForSeconds(waitTime);
-            _animator.Animator.SetBool(Walk, false);
-            _rb.velocity = new Vector3(0, 0, 0);
-        }
-
-        INode.NodeState CheckWalkAction()
-        {
-            if (IsAnimationRunning("piggy_walk"))
-            {
-                return INode.NodeState.Running;
-            }
-
-            return INode.NodeState.Success;
-        }
-        
-
-        INode.NodeState StopWalk()
-        {
-            if (IsAnimationRunning("piggy_walk"))
-            {
-                _animator.Animator.SetBool(Walk, false);
-                _rb.velocity = new Vector3(0, 0, 0);
-                return INode.NodeState.Success;
-            }
-
-            return INode.NodeState.Failure;
-        }
-
         #endregion
 
         #region 방어 OR 도주
@@ -809,7 +854,6 @@ namespace BehaviorTree
                 DetectingMinRange = coinAtaackMinRange,
             };
             
-            // TODO : 배치크기는 어떻게해야 가장 효율이 좋을까?
             JobHandle jobHandle = job.Schedule((int)_playerCount, 3);     
             
             jobHandle.Complete();
@@ -832,12 +876,13 @@ namespace BehaviorTree
             return INode.NodeState.Failure;
         }
         
-        // TODO : CoinAttack의 패턴 조건은 무엇으로 할까.
         INode.NodeState StartCoinAttack()
         {
             _animator.Animator.SetTrigger(Attack);
             _animator.Animator.SetFloat(AttackType, 1);
 
+            // TODO : VFX를 받아와서 실행하고, 매개변수로 자식 객체의 이름를 받는 함수구현
+            
             return INode.NodeState.Success;
         }
 
