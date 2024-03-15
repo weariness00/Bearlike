@@ -20,7 +20,8 @@ namespace Monster
         public LootingTable lootingTable;
 
         public Transform targetTransform;
-
+        public LayerMask targetMask;
+        
         public Action DieAction;
 
         private void Awake()

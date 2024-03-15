@@ -44,12 +44,14 @@ namespace Monster.Container
         {
             var move = new ActionNode(Move);
             var attack = new ActionNode(Attack);
+            var jumpAttack = new ActionNode(JumpAttack);
+            var selectAttack = new SelectorNode(true, attack, jumpAttack);
             
             var sqeunce = new SequenceNode(
                 new ActionNode(FindTarget),
                 new SelectorNode(
                     false,
-                    new Detector(() => CheckTargetDis(3f), attack),
+                    new Detector(() => CheckTargetDis(3f), selectAttack),
                     move
                 ));
         
@@ -215,17 +217,18 @@ namespace Monster.Container
 
         private INode.NodeState Attack()
         {
-            var dir = (transform.position - targetTransform.position).normalized;
             var layerMaks = LayerMask.GetMask("Player");
             var hitOptions = HitOptions.IncludePhysX | HitOptions.IgnoreInputAuthority;
-            DebugManager.DrawRay(transform.position, dir * int.MaxValue, Color.red, 1.0f);
-            
-            // Player 만 Raycast 되도록 함
-            if (Runner.LagCompensation.Raycast(transform.position, dir, status.attackRange, Object.InputAuthority, out var hit, layerMaks, hitOptions))
+            Vector3[] attackDirs = new[] { transform.forward, -transform.forward, transform.right, -transform.right, transform.up, -transform.up };
+            foreach (var attackDir in attackDirs)
             {
-                if (hit.Hitbox == null) return INode.NodeState.Failure;
-                var hitStatus = hit.GameObject.GetComponent<StatusBase>();
-                hitStatus.ApplyDamageRPC(status.attack.Current, CrowdControl.Normality);
+                DebugManager.DrawRay(transform.position, attackDir* status.attackRange, Color.red, 3f);
+                if (Runner.LagCompensation.Raycast(transform.position, attackDir, status.attackRange, Object.InputAuthority, out var hit, layerMaks, hitOptions))
+                {
+                    if (hit.Hitbox == null) return INode.NodeState.Failure;
+                    var hitStatus = hit.GameObject.GetComponent<StatusBase>();
+                    hitStatus.ApplyDamageRPC(status.attack.Current, CrowdControl.Normality);
+                }
             }
 
             return INode.NodeState.Success;
@@ -233,6 +236,18 @@ namespace Monster.Container
 
         private INode.NodeState JumpAttack()
         {
+            Vector3 origin = transform.position;
+            float radius = 3f;
+            var hits = Physics.SphereCastAll(origin, radius, Vector3.zero, 0, targetMask);
+            DebugManager.DrawSphereRay(origin, Vector3.zero, radius, Color.red, 3f);
+            foreach (var hit in hits)
+            {
+                StatusBase playerStatus;
+                if (hit.transform.TryGetComponent(out playerStatus) || hit.transform.parent.TryGetComponent(out playerStatus))
+                {
+                    playerStatus.ApplyDamageRPC(status.attack.Current, CrowdControl.Normality);
+                }
+            }
             return INode.NodeState.Failure;
         }
 

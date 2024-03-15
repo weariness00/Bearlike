@@ -46,10 +46,22 @@ namespace Manager
 
         #endregion
 
+        
+        
         public static void DrawRay(Vector3 position, Vector3 direction, Color color, float time)
         {
             if (!DebugManager.Instance.isDebug || !DebugManager.Instance.drawRay) return;
             Debug.DrawRay(position, direction, color, time);
+        }
+
+        public static void DrawSphereRay(Vector3 position, Vector3 direction, float radius, Color color,  float time = 1f)
+        {
+            if (!DebugManager.Instance.isDebug || !DebugManager.Instance.drawRay) return;
+            var plusPosition = position * radius;
+            var minusPosition = -position * radius;
+            Debug.DrawLine(new Vector3(plusPosition.x, position.y, position.z), new Vector3(minusPosition.x, position.y, position.z));
+            Debug.DrawLine(new Vector3(position.x, plusPosition.y, position.z), new Vector3(position.x, minusPosition.y, position.z));
+            Debug.DrawLine(new Vector3(position.x, position.y, plusPosition.z), new Vector3(position.x, position.y, minusPosition.z));
         }
     }
 }
