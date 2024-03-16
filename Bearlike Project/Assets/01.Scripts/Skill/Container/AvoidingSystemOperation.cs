@@ -21,7 +21,7 @@ namespace Skill.SkillClass.SecondDoll
             
         }
 
-        public override void Run()
+        public override void Run(GameObject runObject)
         {
             var playerState = GameObject.Find("Player").GetComponent<PlayerStatus>();
 

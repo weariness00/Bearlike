@@ -91,7 +91,7 @@ namespace Skill.Container
             _previousPlayTime = _currentPlayTime;
         }
         
-        public override void Run()
+        public override void Run(GameObject runObject)
         {
             // 둘중 하나 채택
             // if(Math.Abs(CoolTime.Current - CoolTime.Min) < 1E-6)

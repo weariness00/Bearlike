@@ -31,6 +31,8 @@ namespace Monster
             
             status = gameObject.GetOrAddComponent<MonsterStatus>();
             lootingTable = gameObject.GetOrAddComponent<LootingTable>();
+
+            gameObject.layer = LayerMask.NameToLayer("Monster");
         }
         
         public virtual void Start()

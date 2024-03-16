@@ -218,7 +218,7 @@ namespace Player
         {
             if (data.FirstSkill)
             {
-                skillSystem.SkillList[0].Run();
+                skillSystem.SkillList[0].Run(gameObject);
             }
         }
 
