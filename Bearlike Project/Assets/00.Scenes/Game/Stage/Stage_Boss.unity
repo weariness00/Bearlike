@@ -133,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2580650}
   - component: {fileID: 2580651}
+  - component: {fileID: 2580652}
   m_Layer: 0
   m_Name: Boss Stage
   m_TagString: Untagged
@@ -176,7 +177,24 @@ MonoBehaviour:
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
+  - {fileID: 2580652}
   - {fileID: 1156301035}
+--- !u!114 &2580652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2580649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0
 --- !u!1 &86509851
 GameObject:
   m_ObjectHideFlags: 0
@@ -815,6 +833,7 @@ GameObject:
   - component: {fileID: 1937586245}
   - component: {fileID: 1937586247}
   - component: {fileID: 1937586246}
+  - component: {fileID: 1937586248}
   m_Layer: 0
   m_Name: Boss Stage Data
   m_TagString: Untagged
@@ -855,6 +874,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 1937586247}
+  - {fileID: 1937586248}
 --- !u!114 &1937586247
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -875,11 +895,7 @@ MonoBehaviour:
   sceneReference:
     sceneAsset: {fileID: 102900000, guid: 7954aa3effb8be0459f0756e44f88204, type: 3}
     scenePath: Assets/00.Scenes/Game/Stage/Stage_Boss.unity
-  stageLevelInfo:
-    StageLevelType: 0
-    title: 
-    explain: 
-    image: {fileID: 0}
+  stageData: {fileID: 11400000, guid: e3922e8a7cc97b64286b73f31d4a0ebf, type: 2}
   isStageClear: 0
   isStageOver: 0
   lootingTable: {fileID: 0}
@@ -912,6 +928,22 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+--- !u!114 &1937586248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1937586244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0
 --- !u!1 &1950841786
 GameObject:
   m_ObjectHideFlags: 0

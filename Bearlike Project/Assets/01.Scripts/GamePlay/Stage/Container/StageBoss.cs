@@ -9,7 +9,7 @@ using UnityEngine.Serialization;
 
 namespace GamePlay.Stage.Container
 {
-    public class StageBoss : StageLevelBase
+    public class StageBoss : StageBase
     {
         [Header("보스 정보")]
         public List<NetworkSpawner> bossSpawnerList;

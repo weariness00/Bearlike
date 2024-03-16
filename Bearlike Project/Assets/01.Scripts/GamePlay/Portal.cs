@@ -37,7 +37,7 @@ namespace GamePlay
             gameObject.layer = LayerMask.NameToLayer("Portal");
             spawnPlace.Initialize();
 
-            InteractAction += Teleport;
+            InteractInit();
         }
 
         public void SetPortal(Portal _otherP)
@@ -73,8 +73,14 @@ namespace GamePlay
             }
         }
 
+        public void InteractInit()
+        {
+            InteractEnterAction += Teleport;
+        }
+
         public bool IsInteract { get; set; }
-        public Action<GameObject> InteractAction { get; set; }
+        public Action<GameObject> InteractEnterAction { get; set; }
+        public Action<GameObject> InteractExitAction { get; set; }
     }
 }
 

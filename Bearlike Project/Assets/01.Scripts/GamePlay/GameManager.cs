@@ -2,6 +2,7 @@
 using System.Linq;
 using Data;
 using Fusion;
+using GamePlay.Stage;
 using GamePlay.StageLevel;
 using Manager;
 using Photon;
@@ -29,9 +30,9 @@ namespace GamePlay
         [SerializeField]private SpawnPlace _spawnPlace = new SpawnPlace();
 
         [Header("스테이지")]
-        public StageLevelBase defaultStage;
+        public StageBase defaultStage;
         [Tooltip("보스 스테이지를 마지막 인덱스에 넣어줘야함")]public List<StageData> stageList = new List<StageData>();
-        public StageLevelBase currentStage;
+        public StageBase currentStage;
         public StatusValue<int> stageCount = new StatusValue<int>();// 현재 몇번째 스테이지 인지
 
         #region Unity Event Function
@@ -58,7 +59,7 @@ namespace GamePlay
             {
                 DebugManager.ToDo("게임을 완전 클리어하면 로비로 돌아가는 포탈 생성해주기");
                 gameClearPortal.gameObject.SetActive(true);
-                gameClearPortal.InteractAction = async (obj) =>
+                gameClearPortal.InteractEnterAction = async (obj) =>
                 {
                     await NetworkManager.LoadScene(SceneType.Lobby);
                 };
@@ -107,7 +108,7 @@ namespace GamePlay
             await NetworkManager.LoadScene(stageData.sceneReference.ScenePath,LoadSceneMode.Additive, LocalPhysicsMode.Physics3D);
             async void OnSceneLoadDoneAction()
             {
-                foreach (var stageLevelBase in FindObjectsOfType<StageLevelBase>())
+                 foreach (var stageLevelBase in FindObjectsOfType<StageBase>())
                 {
                     // 이미 활성화된 스테이지
                     if (stageLevelBase.stageGameObject.activeSelf)
@@ -115,10 +116,10 @@ namespace GamePlay
                         continue;
                     }
 
-                    if (stageData.info.StageLevelType == stageLevelBase.stageLevelInfo.StageLevelType)
+                    if (stageData.info.stageType == stageLevelBase.StageInfo.stageType)
                     {
                         stageLevelBase.SetIsInitRPC(true);
-
+                        
                         DebugManager.Log($"씬 생성 후 초기화 완료 {stageData.sceneReference}");
                         break;
                     }

@@ -1,8 +1,6 @@
-﻿using Status;
-
-namespace GamePlay.StageLevel.Container
+﻿namespace GamePlay.Stage.Container
 {
-    public class StageDestroy : StageLevelBase
+    public class StageDestroy : StageBase
     {
         // public StatusValue<float> destroyTimeLimit = new StatusValue<float>();
 

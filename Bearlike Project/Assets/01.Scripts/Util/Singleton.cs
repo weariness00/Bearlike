@@ -1,4 +1,5 @@
-﻿using Unity.VisualScripting;
+﻿using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Util
@@ -38,6 +39,11 @@ namespace Util
                 var singletonObject = new GameObject(typeof(T).Name);
                 _instance = singletonObject.GetOrAddComponent<T>();
             }
+        }
+
+        private void OnApplicationQuit()
+        {
+            _instance = null;
         }
     }
 }

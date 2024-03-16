@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Data;
 using Fusion;
 using GamePlay;
+using GamePlay.Stage;
 using GamePlay.StageLevel;
 using Manager;
 using Photon;
@@ -23,7 +25,7 @@ namespace UI
         [Networked] public NetworkBool IsSettingUI { get; set; }
         [Networked] [Capacity(3)] private NetworkArray<NetworkBool> NetworkReadyArray { get; } // 투표를 마치고 준비가 되었는지
         [Networked] [Capacity(2)] public NetworkArray<int> StageVoteCount { get; }
-        [Networked] [Capacity(2)] public NetworkArray<StageLevelType> NetworkStages { get; }
+        [Networked] [Capacity(2)] public NetworkArray<StageType> NetworkStages { get; }
 
         #endregion
 
@@ -34,13 +36,17 @@ namespace UI
         public GameObject stageSelectUIPrefab;
         private List<StageSelectUIHandler> stageSelectUIHandlerList = new List<StageSelectUIHandler>();
 
+        private void Start()
+        {
+            StageBase.StageClearAction += SettingStageInfo;
+        }
+
         public override void Spawned()
         {
             _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
             
             clientNumber = UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber;
 
-            StageLevelBase.StageClearAction += SettingStageInfo;
             
             // 객체 동기화를 위한 함수
             if (IsSettingUI)
@@ -122,7 +128,7 @@ namespace UI
             for (int i = 0; i < NetworkStages.Length; i++)
             {
                 var stageData = GameManager.Instance.GetRandomStage();
-                NetworkStages.Set(i, stageData.info.StageLevelType);
+                NetworkStages.Set(i, stageData.info.stageType);
             }
             
             // Vote 초기화

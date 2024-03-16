@@ -11,7 +11,7 @@ namespace Weapon
 
         private void Awake()
         {
-            gun = gameObject.GetOrAddComponent<Maganum>();
+            gun = gameObject.GetOrAddComponent<Magnum>();
         }
 
         private void Start()

@@ -17,8 +17,10 @@ using Weapon;
 namespace Player
 {
     [RequireComponent(typeof(PlayerCameraController), typeof(PlayerStatus))]
-    public class PlayerController : NetworkBehaviour
+    public class PlayerController : NetworkBehaviour, IInteract
     {
+        private PlayerRef _playerRef;
+        
         // public Status status;
         [Header("컴포넌트")] public PlayerStatus status;
         public PlayerCameraController cameraController;
@@ -67,10 +69,10 @@ namespace Player
             {
                 name = "Local Player";
 
-                Runner.SetPlayerObject(Runner.LocalPlayer, Object);
+                // Runner.SetPlayerObject(Runner.LocalPlayer, Object);
                 // equipment?.Equip();
                 weaponSystem.gun?.Equip();
-
+                
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
             }
             else
@@ -95,8 +97,9 @@ namespace Player
                 MoveControl(data);
                 WeaponControl(data);
                 SkillControl(data);
+                CheckInteract(data);
             }
-            CheckInteract();
+            HpControl();
         }
 
         private void MoveControl(PlayerInputData data = default)
@@ -135,7 +138,12 @@ namespace Player
 
             if (data.Jump)
             {
-                jumpImpulse = Vector3.up * 100;
+                var hitOptions = HitOptions.IncludePhysX | HitOptions.IgnoreInputAuthority;
+                DebugManager.DrawRay(transform.position + new Vector3(0,0.03f,0), -transform.up * 0.1f, Color.blue, 1f);
+                if (Runner.LagCompensation.Raycast(transform.position + new Vector3(0,0.03f,0), -transform.up, 0.1f, Runner.LocalPlayer, out var hit,Int32.MaxValue , hitOptions))
+                {
+                    jumpImpulse = Vector3.up * status.jumpPower;
+                }
             }
 
             simpleKcc.Move(dir, jumpImpulse);
@@ -158,7 +166,7 @@ namespace Player
         }
 
         // 상호 작용
-        void CheckInteract()
+        void CheckInteract(PlayerInputData data)
         {
             if (HasInputAuthority == false)
             {
@@ -171,10 +179,16 @@ namespace Player
             if (Runner.LagCompensation.Raycast(ray.origin, ray.direction, interactLength, Object.InputAuthority, out var hit, Int32.MaxValue, hitOptions))
             {
                 var interact = hit.GameObject.GetComponent<IInteract>();
-                if (interact is { IsInteract: true } && 
-                    KeyManager.InputActionDown(KeyToAction.Interact))
+                if (interact is { IsInteract: true })
                 {
-                    interact.InteractAction?.Invoke(gameObject);
+                    if (data.Interact)
+                    {
+                        interact.InteractEnterAction?.Invoke(gameObject);
+                    }
+                    else
+                    {
+                        interact.InteractExitAction?.Invoke(gameObject);
+                    }
                     DebugManager.ToDo("상호작용이 가능할 경우 상호작용 키 UI 띄어주기");
                 }
             }
@@ -207,5 +221,97 @@ namespace Player
                 skillSystem.SkillList[0].Run();
             }
         }
+
+        /// <summary>
+        /// 체력이 0이면 부상
+        /// 부상에서 일정 시간이 지나면 죽음으로 바뀌게 하는 로직
+        /// </summary>
+        void HpControl()
+        {
+            // 부상 상태 로직
+            if (status.isInjury)
+            {
+                status.SetInjuryTimeRPC(status.injuryTime.Current - Runner.DeltaTime);
+                if (status.injuryTime.isMin)
+                {
+                    status.isInjury = false;
+                    status.isRevive = true;
+                }
+            }
+            else if (status.isRevive)
+            {
+            }
+            // 부상 상태로 전환
+            else if (status.IsDie)
+            {
+                IsInteract = true;
+                status.isInjury = true;
+                status.injuryTime.Current = status.injuryTime.Max; // 이건 부상 상태를 유지하는 시간
+            }
+            else
+            {
+                IsInteract = false;
+            }
+        }
+
+        #region Interact 
+
+        #region Interface
+
+        public void InteractInit()
+        {
+            IsInteract = false;
+
+            InteractEnterAction += RecoveryInteract;
+            InteractEnterAction += ReviveInteract;
+
+            InteractExitAction += (targetObject) =>
+            {
+                var remotePlayerStatus = targetObject.GetComponent<PlayerStatus>();
+                remotePlayerStatus.SetRecoveryTimeRPC(0);
+            };
+        }
+
+        public bool IsInteract { get; set; }
+        public Action<GameObject> InteractEnterAction { get; set; }
+        public Action<GameObject> InteractExitAction { get; set; }
+        
+        #endregion
+
+        /// <summary>
+        /// 부상 상태에 빠진 것을 회복하는 상호작용
+        /// </summary>
+        void RecoveryInteract(GameObject targetObject)
+        {
+            if (status.isInjury)
+            {
+                var remotePlayerStatus = targetObject.GetComponent<PlayerStatus>();
+                if (remotePlayerStatus.recoveryTime.isMax)
+                {
+                    // 부상 회복
+                    status.hp.Current = status.hp.Max / 3;
+                    
+                    // remote Player의 부상 관련 스테이터스 초기화
+                    remotePlayerStatus.SetIsInjuryRPC(false);
+                    remotePlayerStatus.SetRecoveryTimeRPC(0);
+                    IsInteract = false;
+                    return;
+                }
+                remotePlayerStatus.SetRecoveryTimeRPC(remotePlayerStatus.recoveryTime.Current + Runner.DeltaTime);
+            }
+        }
+
+        /// <summary>
+        /// 다른 플레이어 소생하는 상호작용
+        /// </summary>
+        void ReviveInteract(GameObject targetObject)
+        {
+            if (status.isRevive)
+            {
+                DebugManager.ToDo("소생 아이템 생기면 소생 로직 만들기");
+            }
+        }
+
+        #endregion
     }
 }

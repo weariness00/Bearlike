@@ -59,7 +59,7 @@ Transform:
   m_GameObject: {fileID: 1467546578422021564}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.25}
+  m_LocalPosition: {x: 0, y: 0, z: 0.27}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1142,6 +1142,15 @@ MonoBehaviour:
     isMax: 0
   experienceAmountList: 
   immortalDurationAfterSpawn: 2
+  jumpPower:
+    _min: 600
+    _max: 1000
+    _current: 600
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  isInjury: 0
 --- !u!114 &5159996301078376767
 MonoBehaviour:
   m_ObjectHideFlags: 0

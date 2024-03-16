@@ -20,13 +20,18 @@ public class MatchRoomUserUI : NetworkBehaviour
     }
 
     private void Update()
-    {
+    {   
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             OnExit();
         }
     }
-    
+
+    public override void Spawned()
+    {
+        DataUpdateRPC();
+    }
+
     [Rpc(RpcSources.All,RpcTargets.All)]
     public void DataUpdateRPC() => DataUpdate();
     public void DataUpdate()

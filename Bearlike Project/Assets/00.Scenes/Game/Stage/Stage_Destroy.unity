@@ -1562,14 +1562,14 @@ BoxCollider:
     m_Bits: 4096
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 1073753015
+    m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 50, y: 30, z: 50}
-  m_Center: {x: 0, y: 15, z: 0}
+  m_Size: {x: 60, y: 30, z: 60}
+  m_Center: {x: 0, y: 15, z: 2}
 --- !u!4 &870149081224051108
 Transform:
   m_ObjectHideFlags: 0
@@ -1675,11 +1675,7 @@ MonoBehaviour:
   sceneReference:
     sceneAsset: {fileID: 102900000, guid: 7146be2ac2ab9024cba3fc8c22de3ae9, type: 3}
     scenePath: Assets/00.Scenes/Game/Stage/Stage_Destroy.unity
-  stageLevelInfo:
-    StageLevelType: 0
-    title: "\uACA9\uD30C"
-    explain: "\uBAA8\uB4E0 \uBAAC\uC2A4\uD130\uB97C \uC12C\uBA78\uD558\uC138\uC694"
-    image: {fileID: 2800000, guid: a508dd2f7a59d2d46af45c9ad37d68dc, type: 3}
+  stageData: {fileID: 11400000, guid: 0554b3b4afaea5e49bf7caf67fb0debf, type: 2}
   isStageClear: 0
   isStageOver: 0
   lootingTable: {fileID: 0}

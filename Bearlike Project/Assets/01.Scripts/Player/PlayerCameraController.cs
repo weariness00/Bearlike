@@ -16,14 +16,11 @@ namespace Player
         {
             if (HasInputAuthority == false)
             {
+                Destroy(targetCamera.GetComponent<UniversalAdditionalCameraData>());
+                Destroy(targetCamera.GetComponent<AudioListener>());
                 Destroy(targetCamera);
-                Destroy(weaponCamera);
+                Destroy(weaponCamera.gameObject);
                 return;
-            }
-
-            if (Camera.main)
-            {
-                Destroy(Camera.main.gameObject);
             }
 
             targetCamera.tag = "MainCamera";

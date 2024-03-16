@@ -45,14 +45,6 @@ namespace Data
         public override void Spawned()
         {
             Runner.MakeDontDestroyOnLoad(gameObject);
-            
-            var data = new UserDataStruct
-            {
-                PlayerRef = Runner.LocalPlayer,
-                Name = Runner.LocalPlayer.ToString()
-            };
-
-            InsertUserDataRPC(Runner.LocalPlayer, data);
         }
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
@@ -96,15 +88,17 @@ namespace Data
             if (Runner.IsServer)
             {
                 int clientIndex = 0;
-                foreach (var (key, value) in UserDictionary)
+                foreach (var (playerRef, data) in UserDictionary)
                 {
-                    var userDataStruct = value;
-                    var spawnObject = await Runner.SpawnAsync(value.PrefabRef, Vector3.zero, Quaternion.identity, value.PlayerRef);
+                    var userDataStruct = data;
+                    var spawnObject = await Runner.SpawnAsync(data.PrefabRef, Vector3.zero, Quaternion.identity, data.PlayerRef);
                     
                     userDataStruct.NetworkId = spawnObject.Id;
                     userDataStruct.ClientNumber = clientIndex++;
-                    UserDictionary.Remove(key);
-                    UserDictionary.Add(key, userDataStruct);
+                    UserDictionary.Remove(playerRef);
+                    UserDictionary.Add(playerRef, userDataStruct);
+                    
+                    Runner.SetPlayerObject(playerRef, spawnObject);
                 }
             }
 

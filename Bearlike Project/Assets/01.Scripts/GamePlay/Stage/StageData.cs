@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using GamePlay.Stage;
+using UnityEngine;
 
 namespace GamePlay.StageLevel
 {
@@ -6,6 +7,6 @@ namespace GamePlay.StageLevel
     public class StageData : ScriptableObject
     {
         public SceneReference sceneReference;
-        public StageLevelInfo info;
+        public StageInfo info;
     }
 }

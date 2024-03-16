@@ -8,7 +8,7 @@
         "HitboxDefaultCapacity": 512,
         "CachedStaticCollidersSize": 64
     },
-    "EnqueueIncompleteSynchronousSpawns": false,
+    "EnqueueIncompleteSynchronousSpawns": true,
     "InvokeRenderInBatchMode": true,
     "NetworkIdIsObjectName": false,
     "HideNetworkObjectInactivityGuard": false,
@@ -26,11 +26,11 @@
     },
     "Network": {
         "ConnectionTimeout": 10.0,
-        "ConnectionShutdownTime": 1.0,
+        "ConnectionShutdownTime": 5.0,
         "ReliableDataTransferModes": 3
     },
     "HostMigration": {
-        "EnableAutoUpdate": false,
+        "EnableAutoUpdate": true,
         "UpdateDelay": 10
     },
     "NetworkConditions": {
@@ -49,7 +49,7 @@
         "AdditionalLoss": 0.0
     },
     "Heap": {
-        "PageShift": 15,
+        "PageShift": 17,
         "PageCount": 256,
         "GlobalsSize": 0
     },

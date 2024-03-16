@@ -1,4 +1,5 @@
 ﻿using System;
+using GamePlay.Stage;
 using GamePlay.StageLevel;
 using TMPro;
 using UnityEngine;
@@ -14,7 +15,7 @@ namespace UI
         public TMP_Text explainText;
         public TMP_Text voteText;
 
-        public void Setting(StageLevelInfo stageInfo)
+        public void Setting(StageInfo stageInfo)
         {
             // image.texture = stageInfo.image;
             

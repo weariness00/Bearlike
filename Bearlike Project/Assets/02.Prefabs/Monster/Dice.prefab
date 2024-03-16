@@ -47,9 +47,9 @@ GameObject:
   - component: {fileID: 1856523567469083767}
   - component: {fileID: 7963566170756306045}
   - component: {fileID: 6190889804286306999}
-  - component: {fileID: 2374443348049298298}
   - component: {fileID: 937732540389472963}
   - component: {fileID: 5282429338338091134}
+  - component: {fileID: -5128691535337078838}
   m_Layer: 0
   m_Name: Dice
   m_TagString: Monster
@@ -118,9 +118,9 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   moveSpeed:
-    _min: 220
-    _max: 0
-    _current: 0
+    _min: 0
+    _max: 220
+    _current: 220
     isOverMax: 0
     isOverMin: 0
     isMin: 0
@@ -210,9 +210,12 @@ MonoBehaviour:
   status: {fileID: 0}
   lootingTable: {fileID: 0}
   targetTransform: {fileID: 0}
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 0
   moveDelay:
     _min: 0
-    _max: 0
+    _max: 1
     _current: 0
     isOverMax: 0
     isOverMin: 0
@@ -237,30 +240,8 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 4519316146450510175}
   - {fileID: 7963566170756306045}
-  - {fileID: 2374443348049298298}
   - {fileID: 5282429338338091134}
---- !u!114 &2374443348049298298
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3465241712122150889}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0a591d221a634417e9827eb58e17de84, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SyncScale: 0
-  SyncParent: 1
-  _interpolationTarget: {fileID: 0}
-  UsePreciseRotation: 0
-  UseRenderSleepThresholds: 1
-  RenderThresholds:
-    UseEnergy: 1
-    Position: 0.01
-    Rotation: 0.01
-    Scale: 0.01
+  - {fileID: -5128691535337078838}
 --- !u!65 &937732540389472963
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -300,6 +281,22 @@ MonoBehaviour:
   SyncSettings: 79
   StateHashes: 
   TriggerHashes: 
+--- !u!114 &-5128691535337078838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3465241712122150889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0
 --- !u!1 &3918122260570522397
 GameObject:
   m_ObjectHideFlags: 0

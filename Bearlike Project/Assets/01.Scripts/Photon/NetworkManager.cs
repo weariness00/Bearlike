@@ -10,24 +10,23 @@ using Fusion.Photon.Realtime;
 using Fusion.Sockets;
 using Manager;
 using Newtonsoft.Json;
-using ProjectUpdate;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Photon
 {
-    public class NetworkManager : global::Util.Singleton<NetworkManager>, INetworkRunnerCallbacks
+    public class NetworkManager : Util.Singleton<NetworkManager>, INetworkRunnerCallbacks
     {
         public static NetworkRunner Runner => Instance._runner;
         public static int PlayerCount => Runner.ActivePlayers.ToArray().Length;
 
         public bool isTest = true; // 현재 테스트 상황인지
         public SceneReference lobbyScene;
-        
         private string[] _sessionNames;
         private NetworkRunner _runner;
 
+        public bool isCursor;
         private Action<NetworkObject> _isSetPlayerObjectEvent;
         public Action<NetworkObject> IsSetPlayerObjectEvent
         {
@@ -308,7 +307,15 @@ namespace Photon
 
         public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
-  
+            Physics.SyncTransforms();
+            
+            var data = new UserDataStruct
+            {
+                PlayerRef = player,
+                Name = player.ToString()
+            };
+
+            UserData.Instance.InsertUserDataRPC(player, data);
         }
 
         public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
@@ -329,11 +336,12 @@ namespace Photon
             var playerInputData = new PlayerInputData();
             
             // 마우스 휠 클릭시 UI와 상호작용 할 수 있도록 플레이어 정지
-            if (Input.GetMouseButtonDown((int)MouseButton.Middle))
+            if (KeyManager.InputActionDown(KeyToAction.Esc) || KeyManager.InputActionDown(KeyToAction.LockCursor))
             {
                 Cursor.lockState = Cursor.lockState == CursorLockMode.None ? CursorLockMode.Locked : CursorLockMode.None;
+                isCursor = !isCursor;
             }
-            if (Cursor.lockState == CursorLockMode.None)
+            if (isCursor)
             {
                 playerInputData.Cursor = true;
                 input.Set(playerInputData);
@@ -363,8 +371,8 @@ namespace Photon
             if (KeyManager.InputAction(KeyToAction.FirstSkill))
                 playerInputData.FirstSkill = true;
 
-            if (KeyManager.InputActionDown(KeyToAction.Esc))
-                OnPlayerLeft(runner, runner.LocalPlayer);
+            if (KeyManager.InputAction(KeyToAction.Interact) || KeyManager.InputActionDown(KeyToAction.Interact))
+                playerInputData.Interact = true;
             
             playerInputData.MouseAxis.x = Input.GetAxis("Mouse X");
             playerInputData.MouseAxis.y = Input.GetAxis("Mouse Y");

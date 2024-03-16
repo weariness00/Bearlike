@@ -24,6 +24,7 @@ namespace Manager
         
         FirstSkill,
         
+        LockCursor,
         Esc,
     }
 
@@ -125,6 +126,24 @@ namespace Manager
                      Input.GetMouseButtonDown((int)mouse))
             {
                 if(IsDebug){DebugManager.Log($"Mouse Down : {mouse}");}
+                return true;
+            }
+
+            return false;
+        }
+        
+        public static bool InputActionUp(KeyToAction action)
+        {
+            if (KeyDictionary.TryGetValue(action, out var key) &&
+                Input.GetKeyUp(key))
+            {
+                if(IsDebug){DebugManager.Log($"Key Up : {key}");}
+                return true;
+            }
+            else if (MouseDictionary.TryGetValue(action, out var mouse) && 
+                     Input.GetMouseButtonUp((int)mouse))
+            {
+                if(IsDebug){DebugManager.Log($"Mouse Up : {mouse}");}
                 return true;
             }
 

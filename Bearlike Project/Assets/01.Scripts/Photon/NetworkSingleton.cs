@@ -1,4 +1,5 @@
-﻿using Fusion;
+﻿using System;
+using Fusion;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -39,6 +40,11 @@ namespace Photon
                 var singletonObject = new GameObject(typeof(T).Name);
                 _instance = singletonObject.GetOrAddComponent<T>();
             }
+        }
+
+        private void OnApplicationQuit()
+        {
+            _instance = null;
         }
     }
 }

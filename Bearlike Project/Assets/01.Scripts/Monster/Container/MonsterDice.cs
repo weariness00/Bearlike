@@ -51,7 +51,7 @@ namespace Monster.Container
                 new ActionNode(FindTarget),
                 new SelectorNode(
                     false,
-                    new Detector(() => CheckTargetDis(3f), selectAttack),
+                    new Detector(() => CheckTargetDis(1f), selectAttack),
                     move
                 ));
         
@@ -119,6 +119,10 @@ namespace Monster.Container
         /// <returns></returns>
         private bool CheckTargetDis(float checkDis)
         {
+            if (targetTransform == null)
+            {
+                return false;
+            }
             var dis = DistanceFromTarget(targetTransform.position);
             return dis < checkDis;
         }
@@ -186,7 +190,8 @@ namespace Monster.Container
                 if (targetTransform == null)
                 {
                     // 타겟이 없으면 자유로운 방향으로 이동하게 하기
-                    dir = SetRotateDir(Random.insideUnitCircle);
+                    var randomCircle = Random.insideUnitCircle;
+                    dir = SetRotateDir(transform.position + new Vector3(randomCircle.x, 0, randomCircle.y));
                 }
                 else 
                 {
