@@ -62,7 +62,7 @@ namespace State.StateClass
             hp.Current -= value;
         }
         
-        public override void ApplyDamage(float damage, CrowdControl property)
+        public override void ApplyDamage(int damage, CrowdControl property)
         {
             if (hp.isMin)
             {

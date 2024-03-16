@@ -126,7 +126,7 @@ namespace Player
             hp.Current -= value;
         }
         
-        public override void ApplyDamage(float damage, CrowdControl enemyProperty) // MonsterRef instigator,
+        public override void ApplyDamage(int damage, CrowdControl enemyProperty) // MonsterRef instigator,
         {
             if (hp.Current < 0)
             {
