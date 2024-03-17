@@ -82,6 +82,8 @@ namespace Skill.Container
                 
                 Debug.Log($"현재 Attack : {playerStatus.attack.Current}, AttackSpeed : {playerStatus.attackSpeed.Current}");
                 
+                Debug.Log(CoolTime.Current);
+                
                 Duration.Current = Duration.Min;
                 _bOn = false;
                 // _difference = 0; // 굳이 필요 없을듯
@@ -89,6 +91,9 @@ namespace Skill.Container
             
             _previousPlayTime = _currentPlayTime;
         }
+        
+        
+        
         
         public override void Run()
         {
