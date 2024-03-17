@@ -15,8 +15,15 @@ const pool = mysql.createPool({
 });
 
 async function query(sql, params) {
+  try
+  {
     const [results, ] = await pool.execute(sql, params);
     return results;
+  }
+  catch(e)
+  {
+    return false; 
+  }
 }
 
 module.exports = { query };

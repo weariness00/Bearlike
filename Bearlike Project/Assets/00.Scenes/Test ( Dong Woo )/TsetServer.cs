@@ -6,6 +6,7 @@ using Fusion;
 using Fusion.Addons.Physics;
 using Fusion.Photon.Realtime;
 using Fusion.Sockets;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -14,10 +15,11 @@ public class TsetServer : MonoBehaviour, INetworkRunnerCallbacks
 {
     private NetworkRunner _runner;
     public SceneReference s;
+    public int sceneIndex;
     public NetworkPrefabRef playerRef;
     private void Start()
     {
-        Matching(GameMode.Host, "aa");  
+        Matching(GameMode.AutoHostOrClient, "aa");  
     }
     
     void Matching(GameMode mode, string sessionName)
@@ -29,7 +31,7 @@ public class TsetServer : MonoBehaviour, INetworkRunnerCallbacks
         _runner.ProvideInput = true;
             
         // Create the NetworkSceneInfo from the current scene
-        var scene = SceneRef.FromIndex(5);
+        var scene = SceneRef.FromIndex(sceneIndex);
         var sceneInfo = new NetworkSceneInfo();
         if (scene.IsValid)
         {
@@ -61,7 +63,8 @@ public class TsetServer : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        runner.Spawn(playerRef);
+        var obj = runner.Spawn(playerRef, Vector3.zero, quaternion.identity, player);
+        runner.SetPlayerObject(player, obj);
     }
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
