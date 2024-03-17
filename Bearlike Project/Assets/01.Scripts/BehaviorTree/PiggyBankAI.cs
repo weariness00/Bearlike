@@ -11,6 +11,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Serialization;
@@ -31,7 +32,7 @@ namespace BehaviorTree
         private NetworkMecanimAnimator _animator = null;
         private StatusBase _status;
         private VisualEffect _visualEffect;
-        private NavMeshAgent _agent;
+        private NavMeshAgent _navMeshAgent;
 
         private GameManager _gameManager;
         private UserData _userData;
@@ -57,11 +58,13 @@ namespace BehaviorTree
         private float _rotationlastTime;
 
         #endregion
+
+        private bool isDead = false;
         
-        [SerializeField] private float attackRange = 20;        // 발차기 감지 범위
+        [SerializeField] private float attackRange = 10;        // 발차기 감지 범위
         [SerializeField] private float rushRange = 100;         // 돌진 감지 범위
-        [SerializeField] private float coinAtaackMinRange = 50;   // 코인 공격 최소 감지 범위
-        [SerializeField] private float coinAtaackMaxRange = 150;   // 코인 공격 최대 감지 범위
+        [SerializeField] private float coinAtaackMinRange = 10;   // 코인 공격 최소 감지 범위
+        [SerializeField] private float coinAtaackMaxRange = 100;   // 코인 공격 최대 감지 범위
 
         private static readonly int Walk = Animator.StringToHash("isWalk");
         
@@ -81,7 +84,7 @@ namespace BehaviorTree
             _btRunner = new BehaviorTreeRunner(SettingBT());
             _status = GetComponent<MonsterStatus>();
             _visualEffect = GetComponentInChildren<VisualEffect>();
-            _agent = GetComponent<NavMeshAgent>();
+            _navMeshAgent = GetComponent<NavMeshAgent>();
         }
 
         private void Start()
@@ -91,20 +94,39 @@ namespace BehaviorTree
 
             _players = GameObject.FindGameObjectsWithTag("Player");
             
-            attackRange = 20;
+            attackRange = 10;
             rushRange = 100;
             coinAtaackMinRange = 50;
             coinAtaackMaxRange = 150;
+
+            isDead = false;
             
             _animator.Animator.SetFloat(AttackType, 0);
             _animator.Animator.SetBool(Walk, true);
             
             StartCoroutine(WalkCorutine(0.5f));
+            StartCoroutine(DieCoroutine(0.5f));
         }
 
         public override void FixedUpdateNetwork()
         {
-            _btRunner.Operator();
+            if(!isDead)
+                _btRunner.Operator();
+        }
+
+        IEnumerator DieCoroutine(float waitTime)
+        {
+            while (true)
+            {
+                if (_status.IsDie)
+                {
+                    _animator.Animator.SetTrigger(Dead);
+                    isDead = true;
+                    yield break;
+                }
+
+                yield return new WaitForSeconds(waitTime);
+            }
         }
         
         IEnumerator WalkCorutine(float waitTime)
@@ -113,15 +135,126 @@ namespace BehaviorTree
             {
                 if (IsAnimationRunning("piggy_walk"))
                 {
-                    _rb.velocity = new Vector3(0, 0, -movementSpeed);
-                }
-                else
-                {
-                    _rb.velocity = new Vector3(0, 0, 0);
+                    if (FastDistance(transform.position, _players[0].transform.position) > 10.0f)
+                    {
+                        _navMeshAgent.speed = 2.0f;
+                        _navMeshAgent.SetDestination(_players[0].transform.position);
+                    }
+                    else
+                    {
+                        _navMeshAgent.speed = 0.0f;
+                    }
                 }
                 yield return new WaitForSeconds(waitTime);
             }
         }
+
+        // INode SettingBT()
+        // {
+        //     return new SequenceNode
+        //     (
+        //         new List<INode>()
+        //         {
+        //             new SelectorNode
+        //             (
+        //                 new List<INode>()
+        //                 {
+        //                     new SequenceNode
+        //                     (
+        //                         new List<INode>()
+        //                         {   // Deffence
+        //                             new ActionNode(CheckMoreHp), 
+        //                             new ActionNode(StartDefence),
+        //                             new ActionNode(TermFuction),
+        //                         }
+        //                     ),
+        //                     new SequenceNode
+        //                     (
+        //                         new List<INode>()
+        //                         {   // Run
+        //                             new ActionNode(StartRun),
+        //                             new ActionNode(TermFuction),
+        //                             new ActionNode(StopRun),
+        //                         }
+        //                     )
+        //                 }
+        //             ),
+        //             new SelectorNode(
+        //                 new List<INode>(){
+        //                     new SequenceNode
+        //                     (
+        //                         new List<INode>()
+        //                         {
+        //                             new ActionNode(CheckAttackAction), // Kick
+        //                             new ActionNode(CheckAttackDistance),
+        //                             new ActionNode(StartRotate),
+        //                             new ActionNode(StartAttack),
+        //                             new ActionNode(TermFuction),
+        //                         }
+        //                     ),
+        //                     new ActionNode(SuccessFunction),
+        //                 }
+        //             ),
+        //             new SelectorNode
+        //             (
+        //                 new List<INode>()
+        //                 {
+        //                     new SequenceNode(
+        //                         new List<INode>()
+        //                         {
+        //                             new ActionNode(CheckRushAction), // Rush
+        //                             new ActionNode(CheckRushDistance),
+        //                             new ActionNode(StartRotate),
+        //                             new ActionNode(StartRush),
+        //                             new ActionNode(TermFuction),
+        //                         }
+        //                     ),
+        //                     new SequenceNode
+        //                     (
+        //                         new List<INode>()
+        //                         {
+        //                             new ActionNode(CheckJumpAttackAction), // JumpAttack
+        //                             new ActionNode(StartRotate),
+        //                             new ActionNode(StartJumpAttack),
+        //                             new ActionNode(TermFuction),
+        //                         }
+        //                     )
+        //                 }
+        //             ),
+        //             new SequenceNode
+        //             (
+        //                 new List<INode>()
+        //                 {
+        //                     new ActionNode(CheckFartAction), // fart
+        //                     new ActionNode(StartFart),
+        //                     new ActionNode(TermFuction),
+        //                 }
+        //             ),
+        //             new SequenceNode
+        //             (    // take a rest
+        //                 new List<INode>()
+        //                 {
+        //                     new ActionNode(CheckRestAction),
+        //                     new ActionNode(CheckRestHp),
+        //                     new ActionNode(StartRest),
+        //                     new ActionNode(TermFuction),
+        //                 }
+        //             ),
+        //             new SequenceNode
+        //             (   // CoinAttack
+        //                 new List<INode>()
+        //                 {
+        //                     new ActionNode(CheckCoinAttackAction),
+        //                     new ActionNode(CheckCoinAttackDistance),
+        //                     new ActionNode(StartCoinAttack),
+        //                     new ActionNode(TermFuction),
+        //                 }
+        //             ),
+        //             
+        //             // // sleep
+        //         }
+        //     );
+        // }
 
         INode SettingBT()
         {
@@ -129,72 +262,56 @@ namespace BehaviorTree
             (
                 new List<INode>()
                 {
-                    new SelectorNode
+                new SequenceNode
+                (
+                    new List<INode>()
+                    {// Deffence
+                        new ActionNode(CheckMoreHp), 
+                        new ActionNode(StartDefence),
+                        new ActionNode(TermFuction),
+                    }
+                    ),
+                    new SequenceNode
+                    (
+                        new List<INode>()
+                        {   // Run
+                            new ActionNode(StartRun), 
+                            new ActionNode(TermFuction), 
+                            new ActionNode(StopRun),
+                        }
+                    ),
+                    new SequenceNode
                     (
                         new List<INode>()
                         {
-                            new SequenceNode
-                            (
-                                new List<INode>()
-                                {   // Deffence
-                                    new ActionNode(CheckMoreHp), 
-                                    new ActionNode(StartDefence),
-                                    new ActionNode(TermFuction),
-                                }
-                            ),
-                            new SequenceNode
-                            (
-                                new List<INode>()
-                                {   // Run
-                                    new ActionNode(StartRun),
-                                    new ActionNode(TermFuction),
-                                    new ActionNode(StopRun),
-                                }
-                            )
+                            new ActionNode(CheckAttackAction), // Kick
+                            new ActionNode(CheckAttackDistance),
+                            new ActionNode(StartRotate),
+                            new ActionNode(StartAttack),
+                            new ActionNode(TermFuction),
                         }
-                    ),
-                    new SelectorNode(
-                        new List<INode>(){
-                            new SequenceNode
-                            (
-                                new List<INode>()
-                                {
-                                    new ActionNode(CheckAttackAction), // Kick
-                                    new ActionNode(CheckAttackDistance),
-                                    new ActionNode(StartRotate),
-                                    new ActionNode(StartAttack),
-                                    new ActionNode(TermFuction),
-                                }
-                            ),
-                            new ActionNode(SuccessFunction),
-                        }
-                    ),
-                    new SelectorNode
+                        ),
+                    new SequenceNode
                     (
                         new List<INode>()
                         {
-                            new SequenceNode(
-                                new List<INode>()
-                                {
-                                    new ActionNode(CheckRushAction), // Rush
-                                    new ActionNode(CheckRushDistance),
-                                    new ActionNode(StartRotate),
-                                    new ActionNode(StartRush),
-                                    new ActionNode(TermFuction),
-                                }
-                            ),
-                            new SequenceNode
-                            (
-                                new List<INode>()
-                                {
-                                    new ActionNode(CheckJumpAttackAction), // JumpAttack
-                                    new ActionNode(StartRotate),
-                                    new ActionNode(StartJumpAttack),
-                                    new ActionNode(TermFuction),
-                                }
-                            )
+                            new ActionNode(CheckRushAction), // Rush
+                            new ActionNode(CheckRushDistance),
+                            new ActionNode(StartRotate),
+                            new ActionNode(StartRush),
+                            new ActionNode(TermFuction),
                         }
-                    ),
+                        ),
+                    new SequenceNode
+                    (
+                        new List<INode>()
+                        {
+                            new ActionNode(CheckJumpAttackAction), // JumpAttack
+                            new ActionNode(StartRotate),
+                            new ActionNode(StartJumpAttack),
+                            new ActionNode(TermFuction),
+                        }
+                        ),
                     new SequenceNode
                     (
                         new List<INode>()
@@ -229,7 +346,7 @@ namespace BehaviorTree
                 }
             );
         }
-
+        
         bool IsAnimationRunning(string stateName)
         {
             if (_animator != null)
@@ -417,6 +534,7 @@ namespace BehaviorTree
             }
             _visualEffect.Play();
             _animator.Animator.SetTrigger(Defence);
+            _navMeshAgent.speed = 0.0f;
             _durationTime = _gameManager.PlayTimer;
             
             return INode.NodeState.Success;
@@ -573,6 +691,7 @@ namespace BehaviorTree
         {
             _animator.Animator.SetFloat(AttackType, 0.0f);
             _animator.Animator.SetTrigger(Attack);
+            _navMeshAgent.speed = 0.0f;
             _durationTime = _gameManager.PlayTimer;
             
             return INode.NodeState.Success;
@@ -654,6 +773,10 @@ namespace BehaviorTree
         {
             _animator.Animator.SetFloat(AttackType, 3);
             _animator.Animator.SetTrigger(Attack);
+
+            _navMeshAgent.SetDestination(_players[_targetPlayerIndex].transform.position - _players[_targetPlayerIndex].transform.forward * 20);
+            _navMeshAgent.speed = 10.0f;
+            
             _durationTime = _gameManager.PlayTimer;
             
             return INode.NodeState.Success;
@@ -727,6 +850,11 @@ namespace BehaviorTree
         {
             _animator.Animator.SetInteger(AttackType, 2);
             
+            _navMeshAgent.SetDestination(_players[_targetPlayerIndex].transform.position);
+            _navMeshAgent.speed = 10.0f;
+            
+            // jump하는 함수 구현
+            
             return INode.NodeState.Success;
         }
 
@@ -747,6 +875,8 @@ namespace BehaviorTree
         INode.NodeState StartFart()
         {
             _animator.Animator.SetFloat(AttackType, 4);
+            _navMeshAgent.speed = 0.0f;
+            
             return INode.NodeState.Success;
         }
 
@@ -793,6 +923,7 @@ namespace BehaviorTree
         INode.NodeState StartRest()
         {
             _animator.Animator.SetTrigger(Rest);
+            _navMeshAgent.speed = 0.0f;
 
             return INode.NodeState.Success;
         }
@@ -882,6 +1013,7 @@ namespace BehaviorTree
             _animator.Animator.SetFloat(AttackType, 1);
 
             // TODO : VFX를 받아와서 실행하고, 매개변수로 자식 객체의 이름를 받는 함수구현
+            
             
             return INode.NodeState.Success;
         }
