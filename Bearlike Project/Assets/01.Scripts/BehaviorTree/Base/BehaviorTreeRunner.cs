@@ -7,13 +7,13 @@ namespace BehaviorTree.Base
 {
     public struct BehaviorTreeRunner
     {
-        private INode _rootNode;
+        public readonly INode RootNode;
 
-        public BehaviorTreeRunner(INode rootNode) => _rootNode = rootNode;
+        public BehaviorTreeRunner(INode rootNode) => RootNode = rootNode;
 
         public INode.NodeState Operator()
         {
-            return _rootNode.Evaluate();
+            return RootNode.Evaluate();
         }
     }
 }

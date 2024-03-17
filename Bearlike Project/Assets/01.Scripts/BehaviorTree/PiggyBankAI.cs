@@ -12,7 +12,11 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.Serialization;
+using UnityEngine.VFX;
 using Allocator = Unity.Collections.Allocator;
 
 namespace BehaviorTree
@@ -28,6 +32,8 @@ namespace BehaviorTree
         private BehaviorTreeRunner _btRunner;
         private NetworkMecanimAnimator _animator = null;
         private StatusBase _status;
+        private VisualEffect _visualEffect;
+        private NavMeshAgent _navMeshAgent;
 
         private GameManager _gameManager;
         private UserData _userData;
@@ -40,10 +46,26 @@ namespace BehaviorTree
         #region 속성
 
         private float _playerCount;
-        private float _durationTime;
+        private float _durationTime;                        // Action간의 딜레이 시간
+        private int _targetPlayerIndex;                     // target으로 지정되는 Player의 index
 
-        [SerializeField] private float attackRange = 3; // 발차기 감지 범위
-        [SerializeField] private float rushRange = 10; // 돌진 감지 범위
+        #region 회전
+
+        private const float RotationDuration = 1.0f;
+
+        private Quaternion _targetRotation; // 목표 회전값
+        private float _timePassed = 0f; // 회전 보간에 사용될 시간 변수
+
+        private float _rotationlastTime;
+
+        #endregion
+
+        private bool isDead = false;
+        
+        [SerializeField] private float attackRange = 10;        // 발차기 감지 범위
+        [SerializeField] private float rushRange = 100;         // 돌진 감지 범위
+        [SerializeField] private float coinAtaackMinRange = 10;   // 코인 공격 최소 감지 범위
+        [SerializeField] private float coinAtaackMaxRange = 100;   // 코인 공격 최대 감지 범위
 
         private static readonly int Walk = Animator.StringToHash("isWalk");
         
@@ -62,6 +84,8 @@ namespace BehaviorTree
             _animator = GetComponent<NetworkMecanimAnimator>();
             _btRunner = new BehaviorTreeRunner(SettingBT());
             _status = GetComponent<MonsterStatus>();
+            _visualEffect = GetComponentInChildren<VisualEffect>();
+            _navMeshAgent = GetComponent<NavMeshAgent>();
         }
 
         private void Start()
@@ -70,51 +94,168 @@ namespace BehaviorTree
             _playerCount = _gameManager.AlivePlayerCount;
 
             _players = GameObject.FindGameObjectsWithTag("Player");
-
-            // TODO : foreach문에서 조건문을 계속 호출해서 성능 저하가 일어나는지 테스트 필요
-            // foreach (var player in _players)
-            // {
-            //     _playerPrefabs.Add(player);
-            // }
-            attackRange = 20;
+            
+            attackRange = 10;
             rushRange = 100;
+            coinAtaackMinRange = 50;
+            coinAtaackMaxRange = 150;
+
+            isDead = false;
             
             _animator.Animator.SetFloat(AttackType, 0);
             _animator.Animator.SetBool(Walk, true);
             
             StartCoroutine(WalkCorutine(0.5f));
-            // StartCoroutine(BTCorutine(5.0f));
+            StartCoroutine(DieCoroutine(0.5f));
         }
 
-        private void Update()
+        public override void FixedUpdateNetwork()
         {
-            _btRunner.Operator();
+            if(!isDead)
+                _btRunner.Operator();
         }
 
-        // IEnumerator BTCorutine(float waitTime)
-        // {
-        //     while (true)
-        //     {
-        //         _btRunner.Operator();
-        //         yield return new WaitForSeconds(waitTime);
-        //     }
-        // }
+        IEnumerator DieCoroutine(float waitTime)
+        {
+            while (true)
+            {
+                if (_status.IsDie)
+                {
+                    _animator.Animator.SetTrigger(Dead);
+                    isDead = true;
+                    yield break;
+                }
 
+                yield return new WaitForSeconds(waitTime);
+            }
+        }
+        
         IEnumerator WalkCorutine(float waitTime)
         {
             while (true)
             {
                 if (IsAnimationRunning("piggy_walk"))
                 {
-                    _rb.velocity = new Vector3(0, 0, -movementSpeed);
-                }
-                else
-                {
-                    _rb.velocity = new Vector3(0, 0, 0);
+                    if (FastDistance(transform.position, _players[0].transform.position) > 10.0f)
+                    {
+                        _navMeshAgent.speed = 2.0f;
+                        _navMeshAgent.SetDestination(_players[0].transform.position);
+                    }
+                    else
+                    {
+                        _navMeshAgent.speed = 0.0f;
+                    }
                 }
                 yield return new WaitForSeconds(waitTime);
             }
         }
+
+        // INode SettingBT()
+        // {
+        //     return new SequenceNode
+        //     (
+        //         new List<INode>()
+        //         {
+        //             new SelectorNode
+        //             (
+        //                 new List<INode>()
+        //                 {
+        //                     new SequenceNode
+        //                     (
+        //                         new List<INode>()
+        //                         {   // Deffence
+        //                             new ActionNode(CheckMoreHp), 
+        //                             new ActionNode(StartDefence),
+        //                             new ActionNode(TermFuction),
+        //                         }
+        //                     ),
+        //                     new SequenceNode
+        //                     (
+        //                         new List<INode>()
+        //                         {   // Run
+        //                             new ActionNode(StartRun),
+        //                             new ActionNode(TermFuction),
+        //                             new ActionNode(StopRun),
+        //                         }
+        //                     )
+        //                 }
+        //             ),
+        //             new SelectorNode(
+        //                 new List<INode>(){
+        //                     new SequenceNode
+        //                     (
+        //                         new List<INode>()
+        //                         {
+        //                             new ActionNode(CheckAttackAction), // Kick
+        //                             new ActionNode(CheckAttackDistance),
+        //                             new ActionNode(StartRotate),
+        //                             new ActionNode(StartAttack),
+        //                             new ActionNode(TermFuction),
+        //                         }
+        //                     ),
+        //                     new ActionNode(SuccessFunction),
+        //                 }
+        //             ),
+        //             new SelectorNode
+        //             (
+        //                 new List<INode>()
+        //                 {
+        //                     new SequenceNode(
+        //                         new List<INode>()
+        //                         {
+        //                             new ActionNode(CheckRushAction), // Rush
+        //                             new ActionNode(CheckRushDistance),
+        //                             new ActionNode(StartRotate),
+        //                             new ActionNode(StartRush),
+        //                             new ActionNode(TermFuction),
+        //                         }
+        //                     ),
+        //                     new SequenceNode
+        //                     (
+        //                         new List<INode>()
+        //                         {
+        //                             new ActionNode(CheckJumpAttackAction), // JumpAttack
+        //                             new ActionNode(StartRotate),
+        //                             new ActionNode(StartJumpAttack),
+        //                             new ActionNode(TermFuction),
+        //                         }
+        //                     )
+        //                 }
+        //             ),
+        //             new SequenceNode
+        //             (
+        //                 new List<INode>()
+        //                 {
+        //                     new ActionNode(CheckFartAction), // fart
+        //                     new ActionNode(StartFart),
+        //                     new ActionNode(TermFuction),
+        //                 }
+        //             ),
+        //             new SequenceNode
+        //             (    // take a rest
+        //                 new List<INode>()
+        //                 {
+        //                     new ActionNode(CheckRestAction),
+        //                     new ActionNode(CheckRestHp),
+        //                     new ActionNode(StartRest),
+        //                     new ActionNode(TermFuction),
+        //                 }
+        //             ),
+        //             new SequenceNode
+        //             (   // CoinAttack
+        //                 new List<INode>()
+        //                 {
+        //                     new ActionNode(CheckCoinAttackAction),
+        //                     new ActionNode(CheckCoinAttackDistance),
+        //                     new ActionNode(StartCoinAttack),
+        //                     new ActionNode(TermFuction),
+        //                 }
+        //             ),
+        //             
+        //             // // sleep
+        //         }
+        //     );
+        // }
 
         INode SettingBT()
         {
@@ -122,29 +263,16 @@ namespace BehaviorTree
             (
                 new List<INode>()
                 {
-                    // new ActionNode(WalkAround), // Walk
-                    // // new ActionNode(StopWalk),
-                    // new ActionNode(CheckWalkAction),
-                    new SelectorNode
+                new SequenceNode
+                (
+                    new ActionNode(CheckMoreHp), 
+                    new ActionNode(StartDefence),
+                    new ActionNode(TermFuction),
+                    new SequenceNode
                     (
-                        false,
-                        // new ActionNode(StopDefence),
-                        new SequenceNode
-                        (
-                            new List<INode>()
-                            {   // Deffence
-                                new ActionNode(CheckMoreHp), 
-                                new ActionNode(StartDefence),
-                            }
-                        ),
-                        new SequenceNode
-                        (
-                            new List<INode>()
-                            {
-                                new ActionNode(CheckRunAction), // Run
-                                new ActionNode(StartRun),
-                            }
-                        )
+                        new ActionNode(StartRun), 
+                        new ActionNode(TermFuction), 
+                        new ActionNode(StopRun),
                     ),
                     new SequenceNode
                     (
@@ -152,49 +280,51 @@ namespace BehaviorTree
                         {
                             new ActionNode(CheckAttackAction), // Kick
                             new ActionNode(CheckAttackDistance),
+                            new ActionNode(StartRotate),
                             new ActionNode(StartAttack),
                             new ActionNode(TermFuction),
                         }
                     ),
                     new SequenceNode
                     (
-                        new List<INode>()
-                        {
-                            new SequenceNode(
-                                new List<INode>()
-                                {
-                                    new ActionNode(CheckRushAction), // Rush
-                                    new ActionNode(CheckRushDistance),
-                                    new ActionNode(StartRush),
-                                    new ActionNode(TermFuction),
-                                }
-                            ),
-                            // new SequenceNode
-                            // (
-                            //     new List<INode>()
-                            //     {
-                            //         new ActionNode(CheckJumpAttackAction), // JumpAttack
-                            //         new ActionNode(StartJumpAttack),
-                            //         // new ActionNode(ReleaseInteger),
-                            //     }
-                            // )
-                        }
+                        new ActionNode(CheckRushAction), // Rush
+                        new ActionNode(CheckRushDistance),
+                        new ActionNode(StartRotate),
+                        new ActionNode(StartRush),
+                        new ActionNode(TermFuction),
                     ),
-                    // new SequenceNode
-                    // (
-                    //     new List<INode>()
-                    //     {
-                    //         new ActionNode(CheckFartAction), // fart
-                    //         new ActionNode(StartFart),
-                    //         // new ActionNode(ReleaseInteger),
-                    //     }
-                    // ),
-                    // take a rest
-                    // sleep
+                    new SequenceNode
+                    (
+                        new ActionNode(CheckJumpAttackAction), // JumpAttack
+                        new ActionNode(StartRotate),
+                        new ActionNode(StartJumpAttack),
+                        new ActionNode(TermFuction),
+                    ),
+                    new SequenceNode
+                    (
+                        new ActionNode(CheckFartAction), // fart
+                        new ActionNode(StartFart),
+                        new ActionNode(TermFuction),
+                    ),
+                    new SequenceNode
+                    (    // take a rest
+                        new ActionNode(CheckRestAction),
+                        new ActionNode(CheckRestHp),
+                        new ActionNode(StartRest),
+                        new ActionNode(TermFuction),
+                    ),
+                    new SequenceNode
+                    (   // CoinAttack
+                        new ActionNode(CheckCoinAttackAction),
+                        new ActionNode(CheckCoinAttackDistance),
+                        new ActionNode(StartCoinAttack),
+                        new ActionNode(TermFuction),
+                    ),
+                    // // sleep
                 }
             );
         }
-
+        
         bool IsAnimationRunning(string stateName)
         {
             if (_animator != null)
@@ -212,13 +342,53 @@ namespace BehaviorTree
             return false;
         }
 
+        #region VFX Function
+
+        void PlayVFX(string vfxName)
+        {
+            GameObject targetObject = transform.Find(vfxName).gameObject;
+
+            if (targetObject != null)
+            {
+                _visualEffect = targetObject.GetComponent<VisualEffect>();
+                if (_visualEffect != null)
+                {
+                    _visualEffect.Play();
+                }
+            }
+        }
+        
+        void StopVFX(string vfxName)
+        {
+            GameObject targetObject = transform.Find(vfxName).gameObject;
+
+            if (targetObject != null)
+            {
+                _visualEffect = targetObject.GetComponent<VisualEffect>();
+                if (_visualEffect != null)
+                {
+                    _visualEffect.Stop();
+                }
+            }
+        }
+
+        #endregion
+        
         INode.NodeState TermFuction()
         {
             if (_gameManager.PlayTimer - _durationTime > 5.0f)
             {
+                _visualEffect.Stop();
+                _animator.Animator.Play("piggy_walk");
+                
                 return INode.NodeState.Success;
             }
             return INode.NodeState.Running;
+        }
+
+        INode.NodeState SuccessFunction()
+        {
+            return INode.NodeState.Success;
         }
         
         #region Walk
@@ -226,49 +396,59 @@ namespace BehaviorTree
         /// <summary>
         /// 돼지저금통이 이동하는 함수 ==> 추후에 정밀하게 이동할 예정
         /// </summary>
-        INode.NodeState WalkAround()
+        // INode.NodeState WalkAround()
+        // {
+        //     if (IsAnimationRunning("piggy_idle"))
+        //     {
+        //         _animator.Animator.SetBool(Walk, true);
+        //         _rb.velocity = new Vector3(0, 0, -movementSpeed);
+        //         
+        //         StartCoroutine(WalkAnimationWait(3.0f));
+        //     }
+        //
+        //     return INode.NodeState.Success;
+        // }
+        //
+        // IEnumerator WalkAnimationWait(float waitTime)
+        // {
+        //     yield return new WaitForSeconds(waitTime);
+        //     _animator.Animator.SetBool(Walk, false);
+        //     _rb.velocity = new Vector3(0, 0, 0);
+        // }
+        //
+        // INode.NodeState CheckWalkAction()
+        // {
+        //     if (IsAnimationRunning("piggy_walk"))
+        //     {
+        //         return INode.NodeState.Running;
+        //     }
+        //
+        //     return INode.NodeState.Success;
+        // }
+        //
+        //
+        // INode.NodeState StopWalk()
+        // {
+        //     if (IsAnimationRunning("piggy_walk"))
+        //     {
+        //         _animator.Animator.SetBool(Walk, false);
+        //         _rb.velocity = new Vector3(0, 0, 0);
+        //         return INode.NodeState.Success;
+        //     }
+        //
+        //     return INode.NodeState.Failure;
+        // }
+
+        INode.NodeState StartWalk()
         {
-            if (IsAnimationRunning("piggy_idle"))
-            {
-                _animator.Animator.SetBool(Walk, true);
-                _rb.velocity = new Vector3(0, 0, -movementSpeed);
-                
-                StartCoroutine(WalkAnimationWait(3.0f));
-            }
+            //TODO : 플레이어의 거리를 측정하거나 랜덤한 좌표에 가는 코드를 구현해야한다
+            // 그러려면 target을 가까운 플레이어나 유리한 위치를 찾는 알고리즘이 필요하다.
+            // GameObject target = 
+            // _agent.SetDestination(target.position);
 
             return INode.NodeState.Success;
         }
         
-        IEnumerator WalkAnimationWait(float waitTime)
-        {
-            yield return new WaitForSeconds(waitTime);
-            _animator.Animator.SetBool(Walk, false);
-            _rb.velocity = new Vector3(0, 0, 0);
-        }
-
-        INode.NodeState CheckWalkAction()
-        {
-            if (IsAnimationRunning("piggy_walk"))
-            {
-                return INode.NodeState.Running;
-            }
-
-            return INode.NodeState.Success;
-        }
-        
-
-        INode.NodeState StopWalk()
-        {
-            if (IsAnimationRunning("piggy_walk"))
-            {
-                _animator.Animator.SetBool(Walk, false);
-                _rb.velocity = new Vector3(0, 0, 0);
-                return INode.NodeState.Success;
-            }
-
-            return INode.NodeState.Failure;
-        }
-
         #endregion
 
         #region 방어 OR 도주
@@ -287,7 +467,6 @@ namespace BehaviorTree
             }
         }
 
-        // TODO: check변수를 두개 만들까 아님 애니메이션 평가하는 함수에 job을 넣을까
         INode.NodeState CheckMoreHp()
         {
             NativeArray<float> results = new NativeArray<float>(1, Allocator.TempJob);
@@ -331,39 +510,35 @@ namespace BehaviorTree
             {
                 return INode.NodeState.Running;
             }
+            _visualEffect.Play();
             _animator.Animator.SetTrigger(Defence);
+            _navMeshAgent.speed = 0.0f;
+            _durationTime = _gameManager.PlayTimer;
+            
             return INode.NodeState.Success;
         }
-
-        // INode.NodeState StopDefence()
-        // {
-        //     if (_gameManager.PlayTimer - _durationTime > 3.0f && _animator.GetBool(IsDefence))
-        //     {
-        //         _animator.SetBool(IsDefence, false);
-        //         _durationTime = 0;
-        //         return INode.NodeState.Success;
-        //     }
-        //
-        //     return INode.NodeState.Failure;
-        // }
 
         #endregion
 
         #region 도주
 
-        INode.NodeState CheckRunAction()
+        INode.NodeState StartRun()
         {
-            // TODO : 도주는 어떻게 해야될까? Walk로 해야하나?
-            // if (IsAnimationRunning("도주 애니메이션"))
-            // {
-            //     return INode.NodeState.Running;
-            // }
+            if (IsAnimationRunning("piggy_run"))
+            {
+                return INode.NodeState.Running;
+            }
+            
+            _animator.SetTrigger("Run");
+            _durationTime = _gameManager.PlayTimer;
+            
             return INode.NodeState.Success;
         }
 
-        INode.NodeState StartRun()
+        INode.NodeState StopRun()
         {
-            // _animator.SetTrigger("tRun");
+            _animator.Animator.Play("piggy_idle");
+
             return INode.NodeState.Success;
         }
         
@@ -380,17 +555,25 @@ namespace BehaviorTree
         
         private struct CheckDistanceJob : IJobParallelFor
         {
-            public NativeArray<bool> Result;
+            public NativeArray<bool> Results;
+            public NativeArray<float> Distances;
             public NativeArray<Vector3> PlayerPosition;
             public Vector3 PiggyPosition;
             public float DetectingRange;
             
             public void Execute(int index)
             {
-                if (FastDistance(PiggyPosition, PlayerPosition[index]) < DetectingRange)
-                    Result[index] = true;
+                var distance = FastDistance(PiggyPosition, PlayerPosition[index]);
+                if ( distance < DetectingRange)
+                {
+                    Results[index] = true;
+                }
                 else
-                    Result[index] = false;
+                {
+                    Results[index] = false;
+                }
+                
+                Distances[index] = distance;
             }
         }
         
@@ -411,18 +594,11 @@ namespace BehaviorTree
             // TODO : 범위 탐색 코드 구현 필요
             // TODO : NativeArraty를 계속 사용하면 성능 저하 가능성 있으니, 일반 멤버변수로 만드는 방법으로 벤치마킹 해보자.
 
-            // NativeArray<bool> results = new NativeArray<bool>((int)_playerCount, Allocator.TempJob);
-            // NativeArray<Vector3> playerPosition = new NativeArray<Vector3>((int)_playerCount, Allocator.TempJob);
-            
-            NativeArray<bool> results = new NativeArray<bool>(1, Allocator.TempJob);
-            NativeArray<Vector3> playerPosition = new NativeArray<Vector3>(1, Allocator.TempJob);
+            NativeArray<bool> results = new NativeArray<bool>((int)_playerCount, Allocator.TempJob);
+            NativeArray<float> distances = new NativeArray<float>((int)_playerCount, Allocator.TempJob);
+            NativeArray<Vector3> playerPosition = new NativeArray<Vector3>((int)_playerCount, Allocator.TempJob);
 
             Vector3 piggyPosition = transform.position;
-
-            // for (int index = 0; index < (int)_playerCount; index++)
-            // {
-            //     playerPosition[index] = _players[index].transform.position;
-            // }
             
             for (int index = 0; index < 1; index++)
             {
@@ -431,50 +607,73 @@ namespace BehaviorTree
             
             CheckDistanceJob job = new CheckDistanceJob()
             {
-                Result = results,
+                Results = results,
+                Distances = distances,
                 PlayerPosition = playerPosition,
                 PiggyPosition = piggyPosition,
                 DetectingRange = attackRange
             };
             
             // TODO : 배치크기는 어떻게해야 가장 효율이 좋을까?
-            // JobHandle jobHandle = job.Schedule((int)_playerCount, 3);
-            JobHandle jobHandle = job.Schedule(1, 3);
+            JobHandle jobHandle = job.Schedule((int)_playerCount, 3);
             jobHandle.Complete();
 
             bool checkResult = false;
-            
-            foreach (var result in results)
-            {
-                checkResult |= result;
-            }
+            float maxDistance = attackRange;
 
+            for (int index = 0; index < (int)_playerCount; ++index)
+            {
+                if (results[index] && (distances[index] < maxDistance))
+                {
+                    checkResult |= results[index];
+                    maxDistance = distances[index];
+                    _targetPlayerIndex = index;
+                }
+            }
+            
             results.Dispose();
+            distances.Dispose();
             playerPosition.Dispose();
             
             if (checkResult)
             {
+                Vector3 targetDirection = _players[_targetPlayerIndex].transform.position - transform.position;
+                _targetRotation = Quaternion.LookRotation(targetDirection);
+                
+                _rotationlastTime = _gameManager.PlayTimer;
+                
                 return INode.NodeState.Success;
             }
             
             return INode.NodeState.Failure;
         }
 
+        INode.NodeState StartRotate()
+        {
+            _timePassed += _gameManager.PlayTimer - _rotationlastTime;
+            
+            transform.rotation = Quaternion.Slerp(transform.rotation, _targetRotation, _timePassed / RotationDuration);
+            
+            if (_timePassed >= RotationDuration)
+            {
+                _timePassed = 0.0f;
+                return INode.NodeState.Success;
+            }
+
+            _rotationlastTime = _gameManager.PlayTimer;
+            
+            return INode.NodeState.Running;
+        }
+        
         INode.NodeState StartAttack()
         {
             _animator.Animator.SetFloat(AttackType, 0.0f);
-            // 바로 넘어가면서 값이 변한다. ==> 사이에 간격을 띄우자
             _animator.Animator.SetTrigger(Attack);
+            _navMeshAgent.speed = 0.0f;
             _durationTime = _gameManager.PlayTimer;
             
             return INode.NodeState.Success;
         }
-
-        // INode.NodeState ReleaseInteger()
-        // {
-        //     _animator.SetFloat(AttackType, -1.0f);
-        //     return INode.NodeState.Success;
-        // }
         
         #endregion
 
@@ -489,15 +688,14 @@ namespace BehaviorTree
             return INode.NodeState.Success;
         }
         
+        // TODO : 러쉬의 범위를 제안하면 점프 공격의 패턴이 거의 안나올 가능성이 있기에 러쉬의 범위제한을 없애는 방향으로 가거나 점프공격을 포물선으로 움직이게 하면 되지 않을까
         // 거리 체크 
         INode.NodeState CheckRushDistance()
         {
-            // NativeArray<bool> results = new NativeArray<bool>((int)_playerCount, Allocator.TempJob);
-            // NativeArray<Vector3> playerPosition = new NativeArray<Vector3>((int)_playerCount, Allocator.TempJob);
-            
-            NativeArray<bool> results = new NativeArray<bool>(1, Allocator.TempJob);
-            NativeArray<Vector3> playerPosition = new NativeArray<Vector3>(1, Allocator.TempJob);
-            
+            NativeArray<bool> results = new NativeArray<bool>((int)_playerCount, Allocator.TempJob);
+            NativeArray<float> distances = new NativeArray<float>((int)_playerCount, Allocator.TempJob);
+            NativeArray<Vector3> playerPosition = new NativeArray<Vector3>((int)_playerCount, Allocator.TempJob);
+   
             Vector3 piggyPosition = transform.position;
 
             for (int index = 0; index < (int)_playerCount; index++)
@@ -507,31 +705,42 @@ namespace BehaviorTree
             
             CheckDistanceJob job = new CheckDistanceJob()
             {
-                Result = results,
+                Results = results,
+                Distances = distances,
                 PlayerPosition = playerPosition,
                 PiggyPosition = piggyPosition,
                 DetectingRange = rushRange
             };
             
             // TODO : 배치크기는 어떻게해야 가장 효율이 좋을까?
-            // JobHandle jobHandle = job.Schedule((int)_playerCount, 3);            
-            JobHandle jobHandle = job.Schedule(1, 3);
-
+            JobHandle jobHandle = job.Schedule((int)_playerCount, 3);          
             
             jobHandle.Complete();
 
             bool checkResult = false;
-            
-            foreach (var result in results)
-            {
-                checkResult |= result;
-            }
+            float maxDistance = rushRange;
 
+            for (int index = 0; index < (int)_playerCount; ++index)
+            {
+                if (results[index] && (distances[index] < maxDistance))
+                {
+                    checkResult |= results[index];
+                    maxDistance = distances[index];
+                    _targetPlayerIndex = index;
+                }
+            }
+            
             results.Dispose();
+            distances.Dispose();
             playerPosition.Dispose();
 
             if (checkResult)
             {
+                Vector3 targetDirection = _players[_targetPlayerIndex].transform.position - transform.position;
+                _targetRotation = Quaternion.LookRotation(targetDirection);
+                
+                _rotationlastTime = _gameManager.PlayTimer;
+                
                 return INode.NodeState.Success;
             }
             
@@ -542,6 +751,10 @@ namespace BehaviorTree
         {
             _animator.Animator.SetFloat(AttackType, 3);
             _animator.Animator.SetTrigger(Attack);
+
+            _navMeshAgent.SetDestination(_players[_targetPlayerIndex].transform.position - _players[_targetPlayerIndex].transform.forward * 20);
+            _navMeshAgent.speed = 10.0f;
+            
             _durationTime = _gameManager.PlayTimer;
             
             return INode.NodeState.Success;
@@ -550,7 +763,7 @@ namespace BehaviorTree
         #endregion
 
         #region JumpAttack
-
+        
         INode.NodeState CheckJumpAttackAction()
         {
             if (IsAnimationRunning("Attack_Blend"))
@@ -561,9 +774,65 @@ namespace BehaviorTree
             return INode.NodeState.Success;
         }
         
+        INode.NodeState CheckJumpAttackDistance()
+        {
+            NativeArray<bool> results = new NativeArray<bool>((int)_playerCount, Allocator.TempJob);
+            NativeArray<float> distances = new NativeArray<float>((int)_playerCount, Allocator.TempJob);
+            NativeArray<Vector3> playerPosition = new NativeArray<Vector3>((int)_playerCount, Allocator.TempJob);
+   
+            Vector3 piggyPosition = transform.position;
+
+            for (int index = 0; index < (int)_playerCount; index++)
+            {
+                playerPosition[index] = _players[index].transform.position;
+            }
+            
+            CheckDistanceJob job = new CheckDistanceJob()
+            {
+                Results = results,
+                Distances = distances,
+                PlayerPosition = playerPosition,
+                PiggyPosition = piggyPosition,
+                DetectingRange = rushRange
+            };
+            
+            // TODO : 배치크기는 어떻게해야 가장 효율이 좋을까?
+            JobHandle jobHandle = job.Schedule((int)_playerCount, 3);         
+            
+            jobHandle.Complete();
+
+            float maxDistance = 999.0f;
+
+            for (int index = 0; index < (int)_playerCount; ++index)
+            {
+                if (distances[index] < maxDistance)
+                {
+                    maxDistance = distances[index];
+                    _targetPlayerIndex = index;
+                }
+            }
+            
+            results.Dispose();
+            distances.Dispose();
+            playerPosition.Dispose();
+            
+            Vector3 targetDirection = _players[_targetPlayerIndex].transform.position - transform.position;
+            _targetRotation = Quaternion.LookRotation(targetDirection);
+                
+            _rotationlastTime = _gameManager.PlayTimer;
+
+            return INode.NodeState.Success;
+        }
+        
         INode.NodeState StartJumpAttack()
         {
             _animator.Animator.SetInteger(AttackType, 2);
+            
+            _navMeshAgent.SetDestination(_players[_targetPlayerIndex].transform.position);
+            _navMeshAgent.speed = 10.0f;
+            
+            // jump하는 함수 구현
+            
             return INode.NodeState.Success;
         }
 
@@ -584,6 +853,146 @@ namespace BehaviorTree
         INode.NodeState StartFart()
         {
             _animator.Animator.SetFloat(AttackType, 4);
+            _navMeshAgent.speed = 0.0f;
+            
+            return INode.NodeState.Success;
+        }
+
+        #endregion
+
+        #region Rest
+
+        INode.NodeState CheckRestAction()
+        {
+            if (IsAnimationRunning("piggy_rest"))
+            {
+                return INode.NodeState.Running;
+            }
+
+            return INode.NodeState.Success;
+        }
+        
+        INode.NodeState CheckRestHp()
+        {
+            NativeArray<float> results = new NativeArray<float>(1, Allocator.TempJob);
+
+            CheckHpJob Job = new CheckHpJob()
+            {
+                Current = _status.hp.Current,
+                Max = _status.hp.Max,
+                Result = results
+            };
+
+            JobHandle jobHandle = Job.Schedule();
+
+            jobHandle.Complete();
+
+            float result = results[0];
+            results.Dispose();
+
+            if (result <= 0.5f) // 정밀한 검사 필요
+            {
+                return INode.NodeState.Success;
+            }
+
+            return INode.NodeState.Failure;
+        }
+        
+        INode.NodeState StartRest()
+        {
+            _animator.Animator.SetTrigger(Rest);
+            _navMeshAgent.speed = 0.0f;
+
+            return INode.NodeState.Success;
+        }
+
+        #endregion
+
+        #region CoinAttack
+
+        INode.NodeState CheckCoinAttackAction()
+        {
+            if (IsAnimationRunning("Attack_Blend"))
+            {
+                return INode.NodeState.Running;
+            }
+
+            return INode.NodeState.Success;
+        }
+
+        private struct CheckCoinAttackDistanceJob : IJobParallelFor
+        {
+            public NativeArray<bool> Results;
+            public NativeArray<Vector3> PlayerPosition;
+            public Vector3 PiggyPosition;
+            public float DetectingMaxRange;
+            public float DetectingMinRange;
+            
+            public void Execute(int index)
+            {
+                var distance = FastDistance(PiggyPosition, PlayerPosition[index]);
+                if (DetectingMinRange <= distance && distance <= DetectingMaxRange)
+                {
+                    Results[index] = true;
+                }
+                else
+                {
+                    Results[index] = false;
+                }
+            }
+        }
+        
+        INode.NodeState CheckCoinAttackDistance()
+        {
+            NativeArray<bool> results = new NativeArray<bool>((int)_playerCount, Allocator.TempJob);
+            NativeArray<Vector3> playerPosition = new NativeArray<Vector3>((int)_playerCount, Allocator.TempJob);
+   
+            Vector3 piggyPosition = transform.position;
+
+            for (int index = 0; index < (int)_playerCount; index++)
+            {
+                playerPosition[index] = _players[index].transform.position;
+            }
+            
+            CheckCoinAttackDistanceJob job = new CheckCoinAttackDistanceJob()
+            {
+                Results = results,
+                PlayerPosition = playerPosition,
+                PiggyPosition = piggyPosition,
+                DetectingMaxRange = coinAtaackMaxRange,
+                DetectingMinRange = coinAtaackMinRange,
+            };
+            
+            JobHandle jobHandle = job.Schedule((int)_playerCount, 3);     
+            
+            jobHandle.Complete();
+
+            bool checkResult = false;
+
+            foreach (var result in results)
+            {
+                checkResult |= result;
+            }
+            
+            results.Dispose();
+            playerPosition.Dispose();
+
+            if (checkResult)
+            {
+                return INode.NodeState.Success;
+            }
+            
+            return INode.NodeState.Failure;
+        }
+        
+        INode.NodeState StartCoinAttack()
+        {
+            _animator.Animator.SetTrigger(Attack);
+            _animator.Animator.SetFloat(AttackType, 1);
+
+            // TODO : VFX를 받아와서 실행하고, 매개변수로 자식 객체의 이름를 받는 함수구현
+            
+            
             return INode.NodeState.Success;
         }
 
