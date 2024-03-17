@@ -14,11 +14,13 @@ namespace Monster
     {
         [HideInInspector] public Rigidbody rigidbody;
         [HideInInspector] public NetworkMecanimAnimator networkAnimator;
+        public Transform pivot; // Pivot이 메쉬 가운데가 아닌 다리에 위치할 떄가 있다. 그때 진짜 pivot으로 사용할 변수
         
+        [Header("Monster 정보")]
         public int id = 0;
         public MonsterStatus status;
         public LootingTable lootingTable;
-
+        
         public Transform targetTransform;
         public LayerMask targetMask;
         
@@ -28,6 +30,7 @@ namespace Monster
         {
             rigidbody = GetComponent<Rigidbody>();
             networkAnimator = GetComponent<NetworkMecanimAnimator>();
+            if (pivot == null) pivot = transform;
             
             status = gameObject.GetOrAddComponent<MonsterStatus>();
             lootingTable = gameObject.GetOrAddComponent<LootingTable>();
