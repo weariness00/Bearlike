@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Manager;
+using Monster;
 using State.StateClass;
 using State.StateClass.Base;
 using Unity.Mathematics;
@@ -12,15 +13,20 @@ namespace Skill.Container
     public class SkillCleanShoot : SkillBase
     {
         public GameObject areaObject;
+        public Vector2 range;
 
+        private RectTransform _areaRect;
         private Animation areaAnimation;
         private WaitForSeconds _areaOpenAniTime;
+        private LayerMask _layerMask;
         
         private void Awake()
         {
             areaAnimation = areaObject.GetComponent<Animation>();
             var clip = areaAnimation.GetClip("Open Clean Shoot Area");
             _areaOpenAniTime = new WaitForSeconds(clip.length);
+            _areaRect = areaObject.GetComponent<RectTransform>();
+            _layerMask = 1 << LayerMask.NameToLayer("Player") | 1 << LayerMask.NameToLayer("Default");
         }
 
         public override void MainLoop()
@@ -37,57 +43,52 @@ namespace Skill.Container
             {
                 isInvoke = true;
                 gameObject.SetActive(true);
+                _areaRect.sizeDelta = range;
                 StartCoroutine(SettingArea(runObject));
             }
         }
 
         IEnumerator SettingArea(GameObject runObject)
         {
+            // viewport상의 영역 크기 잡아주기
+            var rangeHalf = range / 2f;
+            var screen = new Vector2(Screen.width, Screen.height);
+            var screenHalf = screen / 2f;
+            var areaMin = (screenHalf - rangeHalf) / screen;
+            var areaMax = (screenHalf + rangeHalf) / screen;
+            
             // 영역 여는 애니메이션 길이만큼 대기
             areaAnimation.Play();
             yield return _areaOpenAniTime;
 
-            Vector3 center = Camera.main.transform.position;
-            LayerMask monsterLayer = 1 << LayerMask.NameToLayer("Monster");
-            RaycastHit[] hits = Physics.BoxCastAll(center, new Vector3(500, 500, float.MaxValue), runObject.transform.forward, quaternion.identity, monsterLayer);
-
-            // Monster들의 앞에 장애물이 있는지 체크
-            List<GameObject> monsterList = new List<GameObject>();
-            var boxHitMaks = 1 << LayerMask.NameToLayer("Player") | 1 << LayerMask.NameToLayer("Default");
-            foreach (var boxHit in hits)
-            {
-                var dir = boxHit.point - center;
-                DebugManager.DrawRay(boxHit.point, dir * float.MaxValue, Color.red, 3f);
-                if (Physics.Raycast(boxHit.point, dir, out var hit, float.MaxValue, boxHitMaks))
-                {
-                    if (hit.transform.CompareTag("Player") == false) continue;
-                    if (IsFront(runObject.transform, hit.transform))
-                    {
-                        monsterList.Add(hit.transform.gameObject);
-                    }
-                }
-            }
-
             DebugManager.ToDo("영역에 잡힌 Monster들의 위치를 UI로 띄어주고 일정 시간 이후에 대미지 입히기");
 
-            foreach (var monster in monsterList)
+            var monsters = FindObjectsOfType<MonsterBase>();
+
+            foreach (var monster in monsters)
             {
-                var status = monster.GetComponent<MonsterStatus>();
-                status.ApplyDamageRPC(damage.Current, CrowdControl.Normality);
+                Vector3 monsterViewportPosition = Camera.main.WorldToViewportPoint(monster.transform.position);
+
+                // monsterViewportPosition의 값이 areaMin, areaMax 값 사이에 있으면 객체가 UI 영역 내에 있다고 판단할 수 있습니다.
+                if (monsterViewportPosition.x >= areaMin.x && monsterViewportPosition.x <= areaMax.x &&
+                    monsterViewportPosition.y >= areaMin.y && monsterViewportPosition.y <= areaMax.y &&
+                    monsterViewportPosition.z > 0)
+                {
+                    var dir = runObject.transform.position - monster.transform.position;
+                    DebugManager.DrawRay(monster.transform.position, dir, Color.red, 3f);
+                    if (Physics.Raycast(monster.transform.position, dir, out var hit, _layerMask) &&
+                        hit.transform.CompareTag("Player"))
+                    {
+                        var status = monster.GetComponent<MonsterStatus>();
+                        status.ApplyDamageRPC(damage.Current, CrowdControl.Normality);
+                    }
+                }
             }
 
             // 스킬이 끝난 뒤에 초기화 해주기
             gameObject.SetActive(false);
             coolTime.Current = coolTime.Max;
             isInvoke = false;
-        }
-        
-        public bool IsFront(Transform observer, Transform target)
-        {
-            Vector3 toTarget = (target.position - observer.position).normalized;
-            float dotProduct = Vector3.Dot(observer.forward, toTarget);
-
-            return dotProduct > 0;
         }
     }
 }
