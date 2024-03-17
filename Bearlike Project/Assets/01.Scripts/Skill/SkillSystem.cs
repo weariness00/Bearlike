@@ -1,37 +1,54 @@
 ﻿using System.Collections.Generic;
 using Fusion;
-using Player;
-using Skill.Container;
-using State.StateClass;
+using Manager;
 using UnityEngine;
 
 namespace Skill
 {
-    public class SkillSystem : NetworkBehaviour
+    public class SkillSystem : MonoBehaviour
     {
-        public readonly List<SkillBase> SkillList = new List<SkillBase>();
+        public List<SkillBase> skillList = new List<SkillBase>();
+        private Dictionary<string, SkillBase> _skillDictionary = new Dictionary<string, SkillBase>();
 
-        private PlayerStatus _playerStatus;
-        
+        // private PlayerStatus _playerStatus;
+
         private void Start()
         {
-            _playerStatus = gameObject.GetComponent<PlayerStatus>();
-            
-            // HACK : 테스트용
-            SkillList.Add(new FlippingCoin(_playerStatus));
+            // _playerStatus = gameObject.GetComponent<PlayerStatus>();
+            //
+            // // HACK : 테스트용
+            // skillList.Add(new FlippingCoin(_playerStatus));
         }
 
-        public override void FixedUpdateNetwork()
+        private void Update()
         {
-            foreach (var skill in SkillList)
+            foreach (var skill in skillList)
             {
-                skill.MainLoop();
+                if (skill.isInvoke == false)
+                {
+                    skill.MainLoop();
+                }
             }
 
             // var ps = GameObject.Find("Local Player").GetComponent<PlayerStatus>();
             // ps.ShowInfo();
             // ps = GameObject.Find("Remote Player").GetComponent<PlayerStatus>();
             // ps.ShowInfo();
+        }
+        
+        public SkillBase GetSkillFromName(string skillName)
+        {
+            foreach (var skillBase in skillList)
+            {
+                if (skillBase.skillName.Equals(skillName))
+                {
+                    return skillBase;
+                }
+            }
+            
+            DebugManager.LogError($"[{skillName}]이라는 스킬이 존재하지 않습니다.");
+
+            return null;
         }
     }
 }

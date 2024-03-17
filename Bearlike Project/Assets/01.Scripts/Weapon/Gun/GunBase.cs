@@ -99,10 +99,9 @@ namespace Script.Weapon.Gun
             if(Runner.LagCompensation.Raycast(ray.origin, ray.direction, float.MaxValue, Object.InputAuthority, out var hit, includeCollide, hitOptions))
             {
                 DebugManager.Log($"Ray충돌\n총 이름 : {name}\n맞은 대상 : {hit.GameObject.name}");
-                
 
-                var hitState = hit.GameObject.GetComponent<StatusBase>();
-                if (hitState != null)
+                StatusBase hitState;
+                if (hit.GameObject.TryGetComponent(out hitState))
                 {
                     // hitState.ApplyDamage(state.attack.Current, (ObjectProperty)state.property); // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
                     hitState.ApplyDamageRPC(status.attack.Current, (CrowdControl)status.property);

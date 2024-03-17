@@ -334,6 +334,7 @@ namespace Photon
         public void OnInput(NetworkRunner runner, NetworkInput input)
         {
             var playerInputData = new PlayerInputData();
+            NetworkBool trueValue = true;
             
             // 마우스 휠 클릭시 UI와 상호작용 할 수 있도록 플레이어 정지
             if (KeyManager.InputActionDown(KeyToAction.Esc) || KeyManager.InputActionDown(KeyToAction.LockCursor))
@@ -343,36 +344,38 @@ namespace Photon
             }
             if (isCursor)
             {
-                playerInputData.Cursor = true;
+                playerInputData.Cursor = trueValue;
                 input.Set(playerInputData);
                 return;
             }
 
             if (KeyManager.InputAction(KeyToAction.MoveFront))
-                playerInputData.MoveFront = true;
+                playerInputData.MoveFront = trueValue;
             if (KeyManager.InputAction(KeyToAction.MoveBack))
-                playerInputData.MoveBack = true;
+                playerInputData.MoveBack = trueValue;
             if (KeyManager.InputAction(KeyToAction.MoveLeft))
-                playerInputData.MoveLeft = true;
+                playerInputData.MoveLeft = trueValue;
             if (KeyManager.InputAction(KeyToAction.MoveRight))
-                playerInputData.MoveRight = true;
+                playerInputData.MoveRight = trueValue;
             
             if (KeyManager.InputAction(KeyToAction.Jump))
             {
-                playerInputData.Jump = true;
+                playerInputData.Jump = trueValue;
             }
             
             if (KeyManager.InputActionDown(KeyToAction.Reload))
-                playerInputData.ReLoad = true;
+                playerInputData.ReLoad = trueValue;
             
             if (KeyManager.InputAction(KeyToAction.Attack))
-                playerInputData.Attack = true;
+                playerInputData.Attack = trueValue;
 
             if (KeyManager.InputAction(KeyToAction.FirstSkill))
-                playerInputData.FirstSkill = true;
+                playerInputData.FirstSkill = trueValue;
+            if (KeyManager.InputAction(KeyToAction.Ultimate))
+                playerInputData.Ultimate = trueValue;
 
             if (KeyManager.InputAction(KeyToAction.Interact) || KeyManager.InputActionDown(KeyToAction.Interact))
-                playerInputData.Interact = true;
+                playerInputData.Interact = trueValue;
             
             playerInputData.MouseAxis.x = Input.GetAxis("Mouse X");
             playerInputData.MouseAxis.y = Input.GetAxis("Mouse Y");

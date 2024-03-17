@@ -8,15 +8,23 @@ using UnityEngine;
 namespace Skill
 {
     [System.Serializable]
-    public abstract class SkillBase : IJsonData<SkillJsonData>
+    public enum SKillType
     {
-        public string name;
+        Active,
+        Passive
+    }
+    
+    [System.Serializable]
+    public abstract class SkillBase : MonoBehaviour, IJsonData<SkillJsonData>
+    {
+        public string skillName;
         public string explain;
-        public Texture2D image;
+        public Texture2D icon;
 
+        public SKillType type;
         public bool isInvoke; // 현재 스킬이 발동 중인지
         private StatusValue<float> _duration = new StatusValue<float>();
-        private StatusValue<float> _coolTime = new StatusValue<float>();
+        [SerializeField]private StatusValue<float> _coolTime = new StatusValue<float>();
 
         public StatusValue<int> damage = new StatusValue<int>(){Max = 99999};
         

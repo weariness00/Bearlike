@@ -53,7 +53,6 @@ namespace Player
             status = gameObject.GetComponent<PlayerStatus>();
             cameraController = GetComponent<PlayerCameraController>();
             weaponSystem = gameObject.GetComponentInChildren<WeaponSystem>();
-            skillSystem = gameObject.GetOrAddComponent<SkillSystem>();
             _networkAnimator = GetComponent<NetworkMecanimAnimator>();
 
             equipment = GetComponentInChildren<IEquipment>();
@@ -145,6 +144,7 @@ namespace Player
                     jumpImpulse = Vector3.up * status.jumpPower;
                 }
             }
+            
 
             simpleKcc.Move(dir, jumpImpulse);
         }
@@ -218,7 +218,11 @@ namespace Player
         {
             if (data.FirstSkill)
             {
-                skillSystem.SkillList[0].Run(gameObject);
+                skillSystem.skillList[0].Run(gameObject);
+            }
+            else if (data.Ultimate)
+            {
+                skillSystem.GetSkillFromName("Clean Shoot").Run(gameObject);
             }
         }
 

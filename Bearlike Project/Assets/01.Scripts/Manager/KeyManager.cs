@@ -23,6 +23,7 @@ namespace Manager
         Reload,
         
         FirstSkill,
+        Ultimate,
         
         LockCursor,
         Esc,
