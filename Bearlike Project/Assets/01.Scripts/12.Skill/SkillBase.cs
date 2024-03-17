@@ -1,4 +1,4 @@
-﻿using Script.Data;
+﻿using Data;
 using Status;
 using UnityEngine;
 

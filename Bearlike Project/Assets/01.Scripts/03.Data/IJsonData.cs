@@ -3,7 +3,7 @@ using System.IO;
 using Manager;
 using Newtonsoft.Json;
 
-namespace Script.Data
+namespace Data
 {
     public interface IJsonData<T>
     {

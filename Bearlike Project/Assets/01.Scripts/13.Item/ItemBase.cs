@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Data;
 using Script.Data;
 using Status;
 using UnityEngine;
