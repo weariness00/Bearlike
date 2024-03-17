@@ -1,4 +1,5 @@
 ﻿using Data;
+using Fusion;
 using Status;
 using UnityEngine;
 
@@ -19,9 +20,9 @@ namespace Skill
         public Texture2D icon;
 
         public SKillType type;
-        public bool isInvoke; // 현재 스킬이 발동 중인지
         public StatusValue<float> coolTime = new StatusValue<float>();
-
+        public bool isInvoke; // 현재 스킬이 발동 중인지
+        
         public StatusValue<int> damage = new StatusValue<int>(){Max = 99999};
         public StatusValue<float> duration = new StatusValue<float>();
 
@@ -40,5 +41,12 @@ namespace Skill
 
             damage.Current = json.GetStatusInt("Damage");
         }
+
+        #region RPC Function
+
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void SetIsInvokeRPC(NetworkBool value) => isInvoke = value;
+
+        #endregion
     }
 }
