@@ -21,10 +21,7 @@ namespace Weapon.Gun
             base.Start();
 
             ammo.Max = ammo.Current = 36;
-            magazine.Max = magazine.Current = 6;
-            
             bulletFirePerMinute = 120;
-            reloadLateSecond.Max = reloadLateSecond.Current = 0.5f;
             
             attack.Max = attack.Current = 10;
             property = (int)CrowdControl.Normality;
@@ -41,6 +38,8 @@ namespace Weapon.Gun
             
             fireLateSecond.Max = 60 / bulletFirePerMinute;
             fireLateSecond.Current = float.MaxValue;
+            
+            reloadLateSecond.Max = reloadLateSecond.Current = 0.5f;
         }
         
         public override void ReLoadBullet()
@@ -50,12 +49,14 @@ namespace Weapon.Gun
                 reloadLateSecond.Current = reloadLateSecond.Min;
                 
                 var needChargingAmmoCount = magazine.Max - magazine.Current;
+                
                 if (ammo.Current < needChargingAmmoCount)
                 {
                     needChargingAmmoCount = ammo.Current;
                 }
 
-                ReloadCorutine(_reloadSpeed, needChargingAmmoCount);
+                StartCoroutine(ReloadCorutine(_reloadSpeed, needChargingAmmoCount));
+                
                 // for (int i = 0; i < needChargingAmmoCount; ++i)
                 // {
                 //     SoundManager.Play(reloadSound);
@@ -74,6 +75,7 @@ namespace Weapon.Gun
                 ammo.Current -= 1;
                 yield return new WaitForSeconds(waitTime);
             }
+            yield break;
         }
 
         #endregion
