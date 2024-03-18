@@ -95,7 +95,6 @@ namespace Player
                 MouseRotateControl(data.MouseAxis);
                 MoveControl(data);
                 WeaponControl(data);
-                SkillControl(data);
                 CheckInteract(data);
             }
             HpControl();
@@ -211,18 +210,6 @@ namespace Player
             {
                 var gun = weaponSystem.gun as GunBase;
                 gun.ReLoadBullet();
-            }
-        }
-
-        void SkillControl(PlayerInputData data)
-        {
-            if (data.FirstSkill)
-            {
-                skillSystem.skillList[0].Run(gameObject);
-            }
-            else if (data.Ultimate)
-            {
-                skillSystem.GetSkillFromName("Clean Shoot").Run(gameObject);
             }
         }
 
