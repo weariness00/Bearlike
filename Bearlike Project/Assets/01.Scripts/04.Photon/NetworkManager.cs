@@ -9,10 +9,10 @@ using Fusion.Addons.Physics;
 using Fusion.Photon.Realtime;
 using Fusion.Sockets;
 using Manager;
-using Newtonsoft.Json;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Random = System.Random;
 
 namespace Photon
 {
@@ -23,69 +23,28 @@ namespace Photon
 
         public bool isTest = true; // 현재 테스트 상황인지
         public SceneReference lobbyScene;
-        private string[] _sessionNames;
         private NetworkRunner _runner;
+        private SessionInfo[] _sessionInfoAll = Array.Empty<SessionInfo>();
 
         public bool isCursor;
-        private Action<NetworkObject> _isSetPlayerObjectEvent;
-        public Action<NetworkObject> IsSetPlayerObjectEvent
+
+        public Action<SessionInfo[]> SessionListUpdateAction;
+
+        #region Unity Event Function
+
+        private void Start()
         {
-            get => _isSetPlayerObjectEvent;
-            set
-            {
-                DebugManager.ToDo($"SetPlayerObject가 호스트에서는 되는데 클라이언트에서는 안되는 이유 찾기");
-                if (_runner.TryGetPlayerObject(_runner.LocalPlayer, out var playerObject))
-                {
-                    StopCoroutine("IsSetPlayerObjectEventCoroutine");
-                    value.Invoke(playerObject);
-                    return;
-                }
+            // Create the Fusion runner and let it know that we will be providing user inpuz
+            gameObject.GetOrAddComponent<RunnerSimulatePhysics3D>();
+            _runner = gameObject.GetOrAddComponent<NetworkRunner>();
+            _runner.ProvideInput = true;
+            
+            _runner.AddCallbacks(this);
 
-                _isSetPlayerObjectEvent = value;
-            }
-        }
-
-        #region Session Info
-
-        public struct RoomInfo : IEnumerable<RoomInfo>
-        {
-            [JsonProperty("Session Name")]public string Name;
-            [JsonProperty("Player Count")]public int PlayerCount;
-            [JsonProperty("Is Game Start")]public bool IsGameStart;
-
-            public RoomInfo(string name)
-            {
-                Name = name;
-                PlayerCount = 1;
-                IsGameStart = false;
-            }
-
-            public IEnumerator<RoomInfo> GetEnumerator()
-            {
-                yield return this;
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return GetEnumerator();
-            }
+            LobbyConnect();
         }
 
         #endregion
-
-        IEnumerator IsSetPlayerObjectEventCoroutine()
-        {
-            while (true)
-            {
-                if (_runner.TryGetPlayerObject(_runner.LocalPlayer, out var playerObject))
-                {
-                    IsSetPlayerObjectEvent?.Invoke(playerObject);
-                    break;
-                }
-
-                yield return null;
-            }
-        }
 
         #region Scene Static Funtion
 
@@ -169,13 +128,17 @@ namespace Photon
 
         #region Network Connect Function
 
+        public void LobbyConnect()
+        {
+            _runner.JoinSessionLobby(SessionLobby.Shared);
+        }
+        
         async Task Matching(GameMode mode, string sessionName)
         {
-            // Create the Fusion runner and let it know that we will be providing user inpuz
-
-            gameObject.GetOrAddComponent<RunnerSimulatePhysics3D>();
-            _runner = gameObject.GetOrAddComponent<NetworkRunner>();
-            _runner.ProvideInput = true;
+            DebugManager.ToDo("세션에 인원이 꽉 차면 들어가지 못하게 해야됨\n" +
+                              "세션에 인원이 없으면 들어 갈 수 있게 해야됨\n" +
+                              "누군가가 세션을 나가면 정보 업데이트 해줘야함\n" +
+                              "세션에 한명도 없으면 json에 세션 지워줘야함");
             
             // Create the NetworkSceneInfo from the current scene
             var scene = SceneRef.FromIndex((int)SceneType.Matching);
@@ -189,7 +152,7 @@ namespace Photon
             await _runner.StartGame(new StartGameArgs()
             {
                 GameMode = mode,
-                SessionName = "ssssss",
+                SessionName = sessionName,
                 Scene = scene,
                 MatchmakingMode = MatchmakingMode.FillRoom,
                 SceneManager = gameObject.GetOrAddComponent<NetworkSceneManagerDefault>(),
@@ -199,106 +162,64 @@ namespace Photon
             });
 
             gameObject.transform.parent = Managers.Instance.transform;
-
-            StartCoroutine(IsSetPlayerObjectEventCoroutine());
         }
 
         async Task RandomMatching()
         {
-            DebugManager.ToDo("세션에 인원이 꽉 차면 들어가지 못하게 해야됨\n" +
-                              "세션에 인원이 없으면 들어 갈 수 있게 해야됨\n" +
-                              "누군가가 세션을 나가면 정보 업데이트 해줘야함\n" +
-                              "세션에 한명도 없으면 json에 세션 지워줘야함");
-            await Matching(GameMode.AutoHostOrClient, "asd");
+            var sessionNames = _sessionInfoAll.Where(info => info.IsOpen && info.PlayerCount < info.MaxPlayers).Select(info => info.Name).ToArray();
+            var sessionName = sessionNames.Length == 0 ? MakeSessionName(_sessionInfoAll.Select(info => info.Name).ToArray()) : sessionNames[UnityEngine.Random.Range(0, sessionNames.Length)];
             
-            // WebManager.DownloadJson(WebURL.RoomURL, "", async (json) =>
-            // {
-            //     RoomInfo[] roomInfos = JsonConvert.DeserializeObject<RoomInfo[]>(json);
-            //     var sessionNames = roomInfos.Select(room => room.Name).ToArray();
-            //     var sessionName = GetRandomSessionName(sessionNames);
-            //     await Matching(GameMode.AutoHostOrClient, sessionName);
-            // }, false, false);
+            await Matching(GameMode.AutoHostOrClient, sessionName);
         }
 
-        async Task MakeRoom()
+        public async Task MakeRoom()
         {
-            // var fileName = "Lobby Session";
-            // string createSessionName = null;
-            // while (true)
-            // {
-            //     createSessionName = null;
-            //     ProjectUpdateManager.DownLoadLobbyToStorage(fileName);
-            //     JsonConvertExtension.Load(fileName, (data) =>
-            //     {
-            //         var sessionInfos = JsonConvert.DeserializeObject<SessionInfo[]>(data);
-            //         var sessionNames = sessionInfos.Select(info => info.Name).ToArray();
-            //         createSessionName = GetRandomSessionName(sessionNames);
-            //         var newSessionInfo = new SessionInfo(createSessionName);
-            //         sessionInfos.AddRange(newSessionInfo);
-            //
-            //         JsonConvertExtension.Save(JsonConvert.SerializeObject(sessionInfos), fileName);
-            //     });
-            //     if (ProjectUpdateManager.UploadJsonToStorage(fileName))
-            //     {
-            //         break;
-            //     }
-            // }
-            //
-            // if (createSessionName == null)
-            // {
-            //     DebugManager.LogError("서버와의 연결 상태가 좋지 않습니다. 다시 시도해주세요");
-            //     return;
-            // }
-            //
-            // await Matching(GameMode.Host, createSessionName);
-            await Matching(GameMode.Host, "a");
+            var sessionName = MakeSessionName(_sessionInfoAll.Select(info => info.Name).ToArray());
+
+            await Matching(GameMode.Host, sessionName);
         }
 
-        async Task JoinRoom()
+        public async Task JoinRoom(string sessionName)
         {
-            DebugManager.ToDo("세션에 인원이 꽉 차면 들어가지 못하게 해야됨\n" +
-                              "세션에 인원이 없으면 들어 갈 수 있게 해야됨\n" +
-                              "누군가가 세션을 나가면 정보 업데이트 해줘야함\n" +
-                              "세션에 한명도 없으면 json에 세션 지워줘야함");
-            // var fileName = "Lobby Session";
-            // string createSessionName = null;
-            // ProjectUpdateManager.DownLoadLobbyToStorage(fileName);
-            // JsonConvertExtension.Load(fileName, (data) =>
-            // {
-            //     var sessionInfos = JsonConvert.DeserializeObject<SessionInfo[]>(data);
-            //     var sessionNames = sessionInfos.Select(info => info.Name).ToArray();
-            //     createSessionName = GetRandomSessionName(sessionNames);
-            //     var newSessionInfo = new SessionInfo(createSessionName);
-            //     sessionInfos.AddRange(newSessionInfo);
-            //
-            //     JsonConvertExtension.Save(JsonConvert.SerializeObject(sessionInfos), fileName);
-            // });
-            // if (ProjectUpdateManager.UploadJsonToStorage(fileName))
-            // {
-            //     break;
-            // }
-            //
-            // if (createSessionName == null)
-            // {
-            //     DebugManager.LogError("서버와의 연결 상태가 좋지 않습니다. 다시 시도해주세요");
-            //     return;
-            // }
-            //
-            // await Matching(GameMode.Client, );
-            await Matching(GameMode.Client, "a");
+            await Matching(GameMode.Client, sessionName);
         }
 
-        private bool IsValidSessionName(string[] sessionNames, string searchSessionName)
+
+        private const string Characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        public static string MakeSessionName(string[] sessionNames)
         {
-            foreach (var sessionName in sessionNames)
+            string randomName = string.Empty;
+            bool isSuccess = false;
+
+            while (!isSuccess)
             {
-                if (searchSessionName.Equals(sessionName))
+                randomName = RandomString(6);
+                isSuccess = true;
+            
+                foreach (var sessionName in sessionNames)
                 {
-                    return true;
+                    if (randomName.Equals(sessionName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        isSuccess = false;
+                        break;
+                    }
                 }
             }
 
-            return false;
+            return randomName;
+        }
+
+        private static string RandomString(int length)
+        {
+            Random random = new Random();
+            string result = string.Empty;
+        
+            for (int i = 0; i < length; i++)
+            {
+                result += Characters[random.Next(Characters.Length)];
+            }
+
+            return result;
         }
 
         #endregion
@@ -394,7 +315,7 @@ namespace Photon
 
             SceneManager.LoadScene(lobbyScene.ScenePath);
 
-            UserData.Instance.UserDictionary.Remove(runner.LocalPlayer);
+            UserData.Instance.UserLeftRPC(runner.LocalPlayer);
         }
 
         public void OnConnectedToServer(NetworkRunner runner)
@@ -426,7 +347,15 @@ namespace Photon
 
         public void OnSessionListUpdated(NetworkRunner runner, List<Fusion.SessionInfo> sessionList)
         {
+            _sessionInfoAll = sessionList.ToArray();
             
+            foreach (SessionInfo session in sessionList)
+            {
+                DebugManager.Log($"Session: {session.Name}, Players: {session.PlayerCount}");
+            }
+            
+            SessionListUpdateAction?.Invoke(_sessionInfoAll);
+            DebugManager.Log("세션 리스트 업데이트");
         }
 
         public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data)
