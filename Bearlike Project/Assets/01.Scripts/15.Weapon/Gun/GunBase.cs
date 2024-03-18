@@ -1,5 +1,4 @@
-﻿using System;
-using Fusion;
+﻿using Fusion;
 using Inho_Test_.Player;
 using Manager;
 using State.StateClass.Base;
@@ -13,7 +12,6 @@ namespace Script.Weapon.Gun
 {
     public class GunBase : WeaponBase
     {
-        public static StatusValue<int> ammo = new StatusValue<int>(){Max = 100, Current = int.MaxValue};
 
         [Header("총 이펙트")] 
         public VisualEffect shootEffect; // 발사 이펙트
@@ -25,6 +23,7 @@ namespace Script.Weapon.Gun
 
         [Header("총알")] 
         public BulletBase bullet;
+        public static StatusValue<int> ammo = new StatusValue<int>(){Max = 100, Current = int.MaxValue};
         public StatusValue<int> magazine = new StatusValue<int>() {Max = 10, Current = 10}; // max 최대 탄약, current 현재 장정된 탄약
 
         public float bulletFirePerMinute; // 분당 총알 발사량
@@ -120,7 +119,7 @@ namespace Script.Weapon.Gun
             return detination;
         }
         
-        private void ApplyDamage(Hitbox enemyHitbox)
+        public virtual void ApplyDamage(Hitbox enemyHitbox)
         {
             var enemyState = enemyHitbox.Root.GetComponent<StatusBase>();
 

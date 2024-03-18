@@ -49,6 +49,7 @@ namespace Weapon
         public Action EquipAction { get; set; }
         public bool IsEquip { get; set; }
         public bool IsGun { get; set; }
+        
         public virtual void Equip()
         {
             if (HasInputAuthority)

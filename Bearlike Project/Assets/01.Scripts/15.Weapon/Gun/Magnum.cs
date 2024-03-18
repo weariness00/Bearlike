@@ -1,15 +1,17 @@
 using System.Collections;
+using Fusion;
+using Inho_Test_.Player;
 using Script.Weapon.Gun;
 using State.StateClass.Base;
-using Status;
 using UnityEngine;
-using Weapon.Bullet;
 
 namespace Weapon.Gun
 {
     public class Magnum : GunBase
     {
-        [SerializeField] private float _reloadSpeed = 0.5f;
+        [SerializeField] private float reloadSpeed = 0.5f;
+
+        private IEnumerator _reloadCorutine;
         
         public override void Awake()
         {
@@ -29,6 +31,49 @@ namespace Weapon.Gun
             BulletInit();
         } 
         
+        public override void Shoot()
+        {
+            if (fireLateSecond.isMax)
+            {
+                fireLateSecond.Current = fireLateSecond.Min;
+                if (magazine.Current != 0)
+                {
+                    var dst = CheckRay();
+                    
+                    if(shootEffect != null) shootEffect.Play();
+                    bullet.destination = dst;
+                    Instantiate(bullet.gameObject, transform.position, transform.rotation);
+                
+                    magazine.Current--;
+                    SoundManager.Play(shootSound);
+                }
+                else
+                {
+                    SoundManager.Play(emptyAmmoSound);
+                }
+            }
+            StopCoroutine(_reloadCorutine);
+        }
+        
+        public override void ApplyDamage(Hitbox enemyHitbox)
+        {
+            var enemyState = enemyHitbox.Root.GetComponent<StatusBase>();
+
+            if (enemyState.gameObject.CompareTag("Player"))
+            {
+                return;
+            }
+            
+            if (enemyState == null || enemyState.hp.isMin)
+            {
+                return;
+            }
+            
+            float damageMultiplier = enemyHitbox is TestBodyHitbox bodyHitbox ? bodyHitbox.damageMultiplier : 1f;
+            
+            // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
+            enemyState.ApplyDamageRPC((int)((status.attack.Current + attack.Current) * damageMultiplier), (CrowdControl)(status.property | property));
+        }
         
         #region Bullet Funtion
 
@@ -56,14 +101,9 @@ namespace Weapon.Gun
                     needChargingAmmoCount = ammo.Current;
                 }
 
-                StartCoroutine(ReloadCorutine(_reloadSpeed, needChargingAmmoCount));
+                _reloadCorutine = ReloadCorutine(reloadSpeed, needChargingAmmoCount);
                 
-                // for (int i = 0; i < needChargingAmmoCount; ++i)
-                // {
-                //     SoundManager.Play(reloadSound);
-                //     magazine.Current += 1;
-                //     ammo.Current -= 1;
-                // }
+                StartCoroutine(_reloadCorutine);
             }
         }
 
