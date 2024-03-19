@@ -52,27 +52,8 @@ namespace Weapon.Gun
                     SoundManager.Play(emptyAmmoSound);
                 }
             }
-            StopCoroutine(_reloadCorutine);
-        }
-        
-        public override void ApplyDamage(Hitbox enemyHitbox)
-        {
-            var enemyState = enemyHitbox.Root.GetComponent<StatusBase>();
-
-            if (enemyState.gameObject.CompareTag("Player"))
-            {
-                return;
-            }
-            
-            if (enemyState == null || enemyState.hp.isMin)
-            {
-                return;
-            }
-            
-            float damageMultiplier = enemyHitbox is TestBodyHitbox bodyHitbox ? bodyHitbox.damageMultiplier : 1f;
-            
-            // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
-            enemyState.ApplyDamageRPC((int)((status.attack.Current + attack.Current) * damageMultiplier), (CrowdControl)(status.property | property));
+            if(_reloadCorutine != null)
+                StopCoroutine(_reloadCorutine);
         }
         
         #region Bullet Funtion
@@ -80,7 +61,7 @@ namespace Weapon.Gun
         public override void BulletInit()
         {
             base.BulletInit();
-            magazine.Max = magazine.Current = 6;
+            magazine.Max = magazine.Current = 8;
             
             fireLateSecond.Max = 60 / bulletFirePerMinute;
             fireLateSecond.Current = float.MaxValue;

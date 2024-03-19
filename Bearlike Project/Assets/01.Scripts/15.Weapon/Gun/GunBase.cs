@@ -30,6 +30,8 @@ namespace Script.Weapon.Gun
         public StatusValue<float> fireLateSecond = new StatusValue<float>(); // 총 발사후 기다리는 시간
         public StatusValue<float> reloadLateSecond = new StatusValue<float>(){Max = 1, Current = float.MaxValue}; // 재장전 시간
 
+        public float attackRange;       // 총알 사정거리
+
         [Header("성능")] 
         public StatusValue<int> attack = new StatusValue<int>();     // 공격력
         public int property;                // 속성
@@ -136,7 +138,7 @@ namespace Script.Weapon.Gun
             float damageMultiplier = enemyHitbox is TestBodyHitbox bodyHitbox ? bodyHitbox.damageMultiplier : 1f;
             
             // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
-            enemyState.ApplyDamageRPC((int)((status.attack.Current + attack.Current) * damageMultiplier), (CrowdControl)status.property);
+            enemyState.ApplyDamageRPC((int)((status.attack.Current + attack.Current) * damageMultiplier), (CrowdControl)(status.property | property));
         }
 
         #region Bullet Funtion
@@ -148,6 +150,8 @@ namespace Script.Weapon.Gun
 
             fireLateSecond.Max = 60 / bulletFirePerMinute;
             fireLateSecond.Current = float.MaxValue;
+
+            attackRange = 100.0f;
         }
         
         public virtual void ReLoadBullet()
