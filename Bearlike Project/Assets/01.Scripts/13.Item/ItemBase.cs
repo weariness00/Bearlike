@@ -41,27 +41,19 @@ namespace Item
 
         public virtual void Start()
         {
-            StartCoroutine(RiseUp());
+            RiseUp();
         }
 
         #endregion
         
         // 처음 드랍할때 솟아오르는 동작
-        private IEnumerator RiseUp()
+        private void RiseUp()
         {
-            float time = 0f;
             var dir = Random.insideUnitSphere;
             dir.y = 1f;
             dir.Normalize();
-            while (true)
-            {
-                time += Time.deltaTime;
-                if (time > 2f)
-                    break;
-
-                rigidbody.AddForce(Time.deltaTime * 2f * dir);
-                yield return null;
-            }
+            dir = rigidbody.mass * 1000f * dir;
+            rigidbody.AddForce(dir);
         }
         
         // 타겟을 향해 이동하는 코루틴
