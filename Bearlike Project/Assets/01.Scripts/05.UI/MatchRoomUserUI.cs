@@ -15,8 +15,8 @@ public class MatchRoomUserUI : NetworkBehaviour
     private void Awake()
     {
         exitButton.onClick.AddListener(OnExit);
-        UserData.Instance.UserJoinAction += (playerRef) => DataUpdateRPC();
-        UserData.Instance.UserLeftAction += (playerRef) => DataUpdateRPC();
+        UserData.Instance.UserJoinAction += UserActionToDataUpdate;
+        UserData.Instance.UserLeftAction += UserActionToDataUpdate;
     }
 
     private void Update()
@@ -27,11 +27,19 @@ public class MatchRoomUserUI : NetworkBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        UserData.Instance.UserJoinAction -= UserActionToDataUpdate;
+        UserData.Instance.UserLeftAction -= UserActionToDataUpdate;
+    }
+
     public override void Spawned()
     {
         DataUpdateRPC();
     }
 
+    // UserData의 Action들에 넣고 뺼 용으로 사용하는 함수
+    private void UserActionToDataUpdate(PlayerRef playerRef) => DataUpdateRPC();
     [Rpc(RpcSources.All,RpcTargets.All)]
     public void DataUpdateRPC() => DataUpdate();
     public void DataUpdate()

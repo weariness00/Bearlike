@@ -314,8 +314,6 @@ namespace Photon
             DebugManager.Log($"서버 종료 : {runner.LocalPlayer}");
 
             SceneManager.LoadScene(lobbyScene.ScenePath);
-
-            UserData.Instance.UserLeftRPC(runner.LocalPlayer);
         }
 
         public void OnConnectedToServer(NetworkRunner runner)
