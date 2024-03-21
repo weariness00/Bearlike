@@ -34,6 +34,11 @@ namespace Weapon.Gun
             fireLateSecond.Current = float.MaxValue;
             
             reloadLateSecond.Max = reloadLateSecond.Current = 2.0f;
+            
+            attackRange = 150.0f;
+            
+            bullet.maxMoveDistance = attackRange;
+            bullet.player = gameObject;
         }
         
         public override void ReLoadBullet()
