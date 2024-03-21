@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Data;
+using Inventory;
 using Script.Data;
 using Status;
 using UnityEngine;
@@ -9,7 +10,7 @@ using Random = UnityEngine.Random;
 namespace Item
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class ItemBase : MonoBehaviour, IJsonData<ItemJsonData>
+    public class ItemBase : MonoBehaviour, IJsonData<ItemJsonData>, IInventoryItemAdd, IInventoryItemUse
     {
         [HideInInspector] public Rigidbody rigidbody;
         
@@ -18,7 +19,7 @@ namespace Item
         public int id;
         public string itemName;
         
-        public Sprite icon; // 아이템 이미지
+        public Texture2D icon; // 아이템 이미지
 
         public StatusValue<int> amount; // 아이템 총 갯수
         public string explain; // 아이템 설명
@@ -27,6 +28,23 @@ namespace Item
 
         public static bool SaveJsonData(ItemJsonData json) => IJsonData<ItemJsonData>.SaveJsonData(json, json.name, path);
 
+        #endregion
+        
+        #region HashSet Fucntion
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+                return false;
+
+            ItemBase itemBase = (ItemBase)obj;
+            return itemName == itemBase.itemName; // 여기서는 이름만으로 판단
+        }
+
+        public override int GetHashCode()
+        {
+            return itemName.GetHashCode(); // 이름의 해시 코드를 반환
+        }
         #endregion
 
         #region Unity Event Function
@@ -100,6 +118,37 @@ namespace Item
         {
             amount.Current = json.amount;
             explain = json.explain;
+        }
+
+        #endregion
+
+        #region Inventory Function
+
+        public AddItem AddItem<AddItem>(AddItem addItem)
+        {
+            if (addItem is ItemBase itemBase)
+            {
+                itemBase.amount.Current += amount.Current;
+            }
+
+            return addItem;
+        }
+        
+        public virtual UseItem UseItem<UseItem>(UseItem useItem, out bool isDestroy)
+        {
+            isDestroy = false;
+            if (useItem is ItemBase testItem)
+            {
+                testItem.amount.Current -= 1;
+
+                if (testItem.amount.isMin)
+                {
+                    Destroy(testItem.gameObject);
+                    isDestroy = true;
+                }
+            }
+
+            return useItem;
         }
 
         #endregion
