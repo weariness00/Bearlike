@@ -1,34 +1,52 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Manager;
 using Monster;
 using State.StateClass;
 using State.StateClass.Base;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Skill.Container
 {
     public class SkillCleanShoot : SkillBase
     {
+        public Canvas cleanShootCanvas;
         public GameObject areaObject;
+        public GameObject aimObject;
         public Vector2 range;
 
         private RectTransform _areaRect;
         private Animation areaAnimation;
         private WaitForSeconds _areaOpenAniTime; // UI 키는 애니메이션 시간
+
+        private Animation _aimAnimation;
+        private WaitForSeconds _aimTargetingAniTime;
+        
         private LayerMask _layerMask;
 
         private WaitForSeconds _findTime; // 몇초를 주기로 영역내에 몬스터 포착 업데이트를 하게 할지
 
         private List<MonsterBase> _monsterList = new List<MonsterBase>(); // 타격할 몬스터를 담는 컨테이너
+        private Dictionary<GameObject, GameObject> _aimDictionary = new Dictionary<GameObject, GameObject>(); // 타격할 몬스터를 UI로 표시할때 UI들을 담는 컨테이너 // L : Target , R : Aim
         private bool _isAttack;
 
         private void Awake()
         {
-            areaAnimation = areaObject.GetComponent<Animation>();
-            var clip = areaAnimation.GetClip("Open Clean Shoot Area");
-            _areaOpenAniTime = new WaitForSeconds(clip.length);
-            _areaRect = areaObject.GetComponent<RectTransform>();
+            {
+                areaAnimation = areaObject.GetComponent<Animation>();
+                var clip = areaAnimation.GetClip("Open Clean Shoot Area");
+                _areaOpenAniTime = new WaitForSeconds(clip.length);
+                _areaRect = areaObject.GetComponent<RectTransform>();
+            }
+
+            {
+                _aimAnimation = aimObject.GetComponent<Animation>();
+                var targetClip = _aimAnimation.GetClip("Clean Shoot Aim Targeting");
+                _aimTargetingAniTime = new WaitForSeconds(targetClip.length);
+            }
+            
             _layerMask = LayerMask.GetMask("Default");
 
             _findTime = new WaitForSeconds(0.2f);
@@ -38,6 +56,8 @@ namespace Skill.Container
         {
             if (coolTime.isMin == false)
             {
+                cleanShootCanvas.transform.position = Vector3.zero;
+                
                 coolTime.Current -= Time.deltaTime;
             }
         }
@@ -49,7 +69,7 @@ namespace Skill.Container
                 isInvoke = true;
                 gameObject.SetActive(true);
                 _areaRect.sizeDelta = range;
-                StartCoroutine(SettingArea(runObject));
+                StartCoroutine(AreaSetting(runObject));
                 StartCoroutine(AttackMonsterFromArea());
             }
         }
@@ -62,6 +82,12 @@ namespace Skill.Container
                 yield return null;
                 if (KeyManager.InputAction(KeyToAction.Attack))
                 {
+                    foreach (var (monster, aim) in _aimDictionary)
+                    {
+                        Destroy(aim);
+                    }
+                    _aimDictionary.Clear();
+                    
                     foreach (var monster in _monsterList)
                     {
                         var status = monster.GetComponent<MonsterStatus>();
@@ -77,7 +103,7 @@ namespace Skill.Container
             }
         }
 
-        IEnumerator SettingArea(GameObject runObject)
+        IEnumerator AreaSetting(GameObject runObject)
         {
             // viewport상의 영역 크기 잡아주기
             var rangeHalf = range / 2f;
@@ -121,8 +147,64 @@ namespace Skill.Container
                         if (Physics.Raycast(monsterPosition, dir, out var hit, _layerMask) == false)
                         {
                             _monsterList.Add(monster);
+                            if ( _aimDictionary.ContainsKey(monster.gameObject) == false)
+                            {
+                                StartCoroutine(AimSetting(runObject,monster.gameObject));
+                            }
                         }
                     }
+                }
+            }
+        }
+
+        // Aim UI생성해주고 셋팅
+        IEnumerator AimSetting(GameObject runObject, GameObject target)
+        {
+            var aim = Instantiate(aimObject, cleanShootCanvas.transform);
+            aim.SetActive(true);
+            _aimDictionary.TryAdd(target, aim);
+
+            // Aim Update
+            StartCoroutine(AimUpdate(runObject, target, aim));
+
+            // Targeting 애니메이션 기다린 후 회전 애니메이션 실행
+            yield return _aimTargetingAniTime;
+
+            var animation = aim.GetComponent<Animation>();
+            animation.Play("Clean Shoot Aim Rotation");
+        }
+
+        // 생성된 Aim UI를 Target의 위치에 따라 Update
+        IEnumerator AimUpdate(GameObject runObject, GameObject target, GameObject aim)
+        {
+            var rangeHalf = range / 2f;
+            var screen = new Vector2(Screen.width, Screen.height);
+            var screenHalf = screen / 2f;
+            var areaMin = (screenHalf - rangeHalf) / screen;
+            var areaMax = (screenHalf + rangeHalf) / screen;
+            
+            var aimRect = aim.GetComponent<RectTransform>();
+
+            while (true)
+            {
+                yield return null;
+                Vector3 monsterViewportPosition = Camera.main.WorldToViewportPoint(target.transform.position);
+                if (monsterViewportPosition.x >= areaMin.x && monsterViewportPosition.x <= areaMax.x &&
+                    monsterViewportPosition.y >= areaMin.y && monsterViewportPosition.y <= areaMax.y &&
+                    monsterViewportPosition.z > 0)
+                {
+                    var dir = (target.transform.position - runObject.transform.position);
+                    var aimPos = monsterViewportPosition * screen - (Vector2)cleanShootCanvas.transform.position;
+                    var dirMagnitudeNormalize = Mathf.Clamp((50 - dir.magnitude) / 50, 0, 1);
+                    var aimScale = new Vector3(dirMagnitudeNormalize, dirMagnitudeNormalize, 1f);
+                    aimRect.anchoredPosition = aimPos;
+                    aimRect.localScale = aimScale;
+                }
+                else
+                {
+                    _aimDictionary.Remove(target);
+                    Destroy(aim);
+                    break;
                 }
             }
         }
