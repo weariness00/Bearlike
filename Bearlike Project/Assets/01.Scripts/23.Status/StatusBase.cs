@@ -73,7 +73,7 @@ namespace State.StateClass.Base
         #region HP Function
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public virtual void ApplyDamageRPC(int damage, CrowdControl enemyProperty, RpcInfo info = default)
+        public void ApplyDamageRPC(int damage, CrowdControl enemyProperty, RpcInfo info = default)
         {
             ApplyDamage(damage, enemyProperty);
             

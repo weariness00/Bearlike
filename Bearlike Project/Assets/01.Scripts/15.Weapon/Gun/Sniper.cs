@@ -6,12 +6,12 @@ namespace Weapon.Gun
     public class Sniper : GunBase
     {
         public override void Awake()
-        {
-            base.Awake();
-        } 
-        
+        {                           
+            base.Awake();           
+        }                           
+                                    
         public override void Start()
-        {
+        {                           
             base.Start();
 
             ammo.Max = ammo.Current = 36;

@@ -60,13 +60,17 @@ namespace Weapon.Gun
 
         public override void BulletInit()
         {
-            base.BulletInit();
             magazine.Max = magazine.Current = 8;
             
             fireLateSecond.Max = 60 / bulletFirePerMinute;
             fireLateSecond.Current = float.MaxValue;
             
             reloadLateSecond.Max = reloadLateSecond.Current = 0.5f;
+
+            attackRange = 100.0f;
+            
+            bullet.maxMoveDistance = attackRange;
+            bullet.player = gameObject;
         }
         
         public override void ReLoadBullet()
