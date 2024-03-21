@@ -14,7 +14,13 @@ namespace Status
         
         public T Current
         {
-            get => _current;
+            get
+            {
+#if UNITY_EDITOR // Editor 상에서는 초기화가 안되고 나머지 값들이 그대로 남아있는 현상을 없애기 위해 사용
+                CheckCurrent();
+#endif
+                return _current;
+            }
             set
             {
                 _current = value;
