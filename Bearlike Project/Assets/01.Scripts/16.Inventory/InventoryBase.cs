@@ -87,6 +87,11 @@ namespace Inventory
         #region Editor Function
         public void SetItem(Dictionary<Component, Component> items)
         {
+            items.Clear();
+            foreach (var (key, value) in uiHandleDictionary)
+            {
+                items.Add(key, value);
+            }
         }
 
         #endregion
