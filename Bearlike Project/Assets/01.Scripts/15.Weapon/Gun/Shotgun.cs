@@ -7,7 +7,9 @@ namespace Weapon.Gun
 {
     public class Shotgun : GunBase
     {
-        [SerializeField] private float reloadSpeed = 0.5f;
+        [SerializeField] private float reloadSpeed = 0.5f;  // 재장전 속도
+
+        [SerializeField] private float bulletRadian;    // 산탄 정도(원의 반지름)
 
         private IEnumerator _reloadCorutine;
         
@@ -20,6 +22,8 @@ namespace Weapon.Gun
         {
             base.Start();
 
+            bulletRadian = 10;
+            
             ammo.Max = ammo.Current = 36;
             bulletFirePerMinute = 60;
             
@@ -40,14 +44,29 @@ namespace Weapon.Gun
                     
                     // gun의 현재 방향에서 원을 그리는 벡터를 dst에 더하면?
                     // 벡터에 원하는 원의 반지름을 곱하면 그만큼 탄의 퍼짐이 결정이된다.
+                    // dst에 구를 그릴수 있는 vector3를 뽑아서 방향만 설정하면 탄은 결과적으로 원을 그릴것이다.
+                    // ==> 문제점이 반환되는 dst가 객체의 유무에 따라 distance의 길이가 달라지기에 일관성 없는 탄퍼짐이 나온다
+                    // 그러면 사정거리에 따른 dst가 return이 되도록 raycast함수를 수정하던지 아니면 반환받은 dst를 표준화한뒤 사정거리를 곱하자.
                     
                     // 아니면 일정거리는 모든탄이 날아가다가 일정 구간에서 퍼지는 (우클릭? 혹은 일반 공격)으로 구현해도 괜찬을것 같다.
                     
                     if(shootEffect != null) shootEffect.Play();
-                    bullet.destination = dst;
                     
-                    Instantiate(bullet.gameObject, transform.position, transform.rotation);
-                
+                    dst = Vector3.Normalize(dst);
+                    Debug.Log(dst);
+                    
+                    bullet.destination = dst * attackRange;
+                    Debug.Log(bullet.destination);
+                    
+                    for (int i = 0; i < 10; ++i)
+                    {
+                        Vector3 randomVector3 = new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f));
+                        randomVector3 *= bulletRadian;
+                        bullet.destination += randomVector3;
+                        
+                        Instantiate(bullet.gameObject, transform.position, transform.rotation);
+                    }
+                 
                     magazine.Current--;
                     SoundManager.Play(shootSound);
                 }

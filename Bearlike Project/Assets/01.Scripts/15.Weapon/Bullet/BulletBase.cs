@@ -27,6 +27,7 @@ namespace Weapon.Bullet
         protected void Start()
         {
             moveDistance = 0.0f;
+            speed.Current = 1;
             
             transform.LookAt(destination);
             Destroy(gameObject, 50f);
