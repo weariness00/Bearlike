@@ -66,16 +66,19 @@ namespace Player
             
             if (HasInputAuthority)
             {
+                Object.
                 name = "Local Player";
 
                 // Runner.SetPlayerObject(Runner.LocalPlayer, Object);
                 // equipment?.Equip();
                 weaponSystem.gun?.Equip();
-                
+
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
             }
             else
+            {
                 name = "Remote Player";
+            }
         }
 
         public override void FixedUpdateNetwork()
@@ -86,8 +89,9 @@ namespace Player
                 simpleKcc.SetPosition(spawnPosition[0]);
                 UserData.SetTeleportPosition(Runner.LocalPlayer, null);
             }
-
-            if (GetInput(out PlayerInputData data))
+            
+            if (HasInputAuthority && 
+                GetInput(out PlayerInputData data))
             {
                 if (data.Cursor)
                     return;

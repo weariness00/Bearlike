@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Manager;
 using Monster;
+using Photon;
 using State.StateClass;
 using State.StateClass.Base;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.VFX;
 
 namespace Skill.Container
 {
@@ -15,6 +17,7 @@ namespace Skill.Container
         public Canvas cleanShootCanvas;
         public GameObject areaObject;
         public GameObject aimObject;
+        public VisualEffect trajectoryVFX; // 총알 궤적 이펙트
         public Vector2 range;
 
         private RectTransform _areaRect;
@@ -23,6 +26,8 @@ namespace Skill.Container
 
         private Animation _aimAnimation;
         private WaitForSeconds _aimTargetingAniTime;
+
+        private float _trajectoryVFXDestroyTime;
         
         private LayerMask _layerMask;
 
@@ -45,6 +50,10 @@ namespace Skill.Container
                 _aimAnimation = aimObject.GetComponent<Animation>();
                 var targetClip = _aimAnimation.GetClip("Clean Shoot Aim Targeting");
                 _aimTargetingAniTime = new WaitForSeconds(targetClip.length);
+            }
+
+            {
+                _trajectoryVFXDestroyTime = trajectoryVFX.GetFloat("Duration");
             }
             
             _layerMask = LayerMask.GetMask("Default");
@@ -70,11 +79,11 @@ namespace Skill.Container
                 gameObject.SetActive(true);
                 _areaRect.sizeDelta = range;
                 StartCoroutine(AreaSetting(runObject));
-                StartCoroutine(AttackMonsterFromArea());
+                StartCoroutine(AttackMonsterFromArea(runObject));
             }
         }
 
-        IEnumerator AttackMonsterFromArea()
+        IEnumerator AttackMonsterFromArea(GameObject runObject)
         {
             yield return _areaOpenAniTime;
             while (true)
@@ -88,11 +97,21 @@ namespace Skill.Container
                     }
                     _aimDictionary.Clear();
                     
+                    trajectoryVFX.gameObject.SetActive(true);
                     foreach (var monster in _monsterList)
                     {
                         var status = monster.GetComponent<MonsterStatus>();
                         status.ApplyDamageRPC(damage.Current, CrowdControl.Normality);
+                        
+                        Vector3 monsterViewportPosition = Camera.main.WorldToViewportPoint(monster.transform.position);
+                        var dis = Vector3.Magnitude(monster.transform.position - monsterViewportPosition);
+                        trajectoryVFX.SetFloat("Distance", dis);
+                        trajectoryVFX.transform.LookAt(monster.transform);
+                        var trajectoryVFXObject = NetworkManager.Runner.Spawn(trajectoryVFX.gameObject, monsterViewportPosition, trajectoryVFX.transform.rotation);
+                        Destroy(trajectoryVFXObject, _trajectoryVFXDestroyTime);
+                        // NetworkManager.Runner.Despawn(trajectoryVFXObject);
                     }
+                    trajectoryVFX.gameObject.SetActive(false);
 
                     // 스킬이 끝난 뒤에 초기화 해주기
                     gameObject.SetActive(false);
