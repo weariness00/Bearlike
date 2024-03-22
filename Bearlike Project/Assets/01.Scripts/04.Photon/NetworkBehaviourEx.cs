@@ -17,5 +17,11 @@ namespace Photon
         {
             gameObject.SetActive(value);
         }
+
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void SetPositionRPC(Vector3 pos) => transform.position = pos;
+
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void SetRotationRPC(Quaternion quaternion) => transform.rotation = quaternion;
     }
 }

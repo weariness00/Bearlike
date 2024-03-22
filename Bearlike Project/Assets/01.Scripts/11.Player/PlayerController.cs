@@ -17,9 +17,9 @@ using Weapon;
 namespace Player
 {
     [RequireComponent(typeof(PlayerCameraController), typeof(PlayerStatus))]
-    public class PlayerController : NetworkBehaviour, IInteract
+    public class PlayerController : NetworkBehaviourEx, IInteract
     {
-        private PlayerRef _playerRef;
+        public PlayerRef PlayerRef => Object.InputAuthority;
         
         // public Status status;
         [Header("컴포넌트")] public PlayerStatus status;
@@ -90,8 +90,7 @@ namespace Player
                 UserData.SetTeleportPosition(Runner.LocalPlayer, null);
             }
             
-            if (HasInputAuthority && 
-                GetInput(out PlayerInputData data))
+            if (GetInput(out PlayerInputData data))
             {
                 if (data.Cursor)
                     return;
@@ -106,6 +105,11 @@ namespace Player
 
         private void MoveControl(PlayerInputData data = default)
         {
+            if (HasStateAuthority == false)
+            {
+                return;
+            }
+            
             Vector3 dir = Vector3.zero;
             Vector3 jumpImpulse = default;
             bool isMoveX = false, isMoveY = false;
@@ -157,6 +161,11 @@ namespace Player
 
         public void MouseRotateControl(Vector2 mouseAxis = default)
         {
+            if (HasStateAuthority == false)
+            {
+                return;
+            }
+            
             xRotateMove = mouseAxis.y * Runner.DeltaTime * rotateSpeed;
             yRotateMove = mouseAxis.x * Runner.DeltaTime * rotateSpeed;
 
@@ -165,7 +174,7 @@ namespace Player
 
             xRotate = Mathf.Clamp(xRotate, -30, 30); // 위, 아래 제한 
             simpleKcc.SetLookRotation(new Vector3(-xRotate, yRotate, 0));
-            mouseRotateObject.transform.localEulerAngles = new Vector3(-xRotate, 0, 0);
+            mouseRotateObject.transform.rotation = Quaternion.Euler(-xRotate, transform.localRotation.eulerAngles.y, transform.localRotation.eulerAngles.z);
         }
 
         // 상호 작용
@@ -306,6 +315,15 @@ namespace Player
                 DebugManager.ToDo("소생 아이템 생기면 소생 로직 만들기");
             }
         }
+
+        #endregion
+
+        #region RPC Function
+
+        [Rpc(RpcSources.All,RpcTargets.StateAuthority)]
+        public new void SetPositionRPC(Vector3 pos) => simpleKcc.SetPosition(pos);
+        [Rpc(RpcSources.All,RpcTargets.StateAuthority)]
+        public void SetLookRotationRPC(Vector2 look) => simpleKcc.SetLookRotation(look);
 
         #endregion
     }

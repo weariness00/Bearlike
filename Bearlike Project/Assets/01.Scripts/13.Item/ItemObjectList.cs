@@ -14,11 +14,11 @@ namespace Item
         protected override void Awake()
         {
             base.Awake();
-            Init();
+            ListInit();
             DontDestroyOnLoad(gameObject);
         }
         
-        private void Init()
+        private void ListInit()
         {
             for (var i = 0; i < itemObjectList.Count; i++)
             {

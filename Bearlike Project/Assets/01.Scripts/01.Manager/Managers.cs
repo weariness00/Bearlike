@@ -1,14 +1,15 @@
 ﻿using UnityEngine;
+using Util;
 
 namespace Manager
 {
-    public class Managers : MonoBehaviour
+    public class Managers : Singleton<Managers>
     {
         public static Managers Instance = null;
 
-        private void Awake()
+        protected override void Awake()
         {
-            if (Instance == null) Instance = this;
+            base.Awake();
             DontDestroyOnLoad(gameObject);
         }
     }

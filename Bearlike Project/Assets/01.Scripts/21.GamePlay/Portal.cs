@@ -1,7 +1,10 @@
 ﻿using System;
+using Data;
 using Fusion;
 using Fusion.Addons.SimpleKCC;
 using Manager;
+using Photon;
+using Player;
 using Script.GamePlay;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -57,18 +60,17 @@ namespace GamePlay
 
                 var spot = otherPortal.spawnPlace.GetRandomSpot(); // 이동할 위치
 
-                if (targetObject.layer == LayerMask.NameToLayer("Player"))
+                if (targetObject.CompareTag("Player"))
                 {
-                    var simpleKCC = targetObject.transform.root.GetComponent<SimpleKCC>();
-                    simpleKCC.SetPosition(spot.position);
-                    simpleKCC.SetLookRotation(spot.forward);
+                    var pc = targetObject.GetComponent<PlayerController>();
+                    pc.SetPositionRPC(spot.position);
+                    pc.SetLookRotationRPC(spot.forward);
                 }
-                else
+                else if (targetObject.TryGetComponent(out NetworkBehaviourEx networkEx))
                 {
-                    targetObject.transform.position = spot.position;
-                    targetObject.transform.rotation = spot.rotation;
+                    networkEx.SetPositionRPC(spot.position);
+                    networkEx.SetRotationRPC(spot.rotation);
                 }
-                
                 DebugManager.Log($"{targetObject.name}객체가 {name}에서 {otherPortal.name}으로 이동");
             }
         }

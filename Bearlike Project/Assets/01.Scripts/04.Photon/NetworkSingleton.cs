@@ -19,11 +19,12 @@ namespace Photon
 
         protected virtual void Awake()
         {
-            if (_instance != null &&
-                _instance.gameObject != gameObject)
+            if (_instance != null)
             {
-                DestroyImmediate(gameObject);
+                Destroy(gameObject);
             }
+
+            Init();
         }
 
         private static void Init()
