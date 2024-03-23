@@ -27,7 +27,6 @@ namespace Weapon.Bullet
         protected void Start()
         {
             moveDistance = 0.0f;
-            speed.Current = 1;
             
             transform.LookAt(destination);
             Destroy(gameObject, 50f);
@@ -40,10 +39,8 @@ namespace Weapon.Bullet
 
             moveDistance += FastDistance(transform.position, _oldPosition);
             if (moveDistance >= maxMoveDistance)
-            {
-                Debug.Log("Bullet over distance");
                 Destroy(gameObject);
-            }
+            
         }
 
         private void OnTriggerEnter(Collider other)

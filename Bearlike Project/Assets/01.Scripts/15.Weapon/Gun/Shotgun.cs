@@ -22,7 +22,7 @@ namespace Weapon.Gun
         {
             base.Start();
 
-            bulletRadian = 10;
+            bulletRadian = 3;
             
             ammo.Max = ammo.Current = 36;
             bulletFirePerMinute = 60;
@@ -53,10 +53,7 @@ namespace Weapon.Gun
                     if(shootEffect != null) shootEffect.Play();
                     
                     dst = Vector3.Normalize(dst);
-                    Debug.Log(dst);
-                    
                     bullet.destination = dst * attackRange;
-                    Debug.Log(bullet.destination);
                     
                     for (int i = 0; i < 10; ++i)
                     {
