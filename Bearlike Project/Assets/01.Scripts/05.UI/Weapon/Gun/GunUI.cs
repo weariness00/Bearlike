@@ -1,30 +1,33 @@
 using Script.Weapon.Gun;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace UI.Weapon.Gun
 {
     public class GunUI : MonoBehaviour
     {
-        public GameObject UI;
+        public GunBase gun;
+        public TMP_Text bulletCurrentText;
+        public TMP_Text bulletMaxText;
         
         public int bulletMaxCount;
-
-        private GunBase _gun;
-        private TextMeshProUGUI _bulletText;
+        private int _magazineCount;
 
         private void Start()
         {
-            _bulletText = UI.GetComponent<TextMeshProUGUI>();
-            _gun = transform.root.GetComponentInChildren<GunBase>();
-            // _gun = GetComponentInParent<GunBase>();
-            bulletMaxCount = _gun.magazine.Max;
+            bulletMaxCount = _magazineCount = gun.magazine.Max;
+            
+            bulletMaxText.text = gun.magazine.Max.ToString();
+            bulletCurrentText.text = gun.magazine.Current.ToString();
         }
-
+        
         private void Update()
         {
-            _bulletText.text = _gun.magazine.Current.ToString() + " / " + bulletMaxCount.ToString();
+            if (_magazineCount != gun.magazine.Current)
+            {
+                bulletCurrentText.text = gun.magazine.Current.ToString();
+                _magazineCount = gun.magazine.Current;
+            }
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Weapon.Gun
             bulletRadian = 3;
             
             ammo.Max = ammo.Current = 36;
-            bulletFirePerMinute = 60;
+            bulletFirePerMinute = 80;
             
             attack.Max = attack.Current = 3;
             property = (int)CrowdControl.Normality;
@@ -60,8 +60,9 @@ namespace Weapon.Gun
                         Vector3 randomVector3 = new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f));
                         randomVector3 *= bulletRadian;
                         bullet.destination += randomVector3;
-                        
-                        Instantiate(bullet.gameObject, transform.position, transform.rotation);
+
+                        var transform1 = transform;
+                        Instantiate(bullet.gameObject, transform1.position, transform1.rotation);
                     }
                  
                     magazine.Current--;

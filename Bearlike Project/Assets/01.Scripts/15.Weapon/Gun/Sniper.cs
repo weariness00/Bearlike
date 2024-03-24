@@ -15,7 +15,7 @@ namespace Weapon.Gun
             base.Start();
 
             ammo.Max = ammo.Current = 36;
-            bulletFirePerMinute = 360;
+            bulletFirePerMinute = 40;
             
             attack.Max = attack.Current = 50;
             property = (int)CrowdControl.Normality;
@@ -39,21 +39,6 @@ namespace Weapon.Gun
             
             bullet.maxMoveDistance = attackRange;
             bullet.player = gameObject;
-        }
-        
-        public override void ReLoadBullet()
-        {
-            if (reloadLateSecond.isMax && ammo.isMin == false)
-            {
-                reloadLateSecond.Current = reloadLateSecond.Min;
-                
-                var needChargingAmmoCount = magazine.Max - magazine.Current;
-                
-                if (ammo.Current < needChargingAmmoCount)
-                {
-                    needChargingAmmoCount = ammo.Current;
-                }
-            }
         }
         
         #endregion

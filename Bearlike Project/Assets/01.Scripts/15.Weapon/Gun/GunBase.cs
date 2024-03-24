@@ -69,7 +69,7 @@ namespace Script.Weapon.Gun
 
         public virtual void Shoot()
         {
-            if (fireLateSecond.isMax)
+            if (reloadLateSecond.isMax && fireLateSecond.isMax)
             {
                 fireLateSecond.Current = fireLateSecond.Min;
                 if (magazine.Current != 0)
@@ -78,7 +78,9 @@ namespace Script.Weapon.Gun
                     
                     if(shootEffect != null) shootEffect.Play();
                     bullet.destination = dst;
-                    Instantiate(bullet.gameObject, transform.position, transform.rotation);
+                    
+                    var transform1 = transform;
+                    Instantiate(bullet.gameObject, transform1.position, transform1.rotation);
                 
                     magazine.Current--;
                     SoundManager.Play(shootSound);

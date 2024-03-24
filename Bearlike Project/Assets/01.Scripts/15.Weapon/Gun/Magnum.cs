@@ -42,7 +42,9 @@ namespace Weapon.Gun
                     
                     if(shootEffect != null) shootEffect.Play();
                     bullet.destination = dst;
-                    Instantiate(bullet.gameObject, transform.position, transform.rotation);
+                    
+                    var transform1 = transform;
+                    Instantiate(bullet.gameObject, transform1.position, transform1.rotation);
                 
                     magazine.Current--;
                     SoundManager.Play(shootSound);
