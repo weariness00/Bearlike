@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using BehaviorTree.Base;
 using Data;
 using Fusion;
@@ -81,15 +82,13 @@ namespace BehaviorTree
             _btRunner = new BehaviorTreeRunner(SettingBT());
             _status = GetComponent<MonsterStatus>();
             _visualEffect = GetComponentInChildren<VisualEffect>();
-            _navMeshAgent = GetComponent<NavMeshAgent>();
+            if(TryGetComponent(out _navMeshAgent)== false) _navMeshAgent = GetComponentInChildren<NavMeshAgent>();
         }
 
         private void Start()
         {
             _gameManager = GameManager.Instance;
             _playerCount = _gameManager.AlivePlayerCount;
-
-            _players = GameObject.FindGameObjectsWithTag("Player");
 
             attackRange = 10;
             rushRange = 100;
@@ -101,8 +100,20 @@ namespace BehaviorTree
             _animator.Animator.SetFloat(AttackType, 0);
             _animator.Animator.SetBool(Walk, true);
 
-            StartCoroutine(WalkCorutine(0.5f));
+            StartCoroutine(WalkCoroutine(0.5f));
             StartCoroutine(DieCoroutine(0.5f));
+        }
+
+        public override void Spawned()
+        {
+            base.Spawned();
+            
+            List<GameObject> playerObjects = new List<GameObject>();
+            foreach (var playerRef in Runner.ActivePlayers.ToArray())
+            {
+                playerObjects.Add(Runner.GetPlayerObject(playerRef).gameObject);
+            }
+            _players = playerObjects.ToArray();
         }
 
         public override void FixedUpdateNetwork()
@@ -126,7 +137,7 @@ namespace BehaviorTree
             }
         }
 
-        IEnumerator WalkCorutine(float waitTime)
+        IEnumerator WalkCoroutine(float waitTime)
         {
             while (true)
             {
@@ -142,7 +153,7 @@ namespace BehaviorTree
                         _navMeshAgent.speed = 0.0f;
                     }
                 }
-
+                
                 yield return new WaitForSeconds(waitTime);
             }
         }

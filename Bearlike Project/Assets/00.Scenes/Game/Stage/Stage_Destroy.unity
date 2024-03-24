@@ -346,17 +346,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Child Room
       objectReference: {fileID: 0}
-    - target: {fileID: 4528910399635714044, guid: 69ac511c1bea7e540bd78ef6a91f798f,
-        type: 3}
-      propertyPath: m_AgentTypeID
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4528910399635714044, guid: 69ac511c1bea7e540bd78ef6a91f798f,
-        type: 3}
-      propertyPath: m_NavMeshData
-      value: 
-      objectReference: {fileID: 23800000, guid: 65935cde062160049b74c152deaab14e,
-        type: 2}
     - target: {fileID: 6822735359699462654, guid: 69ac511c1bea7e540bd78ef6a91f798f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -532,7 +521,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &541677324
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -545,7 +534,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cee097a6de9140a5a4efef8c767d3366, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isStartSpawn: 1
+  isStartSpawn: 0
   isLoop: 1
   isRandomObject: 0
   isRandomPlace: 1
@@ -1591,7 +1580,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cee097a6de9140a5a4efef8c767d3366, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isStartSpawn: 1
+  isStartSpawn: 0
   isLoop: 0
   isRandomObject: 0
   isRandomPlace: 1
@@ -1798,9 +1787,10 @@ MonoBehaviour:
   nextStagePortal: {fileID: 1267372961}
   monsterSpawnerList:
   - {fileID: 541677324}
+  - {fileID: 2069443426}
   aliveMonsterCount:
     _min: 0
-    _max: 5
+    _max: 100
     _current: 0
     isOverMax: 0
     isOverMin: 0
