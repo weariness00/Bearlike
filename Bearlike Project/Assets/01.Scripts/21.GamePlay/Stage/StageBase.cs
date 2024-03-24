@@ -156,7 +156,7 @@ namespace GamePlay.Stage
                     break;
                 }
 
-                aliveMonsterCount.Current += monsterSpawner.spawnCount.Max;
+                SetAliveMonsterCountRPC(StatusValueType.Current, monsterSpawner.spawnCount.Max);
                 monsterSpawner.SpawnSuccessAction += (obj) =>
                 {
                     // obj.transform.SetParent(monsterParentTransform);
@@ -164,9 +164,9 @@ namespace GamePlay.Stage
                     var monster = obj.GetComponent<MonsterBase>();
                     monster.DieAction += () =>
                     {
-                        --aliveMonsterCount.Current;
-                        --monsterSpawner.spawnCount.Current;
-                        ++monsterKillCount.Current;
+                        SetAliveMonsterCountRPC(StatusValueType.Current,  --aliveMonsterCount.Current);
+                        monsterSpawner.SetSpawnCountRPC(StatusValueType.Current, --monsterSpawner.spawnCount.Current);
+                        SetMonsterKillCountRPC(StatusValueType.Current, ++monsterKillCount.Current);
                     };
                 };
                 monsterSpawner.SpawnStart();
@@ -292,6 +292,39 @@ namespace GamePlay.Stage
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void SetIsStartRPC(NetworkBool value) => IsStageStart = value;
 
+        [Rpc(RpcSources.All,RpcTargets.All)]
+        public void SetAliveMonsterCountRPC(StatusValueType type, int value)
+        {
+            switch (type)
+            {
+                case StatusValueType.Min:
+                    aliveMonsterCount.Min = value;
+                    break;
+                case StatusValueType.Current:
+                    aliveMonsterCount.Current = value;
+                    break;
+                case StatusValueType.Max :
+                    aliveMonsterCount.Max = value;
+                    break;
+            }
+        }
+        [Rpc(RpcSources.All,RpcTargets.All)]
+        public void SetMonsterKillCountRPC(StatusValueType type, int value)
+        {
+            switch (type)
+            {
+                case StatusValueType.Min:
+                     monsterKillCount.Min = value;
+                    break;
+                case StatusValueType.Current:
+                    monsterKillCount.Current = value;
+                    break;
+                case StatusValueType.Max :
+                    monsterKillCount.Max = value;
+                    break;
+            }
+        }
+        
         #endregion
     }
 }

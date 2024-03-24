@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using Photon;
+using TMPro;
 using UnityEngine;
 
 namespace Manager
@@ -11,6 +12,10 @@ namespace Manager
         private void Start()
         {
             SoundManager.Play(BGM, SoundManager.SoundType.BGM);
+            
+            Cursor.lockState = CursorLockMode.None;
+            
+            NetworkManager.Instance.LobbyConnect();
         }
     }
 }

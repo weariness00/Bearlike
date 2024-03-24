@@ -2,15 +2,15 @@
 using Fusion;
 using Item.Looting;
 using Manager;
+using Photon;
 using State.StateClass;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace Monster
 {
     [RequireComponent(typeof(MonsterStatus), typeof(LootingTable), typeof(Rigidbody))]
-    public class MonsterBase : NetworkBehaviour
+    public class MonsterBase : NetworkBehaviourEx
     {
         [HideInInspector] public Rigidbody rigidbody;
         [HideInInspector] public NetworkMecanimAnimator networkAnimator;
@@ -51,11 +51,16 @@ namespace Monster
         {
             if (status.IsDie)
             {
-                DieAction?.Invoke();
-                // Destroy(gameObject);
-                gameObject.SetActive(false);
-                DebugManager.Log($"몬스터[{name}]이 사망했습니다.");
+                DieRPC();
             }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void DieRPC()
+        {
+            DieAction?.Invoke();
+            gameObject.SetActive(false);
+            DebugManager.Log($"몬스터[{name}]이 사망했습니다.");
         }
     }
 }

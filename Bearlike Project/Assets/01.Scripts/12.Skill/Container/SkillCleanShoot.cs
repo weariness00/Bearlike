@@ -1,12 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using Fusion;
 using Manager;
 using Monster;
 using Photon;
 using State.StateClass;
 using State.StateClass.Base;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -17,6 +16,7 @@ namespace Skill.Container
         public Canvas cleanShootCanvas;
         public GameObject areaObject;
         public GameObject aimObject;
+
         public VisualEffect trajectoryVFX; // 총알 궤적 이펙트
         public Vector2 range;
 
@@ -28,6 +28,7 @@ namespace Skill.Container
         private WaitForSeconds _aimTargetingAniTime;
 
         private float _trajectoryVFXDestroyTime;
+        private NetworkObjectTypeId _trajectoryPrefabId;
         
         private LayerMask _layerMask;
 
@@ -53,6 +54,7 @@ namespace Skill.Container
             }
 
             {
+                _trajectoryPrefabId = trajectoryVFX.GetComponent<NetworkObject>().NetworkTypeId;
                 _trajectoryVFXDestroyTime = trajectoryVFX.GetFloat("Duration");
             }
             
@@ -91,13 +93,17 @@ namespace Skill.Container
                 yield return null;
                 if (KeyManager.InputAction(KeyToAction.Attack))
                 {
+                    // 스킬을 사용했으면 초기화 해야됨
+                    gameObject.SetActive(false);
+                    coolTime.Current = coolTime.Max;
+                    isInvoke = false;
+                    
                     foreach (var (monster, aim) in _aimDictionary)
                     {
                         Destroy(aim);
                     }
                     _aimDictionary.Clear();
                     
-                    trajectoryVFX.gameObject.SetActive(true);
                     foreach (var monster in _monsterList)
                     {
                         var status = monster.GetComponent<MonsterStatus>();
@@ -105,18 +111,16 @@ namespace Skill.Container
                         
                         Vector3 monsterViewportPosition = Camera.main.WorldToViewportPoint(monster.transform.position);
                         var dis = Vector3.Magnitude(monster.transform.position - monsterViewportPosition);
-                        trajectoryVFX.SetFloat("Distance", dis);
-                        trajectoryVFX.transform.LookAt(monster.transform);
-                        var trajectoryVFXObject = NetworkManager.Runner.Spawn(trajectoryVFX.gameObject, monsterViewportPosition, trajectoryVFX.transform.rotation);
-                        Destroy(trajectoryVFXObject, _trajectoryVFXDestroyTime);
+                        var trajectoryVFXObjectOp = NetworkManager.Runner.SpawnAsync(trajectoryVFX.gameObject, monsterViewportPosition);
+                        yield return new WaitUntil(() => trajectoryVFXObjectOp.IsSpawned);
+                        var vfxNetworkEx = trajectoryVFXObjectOp.Object.GetComponent<NetworkBehaviourEx>();
+                        var vfx = trajectoryVFXObjectOp.Object.GetComponent<VisualEffect>();
+                        vfx.SetFloat("Distance", dis);
+                        vfx.transform.LookAt(monster.transform);
+                        vfxNetworkEx.SetActiveRPC(true);
+                        vfxNetworkEx.DestroyRPC(vfxNetworkEx.Object.Id, _trajectoryVFXDestroyTime);
                         // NetworkManager.Runner.Despawn(trajectoryVFXObject);
                     }
-                    trajectoryVFX.gameObject.SetActive(false);
-
-                    // 스킬이 끝난 뒤에 초기화 해주기
-                    gameObject.SetActive(false);
-                    isInvoke = false;
-                    coolTime.Current = coolTime.Max;
                     break;
                 }
             }
@@ -203,10 +207,14 @@ namespace Skill.Container
             var areaMax = (screenHalf + rangeHalf) / screen;
             
             var aimRect = aim.GetComponent<RectTransform>();
-
+            
             while (true)
             {
                 yield return null;
+                if (isInvoke == false)
+                {
+                    break;
+                }
                 Vector3 monsterViewportPosition = Camera.main.WorldToViewportPoint(target.transform.position);
                 if (monsterViewportPosition.x >= areaMin.x && monsterViewportPosition.x <= areaMax.x &&
                     monsterViewportPosition.y >= areaMin.y && monsterViewportPosition.y <= areaMax.y &&

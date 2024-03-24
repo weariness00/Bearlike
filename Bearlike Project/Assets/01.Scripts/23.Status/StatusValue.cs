@@ -5,6 +5,14 @@ using Random = UnityEngine.Random;
 namespace Status
 {
     [System.Serializable]
+    public enum StatusValueType
+    {
+        Min,
+        Current,
+        Max
+    }
+    
+    [System.Serializable]
     public class StatusValue<T> where T : struct, IComparable
     {
         public static implicit operator T(StatusValue<T> value)

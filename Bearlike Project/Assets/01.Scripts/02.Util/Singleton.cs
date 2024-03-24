@@ -21,6 +21,7 @@ namespace Util
             if (_instance != null)
             {
                 Destroy(gameObject);
+                return;
             }
 
             Init();

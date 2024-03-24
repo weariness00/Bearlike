@@ -300,6 +300,7 @@ GameObject:
   - component: {fileID: 1861588363286977636}
   - component: {fileID: 6214309504215176155}
   - component: {fileID: 511099524921330336}
+  - component: {fileID: 1209440475239423227}
   m_Layer: 0
   m_Name: Clean Shoot
   m_TagString: Untagged
@@ -383,6 +384,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   muS: 10
   isDestroy: 0
+--- !u!114 &1209440475239423227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5663808322493869097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 2383112543
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects:
+  - {fileID: 2396015473112401732}
+  NetworkedBehaviours:
+  - {fileID: 6214309504215176155}
 --- !u!1001 &9110570556081249256
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -395,6 +415,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Lazer Line
+      objectReference: {fileID: 0}
+    - target: {fileID: 6858811560944426156, guid: acdf23f4dd2d83a4f9a4dc1123be4710,
+        type: 3}
+      propertyPath: SortKey
+      value: 3191873646
       objectReference: {fileID: 0}
     - target: {fileID: 7792870081987008721, guid: acdf23f4dd2d83a4f9a4dc1123be4710,
         type: 3}
@@ -457,3 +482,15 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 9110570556081249256}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2396015473112401732 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6858811560944426156, guid: acdf23f4dd2d83a4f9a4dc1123be4710,
+    type: 3}
+  m_PrefabInstance: {fileID: 9110570556081249256}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

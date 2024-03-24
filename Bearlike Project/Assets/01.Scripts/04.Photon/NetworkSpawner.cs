@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Fusion;
 using Manager;
+using Photon;
 using Script.GamePlay;
 using Status;
 using Unity.VisualScripting;
@@ -12,7 +13,7 @@ using Random = UnityEngine.Random;
 
 namespace Script.Photon
 {
-    public class NetworkSpawner : NetworkBehaviour
+    public class NetworkSpawner : NetworkBehaviourEx
     {
         public bool isStartSpawn = false; // 이 컴포넌트가 생성되자마자 스폰하게 할 것인지
         public bool isLoop = false; // spawnCount가 max가 아니면 계속 소환하게 할 것인지
@@ -159,7 +160,7 @@ namespace Script.Photon
         /// </summary>
         async Task SpawnTask()
         {
-            var obj = await Runner.SpawnAsync(_currentSpawnObjectOrder, _currentSpawnPlace.position);
+            var obj = await Runner.SpawnAsync(_currentSpawnObjectOrder, _currentSpawnPlace.position, _currentSpawnPlace.rotation);
             SetParentRPC(obj.Id);
             SpawnSuccessAction?.Invoke(obj.gameObject);
             NextObject();
@@ -170,7 +171,7 @@ namespace Script.Photon
                              $"이름 : {obj.name}");
         }
 
-        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        [Rpc(RpcSources.All, RpcTargets.All)]
         public void SetParentRPC(NetworkId networkID)
         {
             if (parentTransform == null)
@@ -179,6 +180,7 @@ namespace Script.Photon
             }
             
             var newParentNetworkObject = Runner.FindObject(networkID);
+            
             if (newParentNetworkObject != null)
             {
                 newParentNetworkObject.transform.SetParent(parentTransform);
@@ -204,7 +206,7 @@ namespace Script.Photon
                     SpawnStop();
                 }
                 yield return SpawnTask();
-                ++spawnCount.Current;
+                SetSpawnCountRPC(StatusValueType.Current,++spawnCount.Current);
             }
         }
 
@@ -212,6 +214,23 @@ namespace Script.Photon
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void SetIsSpawnRPC(NetworkBool value) => IsSpawn = value;
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void SetSpawnCountRPC(StatusValueType type, int value)
+        {
+            switch (type)
+            {
+                case StatusValueType.Min:
+                    spawnCount.Min = value;
+                    break;
+                case StatusValueType.Current:
+                    spawnCount.Current = value;
+                    break;
+                case StatusValueType.Max :
+                    spawnCount.Max = value;
+                    break;
+            }
+        }
 
         #endregion
     }

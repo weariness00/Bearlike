@@ -40,8 +40,6 @@ namespace Photon
             _runner.ProvideInput = true;
             
             _runner.AddCallbacks(this);
-
-            LobbyConnect();
         }
 
         #endregion

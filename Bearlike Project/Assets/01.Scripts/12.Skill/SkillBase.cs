@@ -1,5 +1,6 @@
 ﻿using Data;
 using Fusion;
+using Photon;
 using Status;
 using UnityEngine;
 
@@ -13,7 +14,7 @@ namespace Skill
     }
     
     [System.Serializable]
-    public abstract class SkillBase : MonoBehaviour, IJsonData<SkillJsonData>
+    public abstract class SkillBase : NetworkBehaviourEx, IJsonData<SkillJsonData>
     {
         public string skillName;
         public string explain;
