@@ -28,7 +28,6 @@ namespace Skill.Container
         private WaitForSeconds _aimTargetingAniTime;
 
         private float _trajectoryVFXDestroyTime;
-        private NetworkObjectTypeId _trajectoryPrefabId;
         
         private LayerMask _layerMask;
 
@@ -54,7 +53,6 @@ namespace Skill.Container
             }
 
             {
-                _trajectoryPrefabId = trajectoryVFX.GetComponent<NetworkObject>().NetworkTypeId;
                 _trajectoryVFXDestroyTime = trajectoryVFX.GetFloat("Duration");
             }
             
