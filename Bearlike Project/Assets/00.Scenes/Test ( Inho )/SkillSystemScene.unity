@@ -907,6 +907,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55b3a2546ea4412285d29960407696f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  skillList: []
 --- !u!114 &1825248243
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -923,8 +924,7 @@ MonoBehaviour:
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []
-  NetworkedBehaviours:
-  - {fileID: 1825248241}
+  NetworkedBehaviours: []
 --- !u!1 &1904963572
 GameObject:
   m_ObjectHideFlags: 0
@@ -1075,7 +1075,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ExecuteInEditor: 1
-  m_Bindings: []
+  m_Bindings:
+  - {fileID: 1904963576}
   m_VisualEffect: {fileID: 1904963574}
 --- !u!1 &2119354383
 GameObject:

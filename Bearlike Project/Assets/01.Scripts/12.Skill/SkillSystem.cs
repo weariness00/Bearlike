@@ -29,11 +29,6 @@ namespace Skill
                     skill.MainLoop();
                 }
             }
-
-            // var ps = GameObject.Find("Local Player").GetComponent<PlayerStatus>();
-            // ps.ShowInfo();
-            // ps = GameObject.Find("Remote Player").GetComponent<PlayerStatus>();
-            // ps.ShowInfo();
         }
         
         public SkillBase GetSkillFromName(string skillName)
