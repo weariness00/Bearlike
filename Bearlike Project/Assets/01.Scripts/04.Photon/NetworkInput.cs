@@ -14,6 +14,8 @@ namespace Photon
 
         public NetworkBool Jump;
 
+        public NetworkBool ItemInventory;
+        public NetworkBool SkillInventory;
         public NetworkBool Interact;
 
         public NetworkBool Attack;

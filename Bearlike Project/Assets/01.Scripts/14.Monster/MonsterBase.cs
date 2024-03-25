@@ -40,11 +40,8 @@ namespace Monster
         
         public virtual void Start()
         {
-            if (LootingSystem.Instance.monsterLootingItemDictionary.TryGetValue(id, out var lootingItems))
-            {
-                lootingTable.CalLootingItem(lootingItems);
-                DieAction += lootingTable.SpawnDropItem;
-            }
+            lootingTable.CalLootingItem(LootingSystem.MonsterTable(id));
+            DieAction += lootingTable.SpawnDropItem;
         }
 
         public override void FixedUpdateNetwork()

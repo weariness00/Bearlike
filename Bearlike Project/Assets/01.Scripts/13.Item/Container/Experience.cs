@@ -4,18 +4,9 @@ using UnityEngine;
 
 namespace Item.Container
 {
-    public class ItemExperience : ItemBase
+    public class Experience : ItemBase
     {
         public StatusValue<int> experienceAmount = new StatusValue<int>();
-
-        public override void GetItem(GameObject targetObject)
-        {
-            base.GetItem(targetObject);
-            if (targetObject.TryGetComponent(out PlayerController pc))
-            {
-                pc.status.IncreaseExp(experienceAmount);
-            }
-        }
 
         public override ItemJsonData GetJsonData()
         {

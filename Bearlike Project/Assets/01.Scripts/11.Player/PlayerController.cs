@@ -26,6 +26,7 @@ namespace Player
         public PlayerCameraController cameraController;
         public SkillSystem skillSystem;
         public WeaponSystem weaponSystem;
+        public ItemInventory itemInventory;
         private NetworkMecanimAnimator _networkAnimator;
         [HideInInspector] public SimpleKCC simpleKcc;
         [HideInInspector] public Rigidbody rigidBody;
@@ -35,8 +36,6 @@ namespace Player
         public float interactLength = 1f; // 상호작용 범위
 
         [Tooltip("마우스 움직임에 따라 회전할 오브젝트")] public GameObject mouseRotateObject;
-
-        [Header("아이템")] public Dictionary<int, ItemBase> itemList = new Dictionary<int, ItemBase>();
 
         #region Animation Parametar
 
@@ -99,6 +98,16 @@ namespace Player
                 MoveControl(data);
                 WeaponControl(data);
                 CheckInteract(data);
+
+                if (data.ItemInventory)
+                {
+                    itemInventory.canvas.gameObject.SetActive(!itemInventory.canvas.gameObject.activeSelf);
+                }
+
+                if (data.SkillInventory)
+                {
+                    
+                }
             }
             HpControl();
         }

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Item.Container
 {
-    public class ItemMoney : ItemBase
+    public class Money : ItemBase
     {
         public StatusValue<int> moneyAmount = new StatusValue<int>();
         
@@ -31,22 +31,6 @@ namespace Item.Container
         }
 
         #endregion
-        
-        public override void GetItem(GameObject targetObject)
-        {
-            base.GetItem(targetObject);
-            if (targetObject.TryGetComponent(out PlayerController pc))
-            {
-                if (pc.itemList.TryGetValue(Id, out var item))
-                {
-                    item.Amount.Current += item.Amount.Current;
-                }
-                else
-                {
-                    pc.itemList.Add(Id, this);
-                }
-            }
-        }
 
         public override ItemJsonData GetJsonData()
         {

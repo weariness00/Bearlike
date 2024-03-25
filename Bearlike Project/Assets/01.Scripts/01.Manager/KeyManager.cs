@@ -18,6 +18,8 @@ namespace Manager
         
         Jump,
         
+        ItemInventory,
+        SkillInventory,
         Interact,
         
         Attack,

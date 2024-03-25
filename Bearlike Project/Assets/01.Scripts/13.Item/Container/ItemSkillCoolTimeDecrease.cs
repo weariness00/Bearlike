@@ -12,21 +12,6 @@ namespace Item.Container
     {
         public StatusValue<float> decreasePercentage = new StatusValue<float>();
 
-        public override void GetItem(GameObject targetObject)
-        {
-            base.GetItem(targetObject);
-            if (targetObject.TryGetComponent(out PlayerController pc))
-            {
-                if (pc.itemList.TryGetValue(Id, out var item))
-                {
-                    item.Amount.Current += Amount.Current;
-                }
-                else
-                {
-                    pc.itemList.Add(Id, this);
-                }
-            }
-        }
     }
 }
 

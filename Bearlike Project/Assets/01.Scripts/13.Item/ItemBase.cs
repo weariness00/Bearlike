@@ -2,6 +2,7 @@
 using System.Collections;
 using Data;
 using Inventory;
+using Player;
 using Script.Data;
 using Status;
 using UnityEngine;
@@ -104,7 +105,10 @@ namespace Item
         
         public virtual void GetItem(GameObject targetObject)
         {
-            
+            if (targetObject.TryGetComponent(out PlayerController pc))
+            {
+                pc.itemInventory.AddItem(this);
+            }
         }
 
         #region JsonData Interface

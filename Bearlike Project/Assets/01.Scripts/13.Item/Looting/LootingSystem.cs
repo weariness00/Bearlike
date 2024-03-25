@@ -13,6 +13,15 @@ namespace Item.Looting
         [HideInInspector] public Dictionary<int, LootingItem[]> monsterLootingItemDictionary = new Dictionary<int, LootingItem[]>();
         [HideInInspector] public Dictionary<int, LootingItem[]> stageLootingItemDictionary = new Dictionary<int, LootingItem[]>();
 
+        #region Static Function
+
+        public static LootingItem[] MonsterTable(int id)
+        {
+            return Instance.monsterLootingItemDictionary.TryGetValue(id, out var table) ? table : Array.Empty<LootingItem>();
+        }
+
+        #endregion
+        
         protected override void Awake()
         {
             JsonConvertExtension.Load(ProjectUpdateManager.Instance.monsterLootingTableList,
@@ -34,27 +43,27 @@ namespace Item.Looting
 
         private void SetLootingTable(LootingItem[] lootingItems, Dictionary<int, LootingItem[]> lootingItemDict)
         {
-            int id = 0;
-            int currentArrayIndex = 0;
-            for (int i = 0; i < lootingItems.Length; i++)
+            // Target ID에 따라 Looting Table에 추가하기
+            Dictionary<int, List<LootingItem>> targetTables = new  Dictionary<int, List<LootingItem>>();
+            foreach (var item in lootingItems)
             {
-                if (lootingItems[i].TargetObjectID == id) {continue;}
-
-                int subArrayLength = i - currentArrayIndex;
-                LootingItem[] subLootingItems = new LootingItem[subArrayLength];
-                Array.Copy(lootingItems, currentArrayIndex, subLootingItems, 0, subArrayLength);
-                lootingItemDict.Add(id,subLootingItems);
-
-                id = lootingItems[i].TargetObjectID;
-                currentArrayIndex = i;
+                if (targetTables.TryGetValue(item.TargetObjectID, out var table))
+                {
+                    table.Add(item);
+                }
+                else
+                {
+                    targetTables.Add(item.TargetObjectID, new List<LootingItem>(){item});
+                }
             }
-
-            { // 마지막 배열도 분해하기
-                int subArrayLength = lootingItems.Length - currentArrayIndex;
-                LootingItem[] subLootingItems = new LootingItem[subArrayLength];
-                Array.Copy(lootingItems, currentArrayIndex, subLootingItems, 0, subArrayLength);
-                lootingItemDict.Add(id,subLootingItems);
+            
+            foreach (var (id, table) in targetTables)
+            {
+                lootingItemDict.Add(id, table.ToArray());
+                table.Clear();
             }
+            
+            targetTables.Clear();
         }
     }
 }

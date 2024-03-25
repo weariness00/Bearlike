@@ -16,8 +16,8 @@ const DonwloadList = '/DownloadList';
 const DefaultKeySetting = '/KeySetting/Default';
 const StageLootingTable = '/LootingTable/Stage';
 const MonsterLootingTable = '/LootingTable/Monster';
-const MathcingRoom = "/Room Information"
-const URLList = [DonwloadList, DefaultKeySetting, StageLootingTable, MonsterLootingTable, MathcingRoom]
+// const MathcingRoom = "/Room Information"
+const URLList = [DonwloadList, DefaultKeySetting, MonsterLootingTable, StageLootingTable, MathcingRoom]
 
 async function DonwloadListQuery(){ return query("SELECT * FROM bearlike.download");}
 async function KeySettingQuery(){return query("SELECT * FROM bearlike.keysetting");}
