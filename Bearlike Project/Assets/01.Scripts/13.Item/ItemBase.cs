@@ -16,13 +16,17 @@ namespace Item
         
         public static string path = $"{Application.dataPath}/Json/Item/";
 
-        public int id;
-        public string itemName;
-        
-        public Texture2D icon; // 아이템 이미지
+        public ItemInfo info;
 
-        public StatusValue<int> amount; // 아이템 총 갯수
-        public string explain; // 아이템 설명
+        #region Info Parameter
+
+        public int Id => info.id;
+        public string ItemName => info.itemName;
+        public Texture2D Icon => info.icon;
+        public StatusValue<int> Amount => info.amount;
+        public string Explain => info.explain;
+
+        #endregion
 
         #region Static Method
 
@@ -38,12 +42,12 @@ namespace Item
                 return false;
 
             ItemBase itemBase = (ItemBase)obj;
-            return itemName == itemBase.itemName; // 여기서는 이름만으로 판단
+            return info.Equals(itemBase.info);
         }
 
         public override int GetHashCode()
         {
-            return itemName.GetHashCode(); // 이름의 해시 코드를 반환
+            return info.GetHashCode();
         }
         #endregion
 
@@ -107,17 +111,13 @@ namespace Item
 
         public virtual ItemJsonData GetJsonData()
         {
-            ItemJsonData json = new ItemJsonData();
-            json.name = "Item";
-            json.amount = amount;
-            json.explain = explain;
+            var json = info.GetJsonData();
             return json;
         }
 
         public virtual void SetJsonData(ItemJsonData json)
         {
-            amount.Current = json.amount;
-            explain = json.explain;
+            info.SetJsonData(json);
         }
 
         #endregion
@@ -128,7 +128,7 @@ namespace Item
         {
             if (addItem is ItemBase itemBase)
             {
-                itemBase.amount.Current += amount.Current;
+                Amount.Current += itemBase.Amount.Current;
             }
 
             return addItem;
@@ -139,9 +139,9 @@ namespace Item
             isDestroy = false;
             if (useItem is ItemBase testItem)
             {
-                testItem.amount.Current -= 1;
+                testItem.info.amount.Current -= 1;
 
-                if (testItem.amount.isMin)
+                if (testItem.info.amount.isMin)
                 {
                     Destroy(testItem.gameObject);
                     isDestroy = true;

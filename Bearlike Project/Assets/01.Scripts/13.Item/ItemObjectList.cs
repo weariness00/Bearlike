@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using Fusion;
+﻿using System.Collections.Generic;
 using Script.Util;
 using UnityEngine;
+using Util;
 
 namespace Item
 {
-    public class ItemObjectList : Util.Singleton<ItemObjectList>
+    public class ItemObjectList : Singleton<ItemObjectList>
     {
         [SerializeField] private List<GameObject> itemObjectList = new List<GameObject>();
         private Dictionary<DictionaryUtil.MultiKey<int,string>, GameObject> _itemObjectDictionary = new Dictionary<DictionaryUtil.MultiKey<int, string>, GameObject>();
@@ -25,7 +24,7 @@ namespace Item
                 var itemObject = itemObjectList[i];
                 
                 var itemBase = itemObject.GetComponent<ItemBase>();
-                var keyPair  = new DictionaryUtil.MultiKey<int,string>(itemBase.id, itemBase.itemName);
+                var keyPair  = new DictionaryUtil.MultiKey<int,string>(itemBase.Id, itemBase.ItemName);
                 _itemObjectDictionary.Add(keyPair, itemObject);
             }
         }

@@ -17,13 +17,13 @@ namespace Item.Container
             base.GetItem(targetObject);
             if (targetObject.TryGetComponent(out PlayerController pc))
             {
-                if (pc.itemList.TryGetValue(id, out var item))
+                if (pc.itemList.TryGetValue(Id, out var item))
                 {
-                    item.amount.Current += amount.Current;
+                    item.Amount.Current += Amount.Current;
                 }
                 else
                 {
-                    pc.itemList.Add(id, this);
+                    pc.itemList.Add(Id, this);
                 }
             }
         }

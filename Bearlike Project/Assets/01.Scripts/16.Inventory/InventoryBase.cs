@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Manager;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Inventory
@@ -31,23 +32,31 @@ namespace Inventory
             canvas = GetComponent<Canvas>();
         }
 
-        public void AddItem(Item item)
+        public virtual void AddItem(Item item)
         {
             if (itemHashSet.TryGetValue(item, out var hashItem))
             {
-                if (hashItem.TryGetComponent(out IInventoryItemAdd inventoryItemAdd))
+                if (hashItem is IInventoryItemAdd inventoryItemAdd)
                 {
                     inventoryItemAdd.AddItem(item);
                 }
-                var handle = uiHandleDictionary[item];
+                var handle = uiHandleDictionary[hashItem];
                 if (handle.TryGetComponent(out IInventoryUIUpdate handleUpdateInterface))
                 {
                     handleUpdateInterface.UIUpdateFromItem(hashItem);
                 }
+
+                item = hashItem;
             }
             else
             {
+                item = Instantiate(item.gameObject, canvas.transform).GetComponent<Item>();
+                item.gameObject.SetActive(false);
+                itemHashSet.Add(item);
+
                 var handle = Instantiate(blockUIPrefab, uiParentTransform).GetComponent<UIHandle>();
+                handle.gameObject.SetActive(true);
+                
                 uiHandleDictionary.Add(item, handle);
                 if (handle.TryGetComponent(out IInventoryUIUpdate handleUpdateInterface))
                 {
@@ -55,19 +64,18 @@ namespace Inventory
                 }
             }
 
-            itemHashSet.Add(item);
             DebugManager.Log($"[{name}] Inventory에 {item.name}을 추가");
         }
 
-        public void UseItem(Item item)
+        public virtual void UseItem(Item item)
         {
             if (itemHashSet.TryGetValue(item, out var hashItem))
             {
                 if (item.TryGetComponent(out IInventoryItemUse itemInterface))
                 {
                     itemInterface.UseItem(hashItem, out var isDestroy);
-                    DebugManager.Log($"[{name}] Inventory에 {item.name}을 사용");
-                    var handle = uiHandleDictionary[item];
+                    DebugManager.Log($"[{name}] Inventory에 {hashItem.name}을 사용");
+                    var handle = uiHandleDictionary[hashItem];
                     if (handle.TryGetComponent(out IInventoryUIUpdate handleUpdateInterface))
                     {
                         handleUpdateInterface.UIUpdateFromItem(hashItem);
@@ -75,8 +83,8 @@ namespace Inventory
 
                     if (isDestroy)
                     {
-                        itemHashSet.Remove(item);
-                        uiHandleDictionary.Remove(item);
+                        itemHashSet.Remove(hashItem);
+                        uiHandleDictionary.Remove(hashItem);
                     }
                 }
 

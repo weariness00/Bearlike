@@ -54,7 +54,7 @@ namespace Item.Looting
                     
                     var item = Instantiate(dropObjectPrefab).GetComponent<ItemBase>();
                     item.transform.position = gameObject.transform.position;
-                    item.amount.Current = item.amount.Max = dropItem.Amount;
+                    item.Amount.Current = item.Amount.Max = dropItem.Amount;
                 }
             }
 

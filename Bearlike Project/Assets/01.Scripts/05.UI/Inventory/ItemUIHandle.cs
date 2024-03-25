@@ -15,10 +15,10 @@ namespace UI.Inventory
         {
             if (item is ItemBase itemBase)
             {
-                icon.texture = itemBase.icon;
-                count.text = itemBase.amount.Current.ToString();
+                icon.texture = itemBase.Icon;
+                count.text = itemBase.Amount.Current.ToString();
                 
-                if (itemBase.amount.isMin)
+                if (itemBase.Amount.isMin)
                 {
                     Destroy(gameObject);
                 }
