@@ -59,6 +59,8 @@ namespace Util
         {
             fileName = Path.GetFileNameWithoutExtension(fileName);
             var path = Application.persistentDataPath + $"/Json/{fileName}.json";
+            var directory = Path.GetDirectoryName(path);
+            if (Directory.Exists(directory) == false) Directory.CreateDirectory(directory);
             File.WriteAllText(path, data);
             
             doneAction?.Invoke();

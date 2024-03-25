@@ -85,7 +85,7 @@ namespace Manager
 
         public void Load(string fileName)
         {
-            JsonConvertExtension.Load(fileName, (data) =>
+            StartCoroutine(JsonConvertExtension.LoadCoroutine(fileName, (data) =>
             {
                 var keyMapping = JsonConvert.DeserializeObject<KeyMapping[]>(data);
 
@@ -107,7 +107,7 @@ namespace Manager
                         }
                     }
                 }
-            });
+            }));
         }
 
         void DefaultLoad() => Load("DefaultKeyData");

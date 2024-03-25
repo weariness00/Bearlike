@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using _04.Photon;
 using Fusion;
 using Manager;
 using Monster;
 using Photon;
+using Player;
 using State.StateClass;
 using State.StateClass.Base;
 using UnityEngine;
@@ -17,7 +19,8 @@ namespace Skill.Container
         public GameObject areaObject;
         public GameObject aimObject;
 
-        public VisualEffect trajectoryVFX; // 총알 궤적 이펙트
+        // public VisualEffect trajectoryVFX; // 총알 궤적 이펙트
+        public NetworkPrefabRef trajectoryVFX;
         public Vector2 range;
 
         private RectTransform _areaRect;
@@ -53,7 +56,8 @@ namespace Skill.Container
             }
 
             {
-                _trajectoryVFXDestroyTime = trajectoryVFX.GetFloat("Duration");
+                // _trajectoryVFXDestroyTime = trajectoryVFX.GetFloat("Duration");
+                _trajectoryVFXDestroyTime = 3f;
             }
             
             _layerMask = LayerMask.GetMask("Default");
@@ -66,7 +70,6 @@ namespace Skill.Container
             if (coolTime.isMin == false)
             {
                 cleanShootCanvas.transform.position = Vector3.zero;
-                
                 coolTime.Current -= Time.deltaTime;
             }
         }
@@ -76,7 +79,7 @@ namespace Skill.Container
             if (coolTime.isMin && isInvoke == false)
             {
                 isInvoke = true;
-                gameObject.SetActive(true);
+                cleanShootCanvas.gameObject.SetActive(true);
                 _areaRect.sizeDelta = range;
                 StartCoroutine(AreaSetting(runObject));
                 StartCoroutine(AttackMonsterFromArea(runObject));
@@ -92,7 +95,7 @@ namespace Skill.Container
                 if (KeyManager.InputAction(KeyToAction.Attack))
                 {
                     // 스킬을 사용했으면 초기화 해야됨
-                    gameObject.SetActive(false);
+                    cleanShootCanvas.gameObject.SetActive(false);
                     coolTime.Current = coolTime.Max;
                     isInvoke = false;
                     
@@ -101,23 +104,17 @@ namespace Skill.Container
                         Destroy(aim);
                     }
                     _aimDictionary.Clear();
+
                     
                     foreach (var monster in _monsterList)
                     {
                         var status = monster.GetComponent<MonsterStatus>();
                         status.ApplyDamageRPC(damage.Current, CrowdControl.Normality);
                         
-                        Vector3 monsterViewportPosition = Camera.main.WorldToViewportPoint(monster.transform.position);
-                        var dis = Vector3.Magnitude(monster.transform.position - monsterViewportPosition);
-                        var trajectoryVFXObjectOp = NetworkManager.Runner.SpawnAsync(trajectoryVFX.gameObject, monsterViewportPosition);
-                        yield return new WaitUntil(() => trajectoryVFXObjectOp.IsSpawned);
-                        var vfxNetworkEx = trajectoryVFXObjectOp.Object.GetComponent<NetworkBehaviourEx>();
-                        var vfx = trajectoryVFXObjectOp.Object.GetComponent<VisualEffect>();
-                        vfx.SetFloat("Distance", dis);
-                        vfx.transform.LookAt(monster.transform);
-                        vfxNetworkEx.SetActiveRPC(true);
-                        vfxNetworkEx.DestroyRPC(vfxNetworkEx.Object.Id, _trajectoryVFXDestroyTime);
-                        // NetworkManager.Runner.Despawn(trajectoryVFXObject);
+                        // 총알 궤적 VFX 생성
+                        var monsterNetworkId = monster.GetComponent<NetworkObject>().Id;
+                        var viewPosition = Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f, 1f));
+                        SpawnTrajectoryRPC(monsterNetworkId, viewPosition);
                     }
                     break;
                 }
@@ -233,5 +230,22 @@ namespace Skill.Container
                 }
             }
         }
+
+        #region RPC Function
+
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public async void SpawnTrajectoryRPC(NetworkId monsterId, Vector3 viewPosition)
+        {
+            var monster = Runner.FindObject(monsterId);
+            var dis = Vector3.Magnitude(monster.transform.position - viewPosition);
+            var trajectoryVFXObject = await NetworkManager.Runner.SpawnAsync(trajectoryVFX, viewPosition);
+            
+            var vfx = trajectoryVFXObject.GetComponent<VisualEffect>();
+            vfx.SetFloat("Distance", dis);
+            vfx.transform.LookAt(monster.transform);
+            Destroy(vfx, _trajectoryVFXDestroyTime);
+        }
+
+        #endregion
     }
 }

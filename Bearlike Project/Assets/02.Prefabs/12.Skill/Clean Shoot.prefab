@@ -18,7 +18,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2842073493252736886
 RectTransform:
   m_ObjectHideFlags: 0
@@ -299,7 +299,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1861588363286977636}
   - component: {fileID: 6214309504215176155}
-  - component: {fileID: 511099524921330336}
   - component: {fileID: 1209440475239423227}
   m_Layer: 0
   m_Name: Clean Shoot
@@ -338,7 +337,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillName: Clean Shoot
   explain: 
-  icon: {fileID: 0}
+  icon: {fileID: 2800000, guid: 623e239f69e98084b9e76330f088da91, type: 3}
   type: 0
   coolTime:
     _min: 0
@@ -368,22 +367,9 @@ MonoBehaviour:
   cleanShootCanvas: {fileID: 3223929226563402317}
   areaObject: {fileID: 4646657968551755057}
   aimObject: {fileID: 1423914524434371558}
-  trajectoryVFX: {fileID: 0}
-  range: {x: 0, y: 0}
---- !u!114 &511099524921330336
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5663808322493869097}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e9784e7bbe06ce4e84c02b3328325e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  muS: 10
-  isDestroy: 0
+  trajectoryVFX:
+    RawGuidValue: acdf23f4dd2d83a4f9a4dc1123be4710
+  range: {x: 800, y: 800}
 --- !u!114 &1209440475239423227
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -416,20 +402,30 @@ PrefabInstance:
       propertyPath: m_Name
       value: Lazer Line
       objectReference: {fileID: 0}
+    - target: {fileID: 2450467118362598819, guid: acdf23f4dd2d83a4f9a4dc1123be4710,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6858811560944426156, guid: acdf23f4dd2d83a4f9a4dc1123be4710,
         type: 3}
       propertyPath: SortKey
       value: 3191873646
       objectReference: {fileID: 0}
+    - target: {fileID: 6858811560944426156, guid: acdf23f4dd2d83a4f9a4dc1123be4710,
+        type: 3}
+      propertyPath: NetworkedBehaviours.Array.size
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7792870081987008721, guid: acdf23f4dd2d83a4f9a4dc1123be4710,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -960
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7792870081987008721, guid: acdf23f4dd2d83a4f9a4dc1123be4710,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -540
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7792870081987008721, guid: acdf23f4dd2d83a4f9a4dc1123be4710,
         type: 3}
@@ -444,17 +440,17 @@ PrefabInstance:
     - target: {fileID: 7792870081987008721, guid: acdf23f4dd2d83a4f9a4dc1123be4710,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7792870081987008721, guid: acdf23f4dd2d83a4f9a4dc1123be4710,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7792870081987008721, guid: acdf23f4dd2d83a4f9a4dc1123be4710,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7792870081987008721, guid: acdf23f4dd2d83a4f9a4dc1123be4710,
         type: 3}

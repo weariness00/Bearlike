@@ -16,5 +16,8 @@ namespace Photon
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void SetRotationRPC(Quaternion quaternion) => transform.rotation = quaternion;
+
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void LookAtRPC(NetworkId id) => transform.LookAt(Runner.FindObject(id).transform);
     }
 }
