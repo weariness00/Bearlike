@@ -129,25 +129,17 @@ MonoBehaviour:
   rigidbody: {fileID: 0}
   info:
     id: 1
-    itemName: Small Coin
-    icon: {fileID: 0}
+    name: Small Coin
+    icon: {fileID: 2800000, guid: 6d8b13cbbf4423b409b0215a92680f56, type: 3}
     amount:
       _min: 0
-      _max: 10
-      _current: 1
+      _max: 99999
+      _current: 100
       isOverMax: 0
       isOverMin: 0
       isMin: 0
       isMax: 0
     explain: 
-  moneyAmount:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
 --- !u!135 &7593957225724753286
 SphereCollider:
   m_ObjectHideFlags: 0

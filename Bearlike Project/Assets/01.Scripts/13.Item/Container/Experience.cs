@@ -6,21 +6,26 @@ namespace Item.Container
 {
     public class Experience : ItemBase
     {
-        public StatusValue<int> experienceAmount = new StatusValue<int>();
+        #region Unity Event Function
 
-        public override ItemJsonData GetJsonData()
+        public void Update()
         {
-            var data = base.GetJsonData();
-            data.name = "Experience";
-            data.iStatusValueDictionary.Add("ExperienceAmount", experienceAmount);
-
-            return data;
+            transform.Rotate(0, Time.deltaTime * 360f,0);
         }
 
-        public override void SetJsonData(ItemJsonData json)
+        private void OnTriggerEnter(Collider other)
         {
-            base.SetJsonData(json);
-            experienceAmount = json.GetStatusValueInt("ExperienceAmount");
+            if (other.gameObject.CompareTag("Player") && other.transform.parent.name == "Local Player")
+            {
+                foreach (var sphereCollider in GetComponents<SphereCollider>())
+                {
+                    Destroy(sphereCollider);
+                }
+
+                StartCoroutine(MoveTargetCoroutine(other.gameObject));
+            }
         }
+
+        #endregion
     }
 }

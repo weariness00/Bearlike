@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using Data;
 using Inventory;
 using Player;
-using Script.Data;
 using Status;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -13,25 +11,24 @@ namespace Item
     [RequireComponent(typeof(Rigidbody))]
     public class ItemBase : MonoBehaviour, IJsonData<ItemJsonData>, IInventoryItemAdd, IInventoryItemUse
     {
-        [HideInInspector] public Rigidbody rigidbody;
+        #region Static
         
         public static string path = $"{Application.dataPath}/Json/Item/";
+        
+        public static bool SaveJsonData(ItemJsonData json) => IJsonData<ItemJsonData>.SaveJsonData(json, json.name, path);
 
+        #endregion
+        
+        [HideInInspector] public Rigidbody rigidbody;
         public ItemInfo info;
 
         #region Info Parameter
 
         public int Id => info.id;
-        public string ItemName => info.itemName;
+        public string Name => info.name;
         public Texture2D Icon => info.icon;
         public StatusValue<int> Amount => info.amount;
         public string Explain => info.explain;
-
-        #endregion
-
-        #region Static Method
-
-        public static bool SaveJsonData(ItemJsonData json) => IJsonData<ItemJsonData>.SaveJsonData(json, json.name, path);
 
         #endregion
         
@@ -128,7 +125,7 @@ namespace Item
 
         #region Inventory Function
 
-        public AddItem AddItem<AddItem>(AddItem addItem)
+        public virtual AddItem AddItem<AddItem>(AddItem addItem)
         {
             if (addItem is ItemBase itemBase)
             {

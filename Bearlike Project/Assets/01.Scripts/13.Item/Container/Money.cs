@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using Player;
+﻿using Inventory;
 using Status;
 using UnityEngine;
 
@@ -8,8 +6,6 @@ namespace Item.Container
 {
     public class Money : ItemBase
     {
-        public StatusValue<int> moneyAmount = new StatusValue<int>();
-        
         #region Unity Event Function
 
         public void Update()
@@ -31,19 +27,6 @@ namespace Item.Container
         }
 
         #endregion
-
-        public override ItemJsonData GetJsonData()
-        {
-            var json = base.GetJsonData();
-            json.iStatusValueDictionary.Add("MoneyAmount", moneyAmount);
-            return json;
-        }
-
-        public override void SetJsonData(ItemJsonData json)
-        {
-            base.SetJsonData(json);
-            moneyAmount = json.GetStatusValueInt("MoneyAmount");
-        }
     }
 }
 

@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using ProjectUpdate;
 using Script.Util;
 using UnityEngine;
 using Util;
@@ -13,19 +16,28 @@ namespace Item
         protected override void Awake()
         {
             base.Awake();
-            ListInit();
             DontDestroyOnLoad(gameObject);
         }
-        
+
+        private void Start()
+        {
+            ListInit();
+        }
+
         private void ListInit()
         {
             for (var i = 0; i < itemObjectList.Count; i++)
             {
                 var itemObject = itemObjectList[i];
-                
                 var itemBase = itemObject.GetComponent<ItemBase>();
-                var keyPair  = new DictionaryUtil.MultiKey<int,string>(itemBase.Id, itemBase.ItemName);
-                _itemObjectDictionary.Add(keyPair, itemObject);
+                
+                WebManager.DownloadJson($"Item/{itemBase.Id}", null, (json) =>
+                {
+                    ItemJsonData data = JsonConvert.DeserializeObject<ItemJsonData>(json);
+                    itemBase.SetJsonData(data);
+                    var keyPair  = new DictionaryUtil.MultiKey<int,string>(itemBase.Id, itemBase.Name);
+                    _itemObjectDictionary.Add(keyPair, itemObject);
+                }, true);
             }
         }
 

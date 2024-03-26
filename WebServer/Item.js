@@ -6,15 +6,21 @@ async function ItemQuery(){
 JSON_OBJECT(
     'ID', item.ID,
     'Name', item.Name,
-    'Status Int', (
-        SELECT JSON_OBJECTAGG(status.\`Status Name\`, status.Value)
-        FROM bearlike.item_status status
-        WHERE status.\`Item ID\` = item.ID AND status.\`Value Type\` = 0
+    'Status Int', COALESCE(
+        (
+            SELECT JSON_OBJECTAGG(status.\`Status Name\`, status.Value)
+            FROM bearlike.item_status status
+            WHERE status.\`Item ID\` = item.ID AND status.\`Value Type\` = 0
+        ),
+        JSON_OBJECT()
     ),
-    'Status Float', (
-        SELECT JSON_OBJECTAGG(status.\`Status Name\`, status.Value)
-        FROM bearlike.item_status status
-        WHERE status.\`Item ID\` = item.ID AND status.\`Value Type\` = 1
+    'Status Float', COALESCE(
+        (
+            SELECT JSON_OBJECTAGG(status.\`Status Name\`, status.Value)
+            FROM bearlike.item_status status
+            WHERE status.\`Item ID\` = item.ID AND status.\`Value Type\` = 1
+        ),
+        JSON_OBJECT()
     )
 ) AS Item
 FROM bearlike.item item;`);

@@ -8,15 +8,21 @@ JSON_OBJECT(
     'Name', skill.Name,
     'Explain', skill.\`Explain\`,
     'Cool Time', skill.\`Cool Time\`,
-    'Status Int', (
-        SELECT JSON_OBJECTAGG(status.\`Status Name\`, status.Value)
-        FROM bearlike.skill_status status
-        WHERE status.\`Skill ID\` = skill.ID AND status.\`Value Type\` = 0
+    'Status Int', COALESCE(
+        (
+            SELECT JSON_OBJECTAGG(status.\`Status Name\`, status.Value)
+            FROM bearlike.skill_status status
+            WHERE status.\`Skill ID\` = skill.ID AND status.\`Value Type\` = 0
+        ),
+        JSON_OBJECT()
     ),
-    'Status Float', (
-        SELECT JSON_OBJECTAGG(status.\`Status Name\`, status.Value)
-        FROM bearlike.skill_status status
-        WHERE status.\`Skill ID\` = skill.ID AND status.\`Value Type\` = 1
+    'Status Float', COALESCE(
+        (
+            SELECT JSON_OBJECTAGG(status.\`Status Name\`, status.Value)
+            FROM bearlike.skill_status status
+            WHERE status.\`Skill ID\` = skill.ID AND status.\`Value Type\` = 1
+        ),
+        JSON_OBJECT()
     )
 ) AS Skill
 FROM bearlike.skill skill;`);

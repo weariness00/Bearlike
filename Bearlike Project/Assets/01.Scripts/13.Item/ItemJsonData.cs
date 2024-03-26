@@ -1,27 +1,27 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using Status;
 
 namespace Item
 {
     public class ItemJsonData
     {
-        public int id;
-        public string name;
-        public string explain;
-        public int amount;
+        [JsonProperty("ID")]public int id;
+        [JsonProperty("Name")]public string name;
+        [JsonProperty("Explain")]public string explain;
 
-        public Dictionary<string, StatusValue<int>> iStatusValueDictionary = new Dictionary<string, StatusValue<int>>();
-        public Dictionary<string, StatusValue<float>> fStatusValueDictionary = new Dictionary<string, StatusValue<float>>();
+        [JsonProperty("Status Int")]public Dictionary<string, int> statusIntDictionary = new Dictionary<string, int>();
+        [JsonProperty("Status Float")]public Dictionary<string, float> statusFloatDictionary = new Dictionary<string, float>();
 
-        public StatusValue<int> GetStatusValueInt(string statusName)
+        public int GetInt(string statusName)
         {
-            if(iStatusValueDictionary.TryGetValue(statusName, out var statusValue)) {return statusValue;}
-            return null;
+            if(statusIntDictionary.TryGetValue(statusName, out var statusValue)) {return statusValue;}
+            return 0;
         }
-        public StatusValue<float> GetStatusValueFloat(string statusName)
+        public float GetFloat(string statusName)
         {
-            if(fStatusValueDictionary.TryGetValue(statusName, out var statusValue)) {return statusValue;}
-            return null;
+            if(statusFloatDictionary.TryGetValue(statusName, out var statusValue)) {return statusValue;}
+            return 0f;
         }
     }
 }

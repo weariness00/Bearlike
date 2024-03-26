@@ -20,7 +20,7 @@ namespace Item.Looting
         public bool IsDrop()
         {
             if (IsFixed) { return true;}
-            if (Probability <= Random.Range(0f, 1f))
+            if (Random.Range(0f, 1f) <= Probability)
             {
                 return true;
             }

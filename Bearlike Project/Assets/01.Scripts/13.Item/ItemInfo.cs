@@ -1,5 +1,4 @@
 ﻿using Data;
-using Inventory;
 using Status;
 using UnityEngine;
 
@@ -9,7 +8,7 @@ namespace Item
     public struct ItemInfo : IJsonData<ItemJsonData>
     {
         public int id;
-        public string itemName;
+        public string name;
         
         public Texture2D icon; // 아이템 이미지
 
@@ -18,7 +17,7 @@ namespace Item
 
         public static implicit operator string(ItemInfo value)
         {
-            return value.itemName;
+            return value.name;
         }
         
         public override bool Equals(object obj)
@@ -41,15 +40,17 @@ namespace Item
         public ItemJsonData GetJsonData()
         {
             ItemJsonData json = new ItemJsonData();
-            json.name = "Item";
-            json.amount = amount;
+            json.name = name;
             json.explain = explain;
             return json;
         }
 
         public void SetJsonData(ItemJsonData json)
         {
-            amount.Current = json.amount;
+            name = json.name;
+            amount.Max = json.GetInt("Amount Max");
+            amount.Min = json.GetInt("Amount Min");
+            amount.Current = json.GetInt("Amount Current");
             explain = json.explain;
         }
 
