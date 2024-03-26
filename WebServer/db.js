@@ -1,6 +1,6 @@
 // db.js
-const mysql = require('mysql2/promise');
-const dotenv = require('dotenv');
+import mysql from 'mysql2/promise';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -14,7 +14,7 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-async function query(sql, params) {
+export async function query(sql, params) {
   try
   {
     const [results, ] = await pool.execute(sql, params);
@@ -25,5 +25,3 @@ async function query(sql, params) {
     return false; 
   }
 }
-
-module.exports = { query };
