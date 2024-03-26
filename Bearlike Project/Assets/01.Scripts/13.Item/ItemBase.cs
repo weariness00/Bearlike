@@ -102,7 +102,8 @@ namespace Item
         
         public virtual void GetItem(GameObject targetObject)
         {
-            if (targetObject.TryGetComponent(out PlayerController pc))
+            PlayerController pc;
+            if (targetObject.TryGetComponent(out pc) || targetObject.transform.root.TryGetComponent(out pc))
             {
                 pc.itemInventory.AddItem(this);
             }

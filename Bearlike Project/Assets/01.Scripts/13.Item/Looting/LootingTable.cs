@@ -51,10 +51,12 @@ namespace Item.Looting
                         DebugManager.LogError($"아이템이 리스트에 존재하지 않습니다. {dropItem.ItemName}, {dropItem.ItemID}");
                         continue;
                     }
-                    
-                    var item = Instantiate(dropObjectPrefab).GetComponent<ItemBase>();
-                    item.transform.position = gameObject.transform.position;
-                    item.Amount.Current = item.Amount.Max = dropItem.Amount;
+
+                    for (int i = 0; i < dropItem.Amount; i++)
+                    {
+                        var item = Instantiate(dropObjectPrefab).GetComponent<ItemBase>();
+                        item.transform.position = gameObject.transform.position;
+                    }
                 }
             }
 

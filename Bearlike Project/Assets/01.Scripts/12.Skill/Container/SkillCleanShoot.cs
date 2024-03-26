@@ -239,11 +239,11 @@ namespace Skill.Container
             var monster = Runner.FindObject(monsterId);
             var dis = Vector3.Magnitude(monster.transform.position - viewPosition);
             var trajectoryVFXObject = await NetworkManager.Runner.SpawnAsync(trajectoryVFX, viewPosition);
-            
             var vfx = trajectoryVFXObject.GetComponent<VisualEffect>();
+            
             vfx.SetFloat("Distance", dis);
             vfx.transform.LookAt(monster.transform);
-            Destroy(vfx, _trajectoryVFXDestroyTime);
+            Destroy(vfx.gameObject, _trajectoryVFXDestroyTime);
         }
 
         #endregion
