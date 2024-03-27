@@ -68,7 +68,7 @@ namespace Player
             {
                 Object.
                 name = "Local Player";
-
+                
                 // Runner.SetPlayerObject(Runner.LocalPlayer, Object);
                 // equipment?.Equip();
                 weaponSystem.gun?.Equip();

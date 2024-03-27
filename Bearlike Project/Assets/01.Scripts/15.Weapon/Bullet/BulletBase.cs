@@ -19,28 +19,23 @@ namespace Weapon.Bullet
         
         private Vector3 _oldPosition;
         
-        public float moveDistance;      // 이동한 거리
         public float maxMoveDistance;   // 최대 사정거리
 
         #endregion
 
         protected void Start()
         {
-            moveDistance = 0.0f;
+            _oldPosition = transform.position;
             
-            transform.LookAt(destination);
-            Destroy(gameObject, 50f);
+            transform.rotation = Quaternion.LookRotation(destination);
+            Destroy(gameObject, 5f);
         }
 
         protected void Update()
         {
-            _oldPosition = transform.position;
             transform.position += transform.forward * speed * Time.deltaTime;
 
-            moveDistance += FastDistance(transform.position, _oldPosition);
-            if (moveDistance >= maxMoveDistance)
-                Destroy(gameObject);
-            
+            if (FastDistance(transform.position, _oldPosition) >= maxMoveDistance) Destroy(gameObject);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -60,7 +55,7 @@ namespace Weapon.Bullet
             var gun = player.GetComponentInChildren<GunBase>();
             
             other.gameObject.GetComponent<StatusBase>().ApplyDamageRPC(playerStatus.attack.Current + gun.attack, (CrowdControl)(playerStatus.property | gun.property));
-            moveDistance = 0.0f;
+
             Destroy(gameObject);
         }
         

@@ -97,8 +97,12 @@ namespace Script.Weapon.Gun
         {
             Vector3 detination = Vector3.zero;
             Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-            var hitOptions = HitOptions.IncludePhysX | HitOptions.IgnoreInputAuthority;
+            
             DebugManager.DrawRay(ray.origin, ray.direction * int.MaxValue, Color.red, 1.0f);
+            
+            return ray.direction;
+            
+            var hitOptions = HitOptions.IncludePhysX | HitOptions.IgnoreInputAuthority;
             if(Runner.LagCompensation.Raycast(ray.origin, ray.direction, float.MaxValue, Object.InputAuthority, out var hit, includeCollide, hitOptions))
             {
                 DebugManager.Log($"Ray충돌\n총 이름 : {name}\n맞은 대상 : {hit.GameObject.name}");

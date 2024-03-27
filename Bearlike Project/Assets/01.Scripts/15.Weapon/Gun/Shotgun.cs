@@ -52,15 +52,16 @@ namespace Weapon.Gun
                     
                     if(shootEffect != null) shootEffect.Play();
                     
-                    dst = Vector3.Normalize(dst);
-                    bullet.destination = dst * attackRange;
+                    // dst = Vector3.Normalize(dst);    // 어차피 Ray의 반환값은 정규화가 되어있다.
+                    // bullet.destination = dst * attackRange;  // 아래 for문에서 해준다.
                     
                     for (int i = 0; i < 10; ++i)
                     {
-                        Vector3 randomVector3 = new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f));
-                        randomVector3 *= bulletRadian;
-                        bullet.destination += randomVector3;
-
+                        Vector3 randomVector3 = new Vector3(Random.Range(-bulletRadian, bulletRadian), 
+                            Random.Range(-bulletRadian, bulletRadian), Random.Range(-bulletRadian, bulletRadian));
+                        
+                        bullet.destination = (dst * attackRange) + randomVector3;
+                        
                         var transform1 = transform;
                         Instantiate(bullet.gameObject, transform1.position, transform1.rotation);
                     }
@@ -88,7 +89,7 @@ namespace Weapon.Gun
             
             reloadLateSecond.Max = reloadLateSecond.Current = 0.5f;
 
-            attackRange = 30.0f;
+            attackRange = 300.0f;
             
             bullet.maxMoveDistance = attackRange;
             bullet.player = gameObject;
