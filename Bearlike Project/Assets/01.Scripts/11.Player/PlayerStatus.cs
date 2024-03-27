@@ -56,9 +56,9 @@ namespace Player
             hp.Min = 0;
             hp.Current = 100;
 
-            attack.Max = 100;
-            attack.Min = 1;
-            attack.Current = 10;
+            damage.Max = 100;
+            damage.Min = 1;
+            damage.Current = 10;
             
             defence.Max = 100;
             defence.Min = 1;
@@ -105,6 +105,7 @@ namespace Player
         
         public override void Spawned()
         {
+            base.Spawned();
             ImmortalTimer = TickTimer.CreateFromSeconds(Runner, immortalDurationAfterSpawn);
         }
 
@@ -212,7 +213,7 @@ namespace Player
         // DeBug Function
         public override void ShowInfo()
         {
-            Debug.Log($"{gameObject.name} - 체력 : " +  hp.Current + $" 공격력 : " + attack.Current + $" 공격 속도 : " + attackSpeed.Current + $" 상태 : " + (CrowdControl)condition);    // condition이 2개 이상인 경우에는 어떻게 출력?
+            Debug.Log($"{gameObject.name} - 체력 : " +  hp.Current + $" 공격력 : " + damage.Current + $" 공격 속도 : " + attackSpeed.Current + $" 상태 : " + (CrowdControl)condition);    // condition이 2개 이상인 경우에는 어떻게 출력?
         }
         
         

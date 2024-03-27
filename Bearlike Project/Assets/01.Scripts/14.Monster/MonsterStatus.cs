@@ -1,9 +1,6 @@
-﻿using System;
-using Fusion;
-using Manager;
+﻿using Manager;
 using State.StateClass.Base;
 using Unity.Mathematics;
-using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace State.StateClass
@@ -11,7 +8,7 @@ namespace State.StateClass
     /// <summary>
     /// Monster의 State을 나타내는 Class
     /// </summary>
-    public class MonsterStatus : Base.StatusBase
+    public class MonsterStatus : StatusBase
     {
         public void Awake()
         {
@@ -19,9 +16,9 @@ namespace State.StateClass
             hp.Min = 0;
             hp.Current = 100;
 
-            attack.Max = 100;
-            attack.Min = 1;
-            attack.Current = 10;
+            damage.Max = 100;
+            damage.Min = 1;
+            damage.Current = 10;
 
             defence.Max = 100;
             defence.Min = 1;
@@ -97,7 +94,7 @@ namespace State.StateClass
         // DeBug Function
         public override void ShowInfo()
         {
-            DebugManager.Log($"체력 : " +  hp.Current + $" 공격력 : " + attack.Current + $" 공격 속도 : " + attackSpeed.Current + $" 상태 : " + (CrowdControl)condition);    // condition이 2개 이상인 경우에는 어떻게 출력?
+            DebugManager.Log($"체력 : " +  hp.Current + $" 공격력 : " + damage.Current + $" 공격 속도 : " + attackSpeed.Current + $" 상태 : " + (CrowdControl)condition);    // condition이 2개 이상인 경우에는 어떻게 출력?
         }
         
         
