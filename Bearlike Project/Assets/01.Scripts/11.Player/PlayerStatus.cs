@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Fusion;
 using GamePlay;
@@ -17,8 +18,15 @@ namespace Player
     /// </summary>
     public sealed class PlayerStatus : StatusBase
     {
+        #region Networked Property
+        
+        // public GameObject immortalityIndicator;
+        [Networked] private TickTimer ImmortalTimer { get; set; }
+        
+        #endregion
+        
         // Member Variable
-        #region Info Perperty
+        #region Member Perperty
         public StatusValue<int> level = new StatusValue<int>();               // 레벨
         public StatusValue<int> experience = new StatusValue<int>();                 // 경험치
         public List<int> experienceAmountList = new List<int>();  // 레벨별 경험치량
@@ -27,21 +35,18 @@ namespace Player
         public StatusValue<float> jumpPower = new StatusValue<float>();
         
         public bool isInjury; // 부상 상태인지
+        public Action injuryAction;
         public StatusValue<float> injuryTime = new StatusValue<float>() { Max = 30f }; // 부상 상태로 있을 수 있는 시간
-        public StatusValue<float> recoveryTime = new StatusValue<float>(){Max = 12}; // 다른 플레이어를 부상에서 회복시키는데 걸리는 시간
+        public StatusValue<float> recoveryFromInjuryTime = new StatusValue<float>(){Max = 12}; // 다른 플레이어를 부상에서 회복시키는데 걸리는 시간
 
         public bool isRevive; // 소생 상태인지
-        
-        #endregion
-        
-        #region Timer Property
-        
-        // public GameObject immortalityIndicator;
-        [Networked] private TickTimer ImmortalTimer { get; set; }
+        public bool isHelpOtherPlayer; // 다른 플레이어와 상호작용중인지
         
         public bool IsImmortal => ImmortalTimer.ExpiredOrNotRunning(Runner) == false;
         
         #endregion
+
+        #region Unity Event Function
         
         // Member Function
         // ObjectState abstract class Function
@@ -108,6 +113,8 @@ namespace Player
             // immortalityIndicator.SetActive(IsImmortal);
         }
         
+        #endregion
+
         // Loop
         public override void MainLoop()
         {
@@ -154,15 +161,39 @@ namespace Player
 
             hp.Current -= (int)(damageRate * damage);
 
-            if (hp.Current == hp.Min)
-            {
-                // 킬로그 구현할지 고민 (monster -> player)
-                // respawn 시키는 코드 구현
-            }
-                
-            return;
+            HpControlRPC();
         }
-        // HP
+
+        /// <summary>
+        /// 체력이 0이면 부상
+        /// 부상에서 일정 시간이 지나면 죽음으로 바뀌게 하는 로직
+        /// </summary>
+        void HpControl()
+        {
+            // 부상에서 죽어 부활만 가능한 상태일떄 로직
+            if (isRevive)
+            {
+                
+            }
+            // 부상 상태 로직
+            else if (isInjury)
+            {
+                SetInjuryTimeRPC(injuryTime.Current - Runner.DeltaTime);
+                if (injuryTime.isMin)
+                {
+                    isInjury = false;
+                    isRevive = true;
+                }
+            }
+            // 부상 상태로 전환
+            else if (IsDie)
+            {
+                isInjury = true;
+                injuryTime.Current = injuryTime.Max; // 이건 부상 상태를 유지하는 시간
+                
+                injuryAction?.Invoke(); // 부상상태에 되면 발동한는 함수
+            }
+        }
         
         // LV
         public void IncreaseExp(int value)
@@ -203,12 +234,18 @@ namespace Player
         }
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public void SetRecoveryTimeRPC(float time) => recoveryTime.Current = time;
+        public void SetRecoveryInjuryTimeRPC(float time) => recoveryFromInjuryTime.Current = time;
 
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void SetIsInjuryRPC(NetworkBool value) => isInjury = value;
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public void SetInjuryTimeRPC(float time) => injuryTime.Current = time; 
+        public void SetInjuryTimeRPC(float time) => injuryTime.Current = time;
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void SetHelpOtherPlayerRPC(NetworkBool value) => isHelpOtherPlayer = value;
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void HpControlRPC() => HpControl();
     }
 }

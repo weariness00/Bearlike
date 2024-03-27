@@ -73,6 +73,23 @@ namespace State.StateClass.Base
         #region HP Function
 
         [Rpc(RpcSources.All, RpcTargets.All)]
+        public void SetHpRPC(StatusValueType type, int value)
+        {
+            switch (type)
+            {
+                case StatusValueType.Min:
+                    hp.Min = value;
+                    break;
+                case StatusValueType.Current:
+                    hp.Current = value;
+                    break;
+                case StatusValueType.Max:
+                    hp.Max = value;
+                    break;
+            }
+        }
+        
+        [Rpc(RpcSources.All, RpcTargets.All)]
         public void ApplyDamageRPC(int damage, CrowdControl enemyProperty, RpcInfo info = default)
         {
             ApplyDamage(damage, enemyProperty);

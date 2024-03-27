@@ -1317,6 +1317,7 @@ GameObject:
   - component: {fileID: -4627320855333868288}
   - component: {fileID: -8376342315293501503}
   - component: {fileID: 3591252219797454216}
+  - component: {fileID: 4100932630653908726}
   m_Layer: 12
   m_Name: Player 3
   m_TagString: Player
@@ -1372,7 +1373,6 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
-  interactLength: 1
   mouseRotateObject: {fileID: 8897159019937030371}
   rotateSpeed: 500
 --- !u!114 &8389592379722413424
@@ -1417,6 +1417,7 @@ MonoBehaviour:
   - {fileID: -4627320855333868288}
   - {fileID: -8376342315293501503}
   - {fileID: 3591252219797454216}
+  - {fileID: 4100932630653908726}
   - {fileID: 5462640940224501418}
   - {fileID: 2205082202529722068}
 --- !u!54 &7507528767881361376
@@ -1629,7 +1630,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
-  recoveryTime:
+  recoveryFromInjuryTime:
     _min: 0
     _max: 12
     _current: 0
@@ -1638,6 +1639,20 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   isRevive: 0
+  isHelpOtherPlayer: 0
+--- !u!114 &4100932630653908726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4910098564648988719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f515678cf5541e488314bacd2155f3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactLength: 1
 --- !u!1 &5293648659765142871
 GameObject:
   m_ObjectHideFlags: 0

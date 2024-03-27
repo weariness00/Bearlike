@@ -17,7 +17,7 @@ using Weapon;
 namespace Player
 {
     [RequireComponent(typeof(PlayerCameraController), typeof(PlayerStatus))]
-    public class PlayerController : NetworkBehaviourEx, IInteract
+    public class PlayerController : NetworkBehaviourEx
     {
         public PlayerRef PlayerRef => Object.InputAuthority;
         
@@ -33,7 +33,6 @@ namespace Player
 
         public IEquipment equipment;
         public StatusValue<int> ammo = new StatusValue<int>();
-        public float interactLength = 1f; // 상호작용 범위
 
         [Tooltip("마우스 움직임에 따라 회전할 오브젝트")] public GameObject mouseRotateObject;
 
@@ -91,13 +90,9 @@ namespace Player
             
             if (GetInput(out PlayerInputData data))
             {
-                if (data.Cursor)
-                    return;
-
                 MouseRotateControl(data.MouseAxis);
                 MoveControl(data);
                 WeaponControl(data);
-                CheckInteract(data);
 
                 if (data.ItemInventory)
                 {
@@ -109,7 +104,6 @@ namespace Player
                     
                 }
             }
-            HpControl();
         }
 
         private void MoveControl(PlayerInputData data = default)
@@ -160,7 +154,6 @@ namespace Player
                     jumpImpulse = Vector3.up * status.jumpPower;
                 }
             }
-            
 
             simpleKcc.Move(dir, jumpImpulse);
         }
@@ -186,35 +179,6 @@ namespace Player
             mouseRotateObject.transform.rotation = Quaternion.Euler(-xRotate, transform.localRotation.eulerAngles.y, transform.localRotation.eulerAngles.z);
         }
 
-        // 상호 작용
-        void CheckInteract(PlayerInputData data)
-        {
-            if (HasInputAuthority == false)
-            {
-                return;
-            }
-            
-            Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-            var hitOptions = HitOptions.IncludePhysX | HitOptions.IgnoreInputAuthority;
-            DebugManager.DrawRay(ray.origin, ray.direction * interactLength, Color.red, 1.0f);
-            if (Runner.LagCompensation.Raycast(ray.origin, ray.direction, interactLength, Object.InputAuthority, out var hit, Int32.MaxValue, hitOptions))
-            {
-                var interact = hit.GameObject.GetComponent<IInteract>();
-                if (interact is { IsInteract: true })
-                {
-                    if (data.Interact)
-                    {
-                        interact.InteractEnterAction?.Invoke(gameObject);
-                    }
-                    else
-                    {
-                        interact.InteractExitAction?.Invoke(gameObject);
-                    }
-                    DebugManager.ToDo("상호작용이 가능할 경우 상호작용 키 UI 띄어주기");
-                }
-            }
-        }
-
         void WeaponControl(PlayerInputData data)
         {
             if (data.ChangeWeapon0)
@@ -234,99 +198,7 @@ namespace Player
                 gun.ReLoadBullet();
             }
         }
-
-        /// <summary>
-        /// 체력이 0이면 부상
-        /// 부상에서 일정 시간이 지나면 죽음으로 바뀌게 하는 로직
-        /// </summary>
-        void HpControl()
-        {
-            // 부상 상태 로직
-            if (status.isInjury)
-            {
-                status.SetInjuryTimeRPC(status.injuryTime.Current - Runner.DeltaTime);
-                if (status.injuryTime.isMin)
-                {
-                    status.isInjury = false;
-                    status.isRevive = true;
-                }
-            }
-            else if (status.isRevive)
-            {
-            }
-            // 부상 상태로 전환
-            else if (status.IsDie)
-            {
-                IsInteract = true;
-                status.isInjury = true;
-                status.injuryTime.Current = status.injuryTime.Max; // 이건 부상 상태를 유지하는 시간
-            }
-            else
-            {
-                IsInteract = false;
-            }
-        }
-
-        #region Interact 
-
-        #region Interface
-
-        public void InteractInit()
-        {
-            IsInteract = false;
-
-            InteractEnterAction += RecoveryInteract;
-            InteractEnterAction += ReviveInteract;
-
-            InteractExitAction += (targetObject) =>
-            {
-                var remotePlayerStatus = targetObject.GetComponent<PlayerStatus>();
-                remotePlayerStatus.SetRecoveryTimeRPC(0);
-            };
-        }
-
-        public bool IsInteract { get; set; }
-        public Action<GameObject> InteractEnterAction { get; set; }
-        public Action<GameObject> InteractExitAction { get; set; }
         
-        #endregion
-
-        /// <summary>
-        /// 부상 상태에 빠진 것을 회복하는 상호작용
-        /// </summary>
-        void RecoveryInteract(GameObject targetObject)
-        {
-            if (status.isInjury)
-            {
-                var remotePlayerStatus = targetObject.GetComponent<PlayerStatus>();
-                if (remotePlayerStatus.recoveryTime.isMax)
-                {
-                    // 부상 회복
-                    status.hp.Current = status.hp.Max / 3;
-                    
-                    // remote Player의 부상 관련 스테이터스 초기화
-                    remotePlayerStatus.SetIsInjuryRPC(false);
-                    remotePlayerStatus.SetRecoveryTimeRPC(0);
-                    IsInteract = false;
-                    return;
-                }
-                remotePlayerStatus.SetRecoveryTimeRPC(remotePlayerStatus.recoveryTime.Current + Runner.DeltaTime);
-            }
-        }
-
-        /// <summary>
-        /// 다른 플레이어 소생하는 상호작용
-        /// </summary>
-        void ReviveInteract(GameObject targetObject)
-        {
-            if (status.isRevive)
-            {
-                DebugManager.ToDo("소생 아이템 생기면 소생 로직 만들기");
-            }
-        }
-
-        #endregion
-
         #region RPC Function
 
         [Rpc(RpcSources.All,RpcTargets.StateAuthority)]
