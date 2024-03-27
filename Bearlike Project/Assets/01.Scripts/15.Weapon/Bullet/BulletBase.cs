@@ -1,15 +1,18 @@
-﻿using Script.Weapon.Gun;
+﻿using Fusion;
+using Photon;
+using Script.Weapon.Gun;
 using State.StateClass.Base;
 using Status;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Weapon.Bullet
 {
-    public class BulletBase : MonoBehaviour
+    [RequireComponent(typeof(NetworkTransform))]
+    public class BulletBase : NetworkBehaviourEx
     {
+        public StatusValue<int> damage = new StatusValue<int>() {Max = 100, Current = 100 };
         public StatusValue<int> speed = new StatusValue<int>(){Max = 100, Current = 100};
         public Vector3 destination = Vector3.zero;
 
@@ -32,10 +35,10 @@ namespace Weapon.Bullet
             Destroy(gameObject, 50f);
         }
 
-        protected void Update()
+        public override void FixedUpdateNetwork()
         {
             _oldPosition = transform.position;
-            transform.position += transform.forward * speed * Time.deltaTime;
+            transform.position += transform.forward * speed * Runner.DeltaTime;
 
             moveDistance += FastDistance(transform.position, _oldPosition);
             if (moveDistance >= maxMoveDistance)
@@ -45,22 +48,23 @@ namespace Weapon.Bullet
 
         private void OnTriggerEnter(Collider other)
         {
-            // if (other.gameObject.CompareTag("Destruction"))
+            // if (!other.gameObject.CompareTag("Monster") || other.GetComponent<StatusBase>().hp.isMin)
             // {
-            //     MeshDestruction.Destruction(other.gameObject, PrimitiveType.Cube, other.contacts[0].point, Vector3.one);
+            //     return;
             // }
-            
-            if (!other.gameObject.CompareTag("Monster") || other.GetComponent<StatusBase>().hp.isMin)
+
+            StatusBase otherStatus;
+            if (other.TryGetComponent(out otherStatus) || other.transform.root.TryGetComponent(out otherStatus))
             {
-                return;
+                otherStatus.ApplyDamageRPC(damage);
             }
             
-            // player가 건이다.
-            var playerStatus = player.transform.root.GetComponent<StatusBase>();
-            var gun = player.GetComponentInChildren<GunBase>();
-            
-            other.gameObject.GetComponent<StatusBase>().ApplyDamageRPC(playerStatus.attack.Current + gun.attack, (CrowdControl)(playerStatus.property | gun.property));
-            moveDistance = 0.0f;
+            // // player가 건이다.
+            // var playerStatus = player.transform.root.GetComponent<StatusBase>();
+            // var gun = player.GetComponentInChildren<GunBase>();
+            //
+            // other.gameObject.GetComponent<StatusBase>().ApplyDamageRPC(playerStatus.damage.Current + gun.attack, (CrowdControl)(playerStatus.property | gun.property));
+            // moveDistance = 0.0f;
             Destroy(gameObject);
         }
         
@@ -69,5 +73,23 @@ namespace Weapon.Bullet
         {
             return math.distance(pointA, pointB);
         }
+
+        #region RPC Function
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void SetDamageRPC(StatusValueType type, int value)
+        {
+            switch (type)
+            {
+                case StatusValueType.Current:
+                    damage.Current = value;
+                    break;
+                case StatusValueType.Max:
+                    damage.Max = value;
+                    break;
+            }
+        }
+
+        #endregion
     }
 }

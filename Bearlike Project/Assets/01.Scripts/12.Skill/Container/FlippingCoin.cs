@@ -78,14 +78,14 @@ namespace Skill.Container
             {
                 if (_type == 0)
                 {
-                    playerStatus.attackSpeed.Current -= _difference;
+                    playerStatus.SetAttackSpeedRPC(StatusValueType.Current, playerStatus.attackSpeed.Current - _difference);
                 }
                 else
                 {
-                    playerStatus.attack.Current -= (int)_difference;
+                    playerStatus.damage.Current -= (int)_difference;
                 }
                 
-                Debug.Log($"현재 Attack : {playerStatus.attack.Current}, AttackSpeed : {playerStatus.attackSpeed.Current}");
+                Debug.Log($"현재 Attack : {playerStatus.damage.Current}, AttackSpeed : {playerStatus.attackSpeed.Current}");
                 
                 duration.Current = duration.Min;
                 _bOn = false;
@@ -111,8 +111,8 @@ namespace Skill.Container
                 }
                 else
                 {
-                    _difference = playerStatus.attack.Current * AttackSpeedValue;
-                    playerStatus.attack.Current += (int)_difference;
+                    _difference = playerStatus.damage.Current * AttackSpeedValue;
+                    playerStatus.damage.Current += (int)_difference;
                 }
                 
                 duration.Current = duration.Max;
@@ -120,7 +120,7 @@ namespace Skill.Container
 
                 _bOn = true;
                 
-                Debug.Log($"현재 Attack : {playerStatus.attack.Current}, AttackSpeed : {playerStatus.attackSpeed.Current}");
+                Debug.Log($"현재 Attack : {playerStatus.damage.Current}, AttackSpeed : {playerStatus.attackSpeed.Current}");
             }
             else
             {

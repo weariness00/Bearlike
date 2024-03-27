@@ -91,26 +91,6 @@ namespace Monster.Container
             
             return coordinate.right.normalized;
         }
-
-        /// <summary>
-        /// Target과의 거리를 알려주는 함수
-        /// </summary>
-        /// <param name="targetPositoin"> Target의 위치 </param>
-        /// <returns></returns>
-        private float DistanceFromTarget(Vector3 targetPosition)
-        {
-            var path = new NavMeshPath();
-            var dis = 0f;
-            if (NavMesh.CalculatePath(transform.position, targetPosition, NavMesh.AllAreas, path))
-            {
-                for (int i = 0; i < path.corners.Length - 1; i++)
-                {
-                    dis += Vector3.Distance(path.corners[i], path.corners[i + 1]);
-                }
-            }
-
-            return dis;
-        }
         
         /// <summary>
         /// 타겟과의 거리를 판단하여 인자로 넣은 값과 비교해 거리가 인자보다 낮으면 true
@@ -123,7 +103,7 @@ namespace Monster.Container
             {
                 return false;
             }
-            var dis = DistanceFromTarget(targetTransform.position);
+            var dis = NavMeshDistanceFromTarget(targetTransform.position);
             return dis < checkDis;
         }
 
@@ -232,7 +212,7 @@ namespace Monster.Container
                 {
                     if (hit.Hitbox == null) return INode.NodeState.Failure;
                     var hitStatus = hit.GameObject.GetComponent<StatusBase>();
-                    hitStatus.ApplyDamageRPC(status.attack.Current, CrowdControl.Normality);
+                    hitStatus.ApplyDamageRPC(status.damage.Current, CrowdControl.Normality);
                 }
             }
 
@@ -250,7 +230,7 @@ namespace Monster.Container
                 StatusBase playerStatus;
                 if (hit.transform.TryGetComponent(out playerStatus) || hit.transform.parent.TryGetComponent(out playerStatus))
                 {
-                    playerStatus.ApplyDamageRPC(status.attack.Current, CrowdControl.Normality);
+                    playerStatus.ApplyDamageRPC(status.damage.Current, CrowdControl.Normality);
                 }
             }
             return INode.NodeState.Failure;
