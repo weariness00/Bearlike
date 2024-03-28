@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using _23.Status;
 using Fusion;
 using Item.Looting;
 using Manager;
+using Newtonsoft.Json;
 using Photon;
 using State.StateClass;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using Util;
 
 namespace Monster
 {
@@ -26,9 +30,17 @@ namespace Monster
         public LayerMask targetMask;
         
         public Action DieAction;
+        
+        // 캐싱
+        private static Dictionary<int, StatusJsonData> _statusDataChasing = new Dictionary<int, StatusJsonData>();
 
         #region Unity Evenet Function
-        
+
+        private void OnApplicationQuit()
+        {
+            _statusDataChasing.Clear();
+        }
+
         private void Awake()
         {
             rigidbody = GetComponent<Rigidbody>();
@@ -43,6 +55,17 @@ namespace Monster
         
         public virtual void Start()
         {
+            // StatusJsonData statusData;
+            // if (_statusDataChasing.TryGetValue(id, out statusData) == false)
+            // {
+            //     JsonConvertExtension.Load($"/Monster/Status/{id}", (json) =>
+            //     {
+            //         statusData = JsonConvert.DeserializeObject<StatusJsonData>(json);
+            //         _statusDataChasing.Add(id, statusData);
+            //     });
+            // }
+            // status.SetJsonData(statusData);
+            
             lootingTable.CalLootingItem(LootingSystem.MonsterTable(id));
             DieAction += lootingTable.SpawnDropItem;
         }

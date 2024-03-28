@@ -27,7 +27,7 @@ namespace State.StateClass.Base
         public StatusValue<int> hp = new StatusValue<int>();                  // 체력        
         public StatusValue<int> damage = new StatusValue<int>();              // 공격력
         public StatusValue<int> defence = new StatusValue<int>();             // 방어력
-        public StatusValue<float> avoid = new StatusValue<float>();           // 회피율 0 ~ 1 사이값
+        public StatusValue<float> avoid = new StatusValue<float>(){Min = 0, Max = 1, isOverMax = true, isOverMin = true};           // 회피율 0 ~ 1 사이값
         public StatusValue<int> moveSpeed = new StatusValue<int>();           // 이동 속도
         public StatusValue<float> attackSpeed = new StatusValue<float>();     // 초당 공격 속도
         public StatusValue<float> attackLateTime = new StatusValue<float>();  // Attack Speed에 따른 딜레이
@@ -97,8 +97,6 @@ namespace State.StateClass.Base
             defence.Min = json.GetInt("Defence Min");
             defence.Current = json.GetInt("Defence Current");
             
-            avoid.Max = json.GetFloat("Avoid Max");
-            avoid.Min = json.GetFloat("Avoid Min");
             avoid.Current = json.GetFloat("Avoid Current");
             
             moveSpeed.Max = json.GetInt("MoveSpeed Max");

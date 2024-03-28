@@ -93,7 +93,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
-  attack:
+  damage:
     _min: 0
     _max: 0
     _current: 0
@@ -118,14 +118,22 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   moveSpeed:
-    _min: 0
-    _max: 220
-    _current: 220
+    _min: 1
+    _max: 1
+    _current: 1
     isOverMax: 0
     isOverMin: 0
     isMin: 0
     isMax: 0
   attackSpeed:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  attackLateTime:
     _min: 0
     _max: 0
     _current: 0
@@ -214,14 +222,6 @@ MonoBehaviour:
   targetMask:
     serializedVersion: 2
     m_Bits: 0
-  moveDelay:
-    _min: 0
-    _max: 1
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
 --- !u!114 &6190889804286306999
 MonoBehaviour:
   m_ObjectHideFlags: 0

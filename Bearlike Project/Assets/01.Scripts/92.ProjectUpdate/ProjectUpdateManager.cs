@@ -66,6 +66,9 @@ namespace ProjectUpdate
         void Start()
         {
             // DownLoadJsonToStorage(serverInfo); // 스토리지에서 웹 서버 정보 가져오기
+            DebugManager.ToDo("바뀐 DB 내용에 따라 프로젝트 업데이트 바꾸어주기" +
+                              "원래에는 Download 테이블에 따라 만들어주었는데 없애고 원하는 데이터 다운 하게 바꾸기" +
+                              "바꿔야 할 거 매우 많음");
             JsonConvertExtension.Save(serverInfoJson.text, serverInfoJson.name);
             JsonConvertExtension.Load(serverInfo, (data) =>
             {

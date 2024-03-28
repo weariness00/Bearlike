@@ -16,12 +16,14 @@ namespace Monster.Container
     {
         private BehaviorTreeRunner _behaviorTreeRunner;
         private bool _isCollide = true; // 현재 충돌 중인지
-        public StatusValue<float> moveDelay = new StatusValue<float>(); // 몇초에 한번씩 움직일지 ( 자연스러운 움직임 구현을 위해 사용 )
+        private StatusValue<float> moveDelay = new StatusValue<float>(); // 몇초에 한번씩 움직일지 1번의 움직임이 1m움직임이라 가정( 자연스러운 움직임 구현을 위해 사용 )
         
         public override void Start()
         {
             base.Start();
             _behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
+
+            moveDelay.Max = 1f / status.moveSpeed;
         }
 
         private void OnCollisionStay(Collision other)

@@ -4,6 +4,7 @@ using Fusion;
 using Manager;
 using Status;
 using UnityEngine;
+using UnityEngine.AI;
 using Weapon.Bullet;
 using Random = UnityEngine.Random;
 
@@ -15,9 +16,10 @@ namespace Monster.Container
         private BehaviorTreeRunner _behaviorTreeRunner;
         private NetworkObject[] _playerObjects;
 
+        [Header("Bullet")]
         public Transform fireTransform; // 총알이 발사할 Transform
         public NetworkPrefabRef bulletRef;
-
+        
         [Header("Animation Clip")] 
         public AnimationClip idleClip;
         public AnimationClip moveClip;
@@ -45,6 +47,12 @@ namespace Monster.Container
         {
             base.Spawned();
             _playerObjects = Runner.ActivePlayers.ToArray().Select(player => Runner.GetPlayerObject(player)).ToArray(); // 접속한 플레이어들 저장
+        }
+
+        public override void FixedUpdateNetwork()
+        {
+            base.FixedUpdateNetwork();
+            _behaviorTreeRunner.Operator();
         }
 
         #endregion
@@ -152,6 +160,7 @@ namespace Monster.Container
         /// Move 애니메이션 한 사이클 만큼 실행
         /// </summary>
         /// <returns></returns>
+        private Vector3 randomDir;
         private INode.NodeState Move()
         {
             if (_isInitAnimation == false)
@@ -159,9 +168,31 @@ namespace Monster.Container
                 _isInitAnimation = true;
                 _aniMoveTime.Current = 0f;
                 networkAnimator.Animator.SetFloat(_aniPropertyMoveSpeed, 1f);
+                randomDir = Random.onUnitSphere;
+                randomDir.y = 0;
             }
             if (_aniMoveTime.isMax == false)
             {
+                // 타겟 한테 이동
+                var path = new NavMeshPath();
+                if (targetTransform != null && NavMesh.CalculatePath(transform.position, targetTransform.position, NavMesh.AllAreas, path))
+                {
+                    if (path.corners.Length > 1)
+                    {
+                        var dir = path.corners[1] - transform.position;
+                        var nextPos = transform.position + Runner.DeltaTime * dir;
+                        transform.LookAt(nextPos);
+                        transform.position = nextPos;
+                    }
+                }
+                else
+                {
+                    var nextPos = transform.position + Runner.DeltaTime * randomDir;
+                    transform.LookAt(nextPos);
+                    transform.position = nextPos;
+                }
+
+                
                 _aniMoveTime.Current += Runner.DeltaTime;
                 return INode.NodeState.Running;
             }
