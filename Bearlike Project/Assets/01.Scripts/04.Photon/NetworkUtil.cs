@@ -1,7 +1,7 @@
 ﻿using System;
 using Fusion;
 
-namespace Script.Util
+namespace Photon
 {
     public class NetworkUtil
     {
