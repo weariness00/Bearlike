@@ -11,15 +11,7 @@ namespace Status
         [JsonProperty("Status Int")] public Dictionary<string, int> statusIntDictionary;
         [JsonProperty("Status Float")] public Dictionary<string, float> statusFloatDictionary;
 
-        public int GetInt(string statusName)
-        {
-            if(statusIntDictionary.TryGetValue(statusName, out var statusValue)) {return statusValue;}
-            return 0;
-        }
-        public float GetFloat(string statusName)
-        {
-            if(statusFloatDictionary.TryGetValue(statusName, out var statusValue)) {return statusValue;}
-            return 0f;
-        }
+        public int GetInt(string statusName) => statusIntDictionary == null ? 0 : statusIntDictionary.TryGetValue(statusName, out var statusValue) ? statusValue : 0;
+        public float GetFloat(string statusName) => statusFloatDictionary == null ? 0 : statusFloatDictionary.TryGetValue(statusName, out var statusValue) ? statusValue : 0f;
     }
 }

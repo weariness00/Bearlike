@@ -17,7 +17,8 @@ namespace Weapon
 
         private void Start()
         {
-            GetComponentInChildren<GunUI>().gameObject.SetActive(true);
+            // GunUI 스크립트에서 활성화 하도록 바꿈
+            // GetComponentInChildren<GunUI>().gameObject.SetActive(true);
         }
 
         private void Update()

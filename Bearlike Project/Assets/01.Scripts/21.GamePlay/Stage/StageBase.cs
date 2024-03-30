@@ -73,6 +73,7 @@ namespace GamePlay.Stage
         public void Awake()
         {
             lootingTable = GetComponent<LootingTable>();
+            stageGameObject.SetActive(false);
         }
 
         public virtual void Start()
@@ -82,8 +83,6 @@ namespace GamePlay.Stage
             
             StageInfo.SetJsonData(GetInfoData(StageInfo.id));
             lootingTable.CalLootingItem(GetLootingData(StageInfo.id).LootingItems);
-            
-            stageGameObject.SetActive(false);
         }
 
         public void OnTriggerEnter(Collider other)

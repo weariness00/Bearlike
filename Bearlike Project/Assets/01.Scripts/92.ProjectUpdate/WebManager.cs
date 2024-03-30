@@ -73,10 +73,11 @@ namespace ProjectUpdate
                     action?.Invoke(json);
                     if(isSave) JsonConvertExtension.Save(json, fileName);
                     
-                    DebugManager.Log($"웹에서 다운로드 요청 성공\n" +
+                    DebugManager.Log($"웹에서 불러오기 요청 성공\n" +
                                      $"URL : {url}\n" +
-                                     $"Download Byte : {webRequest.downloadedBytes}" +
-                                     $"data : {json}\n");
+                                     $"Download Byte : {webRequest.downloadedBytes}\n" +
+                                     $"data : {json}\n" +
+                                     $"Save : {isSave}");
                     yield break;
                 }
 
