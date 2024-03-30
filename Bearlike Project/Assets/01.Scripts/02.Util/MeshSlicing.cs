@@ -130,7 +130,7 @@ namespace Util
                 
             GameObject sliceGameObject = new GameObject(targetObject.name + "_Slicing", typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider), typeof(Rigidbody));
             var collider = sliceGameObject.GetComponent<MeshCollider>();
-            collider.convex = true;
+            // collider.convex = true;
             collider.sharedMesh = mesh;
             sliceGameObject.GetComponent<MeshFilter>().sharedMesh = mesh;
             sliceGameObject.GetComponent<MeshRenderer>().sharedMaterials = targetMeshRenderer.sharedMaterials;
@@ -378,14 +378,12 @@ namespace Util
                     if (dotList[i * 2 + 1].Vertex == dotList[j * 2].Vertex)
                     {
                         result.Add(dotList[j * 2 + 1]);
-                        dotList.TrySwap(i * 2 + 2, j * 2 , out var e1);
-                        dotList.TrySwap(i * 2 + 3, j * 2 + 1 , out var e2);
+                        SwapTwoIndexSet(ref dotList, i * 2 + 2, i * 2 + 3, j * 2, j * 2 + 1);
                     }
                     else if (dotList[i * 2 + 1].Vertex == dotList[j * 2 + 1].Vertex)
                     {
                         result.Add(dotList[j * 2]);
-                        dotList.TrySwap(i * 2 + 2, j * 2 + 1, out var e1);
-                        dotList.TrySwap(i * 2 + 3, j * 2 , out var e2);
+                        SwapTwoIndexSet(ref dotList, i * 2 + 2, i * 2 + 3, j * 2 + 1, j * 2);
                     }
                 }
             }
@@ -394,6 +392,16 @@ namespace Util
                 result.RemoveAt(result.Count - 1);
             }
             return result;
+        }
+        
+        internal static void SwapTwoIndexSet<T>(ref List<T> _target, int _idx00, int _idx01, int _idx10, int _idx11)
+        {
+            T temp0 = _target[_idx00];
+            T temp1 = _target[_idx01];
+            _target[_idx00] = _target[_idx10];
+            _target[_idx01] = _target[_idx11];
+            _target[_idx10] = temp0;
+            _target[_idx11] = temp1;
         }
         
         #endregion

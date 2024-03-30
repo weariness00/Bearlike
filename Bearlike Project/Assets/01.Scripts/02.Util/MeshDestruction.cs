@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Fusion;
 using Manager;
 using Parabox.CSG;
 using UnityEngine;
@@ -93,7 +94,7 @@ namespace Util
             if (name.Contains("_Destruction") == false) name += "_Destruction";
             var obj = new GameObject(name, typeof(MeshFilter), typeof(MeshRenderer),typeof(MeshCollider));
             var copyMesh = model.mesh;
-            var centerVertex = new Vector3(
+            var centerVertex = new Vector3( 
                 copyMesh.vertices.Average(vertex => vertex.x),
                 copyMesh.vertices.Average(vertex => vertex.y),
                 copyMesh.vertices.Average(vertex => vertex.z)
