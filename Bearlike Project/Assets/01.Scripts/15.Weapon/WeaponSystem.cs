@@ -1,5 +1,6 @@
 ﻿using Fusion;
 using Script.Weapon.Gun;
+using UI.Weapon.Gun;
 using Unity.VisualScripting;
 using Weapon.Gun;
 
@@ -11,12 +12,12 @@ namespace Weapon
 
         private void Awake()
         {
-            gun = gameObject.GetOrAddComponent<Sniper>();
+            gun = gameObject.GetOrAddComponent<Shotgun>();
         }
 
         private void Start()
         {
-            
+            GetComponentInChildren<GunUI>().gameObject.SetActive(true);
         }
 
         private void Update()
