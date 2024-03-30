@@ -25,3 +25,12 @@ export async function query(sql, params) {
     return false; 
   }
 }
+
+export async function TableVesrionData(tableName)
+{
+  return await query(`
+    SELECT *
+    FROM  bearlike.\`table version\` tv 
+    WHERE tv.\`Table Name\` = '${tableName}';
+    `);
+}

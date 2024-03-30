@@ -1,28 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
-using _23.Status;
+using Data;
 using Fusion;
 using Item.Looting;
 using Manager;
-using Newtonsoft.Json;
 using Photon;
 using State.StateClass;
+using Status;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
-using Util;
 
 namespace Monster
 {
     [RequireComponent(typeof(MonsterStatus), typeof(LootingTable), typeof(Rigidbody))]
-    public class MonsterBase : NetworkBehaviourEx
+    public class MonsterBase : NetworkBehaviourEx, IJsonData<MonsterJsonData>
     {
+        #region Static
+
+        // Info Data 캐싱
+        private static readonly Dictionary<int, MonsterJsonData> InfoDataCash = new Dictionary<int, MonsterJsonData>();
+        public static void AddInfoData(int id, MonsterJsonData data) => InfoDataCash.TryAdd(id, data);
+        public static MonsterJsonData GetInfoData(int id) => InfoDataCash.TryGetValue(id, out var data) ? data : new MonsterJsonData();
+        public static void ClearInfosData() => InfoDataCash.Clear();
+        
+        // Status Data 캐싱
+        private static readonly Dictionary<int, StatusJsonData> StatusDataChasing = new Dictionary<int, StatusJsonData>();
+        public static void AddStatusData(int id, StatusJsonData data) => StatusDataChasing.TryAdd(id, data);
+        public static StatusJsonData GetStatusData(int id) => StatusDataChasing.TryGetValue(id, out var data) ? data : new StatusJsonData();
+        public static void ClearStatusData() => StatusDataChasing.Clear();
+        
+        // Looting Data 캐싱
+        private static readonly Dictionary<int, LootingJsonData> LootingDataChasing = new Dictionary<int, LootingJsonData>();
+        public static void AddLootingData(int id, LootingJsonData data) => LootingDataChasing.TryAdd(id, data);
+        public static LootingJsonData GetLootingData(int id) => LootingDataChasing.TryGetValue(id, out var data) ? data : new LootingJsonData();
+        public static void ClearLootingData() => LootingDataChasing.Clear();
+
+        #endregion
+        
         [HideInInspector] public Rigidbody rigidbody;
         [HideInInspector] public NetworkMecanimAnimator networkAnimator;
         public Transform pivot; // Pivot이 메쉬 가운데가 아닌 다리에 위치할 떄가 있다. 그때 진짜 pivot으로 사용할 변수
         
         [Header("Monster 정보")]
         public int id = 0;
+        public string explain;
+        public string type;
         public MonsterStatus status;
         public LootingTable lootingTable;
         
@@ -30,16 +53,8 @@ namespace Monster
         public LayerMask targetMask;
         
         public Action DieAction;
-        
-        // 캐싱
-        private static Dictionary<int, StatusJsonData> _statusDataChasing = new Dictionary<int, StatusJsonData>();
 
         #region Unity Evenet Function
-
-        private void OnApplicationQuit()
-        {
-            _statusDataChasing.Clear();
-        }
 
         private void Awake()
         {
@@ -51,23 +66,15 @@ namespace Monster
             lootingTable = gameObject.GetOrAddComponent<LootingTable>();
 
             gameObject.layer = LayerMask.NameToLayer("Monster");
+            
         }
         
         public virtual void Start()
         {
-            // StatusJsonData statusData;
-            // if (_statusDataChasing.TryGetValue(id, out statusData) == false)
-            // {
-            //     JsonConvertExtension.Load($"/Monster/Status/{id}", (json) =>
-            //     {
-            //         statusData = JsonConvert.DeserializeObject<StatusJsonData>(json);
-            //         _statusDataChasing.Add(id, statusData);
-            //     });
-            // }
-            // status.SetJsonData(statusData);
-            
-            lootingTable.CalLootingItem(LootingSystem.MonsterTable(id));
+            lootingTable.CalLootingItem(GetLootingData(id).LootingItems);
             DieAction += lootingTable.SpawnDropItem;
+            
+            status.SetJsonData(GetStatusData(id));
         }
 
         public override void FixedUpdateNetwork()
@@ -126,6 +133,29 @@ namespace Monster
             return dis;
         }
         
+        #endregion
+
+        #region Json Data Interface
+
+        public MonsterJsonData GetJsonData()
+        {
+            MonsterJsonData data = new MonsterJsonData()
+            {
+                ID = id,
+                Name = name,
+                Explain = explain,
+                Type = type,
+            };
+            return data;
+        }
+
+        public void SetJsonData(MonsterJsonData json)
+        {
+            name = json.Name;
+            explain = json.Explain;
+            type = json.Type;
+        }        
+
         #endregion
 
         #region RPC Function

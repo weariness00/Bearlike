@@ -1,14 +1,27 @@
-﻿using UnityEngine;
-using UnityEngine.Serialization;
+﻿using Data;
+using UnityEngine;
 
 namespace GamePlay.Stage
 {
     [System.Serializable]
-    public struct StageInfo
+    public struct StageInfo : IJsonData<StageJsonData>
     {
-        [FormerlySerializedAs("StageLevelType")] public StageType stageType;
+        public int id;
+        public StageType stageType;
         public string title;
         public string explain;
         public Texture2D image;
+        
+        public StageJsonData GetJsonData()
+        {
+            return new StageJsonData();
+        }
+
+        public void SetJsonData(StageJsonData json)
+        {
+            stageType = json.stageType;
+            title = json.title;
+            explain = json.explain;
+        }
     }
 }

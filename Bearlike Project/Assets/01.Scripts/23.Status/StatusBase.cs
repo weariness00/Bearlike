@@ -1,9 +1,6 @@
-using _23.Status;
 using Data;
 using Fusion;
 using Status;
-using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace State.StateClass.Base
 {    

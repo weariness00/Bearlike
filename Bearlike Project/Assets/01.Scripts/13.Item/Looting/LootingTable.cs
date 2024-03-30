@@ -48,7 +48,7 @@ namespace Item.Looting
                     var dropObjectPrefab = ItemObjectList.GetObject(dropItem.ItemID);
                     if (dropObjectPrefab == null)
                     {
-                        DebugManager.LogError($"아이템이 리스트에 존재하지 않습니다. {dropItem.ItemName}, {dropItem.ItemID}");
+                        DebugManager.LogError($"아이템이 리스트에 존재하지 않습니다. Item ID : {dropItem.ItemID}");
                         continue;
                     }
 

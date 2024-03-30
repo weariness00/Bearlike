@@ -1,30 +1,4 @@
-import { query } from './db.js'; // 수정된 부분
-
-// async function MonsterStatusQuery(){ 
-//     return await query(
-// `SELECT
-// JSON_OBJECT(
-//     'ID', monster.ID,
-//     'Name', monster.Name,
-//     'Status Int', COALESCE(
-//         (
-//             SELECT JSON_OBJECTAGG(status.\`Status Name\`, status.Value)
-//             FROM bearlike.monster_status status
-//             WHERE status.\`Monster ID\` = monster.ID AND status.\`Value Type\` = 0
-//         ),
-//         JSON_OBJECT()
-//     ),
-//     'Status Float', COALESCE(
-//         (
-//             SELECT JSON_OBJECTAGG(status.\`Status Name\`, status.Value)
-//             FROM bearlike.monster_status status
-//             WHERE status.\`Monster ID\` = monster.ID AND status.\`Value Type\` = 1
-//         ),
-//         JSON_OBJECT()
-//     )
-// ) AS MonsterStatus
-// FROM bearlike.monster monster;`);
-// }
+import { query, TableVesrionData } from './db.js'; // 수정된 부분
 
 async function LootingTableQuery()
 {
@@ -47,31 +21,33 @@ async function LootingTableQuery()
     );
 }
 
-// export async function MakeMonsterStatusData(app)
-// {
-//     var json = await MonsterStatusQuery();
-//     app.get('/Monster/Status', async (req, res) => {
-//         try {
-//             res.json(json);
-//         } catch (error) {
-//             res.status(500).send('Item Query error');
-//         }
-//     })
-//     json.forEach(data => {
-//         var monsterStatus = data.MonsterStatus; // 직접 Skill 객체에 접근
-//         var id = monsterStatus['ID'];
-//         app.get(`/Monster/Status/${id}`, async (req,res) => {
-//             try {
-//                 res.json(monsterStatus);
-//             } catch (error) {
-//                 res.status(500).send('Item Query error' + id);
-//             }
-//         })
-//     });
-// }
-
-export async function MakeLootingTable(app)
+async function MakeInfoData(app)
 {
+    app.get('/Stage/Version', async (req, res) => {
+        var version = await TableVesrionData("Stage");
+        res.json(version);
+    });
+
+    var json = await query('SELECT * FROM bearlike.stage');
+    app.get('/Stage', async (req, res) =>{
+        res.json(json);
+    });
+
+    json.forEach(data => {
+        var id = data.ID;
+        app.get(`/Stage/${id}`, (req, res) =>{
+            res.json(data);
+        });
+    });
+}
+
+async function MakeLootingTable(app)
+{
+    app.get('/Stage/LootingTable/Version', async (req, res) => {
+        var version = await TableVesrionData("Stage Looting Table");
+        res.json(version);
+    });
+
     var json = await LootingTableQuery();
     app.get('/Stage/LootingTable', async (req, res) => {
         try {
@@ -90,4 +66,10 @@ export async function MakeLootingTable(app)
             }
         })
     });
+}
+
+export async function MakeData(app)
+{
+    MakeInfoData(app);
+    MakeLootingTable(app);
 }

@@ -1,4 +1,9 @@
-import { query } from './db.js'; // 수정된 부분
+import { query, TableVesrionData } from './db.js'; // 수정된 부분
+
+async function InfoQuery()
+{
+    return await query(`SELECT * FROM bearlike.monster`);
+}
 
 async function MonsterStatusQuery(){ 
     return await query(
@@ -28,7 +33,7 @@ async function LootingTableQuery()
 {
     return await query(
         `SELECT
-        m.ID as MonsterID,
+        m.ID as ID,
         m.Name as MonsterName,
         JSON_ARRAYAGG(
           JSON_OBJECT(
@@ -45,8 +50,24 @@ async function LootingTableQuery()
     );
 }
 
-export async function MakeMonsterStatusData(app)
+async function MakeInfoData(app)
 {
+    app.get('/Monster/Version', async (req, res) => {
+        var version = await TableVesrionData("Monster");
+        res.json(version);
+    });
+
+    var json = await InfoQuery();
+    app.get('/Monster', async (req, res) =>{ res.json(json); });
+}
+
+async function MakeStatusData(app)
+{
+    app.get('/Monster/Status/Version', async (req, res) => {
+        var version = await TableVesrionData("Monster Status");
+        res.json(version);
+    });
+
     var json = await MonsterStatusQuery();
     app.get('/Monster/Status', async (req, res) => {
         try {
@@ -54,7 +75,7 @@ export async function MakeMonsterStatusData(app)
         } catch (error) {
             res.status(500).send('Item Query error');
         }
-    })
+    });
     json.forEach(data => {
         var id = data.ID;
         app.get(`/Monster/Status/${id}`, async (req,res) => {
@@ -67,8 +88,13 @@ export async function MakeMonsterStatusData(app)
     });
 }
 
-export async function MakeLootingTable(app)
+async function MakeLootingTable(app)
 {
+    app.get('/Monster/LootingTable/Version', async (req, res) => {
+        var version = await TableVesrionData("Monster Looting Table");
+        res.json(version);
+    });
+
     var json = await LootingTableQuery();
     app.get('/Monster/LootingTable', async (req, res) => {
         try {
@@ -76,7 +102,7 @@ export async function MakeLootingTable(app)
         } catch (error) {
             res.status(500).send('Item Query error');
         }
-    })  
+    });
     json.forEach(data => {
         var id = data.MonsterID;
         app.get(`/Monster/LootingTable/${id}`, async (req,res) => {
@@ -87,4 +113,11 @@ export async function MakeLootingTable(app)
             }
         })
     });
+}
+
+export async function MakeData(app)
+{
+    await MakeInfoData(app);
+    await MakeStatusData(app);
+    await MakeLootingTable(app);
 }

@@ -8,7 +8,7 @@ namespace Util
 {
     public class JsonConvertExtension
     {
-        public static void Load(string fileName, Action<string> action = null)
+        public static bool Load(string fileName, Action<string> action = null)
         {
             fileName = Path.GetFileNameWithoutExtension(fileName);
             var path = Application.persistentDataPath + $"/Json/{fileName}.json";
@@ -17,7 +17,7 @@ namespace Util
                 DebugManager.LogWarning("존재하지 않는 Json입니다.\n" +
                                         $"파일 이름 : {fileName}\n" +
                                         $"저장 경로 : {path}\n");
-                return;
+                return false;
             }
             var data = File.ReadAllText(path);
 
@@ -27,6 +27,8 @@ namespace Util
                              $"파일 이름 : {fileName}\n" +
                              $"저장 경로 : {path}\n" +
                              $"데이터 : {data}\n");
+
+            return true;
         }
 
         public static IEnumerator LoadCoroutine(string fileName, Action<string> action = null)

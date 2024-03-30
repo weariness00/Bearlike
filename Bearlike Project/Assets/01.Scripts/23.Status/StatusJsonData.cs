@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace _23.Status
+namespace Status
 {
     public struct StatusJsonData
     {

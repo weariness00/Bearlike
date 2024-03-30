@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using Data;
 using Inventory;
 using Player;
@@ -9,21 +10,30 @@ using Random = UnityEngine.Random;
 namespace Item
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class ItemBase : MonoBehaviour, IJsonData<ItemJsonData>, IInventoryItemAdd, IInventoryItemUse
+    public class ItemBase : MonoBehaviour, IJsonData<StatusJsonData>, IInventoryItemAdd, IInventoryItemUse
     {
         #region Static
+
+        // Item Info Data 캐싱
+        private static Dictionary<int, ItemJsonData> _itemInfoDataCash = new Dictionary<int, ItemJsonData>();
+        public static void AddInfoData(int id, ItemJsonData data) => _itemInfoDataCash.TryAdd(id, data);
+        public static ItemJsonData GetInfoData(int id) => _itemInfoDataCash.TryGetValue(id, out var data) ? data : new ItemJsonData();
+        public static void ClearInfosData() => _itemInfoDataCash.Clear();
         
-        public static string path = $"{Application.dataPath}/Json/Item/";
-        
-        public static bool SaveJsonData(ItemJsonData json) => IJsonData<ItemJsonData>.SaveJsonData(json, json.name, path);
+        // Item Status Data 캐싱
+        private static Dictionary<int, StatusJsonData> _itemStatusDataCash = new Dictionary<int, StatusJsonData>();
+        public static void AddStatusData(int id, StatusJsonData data) => _itemStatusDataCash.TryAdd(id, data);
+        public static StatusJsonData GetStatusData(int id) => _itemStatusDataCash.TryGetValue(id, out var data) ? data : new StatusJsonData();
+        public static void ClearStatusData() => _itemStatusDataCash.Clear();
 
         #endregion
         
         [HideInInspector] public Rigidbody rigidbody;
-        public ItemInfo info;
 
         #region Info Parameter
-
+        
+        public ItemInfo info;
+        
         public int Id => info.id;
         public string Name => info.name;
         public Texture2D Icon => info.icon;
@@ -57,6 +67,9 @@ namespace Item
 
             gameObject.layer = LayerMask.NameToLayer("Item");
             tag = "Item";
+
+            info.SetJsonData(GetInfoData(Id));
+            SetJsonData(GetStatusData(Id));
         }
 
         public virtual void Start()
@@ -111,15 +124,18 @@ namespace Item
 
         #region JsonData Interface
 
-        public virtual ItemJsonData GetJsonData()
+        public virtual StatusJsonData GetJsonData()
         {
-            var json = info.GetJsonData();
-            return json;
+            var data = new StatusJsonData
+            {
+                ID = Id
+            };
+            return data;
         }
 
-        public virtual void SetJsonData(ItemJsonData json)
+        public virtual void SetJsonData(StatusJsonData json)
         {
-            info.SetJsonData(json);
+            
         }
 
         #endregion

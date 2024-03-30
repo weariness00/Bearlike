@@ -9,11 +9,10 @@ namespace Item
     {
         public int id;
         public string name;
-        
-        public Texture2D icon; // 아이템 이미지
-
-        public StatusValue<int> amount; // 아이템 총 갯수
         public string explain; // 아이템 설명
+        
+        public StatusValue<int> amount; // 아이템 총 갯수
+        public Texture2D icon; // 아이템 이미지
 
         public static implicit operator string(ItemInfo value)
         {
@@ -48,9 +47,6 @@ namespace Item
         public void SetJsonData(ItemJsonData json)
         {
             name = json.name;
-            amount.Max = json.GetInt("Amount Max");
-            amount.Min = json.GetInt("Amount Min");
-            amount.Current = json.GetInt("Amount Current");
             explain = json.explain;
         }
 

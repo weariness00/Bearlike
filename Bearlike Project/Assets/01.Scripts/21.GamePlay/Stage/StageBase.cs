@@ -22,6 +22,18 @@ namespace GamePlay.Stage
 
         public static Action StageInitAction;
         public static Action StageClearAction;
+        
+        // Info Data 캐싱
+        private static readonly Dictionary<int, StageJsonData> InfoDataCash = new Dictionary<int, StageJsonData>();
+        public static void AddInfoData(int id, StageJsonData data) => InfoDataCash.TryAdd(id, data);
+        public static StageJsonData GetInfoData(int id) => InfoDataCash.TryGetValue(id, out var data) ? data : new StageJsonData();
+        public static void ClearInfosData() => InfoDataCash.Clear();
+        
+        // Looting Data 캐싱
+        private static readonly Dictionary<int, LootingJsonData> LootingDataChasing = new Dictionary<int, LootingJsonData>();
+        public static void AddLootingData(int id, LootingJsonData data) => LootingDataChasing.TryAdd(id, data);
+        public static LootingJsonData GetLootingData(int id) => LootingDataChasing.TryGetValue(id, out var data) ? data : new LootingJsonData();
+        public static void ClearLootingData() => LootingDataChasing.Clear();
 
         #endregion
 
@@ -61,13 +73,17 @@ namespace GamePlay.Stage
         public void Awake()
         {
             lootingTable = GetComponent<LootingTable>();
-            stageGameObject.SetActive(false);
         }
 
         public virtual void Start()
         {
             aliveMonsterCount.isOverMax = true;
             monsterKillCount.isOverMax = true;
+            
+            StageInfo.SetJsonData(GetInfoData(StageInfo.id));
+            lootingTable.CalLootingItem(GetLootingData(StageInfo.id).LootingItems);
+            
+            stageGameObject.SetActive(false);
         }
 
         public void OnTriggerEnter(Collider other)
@@ -206,12 +222,7 @@ namespace GamePlay.Stage
             stageGameObject.transform.position = pos;
             
             stageGameObject.SetActive(true);
-
-            if (LootingSystem.Instance.stageLootingItemDictionary.TryGetValue((int)stageData.info.stageType, out var lootingItems))
-            {
-                lootingTable.CalLootingItem(lootingItems);
-            }
-
+            
             // 포탈 연결
             if (GameManager.Instance.currentStage != null)
             {

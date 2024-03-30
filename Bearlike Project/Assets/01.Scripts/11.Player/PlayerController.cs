@@ -38,9 +38,11 @@ namespace Player
 
         #region Animation Parametar
 
-        private readonly int _aniShoot = Animator.StringToHash("tShoot");
-        private readonly int _aniFrontMove = Animator.StringToHash("fFrontMove");
-        private readonly int _aniSideMove = Animator.StringToHash("fSideMove");
+        private static readonly int AniShoot = Animator.StringToHash("tShoot");
+        private static readonly int AniFrontMove = Animator.StringToHash("fFrontMove");
+        private static readonly int AniSideMove = Animator.StringToHash("fSideMove");
+        private static readonly int AniDie = Animator.StringToHash("isDead");
+
 
         #endregion
 
@@ -54,6 +56,11 @@ namespace Player
             _networkAnimator = GetComponent<NetworkMecanimAnimator>();
 
             equipment = GetComponentInChildren<IEquipment>();
+        }
+
+        private void Start()
+        {
+            status.injuryAction += () => { _networkAnimator.Animator.SetBool(AniDie, true); };
         }
 
         public override void Spawned()
@@ -103,6 +110,11 @@ namespace Player
                 {
                     
                 }
+
+                if (Input.GetKeyDown(KeyCode.F))
+                {
+                    status.ApplyDamageRPC(1000);
+                }
             }
         }
 
@@ -140,8 +152,8 @@ namespace Player
                 isMoveY = true;
             }
 
-            _networkAnimator.Animator.SetFloat(_aniFrontMove, isMoveX ? 1 : 0);
-            _networkAnimator.Animator.SetFloat(_aniSideMove, isMoveY ? 1 : 0);
+            _networkAnimator.Animator.SetFloat(AniFrontMove, isMoveX ? 1 : 0);
+            _networkAnimator.Animator.SetFloat(AniSideMove, isMoveY ? 1 : 0);
             
             dir *= Runner.DeltaTime * status.moveSpeed;
 
@@ -160,7 +172,6 @@ namespace Player
 
         public float rotateSpeed = 500.0f;
         float xRotate, yRotate, xRotateMove, yRotateMove;
-
         public void MouseRotateControl(Vector2 mouseAxis = default)
         {
             if (HasStateAuthority == false)
@@ -188,7 +199,7 @@ namespace Player
 
             if (data.Attack && weaponSystem.gun != null)
             {
-                _networkAnimator.SetTrigger(_aniShoot);
+                _networkAnimator.SetTrigger(AniShoot);
                 weaponSystem.gun.AttackAction?.Invoke();
             }
 

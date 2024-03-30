@@ -1,37 +1,60 @@
 import { query } from './db.js'; // 수정된 부분
 
-async function SkillQuery(){ 
+async function InfoQuery()
+{
+    return await query(`SELECT * FROM bearlike.skill;`)
+}
+
+async function StatusQuery(){ 
     return await query(
 `SELECT
-JSON_OBJECT(
-    'ID', skill.ID,
-    'Name', skill.Name,
-    'Explain', skill.\`Explain\`,
-    'Cool Time', skill.\`Cool Time\`,
-    'Status Int', COALESCE(
+    skill.ID as ID,
+    skill.Name as 'Skill Name',
+    COALESCE(
         (
             SELECT JSON_OBJECTAGG(status.\`Status Name\`, status.Value)
             FROM bearlike.skill_status status
             WHERE status.\`Skill ID\` = skill.ID AND status.\`Value Type\` = 0
         ),
         JSON_OBJECT()
-    ),
-    'Status Float', COALESCE(
+    ) as 'Status Int',
+    COALESCE(
         (
             SELECT JSON_OBJECTAGG(status.\`Status Name\`, status.Value)
             FROM bearlike.skill_status status
             WHERE status.\`Skill ID\` = skill.ID AND status.\`Value Type\` = 1
         ),
         JSON_OBJECT()
-    )
-) AS Skill
+    ) as 'Status Float'
 FROM bearlike.skill skill;`);
 }
 
-export async function MakeSkillData(app)
+async function MakeInfoData(app)
 {
-    var json = await SkillQuery();
-    app.get('/Skill', async (req, res) => {
+    app.get('/Skill/Version', async (req, res) => {
+        var version = await TableVesrionData("Skill");
+        res.json(version);
+    })
+
+    var json = await InfoQuery();
+    app.get('/Skill', async (req, res) => { res.json(json); })
+    json.forEach(data => {
+        var id = data.ID;
+        app.get(`/Skill/${id}`, async (req, res) => {
+            res.json(data);
+        });
+    });
+}
+
+async function MakeStatusData(app)
+{
+    app.get('/Skill/Status/Version', async (req, res) => {
+        var version = await TableVesrionData("Skill Status");
+        res.json(version);
+    })
+
+    var json = await StatusQuery();
+    app.get('/Skill/Status', async (req, res) => {
         try {
             res.json(json);
         } catch (error) {
@@ -39,14 +62,19 @@ export async function MakeSkillData(app)
         }
     })
     json.forEach(data => {
-        var skill = data.Skill; // 직접 Skill 객체에 접근
-        var id = skill['ID'];
-        app.get(`/Skill/${id}`, async (req,res) => {
+        var id = data.ID;
+        app.get(`/Skill/Status/${id}`, async (req,res) => {
             try {
-                res.json(skill);
+                res.json(data);
             } catch (error) {
                 res.status(500).send('Skill Query error' + name);
             }
         })
     });
+}
+
+export async function MakeData(app)
+{
+    await MakeInfoData(app);
+    await MakeStatusData(app);
 }

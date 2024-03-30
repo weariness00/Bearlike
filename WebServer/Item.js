@@ -1,35 +1,40 @@
-import { query } from './db.js'; // 수정된 부분
+import { query, TableVesrionData } from './db.js'; // 수정된 부분
 
-async function ItemQuery(){ 
+async function ItemInfoQuery(){ 
     return await query(
 `SELECT
-JSON_OBJECT(
-    'ID', item.ID,
-    'Name', item.Name,
-    'Status Int', COALESCE(
+    item.ID as ID,
+    item.Name as Name,
+    item.\`Explain\` as 'Explain',
+    COALESCE(
         (
             SELECT JSON_OBJECTAGG(status.\`Status Name\`, status.Value)
             FROM bearlike.item_status status
             WHERE status.\`Item ID\` = item.ID AND status.\`Value Type\` = 0
         ),
         JSON_OBJECT()
-    ),
-    'Status Float', COALESCE(
+    ) as 'Status Int',
+    COALESCE(
         (
             SELECT JSON_OBJECTAGG(status.\`Status Name\`, status.Value)
             FROM bearlike.item_status status
             WHERE status.\`Item ID\` = item.ID AND status.\`Value Type\` = 1
         ),
         JSON_OBJECT()
-    )
-) AS Item
+    ) as 'Status Float'
 FROM bearlike.item item;`);
 }
 
-export async function MakeItemData(app)
+// 아이템 정보
+async function MakeInfoData(app)
 {
-    var json = await ItemQuery();
-    app.get('/Item', async (req, res) => {
+    app.get('/Item/Version', async (req, res) => {
+        var version = await TableVesrionData("Item");
+        res.json(version);
+    })
+
+    var json = await ItemInfoQuery();
+    app.get('/Item/', async (req, res) => {
         try {
             res.json(json);
         } catch (error) {
@@ -37,14 +42,18 @@ export async function MakeItemData(app)
         }
     })
     json.forEach(data => {
-        var item = data.Item; // 직접 Skill 객체에 접근
-        var id = item['ID'];
+        var id = data.ID;
         app.get(`/Item/${id}`, async (req,res) => {
             try {
-                res.json(item);
+                res.json(data);
             } catch (error) {
                 res.status(500).send('Item Query error' + id);
             }
         })
     });
+}
+
+export async function MakeData(app)
+{
+    await MakeInfoData(app);
 }

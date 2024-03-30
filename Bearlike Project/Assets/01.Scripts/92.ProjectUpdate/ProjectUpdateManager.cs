@@ -1,8 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.IO;
+using System.Linq;
+using GamePlay.Stage;
+using Item;
+using Item.Looting;
 using Manager;
+using Monster;
 using Newtonsoft.Json;
 using Script.Data;
+using Skill;
+using Status;
 using UnityEngine;
 using Util;
 
@@ -14,14 +21,6 @@ namespace ProjectUpdate
         private readonly string _json = "bearlike-json";
 
         public TextAsset serverInfoJson;
-        
-        public readonly string downloadList = "Download_List";
-        public readonly string serverInfo = "Server Information"; // 서버의 정보를 담고 있다.
-        public readonly string monsterLootingTableList = "Monster Looting Table List.json";
-        public readonly string stageLootingTableList = "Stage Looting Table List.json";
-
-        public readonly WebManager.WebDownInfo download = new WebManager.WebDownInfo("DownloadList", "");
-        public List<DownloadInfo> DownloadInfoList = new List<DownloadInfo>();
         
         #region Static Function
 
@@ -66,23 +65,102 @@ namespace ProjectUpdate
         void Start()
         {
             // DownLoadJsonToStorage(serverInfo); // 스토리지에서 웹 서버 정보 가져오기
-            DebugManager.ToDo("바뀐 DB 내용에 따라 프로젝트 업데이트 바꾸어주기" +
-                              "원래에는 Download 테이블에 따라 만들어주었는데 없애고 원하는 데이터 다운 하게 바꾸기" +
-                              "바꿔야 할 거 매우 많음");
             JsonConvertExtension.Save(serverInfoJson.text, serverInfoJson.name);
-            JsonConvertExtension.Load(serverInfo, (data) =>
+            JsonConvertExtension.Load(serverInfoJson.name, (data) =>
             {
-                // 웹 서버 정보를 토대로 다운 받아야할 json 데이터들 다운 받기
                 WebManager.Instance.webServerInfo = JsonConvert.DeserializeObject<WebManager.WebServerInfo>(data);
-                WebManager.DownloadJson(download, (json) =>
-                {
-                    DownloadInfoList = JsonConvert.DeserializeObject<List<DownloadInfo>>(json);
-                    foreach (var downloadInfo in DownloadInfoList)
-                    {
-                        WebManager.DownloadJson(downloadInfo.URL, downloadInfo.Name, json =>{}, true, true);
-                    }
-                }, true);
             });
+            
+            WebManager.DownloadJson("KeySetting/Default", "DefaultKeyData", null, true, true);
+                  
+            // Skill 업데이트
+            SkillBase.ClearInfosData();
+            SkillBase.ClearStatusData();
+            WebRequestJson("Skill", "Skill", json =>
+            {
+                var data = JsonConvert.DeserializeObject<SkillJsonData[]>(json);
+                foreach (var skillJsonData in data)
+                {
+                    SkillBase.AddInfoData(skillJsonData.ID, skillJsonData);
+                }
+            }, true, true);
+            WebRequestJson("Skill/Status", "SkillStatus", json =>
+            {
+                var data = JsonConvert.DeserializeObject<StatusJsonData[]>(json);
+                foreach (var statusJsonData in data)
+                {
+                    SkillBase.AddStatusData(statusJsonData.ID, statusJsonData);
+                }
+            }, true, true);
+            
+            // Item 업데이트
+            ItemBase.ClearInfosData();
+            ItemBase.ClearStatusData();
+            WebRequestJson("Item", "Item", json =>
+            {
+                var data = JsonConvert.DeserializeObject<ItemJsonData[]>(json);
+                foreach (var itemJsonData in data)
+                {
+                    ItemBase.AddInfoData(itemJsonData.id, itemJsonData);
+                }
+            }, true, true);
+            WebRequestJson("Item/Status", "ItemStatus", json =>
+            {
+                var data = JsonConvert.DeserializeObject<StatusJsonData[]>(json);
+                foreach (var itemStatusJsonData in data)
+                {
+                    ItemBase.AddStatusData(itemStatusJsonData.ID, itemStatusJsonData);
+                }
+            }, true, true);
+            
+            // Monster 업데이트
+            MonsterBase.ClearInfosData();
+            MonsterBase.ClearStatusData();
+            MonsterBase.ClearLootingData();
+            WebRequestJson("Monster", "Monster", json =>
+            {
+                var data = JsonConvert.DeserializeObject<MonsterJsonData[]>(json);
+                foreach (var monsterJsonData in data)
+                {
+                    MonsterBase.AddInfoData(monsterJsonData.ID, monsterJsonData);
+                }
+            }, true, true);
+            WebRequestJson("Monster/Status", "MonsterStatus", json =>
+            {
+                var data = JsonConvert.DeserializeObject<StatusJsonData[]>(json);
+                foreach (var statusJsonData in data)
+                {
+                    MonsterBase.AddStatusData(statusJsonData.ID, statusJsonData);
+                }
+            }, true, true);
+            WebRequestJson("Monster/LootingTable", "MonsterLootingTable", json =>
+            {
+                var data = JsonConvert.DeserializeObject<LootingJsonData[]>(json);
+                foreach (var lootingData in data)
+                {
+                    MonsterBase.AddLootingData(lootingData.TargetID, lootingData);
+                }
+            }, true, true);
+            
+            // Stage 업데이트
+            StageBase.ClearInfosData();
+            StageBase.ClearLootingData();
+            WebRequestJson("Stage", "Stage", json =>
+            {
+                var data = JsonConvert.DeserializeObject<StageJsonData[]>(json);
+                foreach (var stageInfo in data)
+                {
+                    StageBase.AddInfoData(stageInfo.id, stageInfo);
+                }
+            }, true, true);
+            WebRequestJson("Stage/LootingTable", "StageLootingTable", json =>
+            {
+                var data = JsonConvert.DeserializeObject<LootingJsonData[]>(json);
+                foreach (var lootingData in data)
+                {
+                    StageBase.AddLootingData(lootingData.TargetID, lootingData);
+                }
+            }, true, true);
         }
 
         public struct DownloadInfo
@@ -91,5 +169,46 @@ namespace ProjectUpdate
             [JsonProperty("JsonName")] public string Name;
             [JsonProperty("Explain")] public string Explain;
         }
+
+        private void WebRequestJson(string url, string fileName, Action<string> action = null, bool isLoop = false, bool isSave = false)
+        {
+            // json의 version 정보 가져오기
+            WebManager.DownloadJson($"{url}/Version", $"{fileName}_Version", nowVersionJson =>
+            {
+                // 컴퓨터에 저장된 Version 데이터 가져오기
+                var hasVersion = JsonConvertExtension.Load($"{fileName}_Version", prevVersionJson =>
+                {
+                    var nowVersionData = JsonConvert.DeserializeObject<TableVersion[]>(nowVersionJson).First();
+                    var prevVersionData = JsonConvert.DeserializeObject<TableVersion[]>(prevVersionJson).First();
+
+                    // Version이 최신이 아니면 다운로드
+                    if (nowVersionData.UnixTime > prevVersionData.UnixTime)
+                    {
+                        WebManager.DownloadJson(url, fileName, action, isLoop, isSave);
+                    }
+                    // 버전이 최신이라면 load
+                    else
+                    {
+                        JsonConvertExtension.Load(fileName, action);
+                    }
+                });
+                // 버전이 없다면 다운로드
+                if (hasVersion == false)
+                {
+                    WebManager.DownloadJson(url, fileName, action, isLoop, isSave);
+                }
+            }, true, true);
+        }
+
+        #region Struct
+
+        private struct TableVersion
+        {
+            [JsonProperty("Table Name")]public string TableName;
+            [JsonProperty("Time")] public string ZTimeData;
+            [JsonProperty("Second")]public ulong UnixTime;
+        }
+
+        #endregion
     }
 }
