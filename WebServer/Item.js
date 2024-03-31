@@ -1,6 +1,8 @@
 import { query, TableVesrionData } from './db.js'; // 수정된 부분
 
-async function ItemInfoQuery(){ 
+async function InfoQuery(){ return await query(`SELECT * FROM bearlike.item;`)};
+
+async function StatusQuery(){ 
     return await query(
 `SELECT
     item.ID as ID,
@@ -25,7 +27,6 @@ async function ItemInfoQuery(){
 FROM bearlike.item item;`);
 }
 
-// 아이템 정보
 async function MakeInfoData(app)
 {
     app.get('/Item/Version', async (req, res) => {
@@ -33,7 +34,7 @@ async function MakeInfoData(app)
         res.json(version);
     })
 
-    var json = await ItemInfoQuery();
+    var json = await InfoQuery();
     app.get('/Item/', async (req, res) => {
         try {
             res.json(json);
@@ -52,8 +53,36 @@ async function MakeInfoData(app)
         })
     });
 }
+// 아이템 정보
+async function MakeStatusData(app)
+{
+    app.get('/Item/Status/Version', async (req, res) => {
+        var version = await TableVesrionData("Item");
+        res.json(version);
+    })
+
+    var json = await StatusQuery();
+    app.get('/Item/Status/', async (req, res) => {
+        try {
+            res.json(json);
+        } catch (error) {
+            res.status(500).send('Item Query error');
+        }
+    })
+    json.forEach(data => {
+        var id = data.ID;
+        app.get(`/Item/Status/${id}`, async (req,res) => {
+            try {
+                res.json(data);
+            } catch (error) {
+                res.status(500).send('Item Query error' + id);
+            }
+        })
+    });
+}
 
 export async function MakeData(app)
 {
     await MakeInfoData(app);
+    await MakeStatusData(app);
 }

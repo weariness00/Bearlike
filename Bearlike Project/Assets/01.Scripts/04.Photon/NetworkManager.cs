@@ -8,6 +8,7 @@ using Fusion;
 using Fusion.Addons.Physics;
 using Fusion.Photon.Realtime;
 using Fusion.Sockets;
+using Loading;
 using Manager;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -32,8 +33,9 @@ namespace Photon
 
         #region Unity Event Function
 
-        private void Start()
+        protected override void Awake()
         {
+            base.Awake();
             // Create the Fusion runner and let it know that we will be providing user inpuz
             gameObject.GetOrAddComponent<RunnerSimulatePhysics3D>();
             _runner = gameObject.GetOrAddComponent<NetworkRunner>();
@@ -137,6 +139,8 @@ namespace Photon
                               "세션에 인원이 없으면 들어 갈 수 있게 해야됨\n" +
                               "누군가가 세션을 나가면 정보 업데이트 해줘야함\n" +
                               "세션에 한명도 없으면 json에 세션 지워줘야함");
+
+            LoadingManager.Initialize();
             
             // Create the NetworkSceneInfo from the current scene
             var scene = SceneRef.FromIndex((int)SceneType.Matching);
