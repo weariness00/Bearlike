@@ -60,7 +60,7 @@ namespace Weapon.Gun
                         Vector3 randomVector3 = new Vector3(Random.Range(-bulletRadian, bulletRadian), 
                             Random.Range(-bulletRadian, bulletRadian), Random.Range(-bulletRadian, bulletRadian));
                         
-                        bullet.destination = (dst * attackRange) + randomVector3;
+                        bullet.destination = (dst * attackRange) + randomVector3 * bulletRadian;
                         
                         var transform1 = transform;
                         Instantiate(bullet.gameObject, transform1.position, transform1.rotation);

@@ -7,6 +7,8 @@ namespace Player.Container
 {
     public class FirstBear : PlayerController
     {
+        private SkillBase FlippingCoin;
+        private SkillBase tmpSkill;
         private SkillBase ultimateSkill;
 
         public override void Spawned()
@@ -30,6 +32,8 @@ namespace Player.Container
 
         void SkillInit()
         {
+            FlippingCoin = skillSystem.GetSkillFromName("FlippingCoin");
+            tmpSkill = skillSystem.GetSkillFromName("SniperContinousMode");
             ultimateSkill = skillSystem.GetSkillFromName("Clean Shoot");
         }
 
@@ -42,6 +46,11 @@ namespace Player.Container
             
             if (data.FirstSkill)
             {
+                FlippingCoin.Run(gameObject);
+            }
+            else if (data.SecondSkill)
+            {
+                tmpSkill.Run(gameObject);
             }
             else if (data.Ultimate)
             {

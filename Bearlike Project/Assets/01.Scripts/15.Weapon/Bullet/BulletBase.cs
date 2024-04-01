@@ -13,7 +13,7 @@ namespace Weapon.Bullet
     public class BulletBase : NetworkBehaviourEx
     {
         public StatusValue<int> damage = new StatusValue<int>() {Max = 100, Current = 100 };
-        public StatusValue<int> speed = new StatusValue<int>(){Max = 100, Current = 100};
+        public StatusValue<float> speed = new StatusValue<float>(){Max = 100.0f, Current = 50.0f};
         public Vector3 destination = Vector3.zero;
 
         #region 사정거리
@@ -34,34 +34,42 @@ namespace Weapon.Bullet
             Destroy(gameObject, 5f);
         }
 
-        public override void FixedUpdateNetwork()
+        // public override void FixedUpdateNetwork()
+        // {
+        //     _oldPosition = transform.position;
+        //     transform.position += transform.forward * Runner.DeltaTime * speed;
+        //     
+        //     if (FastDistance(transform.position, _oldPosition) >= maxMoveDistance) Destroy(gameObject);
+        // }
+
+        public void Update()
         {
             _oldPosition = transform.position;
-            transform.position += transform.forward * speed * Runner.DeltaTime;
-
+            transform.position += transform.forward * Time.deltaTime * speed;
+            
+            Debug.Log(destination);
+            
             if (FastDistance(transform.position, _oldPosition) >= maxMoveDistance) Destroy(gameObject);
         }
-
+        
         private void OnTriggerEnter(Collider other)
         {
-            // if (!other.gameObject.CompareTag("Monster") || other.GetComponent<StatusBase>().hp.isMin)
-            // {
-            //     return;
-            // }
-
-            StatusBase otherStatus;
-            if (other.TryGetComponent(out otherStatus) || other.transform.root.TryGetComponent(out otherStatus))
+            if (!other.CompareTag("Bullet"))
             {
-                otherStatus.ApplyDamageRPC(damage);
+                // // player가 건이다.
+                var playerStatus = player.transform.root.GetComponent<StatusBase>();
+                var gun = player.GetComponentInChildren<GunBase>();
+
+                StatusBase otherStatus;
+                if (other.TryGetComponent(out otherStatus) || other.transform.root.TryGetComponent(out otherStatus))
+                {
+                    otherStatus.ApplyDamageRPC(playerStatus.damage.Current + gun.attack,
+                        (CrowdControl)(playerStatus.property | gun.property));
+                }
+
+                // other.gameObject.GetComponent<StatusBase>().ApplyDamageRPC(playerStatus.damage.Current + gun.attack, (CrowdControl)(playerStatus.property | gun.property));
+                Destroy(gameObject);
             }
-            
-            // // player가 건이다.
-            // var playerStatus = player.transform.root.GetComponent<StatusBase>();
-            // var gun = player.GetComponentInChildren<GunBase>();
-            //
-            // other.gameObject.GetComponent<StatusBase>().ApplyDamageRPC(playerStatus.damage.Current + gun.attack, (CrowdControl)(playerStatus.property | gun.property));
-            // moveDistance = 0.0f;
-            Destroy(gameObject);
         }
         
         [BurstCompile]

@@ -1,6 +1,7 @@
 using GamePlay;
 using Player;
 using Status;
+using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -42,7 +43,7 @@ namespace Skill.Container
 
         #endregion
         
-        public FlippingCoin(PlayerStatus status)
+        private void Awake()
         {
             var tempCoolTime = new StatusValue<float>();
             tempCoolTime.Max = CoolTime;

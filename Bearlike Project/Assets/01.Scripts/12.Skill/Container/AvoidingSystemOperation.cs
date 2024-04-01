@@ -25,7 +25,7 @@ namespace Skill.Container
 
         public PlayerStatus playerStatus;
         
-        private int _type;              // 동전 앞뒷면
+        private int _type;
         private bool _bOn;              // 현재 발동 중인지 판단하는 bool
 
         private float _difference;      // 차이 값 
@@ -87,7 +87,7 @@ namespace Skill.Container
         {
             if (_bOn == false && Mathf.Round((coolTime.Current - coolTime.Min) * 10) * 0.1f <= 0f)
             {
-                playerStatus = GameObject.Find("Player").GetComponent<PlayerStatus>();
+                playerStatus = runObject.GetComponent<PlayerStatus>();
 
                 _difference = playerStatus.avoid * AvoidValue;
                 playerStatus.avoid.Current += _difference;

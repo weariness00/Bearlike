@@ -61,7 +61,7 @@ namespace Skill.Container
         private void Start()
         {
             _sniper = transform.root.GetComponentInChildren<GunBase>();    // or 인스펙터에서 추가하는 방식
-            gameObject.SetActive(false);
+            // gameObject.SetActive(false);
         }
 
         public override void MainLoop()
@@ -80,10 +80,10 @@ namespace Skill.Container
             {
                 _sniper.bulletFirePerMinute += _difference;
                 _sniper.fireLateSecond.Max = 60 / _sniper.bulletFirePerMinute;
-                    
+                
                 duration.Current = duration.Min;
                 _bOn = false;
-                gameObject.SetActive(false);
+                // gameObject.SetActive(false);
             }
 
             if (coolTime.isMin == false)
@@ -96,10 +96,12 @@ namespace Skill.Container
         {
             if (_bOn == false && Mathf.Round((coolTime.Current - coolTime.Min) * 10) * 0.1f <= 0f)
             {
-                gameObject.SetActive(true);
+                Debug.Log("asd");
+                // gameObject.SetActive(true);
                 _difference = 2 * (_sniper.bulletFirePerMinute / 3);
                 _sniper.bulletFirePerMinute -= _difference;
                 _sniper.fireLateSecond.Max = 60 / _sniper.bulletFirePerMinute;
+                _sniper.fireLateSecond.Current = _sniper.fireLateSecond.Max;
     
                 duration.Current = duration.Max;
                 coolTime.Current = coolTime.Max;
