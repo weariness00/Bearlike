@@ -4,6 +4,7 @@ using System.Linq;
 using Fusion;
 using Manager;
 using Parabox.CSG;
+using Unity.VisualScripting;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
@@ -12,7 +13,7 @@ namespace Util
 {
     public static class MeshDestruction
     {
-        public static List<GameObject> Destruction(GameObject targetObject, PrimitiveType shapeType, Vector3 position, Vector3 size, Vector3 force)
+        public static List<GameObject> Destruction(GameObject targetObject, PrimitiveType shapeType, Vector3 position, Vector3 size, Vector3 force, params Type[] components)
         {
             var targetMeshFilter = targetObject.GetComponent<MeshFilter>();
             List<GameObject> destructionObjects = new List<GameObject>();
@@ -28,9 +29,13 @@ namespace Util
             if ((max - min).magnitude < size.magnitude) return destructionObjects;
             if ((max - min).magnitude < 5f) // 일정 크기 이하면 slice 하기
             {
-                var sliceObjects = MeshSlicing.Slice(targetObject, Random.onUnitSphere.normalized, position);
+                var sliceObjects = MeshSlicing.Slice(targetObject, Random.onUnitSphere.normalized, position, components);
                 return sliceObjects.ToList();
             }
+
+            var componentList = new List<Type>{ typeof(MeshFilter), typeof(MeshRenderer) };
+            componentList.AddRange(components);
+            components = componentList.ToArray();
             
             GameObject shapeObject = GameObject.CreatePrimitive(shapeType);
             shapeObject.transform.position = position;
@@ -40,12 +45,12 @@ namespace Util
             try
             {
                 var intersectModel = CSG.Intersect(targetObject, shapeObject);
-                var obj = CreateDestructionGameObject(targetObject, intersectModel);
+                var obj = CreateDestructionGameObject(targetObject, intersectModel, components);
                 var sliceObjects = MeshSlicing.Slice(obj, Random.onUnitSphere.normalized, position);
                 if (sliceObjects != Array.Empty<GameObject>())
                 {
-                    destructionObjects.AddRange(MeshSlicing.Slice(sliceObjects[0], Random.onUnitSphere.normalized, position));
-                    destructionObjects.AddRange(MeshSlicing.Slice(sliceObjects[1], Random.onUnitSphere.normalized, position));
+                    destructionObjects.AddRange(MeshSlicing.Slice(sliceObjects[0], Random.onUnitSphere.normalized, position, components));
+                    destructionObjects.AddRange(MeshSlicing.Slice(sliceObjects[1], Random.onUnitSphere.normalized, position, components));
                 }
                 else
                     destructionObjects.AddRange(sliceObjects);
@@ -66,7 +71,7 @@ namespace Util
             try
             {
                 var subtractModel = CSG.Subtract(targetObject, shapeObject);
-                var obj = CreateDestructionGameObject(targetObject, subtractModel);
+                var obj = CreateDestructionGameObject(targetObject, subtractModel, components);
                 
                 destructionObjects.Add(obj);
             }
@@ -88,11 +93,11 @@ namespace Util
             return destructionObjects;
         }
 
-        private static GameObject CreateDestructionGameObject(GameObject targetObject, Model model)
+        private static GameObject CreateDestructionGameObject(GameObject targetObject, Model model, params Type[] components)
         {
             var name = targetObject.name;
             if (name.Contains("_Destruction") == false) name += "_Destruction";
-            var obj = new GameObject(name, typeof(MeshFilter), typeof(MeshRenderer),typeof(MeshCollider));
+            var obj = new GameObject(name, components);
             var copyMesh = model.mesh;
             var centerVertex = new Vector3( 
                 copyMesh.vertices.Average(vertex => vertex.x),
@@ -110,12 +115,6 @@ namespace Util
             obj.GetComponent<MeshFilter>().sharedMesh = copyMesh;
             obj.GetComponent<MeshRenderer>().sharedMaterials = model.materials.ToArray();
                 
-            var collider = obj.GetComponent<MeshCollider>();
-            // var rigid = obj.GetComponent<Rigidbody>();
-
-            collider.convex = true;
-            collider.sharedMesh = copyMesh;
-
             obj.tag = "Destruction";
             obj.transform.position += centerVertex;
             if(targetObject.transform.parent) obj.transform.SetParent(targetObject.transform.parent);

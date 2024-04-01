@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 using DebugManager = Manager.DebugManager;
@@ -99,11 +100,15 @@ namespace Util
 
         #region Default Function
 
-        static GameObject CreateSliceGameObject(GameObject targetObject, SliceInfo sliceInfo)
+        static GameObject CreateSliceGameObject(GameObject targetObject, SliceInfo sliceInfo, params Type[] components)
         {
             var targetMesh = targetObject.GetComponent<MeshFilter>();
             var targetMeshRenderer = targetObject.GetComponent<MeshRenderer>();
             
+            var componentList = new List<Type>{ typeof(MeshFilter), typeof(MeshRenderer) };
+            componentList.AddRange(components);
+            components = componentList.ToArray();
+
             // pivot 중심으로 다시 잡아주기
             Vector3 center = new Vector3(
                 sliceInfo.DotList.Average(point => point.Vertex.x),
@@ -127,11 +132,10 @@ namespace Util
             mesh.SetTriangles(sliceInfo.Triangles, 0);
             DebugManager.Log("나중에 subMesh에 포함하는 형식으로 하여 Material 개별 적용 가능하게 바꾸기");
             // mesh.SetTriangles(capSliceInfos[i].triangles, targetMeshRenderer.sharedMaterials.Length);
-                
-            GameObject sliceGameObject = new GameObject(targetObject.name + "_Slicing", typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider), typeof(Rigidbody));
-            var collider = sliceGameObject.GetComponent<MeshCollider>();
-            // collider.convex = true;
-            collider.sharedMesh = mesh;
+
+            var name = targetObject.name;
+            if (name.Contains("_Slicing") == false) targetObject.name += "_Slicing";
+            GameObject sliceGameObject = new GameObject(targetObject.name, components);
             sliceGameObject.GetComponent<MeshFilter>().sharedMesh = mesh;
             sliceGameObject.GetComponent<MeshRenderer>().sharedMaterials = targetMeshRenderer.sharedMaterials;
             sliceGameObject.tag = "Destruction";
@@ -154,7 +158,7 @@ namespace Util
         /// <param name="targetObject">자를 메쉬</param>
         /// <param name="sliceNormal">자를 단면의 평면 노멀값</param>
         /// <param name="slicePoint">자를 단면의 평면 위의 한 점</param>
-        public static GameObject[] Slice(GameObject targetObject, Vector3 sliceNormal, Vector3 slicePoint)
+        public static GameObject[] Slice(GameObject targetObject, Vector3 sliceNormal, Vector3 slicePoint, params Type[] components)
         {
             var targetMesh = targetObject.GetComponent<MeshFilter>().sharedMesh;
             SliceInfo[] sliceInfos = new []{new SliceInfo(), new SliceInfo()};
@@ -263,7 +267,7 @@ namespace Util
                     }
                 }
             }
-            if (createdSliceInfo.DotList.Count == 0) return Array.Empty<GameObject>();
+            if (createdSliceInfo.DotList.Count == 0) return new []{targetObject};
 
             createdSliceInfo.DotList = SortVertices(createdSliceInfo.DotList);
             var capSliceInfos = MakeCap(sliceNormal,createdSliceInfo.DotList);
@@ -279,7 +283,7 @@ namespace Util
             var sliceObjects = new GameObject[2];
             for (int i = 0; i < 2; i++)
             {
-                sliceObjects[i] = CreateSliceGameObject(targetObject, finalSliceInfos[i]);
+                sliceObjects[i] = CreateSliceGameObject(targetObject, finalSliceInfos[i], components);
             }
             Object.Destroy(targetObject);
 
