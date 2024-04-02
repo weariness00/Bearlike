@@ -110,11 +110,6 @@ namespace Player
                 {
                     
                 }
-
-                if (Input.GetKeyDown(KeyCode.F))
-                {
-                    status.ApplyDamageRPC(1000);
-                }
             }
         }
 

@@ -76,12 +76,12 @@ namespace State.StateClass.Base
 
         #region Json Data Interface
 
-        public StatusJsonData GetJsonData()
+        public virtual StatusJsonData GetJsonData()
         {
             return new StatusJsonData();
         }
 
-        public void SetJsonData(StatusJsonData json)
+        public virtual void SetJsonData(StatusJsonData json)
         {
             hp.Max = json.GetInt("Hp Max");
             hp.Current = json.GetInt("Hp Current");

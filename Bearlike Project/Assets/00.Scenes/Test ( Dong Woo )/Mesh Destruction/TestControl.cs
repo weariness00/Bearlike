@@ -1,8 +1,9 @@
+using Photon;
 using UnityEngine;
 
-namespace _00.Scenes.Test___Dong_Woo__
+namespace Test
 {
-    public class TestControl : MonoBehaviour
+    public class TestControl : NetworkBehaviourEx
     {
         public float speed;
         public float mouseSpeed;
@@ -14,35 +15,35 @@ namespace _00.Scenes.Test___Dong_Woo__
             c.transform.rotation = transform.rotation;
             c.transform.SetParent(transform);
         }
-
-        // Update is called once per frame
-        void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.K))
-            {
-                Cursor.lockState = Cursor.lockState == CursorLockMode.Locked ? CursorLockMode.None : CursorLockMode.Locked;
-            }
-            
-            if (Input.GetKey(KeyCode.D))
-            {
-                transform.position += transform.right * speed * Time.deltaTime;
-            }
-            else if (Input.GetKey(KeyCode.A))
-            {
-                transform.position += -transform.right * speed* Time.deltaTime;
-            }
-            else if (Input.GetKey(KeyCode.S))
-            {
-                transform.position += -transform.forward * speed* Time.deltaTime;
-            }
-            else if (Input.GetKey(KeyCode.W))
-            {
-                transform.position += transform.forward * speed* Time.deltaTime;
-            }
-
-            MouseRotateControl(new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")));
-        }
         
+        public override void FixedUpdateNetwork()
+        {
+            if (GetInput(out TsetServer.TestInputData data))
+            {
+                if (data.Cursor)
+                {
+                    Cursor.lockState = Cursor.lockState == CursorLockMode.Locked ? CursorLockMode.None : CursorLockMode.Locked;
+                }
+                if (data.MoveRight)
+                {
+                    transform.position += transform.right * speed * Time.deltaTime;
+                }
+                else if (data.MoveLeft)
+                {
+                    transform.position += -transform.right * speed* Time.deltaTime;
+                }
+                else if (data.MoveBack)
+                {
+                    transform.position += -transform.forward * speed* Time.deltaTime;
+                }
+                else if (data.MoveForward)
+                {
+                    transform.position += transform.forward * speed* Time.deltaTime;
+                }
+                MouseRotateControl(data.MouseAxis);
+            }
+        }
+
         float xRotate, yRotate, xRotateMove, yRotateMove;
         public void MouseRotateControl(Vector2 mouseAxis = default)
         {

@@ -4,6 +4,7 @@ using System.Linq;
 using GamePlay.Stage;
 using Item;
 using Item.Looting;
+using Loading;
 using Manager;
 using Monster;
 using Newtonsoft.Json;
@@ -15,7 +16,7 @@ using Util;
 
 namespace ProjectUpdate
 {
-    [DefaultExecutionOrder((int)DefaultExecutionOrderType.LobbySceneStart)]
+    [DefaultExecutionOrder((int)DefaultExecutionOrderType.LobbySceneEnd)]
     public class ProjectUpdateManager : Singleton<ProjectUpdateManager>
     {
         private readonly string _json = "bearlike-json";
@@ -64,11 +65,15 @@ namespace ProjectUpdate
 
         void Start()
         {
+            LoadingManager.AddWait();
             // DownLoadJsonToStorage(serverInfo); // 스토리지에서 웹 서버 정보 가져오기
             JsonConvertExtension.Save(serverInfoJson.text, serverInfoJson.name);
+            
+            LoadingManager.AddWait();
             JsonConvertExtension.Load(serverInfoJson.name, (data) =>
             {
                 WebManager.Instance.webServerInfo = JsonConvert.DeserializeObject<WebManager.WebServerInfo>(data);
+                LoadingManager.EndWait("서버 정보 불러오기 성공");
             });
             
             WebManager.DownloadJson("KeySetting/Default", "DefaultKeyData", null, true, true);
@@ -83,6 +88,8 @@ namespace ProjectUpdate
                 {
                     SkillBase.AddInfoData(skillJsonData.ID, skillJsonData);
                 }
+                
+                LoadingManager.EndWait("스킬 불러오기 성공");
             }, true, true);
             WebRequestJson("Skill/Status", "SkillStatus", json =>
             {
@@ -91,6 +98,8 @@ namespace ProjectUpdate
                 {
                     SkillBase.AddStatusData(statusJsonData.ID, statusJsonData);
                 }
+                
+                LoadingManager.EndWait("스킬 정보 (Status) 불러오기 성공");
             }, true, true);
             
             // Item 업데이트
@@ -103,6 +112,7 @@ namespace ProjectUpdate
                 {
                     ItemBase.AddInfoData(itemJsonData.id, itemJsonData);
                 }
+                LoadingManager.EndWait("아이템 정보 불러오기 성공");
             }, true, true);
             WebRequestJson("Item/Status", "ItemStatus", json =>
             {
@@ -111,6 +121,7 @@ namespace ProjectUpdate
                 {
                     ItemBase.AddStatusData(itemStatusJsonData.ID, itemStatusJsonData);
                 }
+                LoadingManager.EndWait("아이템 정보 (Status) 불러오기 성공");
             }, true, true);
             
             // Monster 업데이트
@@ -124,6 +135,7 @@ namespace ProjectUpdate
                 {
                     MonsterBase.AddInfoData(monsterJsonData.ID, monsterJsonData);
                 }
+                LoadingManager.EndWait("몬스터 정보 불러오기 성공");
             }, true, true);
             WebRequestJson("Monster/Status", "MonsterStatus", json =>
             {
@@ -132,6 +144,7 @@ namespace ProjectUpdate
                 {
                     MonsterBase.AddStatusData(statusJsonData.ID, statusJsonData);
                 }
+                LoadingManager.EndWait("몬스터 정보 (Status) 불러오기 성공");
             }, true, true);
             WebRequestJson("Monster/LootingTable", "MonsterLootingTable", json =>
             {
@@ -140,6 +153,7 @@ namespace ProjectUpdate
                 {
                     MonsterBase.AddLootingData(lootingData.TargetID, lootingData);
                 }
+                LoadingManager.EndWait("몬스터 아이템 드랍율 불러오기 성공");
             }, true, true);
             
             // Stage 업데이트
@@ -152,6 +166,7 @@ namespace ProjectUpdate
                 {
                     StageBase.AddInfoData(stageInfo.id, stageInfo);
                 }
+                LoadingManager.EndWait("스테이지 정보 불러오기 성공");
             }, true, true);
             WebRequestJson("Stage/LootingTable", "StageLootingTable", json =>
             {
@@ -160,7 +175,10 @@ namespace ProjectUpdate
                 {
                     StageBase.AddLootingData(lootingData.TargetID, lootingData);
                 }
+                LoadingManager.EndWait("스테이지 드랍률 불러오기 성공");
             }, true, true);
+            
+            LoadingManager.EndWait();
         }
 
         public struct DownloadInfo
@@ -172,6 +190,7 @@ namespace ProjectUpdate
 
         private void WebRequestJson(string url, string fileName, Action<string> action = null, bool isLoop = false, bool isSave = false)
         {
+            LoadingManager.AddWait();
             // json의 version 정보 가져오기
             WebManager.DownloadJson($"{url}/Version", $"{fileName}_Version", nowVersionJson =>
             {

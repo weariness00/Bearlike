@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Manager;
 using Unity.VisualScripting;
 using UnityEngine;

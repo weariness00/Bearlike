@@ -1,5 +1,6 @@
 ﻿using Manager;
 using State.StateClass.Base;
+using Status;
 using Unity.Mathematics;
 using Random = UnityEngine.Random;
 
@@ -114,5 +115,14 @@ namespace State.StateClass
         {
             if(On(condition)) base.condition ^= (int)condition;
         }
+
+        #region Json Data Interfacec
+
+        public override void SetJsonData(StatusJsonData json)
+        {
+            base.SetJsonData(json);
+        }
+
+        #endregion
     }
 }

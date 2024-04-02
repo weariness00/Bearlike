@@ -1,4 +1,4 @@
-import { query } from './db.js'; // 수정된 부분
+import { query, TableVesrionData } from './db.js'; // 수정된 부분
 
 async function InfoQuery()
 {
