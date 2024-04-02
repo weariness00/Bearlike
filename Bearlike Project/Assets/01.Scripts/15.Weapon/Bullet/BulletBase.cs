@@ -42,15 +42,26 @@ namespace Weapon.Bullet
         //     if (FastDistance(transform.position, _oldPosition) >= maxMoveDistance) Destroy(gameObject);
         // }
 
-        public void Update()
+        public override void FixedUpdateNetwork()
         {
+            Debug.Log("FixedUpdateNetwork");    
             _oldPosition = transform.position;
-            transform.position += transform.forward * Time.deltaTime * speed;
-            
-            Debug.Log(destination);
-            
+            transform.position += transform.forward * Runner.DeltaTime * speed;
+                
             if (FastDistance(transform.position, _oldPosition) >= maxMoveDistance) Destroy(gameObject);
+            
         }
+        
+        // public void Update()
+        // {
+        //     _oldPosition = transform.position;
+        //     transform.position += transform.forward * Time.deltaTime * speed;
+        //     
+        //     // Debug.Log(destination);
+        //     Debug.Log("Update");
+        //     
+        //     if (FastDistance(transform.position, _oldPosition) >= maxMoveDistance) Destroy(gameObject);
+        // }
         
         private void OnTriggerEnter(Collider other)
         {

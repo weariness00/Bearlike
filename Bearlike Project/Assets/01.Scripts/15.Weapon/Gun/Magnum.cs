@@ -69,7 +69,7 @@ namespace Weapon.Gun
             
             reloadLateSecond.Max = reloadLateSecond.Current = 0.5f;
 
-            attackRange = 30.0f;
+            attackRange = 50.0f;
             
             bullet.maxMoveDistance = attackRange;
             bullet.player = gameObject;

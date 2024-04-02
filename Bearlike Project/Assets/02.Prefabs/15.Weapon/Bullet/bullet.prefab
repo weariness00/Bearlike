@@ -121,23 +121,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage:
     _min: 0
-    _max: 0
-    _current: 0
+    _max: 100
+    _current: 100
     isOverMax: 0
     isOverMin: 0
     isMin: 0
-    isMax: 0
+    isMax: 1
   speed:
     _min: 0
-    _max: 900
-    _current: 900
+    _max: 100
+    _current: 50
     isOverMax: 0
     isOverMin: 0
     isMin: 0
     isMax: 0
-  destination: {x: -36.263832, y: 147.2947, z: 256.30548}
+  destination: {x: 0, y: 0, z: 0}
   player: {fileID: 0}
-  maxMoveDistance: 300
+  maxMoveDistance: 0
 --- !u!54 &-8670076698105449635
 Rigidbody:
   m_ObjectHideFlags: 0

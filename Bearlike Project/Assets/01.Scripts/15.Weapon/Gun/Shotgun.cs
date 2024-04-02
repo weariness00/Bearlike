@@ -60,10 +60,10 @@ namespace Weapon.Gun
                         Vector3 randomVector3 = new Vector3(Random.Range(-bulletRadian, bulletRadian), 
                             Random.Range(-bulletRadian, bulletRadian), Random.Range(-bulletRadian, bulletRadian));
                         
-                        bullet.destination = (dst * attackRange) + randomVector3 * bulletRadian;
+                        bullet.destination = (dst * attackRange) + randomVector3;
                         
                         var transform1 = transform;
-                        Instantiate(bullet.gameObject, transform1.position, transform1.rotation);
+                        Runner.SpawnAsync(bullet.gameObject, transform1.position, transform1.rotation);
                     }
                  
                     magazine.Current--;
@@ -89,7 +89,7 @@ namespace Weapon.Gun
             
             reloadLateSecond.Max = reloadLateSecond.Current = 0.5f;
 
-            attackRange = 300.0f;
+            attackRange = 30.0f;
             
             bullet.maxMoveDistance = attackRange;
             bullet.player = gameObject;
