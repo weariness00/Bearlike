@@ -13,7 +13,7 @@ namespace Util
 {
     public static class MeshDestruction
     {
-        public static List<GameObject> Destruction(GameObject targetObject, PrimitiveType shapeType, Vector3 position, Vector3 size, Vector3 force, params Type[] components)
+        public static List<GameObject> Destruction(GameObject targetObject, PrimitiveType shapeType, Vector3 position, Vector3 size, params Type[] components)
         {
             var targetMeshFilter = targetObject.GetComponent<MeshFilter>();
             List<GameObject> destructionObjects = new List<GameObject>();
@@ -42,51 +42,65 @@ namespace Util
             shapeObject.transform.localScale = size;
             
             // 겹치는 영역 만들기
+            GameObject intersectObject = null;
+            GameObject subtractObject = null;
             try
             {
                 var intersectModel = CSG.Intersect(targetObject, shapeObject);
-                var obj = CreateDestructionGameObject(targetObject, intersectModel, components);
-                var sliceObjects = MeshSlicing.Slice(obj, Random.onUnitSphere.normalized, position);
-                if (sliceObjects != Array.Empty<GameObject>())
-                {
-                    destructionObjects.AddRange(MeshSlicing.Slice(sliceObjects[0], Random.onUnitSphere.normalized, position, components));
-                    destructionObjects.AddRange(MeshSlicing.Slice(sliceObjects[1], Random.onUnitSphere.normalized, position, components));
-                }
-                else
-                    destructionObjects.AddRange(sliceObjects);
-                
-                // foreach (var destructionObject in destructionObjects)
-                // {
-                //     var rigid = destructionObject.GetComponent<Rigidbody>();
-                //     rigid.AddForce(force);
-                // }
+                intersectObject = CreateDestructionGameObject(targetObject, intersectModel, components);
+                if(intersectObject.name.Contains("_Intersect") == false) intersectObject.name += "_Intersect";
             }
             catch (Exception e)
             {
                 DebugManager.LogWarning($"Intersect가 실패했습니다." +
                                         $"{targetObject.name}와 충돌 {shapeType}의 영역이 충돌하지 않습니다.");
+
+                if(intersectObject != null) Object.Destroy(intersectObject);
+                Object.Destroy(shapeObject);
+                return destructionObjects;
             }
             
             // 겹치는 영역제외하고 만들기
             try
             {
                 var subtractModel = CSG.Subtract(targetObject, shapeObject);
-                var obj = CreateDestructionGameObject(targetObject, subtractModel, components);
+                subtractObject = CreateDestructionGameObject(targetObject, subtractModel, components);
                 
-                destructionObjects.Add(obj);
+                if(subtractObject.name.Contains("_Subtract") == false) subtractObject.name += "_Subtract";
             }
             catch (Exception e)
             {
                 DebugManager.LogWarning($"Subtract 실패했습니다." +
                                         $"{targetObject.name}와 충돌 {shapeType}의 영역이 충돌하지 않습니다.");
+
+                Object.Destroy(intersectObject);
+                Object.Destroy(shapeObject);
+                return destructionObjects;
+            }
+
+            // 겹치는 영역 Slicing 하기
+            try
+            {
+                destructionObjects.AddRange(MeshSlicing.Slice(intersectObject, Random.onUnitSphere.normalized, position, components));
+                
+                if(destructionObjects.Count == 1) destructionObjects.Clear();
+            }
+            catch (Exception e)
+            {
+                DebugManager.LogWarning($"Slicing에 실패했습니다.");
+
+                if(intersectObject != null) Object.Destroy(intersectObject);
+                Object.Destroy(subtractObject);
+                Object.Destroy(shapeObject);
                 foreach (var destructionObject in destructionObjects)
                 {
                     Object.Destroy(destructionObject);
                 }
-                destructionObjects.Clear();
-                Object.Destroy(shapeObject);
                 return destructionObjects;
             }
+
+            destructionObjects.Add(intersectObject);
+            destructionObjects.Add(subtractObject);
             
             Object.Destroy(targetObject);
             Object.Destroy(shapeObject);

@@ -23,7 +23,7 @@ namespace _00.Scenes.Test___Dong_Woo__
                 
                     if (hit.collider.CompareTag("Destruction"))
                     {
-                        MeshDestruction.Destruction(hit.collider.gameObject, PrimitiveType.Cube, hit.point, Vector3.one * 2, ray.direction);
+                        MeshDestruction.Destruction(hit.collider.gameObject, PrimitiveType.Cube, hit.point, Vector3.one * 2);
                     }
                 }
             }
