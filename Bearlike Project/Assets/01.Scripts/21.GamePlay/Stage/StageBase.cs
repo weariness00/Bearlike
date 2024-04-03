@@ -184,7 +184,7 @@ namespace GamePlay.Stage
                         SetMonsterKillCountRPC(StatusValueType.Current, ++monsterKillCount.Current);
                     };
                 };
-                monsterSpawner.SpawnStart();
+                monsterSpawner.SpawnStartRPC();
             }
         }
 

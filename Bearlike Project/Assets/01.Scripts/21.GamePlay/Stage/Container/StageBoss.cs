@@ -34,7 +34,7 @@ namespace GamePlay.Stage.Container
                         --bossMonsterCount.Current;
                     };
                 };
-                bossSpawner.SpawnStart();
+                bossSpawner.SpawnStartRPC();
             }
         }
 
