@@ -20,12 +20,14 @@ namespace Photon
             AddIsSuccessDestructionDictRPC(Runner.LocalPlayer);
         }
 
-        public IEnumerator IsSuccessDestructionDictCoroutine(PlayerRef playerRef, bool value)
+        public void SetIsSuccessDestructionDict(PlayerRef playerRef, bool value) => StartCoroutine(SetIsSuccessDestructionDictCoroutine(playerRef, value));
+
+        public IEnumerator SetIsSuccessDestructionDictCoroutine(PlayerRef playerRef, bool value)
         {
             while (IsSuccessDestructionDict.Get(playerRef) == false)
             {
-                yield return null;
                 SetIsSuccessDestructionDictRPC(Runner.LocalPlayer, true);
+                yield return null;
             }
         }
         
@@ -105,8 +107,6 @@ namespace Photon
             {
                 var obj = await Runner.SpawnAsync(socketPrefab, Vector3.zero, Quaternion.identity, playerRef);
                 var meshSocket = obj.GetComponent<NetworkMeshDestructSocket>();
-                meshSocket.VerticesCapacity = (byte)(vertices.Length / SendByteCapacity);
-                meshSocket.SendVerticesLayer = 0;
                 
                 meshSocket.SetDestructData(destructNetworkDataList.ToArray());
                 meshSocket.SetVerticesData(vertices);

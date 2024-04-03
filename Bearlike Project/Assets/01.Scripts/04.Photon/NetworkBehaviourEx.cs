@@ -5,9 +5,9 @@ namespace Photon
 {
     public class NetworkBehaviourEx : NetworkBehaviour
     {
-        [Rpc(RpcSources.All,RpcTargets.All)]
-        public void DestroyRPC(float time = 0f) =>Destroy(gameObject, time);
-        [Rpc(RpcSources.All, RpcTargets.All)]
+        [Rpc(RpcSources.All,RpcTargets.StateAuthority)]
+        public void DestroyRPC(float time = 0f) => Destroy(gameObject, time);
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void DestroyRPC(NetworkId id, float time = 0f) => Destroy(Runner.FindObject(id), time);
         
         [Rpc(RpcSources.All, RpcTargets.All)]

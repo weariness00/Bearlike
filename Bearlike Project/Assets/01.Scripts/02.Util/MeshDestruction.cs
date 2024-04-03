@@ -82,8 +82,12 @@ namespace Util
             try
             {
                 destructionObjects.AddRange(MeshSlicing.Slice(intersectObject, Random.onUnitSphere.normalized, position, components));
-                
-                if(destructionObjects.Count == 1) destructionObjects.Clear();
+
+                if (destructionObjects.Count == 1)
+                {
+                    destructionObjects.Clear();
+                    destructionObjects.Add(intersectObject);
+                }
             }
             catch (Exception e)
             {
@@ -99,7 +103,6 @@ namespace Util
                 return destructionObjects;
             }
 
-            destructionObjects.Add(intersectObject);
             destructionObjects.Add(subtractObject);
             
             Object.Destroy(targetObject);
