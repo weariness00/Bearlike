@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using BehaviorTree.Base;
@@ -16,10 +16,9 @@ using UnityEngine.AI;
 using UnityEngine.VFX;
 using Allocator = Unity.Collections.Allocator;
 
-namespace BehaviorTree
+namespace Monster.Container
 {
-    [RequireComponent(typeof(Animator))]
-    public sealed class PiggyBankAI : NetworkBehaviour
+    public class PiggyBank : MonsterBase
     {
         [SerializeField] private float movementSpeed = 1.0f;
 
@@ -145,7 +144,7 @@ namespace BehaviorTree
                 {
                     if (FastDistance(transform.position, _players[0].transform.position) > 10.0f)
                     {
-                        _navMeshAgent.speed = 2.0f;
+                        _navMeshAgent.speed = movementSpeed;
                         // _navMeshAgent.SetDestination(_players[0].transform.position);
 
                         NavMeshPath path = new NavMeshPath();

@@ -292,7 +292,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1825248237}
-  agent: {fileID: 1570614668}
+  agentGameObject: {fileID: 267233472}
+--- !u!195 &267233477
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 267233472}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 3
+  m_BaseOffset: 3
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &352570900
 GameObject:
   m_ObjectHideFlags: 0
@@ -467,7 +489,7 @@ Transform:
   m_GameObject: {fileID: 974999925}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.35, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -924,7 +946,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1570614667
 Transform:
   m_ObjectHideFlags: 0
@@ -934,7 +956,7 @@ Transform:
   m_GameObject: {fileID: 1570614666}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.24, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -978,7 +1000,7 @@ PrefabInstance:
     - target: {fileID: 2501944239716609005, guid: 6b27d136a91f9824c931bc5eb71e75a6,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.35
+      value: 5.69
       objectReference: {fileID: 0}
     - target: {fileID: 2501944239716609005, guid: 6b27d136a91f9824c931bc5eb71e75a6,
         type: 3}
@@ -1037,6 +1059,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 267233475}
+    - targetCorrespondingSourceObject: {fileID: 3022867162543223127, guid: 6b27d136a91f9824c931bc5eb71e75a6,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 267233477}
   m_SourcePrefab: {fileID: 100100000, guid: 6b27d136a91f9824c931bc5eb71e75a6, type: 3}
 --- !u!1 &1825248237
 GameObject:
@@ -1065,7 +1091,7 @@ Transform:
   m_GameObject: {fileID: 1825248237}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 14.13, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1504,7 +1530,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 0
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0

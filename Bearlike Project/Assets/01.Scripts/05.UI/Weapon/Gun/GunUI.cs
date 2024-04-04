@@ -19,7 +19,6 @@ namespace UI.Weapon.Gun
             
             bulletMaxText.text = gun.magazine.Max.ToString();
             bulletCurrentText.text = gun.magazine.Current.ToString();
-            gameObject.SetActive(true);
         }
         
         private void Update()

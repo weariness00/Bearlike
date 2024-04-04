@@ -43,25 +43,13 @@ namespace Weapon.Bullet
         // }
 
         public override void FixedUpdateNetwork()
-        {
-            Debug.Log("FixedUpdateNetwork");    
+        { 
             _oldPosition = transform.position;
             transform.position += transform.forward * Runner.DeltaTime * speed;
                 
             if (FastDistance(transform.position, _oldPosition) >= maxMoveDistance) Destroy(gameObject);
             
         }
-        
-        // public void Update()
-        // {
-        //     _oldPosition = transform.position;
-        //     transform.position += transform.forward * Time.deltaTime * speed;
-        //     
-        //     // Debug.Log(destination);
-        //     Debug.Log("Update");
-        //     
-        //     if (FastDistance(transform.position, _oldPosition) >= maxMoveDistance) Destroy(gameObject);
-        // }
         
         private void OnTriggerEnter(Collider other)
         {
@@ -74,7 +62,8 @@ namespace Weapon.Bullet
                 StatusBase otherStatus;
                 if (other.TryGetComponent(out otherStatus) || other.transform.root.TryGetComponent(out otherStatus))
                 {
-                    otherStatus.ApplyDamageRPC(playerStatus.damage.Current + gun.attack,
+                    otherStatus.ApplyDamageRPC(
+                        (int)(((100.0f + (playerStatus.damage.Current)) / 100.0f) + (gun.attack.Current)),
                         (CrowdControl)(playerStatus.property | gun.property));
                 }
 

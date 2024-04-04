@@ -1362,6 +1362,7 @@ MonoBehaviour:
   cameraController: {fileID: 0}
   skillSystem: {fileID: 4719698784326777624}
   weaponSystem: {fileID: 1540949093524800849}
+  GunUI: {fileID: 2911956904859878071}
   itemInventory: {fileID: 8992574548056908079}
   simpleKcc: {fileID: 0}
   rigidBody: {fileID: 0}
@@ -3149,6 +3150,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7a68dec2cbfce0e4ca5e52ca2616376d, type: 3}
+--- !u!223 &2911956904859878071 stripped
+Canvas:
+  m_CorrespondingSourceObject: {fileID: 7591821543876279416, guid: 7a68dec2cbfce0e4ca5e52ca2616376d,
+    type: 3}
+  m_PrefabInstance: {fileID: 4698037370523254479}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &7476193710398977489 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2806321500718320414, guid: 7a68dec2cbfce0e4ca5e52ca2616376d,
@@ -3446,6 +3453,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7856296637238042012, guid: cc580b57f8a4fcd4abaecfda0b38bc64,
+        type: 3}
+      propertyPath: GunUI
+      value: 
+      objectReference: {fileID: 2911956904859878071}
     - target: {fileID: 7856296637238042012, guid: cc580b57f8a4fcd4abaecfda0b38bc64,
         type: 3}
       propertyPath: skillName

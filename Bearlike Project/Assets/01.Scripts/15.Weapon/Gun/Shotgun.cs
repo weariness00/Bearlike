@@ -15,7 +15,9 @@ namespace Weapon.Gun
         
         public override void Awake()
         {
-            base.Awake();
+            base.Awake();            
+            
+            BulletInit();
         }
         
         public override void Start()
@@ -24,13 +26,12 @@ namespace Weapon.Gun
 
             bulletRadian = 3;
             
-            ammo.Max = ammo.Current = 36;
-            bulletFirePerMinute = 80;
+            ammo.Max = 36;
+            ammo.Current = ammo.Max;
             
-            attack.Max = attack.Current = 3;
+            attack.Max = 5;
+            attack.Current = attack.Max;
             property = (int)CrowdControl.Normality;
-            
-            BulletInit();
         } 
         
         public override void Shoot()
@@ -82,7 +83,10 @@ namespace Weapon.Gun
 
         public override void BulletInit()
         {
-            magazine.Max = magazine.Current = 5;
+            bulletFirePerMinute = 80;
+            
+            magazine.Max = 5;
+            magazine.Current = magazine.Max;
             
             fireLateSecond.Max = 60 / bulletFirePerMinute;
             fireLateSecond.Current = float.MaxValue;

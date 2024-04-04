@@ -2,6 +2,7 @@
 using State.StateClass.Base;
 using Status;
 using Unity.Mathematics;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace State.StateClass
@@ -23,7 +24,7 @@ namespace State.StateClass
 
             defence.Max = 100;
             defence.Min = 1;
-            defence.Current = 1;
+            defence.Current = 10;
 
             avoid.Max = 100.0f;
             avoid.Min = 0.0f;
@@ -80,7 +81,7 @@ namespace State.StateClass
             {
                 damageRate *= 1.5f;
             }
-
+            
             hp.Current -= (int)(damageRate * damage);
 
             if (hp.Current == hp.Min)

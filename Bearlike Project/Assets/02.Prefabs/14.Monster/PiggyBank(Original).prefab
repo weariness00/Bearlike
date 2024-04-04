@@ -694,7 +694,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
-  attack:
+  damage:
     _min: 0
     _max: 0
     _current: 0
@@ -727,6 +727,14 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   attackSpeed:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  attackLateTime:
     _min: 0
     _max: 0
     _current: 0
@@ -859,7 +867,7 @@ NavMeshAgent:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4424066798281067371}
   m_Enabled: 1
-  m_AgentTypeID: 0
+  m_AgentTypeID: 1479372276
   m_Radius: 2.5
   m_Speed: 3.5
   m_Acceleration: 8
@@ -869,8 +877,8 @@ NavMeshAgent:
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 6
-  m_BaseOffset: 3.3
+  m_Height: 5
+  m_BaseOffset: 4
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!1 &4837738324536657914 stripped

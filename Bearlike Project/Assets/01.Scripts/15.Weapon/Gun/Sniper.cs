@@ -7,7 +7,9 @@ namespace Weapon.Gun
     {
         public override void Awake()
         {                           
-            base.Awake();           
+            base.Awake();
+            
+            BulletInit();        
         }                           
                                     
         public override void Start()
@@ -15,19 +17,18 @@ namespace Weapon.Gun
             base.Start();
 
             ammo.Max = ammo.Current = 36;
-            bulletFirePerMinute = 40;
             
-            attack.Max = attack.Current = 50;
+            attack.Max = attack.Current = 150;
             property = (int)CrowdControl.Normality;
             
-            BulletInit();
         }
         
         #region Bullet Funtion
 
         public override void BulletInit()
         {
-            base.BulletInit();
+            bulletFirePerMinute = 40;
+            
             magazine.Max = magazine.Current = 5;
             
             fireLateSecond.Max = 60 / bulletFirePerMinute;
