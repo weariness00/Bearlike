@@ -78,6 +78,7 @@ namespace Script.Weapon.Gun
                     
                     if(shootEffect != null) shootEffect.Play();
                     bullet.destination = dst;
+                    bullet.hitEffect = hitEffect;
                     
                     var transform1 = transform;
                     Instantiate(bullet.gameObject, transform1.position, transform1.rotation);

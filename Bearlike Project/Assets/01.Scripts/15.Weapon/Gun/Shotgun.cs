@@ -52,6 +52,7 @@ namespace Weapon.Gun
                     // 아니면 일정거리는 모든탄이 날아가다가 일정 구간에서 퍼지는 (우클릭? 혹은 일반 공격)으로 구현해도 괜찬을것 같다.
                     
                     if(shootEffect != null) shootEffect.Play();
+                    bullet.hitEffect = hitEffect;
                     
                     // dst = Vector3.Normalize(dst);    // 어차피 Ray의 반환값은 정규화가 되어있다.
                     // bullet.destination = dst * attackRange;  // 아래 for문에서 해준다.

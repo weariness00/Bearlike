@@ -6,6 +6,7 @@ using Status;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.VFX;
 
 namespace Weapon.Bullet
 {
@@ -15,6 +16,8 @@ namespace Weapon.Bullet
         public StatusValue<int> damage = new StatusValue<int>() {Max = 100, Current = 100 };
         public StatusValue<float> speed = new StatusValue<float>(){Max = 100.0f, Current = 50.0f};
         public Vector3 destination = Vector3.zero;
+
+        public VisualEffect hitEffect; 
 
         #region 사정거리
 
@@ -33,22 +36,13 @@ namespace Weapon.Bullet
             transform.rotation = Quaternion.LookRotation(destination);
             Destroy(gameObject, 5f);
         }
-
-        // public override void FixedUpdateNetwork()
-        // {
-        //     _oldPosition = transform.position;
-        //     transform.position += transform.forward * Runner.DeltaTime * speed;
-        //     
-        //     if (FastDistance(transform.position, _oldPosition) >= maxMoveDistance) Destroy(gameObject);
-        // }
-
+        
         public override void FixedUpdateNetwork()
         { 
             _oldPosition = transform.position;
             transform.position += transform.forward * Runner.DeltaTime * speed;
                 
             if (FastDistance(transform.position, _oldPosition) >= maxMoveDistance) Destroy(gameObject);
-            
         }
         
         private void OnTriggerEnter(Collider other)
@@ -67,6 +61,10 @@ namespace Weapon.Bullet
                         (CrowdControl)(playerStatus.property | gun.property));
                 }
 
+                var hitEffectObject = Instantiate(hitEffect.gameObject, transform.position, Quaternion.identity);
+                hitEffectObject.transform.LookAt(gun.transform.position);
+                Destroy(hitEffectObject, 5f);
+                
                 // other.gameObject.GetComponent<StatusBase>().ApplyDamageRPC(playerStatus.damage.Current + gun.attack, (CrowdControl)(playerStatus.property | gun.property));
                 Destroy(gameObject);
             }

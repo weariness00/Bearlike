@@ -18,6 +18,7 @@ using Allocator = Unity.Collections.Allocator;
 
 namespace Monster.Container
 {
+    [RequireComponent(typeof(Animator))]
     public class PiggyBank : MonsterBase
     {
         [SerializeField] private float movementSpeed = 1.0f;
