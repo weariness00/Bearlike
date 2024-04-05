@@ -136,6 +136,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Child Room
       objectReference: {fileID: 0}
+    - target: {fileID: 5156906037214166286, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+        type: 3}
+      propertyPath: Flags
+      value: 262145
+      objectReference: {fileID: 0}
+    - target: {fileID: 5156906037214166286, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+        type: 3}
+      propertyPath: SortKey
+      value: 891439234
+      objectReference: {fileID: 0}
+    - target: {fileID: 5156906037214166286, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+        type: 3}
+      propertyPath: NetworkedBehaviours.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5156906037214166286, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+        type: 3}
+      propertyPath: NetworkedBehaviours.Array.data[0]
+      value: 
+      objectReference: {fileID: 466974298}
     - target: {fileID: 6822735359699462654, guid: 69ac511c1bea7e540bd78ef6a91f798f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -194,6 +214,36 @@ PrefabInstance:
 --- !u!4 &466974296 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6822735359699462654, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+    type: 3}
+  m_PrefabInstance: {fileID: 466974295}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &466974297 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5156906037214166286, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+    type: 3}
+  m_PrefabInstance: {fileID: 466974295}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 466974299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &466974298 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8984828093266996157, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+    type: 3}
+  m_PrefabInstance: {fileID: 466974295}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 466974299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d90174c1baf422943b76e333d74af420, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &466974299 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 399576629531323057, guid: 69ac511c1bea7e540bd78ef6a91f798f,
     type: 3}
   m_PrefabInstance: {fileID: 466974295}
   m_PrefabAsset: {fileID: 0}
@@ -838,7 +888,8 @@ MonoBehaviour:
   SortKey: 14723193
   ObjectInterest: 1
   Flags: 262145
-  NestedObjects: []
+  NestedObjects:
+  - {fileID: 466974297}
   NetworkedBehaviours:
   - {fileID: 1776461682}
 --- !u!114 &1776461682
@@ -1071,6 +1122,7 @@ MonoBehaviour:
   isStageOver: 0
   lootingTable: {fileID: 0}
   stageGameObject: {fileID: 1776461677}
+  destructObject: {fileID: 466974299}
   prevStagePortal: {fileID: 1136499894}
   nextStagePortal: {fileID: 2091827528}
   monsterSpawnerList: []

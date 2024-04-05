@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.ComponentModel;
 using System.IO;
 using Fusion;
 using Manager;
@@ -15,19 +14,23 @@ namespace Photon
     /// </summary>
     public class NetworkMeshDestructSocket : NetworkBehaviourEx
     {
+        // 전송 받은 데이터 들 비트 단위로 계산
         [Networked] public UInt64 SendVerticesLayer { get; set; }
         [Networked] public UInt64 SendNormalsLayer { get; set; }
         [Networked] public UInt64 SendUVsLayer { get; set; }
         [Networked] public UInt64 SendTrianglesLayer { get; set; }
+        
+        // 전송 받아야할 패킷 갯수 255이 최대치
         [Networked] public byte VerticesCapacity { get; set; }
         [Networked] public byte NormalsCapacity { get; set; }
         [Networked] public byte UVsCapacity { get; set; }
         [Networked] public byte TrianglesCapacity { get; set; }
         
-        [Networked] public ushort VerticesSize { get; set; }
-        [Networked] public ushort NormalsSize { get; set; }
-        [Networked] public ushort UVsSize { get; set; }
-        [Networked] public ushort TrianglesSize { get; set; }
+        // 패킷의 최종 크기
+        [Networked] public int VerticesSize { get; set; }
+        [Networked] public int NormalsSize { get; set; }
+        [Networked] public int UVsSize { get; set; }
+        [Networked] public int TrianglesSize { get; set; }
 
         // RPC는 한번에 1개밖에 실행이 안됨으로 코루틴을 돌려 실시간 업데이트가 되도록 실행
         private Coroutine _setHasVerticesCoroutine;
@@ -55,11 +58,14 @@ namespace Photon
         private byte[][] _uvsDivideByte;
         private byte[][] _trianglesDivideByte;
 
-        private bool _sendCompleteDestructData; 
-        private bool _sendCompleteVertices; 
-        private bool _sendCompleteNormals; 
-        private bool _sendCompleteUVs; 
-        private bool _sendCompleteTriangles;
+        // 전송이 성공했음에 대한 여부
+        [Header("Is Send Complete")]
+        [SerializeField] private bool _sendCompleteDestructData; 
+        [SerializeField] private bool _sendCompleteVertices; 
+        [SerializeField] private bool _sendCompleteNormals; 
+        [SerializeField] private bool _sendCompleteUVs; 
+        [SerializeField] private bool _sendCompleteTriangles;
+        private bool _isDestruct;
         
         #region Member Function
 
@@ -86,14 +92,14 @@ namespace Photon
             _verticesDivideByte = new byte[VerticesCapacity][];
             for (int i = 0; i < _verticesDivideByte.Length; i++)
             {
-                uint capacity = NetworkMeshDestructSystem.SendByteCapacity;
-                if (i == VerticesCapacity - 1) capacity = (uint)vByte.Length % capacity;
+                int capacity = NetworkMeshDestructSystem.SendByteCapacity;
+                if (i == VerticesCapacity - 1) capacity = vByte.Length % capacity;
                 _verticesDivideByte[i] = new byte[capacity];
                 Array.Copy(vByte, i * NetworkMeshDestructSystem.SendByteCapacity, _verticesDivideByte[i], 0, capacity);
             }
 
             SendVerticesLayer = 0;
-            VerticesSize = (ushort)vByte.Length;
+            VerticesSize = vByte.Length;
         }
         
         public void SetNormalsData(Vector3[] n)
@@ -103,14 +109,14 @@ namespace Photon
             _normalsDivideByte = new byte[NormalsCapacity][];
             for (int i = 0; i < _normalsDivideByte.Length; i++)
             {
-                uint capacity = NetworkMeshDestructSystem.SendByteCapacity;
-                if (i == NormalsCapacity - 1) capacity = (uint)nByte.Length % capacity;
+                int capacity = NetworkMeshDestructSystem.SendByteCapacity;
+                if (i == NormalsCapacity - 1) capacity = nByte.Length % capacity;
                 _normalsDivideByte[i] = new byte[capacity];
                 Array.Copy(nByte, i * NetworkMeshDestructSystem.SendByteCapacity, _normalsDivideByte[i], 0, capacity);
             }
             
             SendNormalsLayer = 0;
-            NormalsSize = (ushort)nByte.Length;
+            NormalsSize = nByte.Length;
         }
         
         public void SetUVsData(Vector2[] u)
@@ -120,14 +126,14 @@ namespace Photon
             _uvsDivideByte = new byte[UVsCapacity][];
             for (int i = 0; i < _uvsDivideByte.Length; i++)
             {
-                uint capacity = NetworkMeshDestructSystem.SendByteCapacity;
-                if (i == UVsCapacity - 1) capacity = (uint)uByte.Length % capacity;
+                int capacity = NetworkMeshDestructSystem.SendByteCapacity;
+                if (i == UVsCapacity - 1) capacity = uByte.Length % capacity;
                 _uvsDivideByte[i] = new byte[capacity];
                 Array.Copy(uByte, i * NetworkMeshDestructSystem.SendByteCapacity, _uvsDivideByte[i], 0, capacity);
             }
             
             SendUVsLayer = 0;
-            UVsSize = (ushort)uByte.Length;
+            UVsSize = uByte.Length;
         }
         
         public void SetTrianglesData(int[] t)
@@ -137,14 +143,14 @@ namespace Photon
             _trianglesDivideByte = new byte[TrianglesCapacity][];
             for (int i = 0; i < _trianglesDivideByte.Length; i++)
             {
-                uint capacity = NetworkMeshDestructSystem.SendByteCapacity;
-                if (i == TrianglesCapacity - 1) capacity = (uint)tByte.Length % capacity;
+                int capacity = NetworkMeshDestructSystem.SendByteCapacity;
+                if (i == TrianglesCapacity - 1) capacity = tByte.Length % capacity;
                 _trianglesDivideByte[i] = new byte[capacity];
                 Array.Copy(tByte, i * NetworkMeshDestructSystem.SendByteCapacity, _trianglesDivideByte[i], 0, capacity);
             }
             
             SendTrianglesLayer = 0;
-            TrianglesSize = (ushort)tByte.Length;
+            TrianglesSize = tByte.Length;
         }
         
         #endregion
@@ -171,8 +177,7 @@ namespace Photon
 
                 if (layer == SendVerticesLayer)
                 {
-                    SetSendVerticesCompleteRPC(true);
-                    DebugManager.Log("Vertices 정보 전송 완료");
+                    StartCoroutine(SendVerticesCompleteCoroutine());
                     break;
                 }
                 yield return null;
@@ -199,8 +204,7 @@ namespace Photon
 
                 if (layer == SendNormalsLayer)
                 {
-                    SetSendNormalsCompleteRPC(true);
-                    DebugManager.Log("Normals 정보 전송 완료");
+                    StartCoroutine(SendNormalsCompleteCoroutine());
                     break;
                 }
                 yield return null;
@@ -227,8 +231,7 @@ namespace Photon
 
                 if (layer == SendUVsLayer)
                 {
-                    SetSendUVsCompleteRPC(true);
-                    DebugManager.Log("UVs 정보 전송 완료");
+                    StartCoroutine(SendUVsCompleteCoroutine());
                     break;
                 }
                 yield return null;
@@ -255,10 +258,50 @@ namespace Photon
 
                 if (layer == SendTrianglesLayer)
                 {
-                    SetSendTrianglesCompleteRPC(true);
-                    DebugManager.Log("Triangles 정보 전송 완료");
+                    StartCoroutine(SendTrianglesCompleteCoroutine());
                     break;
                 }
+                yield return null;
+            }
+        }
+        
+        #endregion
+
+        // 모든 데이터를 전송했다는 것을 알리는 RPC가 도중에 자꾸 손실되어 Coroutine으로 만듬
+        #region Complete Coroutine
+
+        private IEnumerator SendVerticesCompleteCoroutine()
+        {
+            while (true)
+            {
+                SetSendVerticesCompleteRPC(true);
+                yield return null;
+            }
+        }
+        
+        private IEnumerator SendNormalsCompleteCoroutine()
+        {
+            while (true)
+            {
+                SetSendNormalsCompleteRPC(true);
+                yield return null;
+            }
+        }
+        
+        private IEnumerator SendUVsCompleteCoroutine()
+        {
+            while (true)
+            {
+                SetSendUVsCompleteRPC(true);
+                yield return null;
+            }
+        }
+        
+        private IEnumerator SendTrianglesCompleteCoroutine()
+        {
+            while (true)
+            {
+                SetSendTrianglesCompleteRPC(true);
                 yield return null;
             }
         }
@@ -304,17 +347,26 @@ namespace Photon
         
         #endregion
 
+        IEnumerator DestroyCoroutine()
+        {
+            while (gameObject != null)
+            {
+                DestroyRPC();
+                yield return null;
+            }
+        }
+        
         private void Destruct()
         {
-            if (!_sendCompleteDestructData || !_sendCompleteVertices || !_sendCompleteNormals || !_sendCompleteUVs || !_sendCompleteTriangles)
-            {
-                return;
-            }
+            if(_isDestruct) return;
+            if (!_sendCompleteDestructData || !_sendCompleteVertices || !_sendCompleteNormals || !_sendCompleteUVs || !_sendCompleteTriangles) return;
 
-            ushort vertexCount = 0;
-            ushort normalCount = 0;
-            ushort uvCount = 0;
-            ushort triangleCount = 0;
+            _isDestruct = true;
+
+            uint vertexCount = 0;
+            uint normalCount = 0;
+            uint uvCount = 0;
+            uint triangleCount = 0;
 
             Vector3[] vertices = DeserializeVector3(verticesByte);
             Vector3[] normals = DeserializeVector3(normalsByte);
@@ -352,12 +404,12 @@ namespace Photon
             
                 // 컴포넌트 초기화
                 var meshFilter = netObject.GetComponent<MeshFilter>();
-                var renderer = netObject.GetComponent<MeshRenderer>();
+                var msehRenderer = netObject.GetComponent<MeshRenderer>();
                 var meshCollider = netObject.gameObject.AddComponent<MeshCollider>();
 
                 meshFilter.sharedMesh = mesh;
                 
-                renderer.material = NetworkMeshDestructObject.GetMaterial((string)data.MaterialName);
+                msehRenderer.material = NetworkMeshDestructObject.GetMaterial((string)data.MaterialName);
                 if (netObject.name.Contains("_Slicing") || netObject.name.Contains("_Intersect"))
                 {
                     meshCollider.convex = true;
@@ -370,8 +422,8 @@ namespace Photon
             
             NetworkMeshDestructSystem.Instance.SetIsSuccessDestructionDict(Runner.LocalPlayer, true);
             DebugManager.Log($"{Runner.LocalPlayer}의 객체 붕괴 성공");
-            
-            DestroyRPC();
+
+            StartCoroutine(DestroyCoroutine());
         }
 
         #endregion
@@ -504,40 +556,40 @@ namespace Photon
 
         #region Set Function
         
-        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority, Channel = RpcChannel.Reliable)]
         public void SetHasVerticesRPC(UInt64 value) => SendVerticesLayer = value;
         
-        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority, Channel = RpcChannel.Reliable)]
         public void SetHasNormalsRPC(UInt64 value) => SendNormalsLayer = value;
         
-        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority, Channel = RpcChannel.Reliable)]
         public void SetHasUVsRPC(UInt64 value) => SendUVsLayer = value;
         
-        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority, Channel = RpcChannel.Reliable)]
         public void SetHasTrianglesRPC(UInt64 value) => SendTrianglesLayer = value;
 
-        [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
+        [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority, Channel = RpcChannel.Reliable)]
         public void SetSendVerticesCompleteRPC(NetworkBool value)
         {
             _sendCompleteVertices = value;
             Destruct();
         }
         
-        [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
+        [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority, Channel = RpcChannel.Reliable)]
         public void SetSendNormalsCompleteRPC(NetworkBool value)
         {
             _sendCompleteNormals = value;
             Destruct();
         }
         
-        [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
+        [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority, Channel = RpcChannel.Reliable)]
         public void SetSendUVsCompleteRPC(NetworkBool value)
         {
             _sendCompleteUVs = value;
             Destruct();
         }
         
-        [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
+        [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority, Channel = RpcChannel.Reliable)]
         public void SetSendTrianglesCompleteRPC(NetworkBool value)
         {
             _sendCompleteTriangles = value;
@@ -562,7 +614,7 @@ namespace Photon
             verticesByte ??= new byte[VerticesSize];
             Array.Copy(data, 0, verticesByte, NetworkMeshDestructSystem.SendByteCapacity * number, data.Length);
 
-            _hasVertices |= (uint)(1 << number);
+            _hasVertices |= (1UL << number);
             if(_setHasVerticesCoroutine != null) StopCoroutine(_setHasVerticesCoroutine);
             _setHasVerticesCoroutine = StartCoroutine(SetHasVerticesDataCoroutine(_hasVertices));
         }
@@ -573,7 +625,7 @@ namespace Photon
             normalsByte ??= new byte[NormalsSize];
             Array.Copy(data, 0, normalsByte, NetworkMeshDestructSystem.SendByteCapacity * number, data.Length);
 
-            _hasNormals |= (uint)(1 << number);
+            _hasNormals |= (1UL << number);
             if(_setHasNormalsCoroutine != null) StopCoroutine(_setHasNormalsCoroutine);
             _setHasNormalsCoroutine = StartCoroutine(SetHasNormalsDataCoroutine(_hasNormals));
         }
@@ -584,7 +636,7 @@ namespace Photon
             uvsByte ??= new byte[UVsSize];
             Array.Copy(data, 0, uvsByte, NetworkMeshDestructSystem.SendByteCapacity * number, data.Length);
 
-            _hasUVs |= (uint)(1 << number);
+            _hasUVs |= (1UL << number);
             if(_setHasUVsCoroutine != null) StopCoroutine(_setHasUVsCoroutine);
             _setHasUVsCoroutine = StartCoroutine(SetHasUVsDataCoroutine(_hasUVs));
         }
@@ -595,7 +647,7 @@ namespace Photon
             trianglesByte ??= new byte[TrianglesSize];
             Array.Copy(data, 0, trianglesByte, NetworkMeshDestructSystem.SendByteCapacity * number, data.Length);
 
-            _hasTriangles |= (uint)(1 << number);
+            _hasTriangles |= (1UL << number);
             if(_setHasTrianglesCoroutine != null) StopCoroutine(_setHasTrianglesCoroutine);
             _setHasTrianglesCoroutine = StartCoroutine(SetHasTrianglesDataCoroutine(_hasTriangles));
         }

@@ -13,7 +13,7 @@ namespace Util
 {
     public static class MeshDestruction
     {
-        public static List<GameObject> Destruction(GameObject targetObject, PrimitiveType shapeType, Vector3 position, Vector3 size, params Type[] components)
+        public static List<GameObject> Destruction(GameObject targetObject, PrimitiveType shapeType, Vector3 position, Vector3 size, bool isDestroyOrigin = true, params Type[] components)
         {
             var targetMeshFilter = targetObject.GetComponent<MeshFilter>();
             List<GameObject> destructionObjects = new List<GameObject>();
@@ -105,7 +105,7 @@ namespace Util
 
             destructionObjects.Add(subtractObject);
             
-            Object.Destroy(targetObject);
+            if(isDestroyOrigin) Object.Destroy(targetObject);
             Object.Destroy(shapeObject);
             return destructionObjects;
         }

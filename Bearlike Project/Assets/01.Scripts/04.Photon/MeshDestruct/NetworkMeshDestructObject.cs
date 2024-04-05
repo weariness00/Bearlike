@@ -19,6 +19,7 @@ namespace Photon
         {
             MaterialDictionary.Clear();
         }
+        
         #endregion
     }
 }

@@ -61,6 +61,8 @@ namespace GamePlay.Stage
         [Header("맵 정보")] 
         public GameObject stageGameObject;
 
+        public GameObject destructObject; // 스테이지 클리어시 붕괴가능하게 할 객체
+        
         public Portal prevStagePortal;
         public Portal nextStagePortal;
 
@@ -269,6 +271,8 @@ namespace GamePlay.Stage
 
             lootingTable.SpawnDropItem();
             DebugManager.ToDo("임시적으로 모든 아이템을 드랍하게 함");
+
+            if (destructObject != null) destructObject.tag = "Destruction";
 
             StageClearAction?.Invoke();
             DebugManager.Log("스테이지 클리어\n" +

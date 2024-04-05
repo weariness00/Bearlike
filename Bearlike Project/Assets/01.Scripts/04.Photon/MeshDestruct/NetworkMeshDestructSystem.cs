@@ -9,11 +9,13 @@ namespace Photon
 {
     public class NetworkMeshDestructSystem : NetworkSingleton<NetworkMeshDestructSystem>
     {
-        public static readonly uint SendByteCapacity = 5000;
+        public static readonly int SendByteCapacity = 5000;
         
         [Networked, Capacity(3)] public NetworkDictionary<PlayerRef, NetworkBool> IsSuccessDestructionDict { get; }
         public NetworkPrefabRef emptyPrefab;
         public NetworkPrefabRef socketPrefab; // 송수신 용도로 사용할 네트워크 객체, 트래픽을 줄이고 코드를 단순화 하기 위해 사용
+
+        private NetworkObject _targetObject;
 
         public override void Spawned()
         {
@@ -47,8 +49,9 @@ namespace Photon
                 IsSuccessDestructionDict.Set(playerRef, false);
             }
 
-            var targetObject = Runner.FindObject(id).gameObject;
-            var objects = MeshDestruction.Destruction(targetObject, shapeType, position, size);
+            InitDestructObjectRPC(id);
+            _targetObject = Runner.FindObject(id);
+            var objects = MeshDestruction.Destruction(_targetObject.gameObject, shapeType, position, size, false);
             
             // Mesh의 정점 총 갯수
             int vertexCount = 0;
@@ -99,7 +102,11 @@ namespace Photon
 
                 vertexCountSum += mesh.vertexCount;
                 trianglesCountSum += mesh.triangles.Length;
-                
+
+                if (o.TryGetComponent<MeshCollider>(out var collide))
+                {
+                    Destroy(collide);
+                }
                 Destroy(o);
             }
             
@@ -118,11 +125,23 @@ namespace Photon
             }
         }
 
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void InitDestructObjectRPC(NetworkId id)
+        {
+            var targetObject = Runner.FindObject(id);
+            if(targetObject.TryGetComponent(out MeshCollider c)) Destroy(c);
+            if(targetObject.TryGetComponent(out Rigidbody rb)) Destroy(rb);
+        }
+
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void AddIsSuccessDestructionDictRPC(PlayerRef playerRef) => IsSuccessDestructionDict.Add(playerRef, true);
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-        public void SetIsSuccessDestructionDictRPC(PlayerRef playerRef, NetworkBool value) => IsSuccessDestructionDict.Set(playerRef, value);
+        public void SetIsSuccessDestructionDictRPC(PlayerRef playerRef, NetworkBool value)
+        {
+            IsSuccessDestructionDict.Set(playerRef, value);
+            Runner.Despawn(_targetObject);
+        }
 
         public struct DestructNetworkData : INetworkStruct
         {

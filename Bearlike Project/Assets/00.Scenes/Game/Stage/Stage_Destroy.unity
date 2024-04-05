@@ -193,7 +193,8 @@ MonoBehaviour:
   SortKey: 152746429
   ObjectInterest: 1
   Flags: 262145
-  NestedObjects: []
+  NestedObjects:
+  - {fileID: 217900966}
   NetworkedBehaviours:
   - {fileID: 42810328}
   - {fileID: 541677324}
@@ -347,6 +348,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Child Room
       objectReference: {fileID: 0}
+    - target: {fileID: 5156906037214166286, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+        type: 3}
+      propertyPath: Flags
+      value: 262145
+      objectReference: {fileID: 0}
+    - target: {fileID: 5156906037214166286, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+        type: 3}
+      propertyPath: SortKey
+      value: 1377493178
+      objectReference: {fileID: 0}
+    - target: {fileID: 5156906037214166286, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+        type: 3}
+      propertyPath: NetworkedBehaviours.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5156906037214166286, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+        type: 3}
+      propertyPath: NetworkedBehaviours.Array.data[0]
+      value: 
+      objectReference: {fileID: 217900967}
     - target: {fileID: 6822735359699462654, guid: 69ac511c1bea7e540bd78ef6a91f798f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -405,6 +426,36 @@ PrefabInstance:
 --- !u!4 &217900965 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6822735359699462654, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+    type: 3}
+  m_PrefabInstance: {fileID: 217900964}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &217900966 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5156906037214166286, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+    type: 3}
+  m_PrefabInstance: {fileID: 217900964}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 217900968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &217900967 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8984828093266996157, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+    type: 3}
+  m_PrefabInstance: {fileID: 217900964}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 217900968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d90174c1baf422943b76e333d74af420, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &217900968 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 399576629531323057, guid: 69ac511c1bea7e540bd78ef6a91f798f,
     type: 3}
   m_PrefabInstance: {fileID: 217900964}
   m_PrefabAsset: {fileID: 0}
@@ -1886,6 +1937,7 @@ MonoBehaviour:
   isStageOver: 0
   lootingTable: {fileID: 0}
   stageGameObject: {fileID: 42810325}
+  destructObject: {fileID: 217900968}
   prevStagePortal: {fileID: 1937373744}
   nextStagePortal: {fileID: 1267372961}
   monsterSpawnerList:
