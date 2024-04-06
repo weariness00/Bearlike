@@ -127,6 +127,11 @@ namespace State.StateClass.Base
                 case StatusValueType.Max:
                     hp.Max = value;
                     break;
+                
+                case StatusValueType.CurrentAndMax:
+                    hp.Max = value;
+                    hp.Current = value;
+                    break;
             }
         }
 

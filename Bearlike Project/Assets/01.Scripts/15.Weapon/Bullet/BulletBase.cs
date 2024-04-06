@@ -44,24 +44,18 @@ namespace Weapon.Bullet
 
         private void OnTriggerEnter(Collider other)
         {
-            // if (!other.gameObject.CompareTag("Monster") || other.GetComponent<StatusBase>().hp.isMin)
-            // {
-            //     return;
-            // }
-
             StatusBase otherStatus;
             if (other.TryGetComponent(out otherStatus) || other.transform.root.TryGetComponent(out otherStatus))
             {
                 otherStatus.ApplyDamageRPC(damage);
+                Destroy(gameObject);
             }
-            
-            // // player가 건이다.
-            // var playerStatus = player.transform.root.GetComponent<StatusBase>();
-            // var gun = player.GetComponentInChildren<GunBase>();
-            //
-            // other.gameObject.GetComponent<StatusBase>().ApplyDamageRPC(playerStatus.damage.Current + gun.attack, (CrowdControl)(playerStatus.property | gun.property));
-            // moveDistance = 0.0f;
-            Destroy(gameObject);
+            // 메쉬 붕괴 객체와 충돌 시
+            else if (other.CompareTag("Destruction"))
+            {
+                NetworkMeshDestructSystem.Instance.DestructRPC(other.GetComponent<NetworkObject>().Id,PrimitiveType.Cube, transform.position, Vector3.one * 2, transform.forward);
+                Destroy(gameObject);
+            }
         }
         
         [BurstCompile]
