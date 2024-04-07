@@ -50,6 +50,10 @@ namespace Weapon.Gun
                     bullet.hitEffect = hitEffect;
                     
                     bullet.bknock = bknock;
+                    // var bulletStatus = bullet.GetComponent<StatusBase>();
+                    // bulletStatus.damage.Max = 9999;
+                    // bulletStatus.damage.Current = (int)(((100.0f + (playerStatus.damage.Current)) / 100.0f) + (gun.attack.Current)),
+                    // (CrowdControl)(playerStatus.property | gun.property);
                     
                     for (int i = 0; i < 10; ++i)
                     {

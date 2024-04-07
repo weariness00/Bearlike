@@ -1,4 +1,5 @@
 ﻿using Fusion;
+using Manager;
 using Photon;
 using Script.Weapon.Gun;
 using State.StateClass.Base;
@@ -57,42 +58,29 @@ namespace Weapon.Bullet
             StatusBase otherStatus;
             if (other.TryGetComponent(out otherStatus) || other.transform.root.TryGetComponent(out otherStatus))
             {
-                otherStatus.ApplyDamageRPC(damage);
-                Destroy(gameObject);
+                // player가 건이다.
+                var playerStatus = player.transform.root.GetComponent<StatusBase>();
+                var gun = player.GetComponentInChildren<GunBase>();
+
+                otherStatus.ApplyDamageRPC(
+                    (int)(((100.0f + (playerStatus.damage.Current)) / 100.0f) + (gun.attack.Current)), 
+                    (CrowdControl)(playerStatus.property | gun.property));
+                    
+                if (bknock)
+                {
+                    otherStatus.gameObject.transform.Translate(direction);
+                }
+                
+                var hitEffectObject = Instantiate(hitEffect.gameObject, transform.position, Quaternion.identity);
+                hitEffectObject.transform.LookAt(gun.transform.position);
+                Destroy(hitEffectObject, 5f);
             }
             // 메쉬 붕괴 객체와 충돌 시
             else if (other.CompareTag("Destruction"))
             {
                 NetworkMeshDestructSystem.Instance.DestructRPC(other.GetComponent<NetworkObject>().Id,PrimitiveType.Cube, transform.position, Vector3.one * 2, transform.forward);
             }
-            if (!other.CompareTag("Bullet"))
-            {
-                // // player가 건이다.
-                var playerStatus = player.transform.root.GetComponent<StatusBase>();
-                var gun = player.GetComponentInChildren<GunBase>();
-
-                Debug.Log($"{bknock}");
-                
-                StatusBase otherStatus;
-                if (other.TryGetComponent(out otherStatus) || other.transform.root.TryGetComponent(out otherStatus))
-                {
-                    otherStatus.ApplyDamageRPC(
-                        (int)(((100.0f + (playerStatus.damage.Current)) / 100.0f) + (gun.attack.Current)), 
-                        (CrowdControl)(playerStatus.property | gun.property));
-                    
-                    if (bknock)
-                    {
-                        otherStatus.gameObject.transform.Translate(direction);
-                    }
-                }
-
-                var hitEffectObject = Instantiate(hitEffect.gameObject, transform.position, Quaternion.identity);
-                hitEffectObject.transform.LookAt(gun.transform.position);
-                Destroy(hitEffectObject, 5f);
-                
-                // other.gameObject.GetComponent<StatusBase>().ApplyDamageRPC(playerStatus.damage.Current + gun.attack, (CrowdControl)(playerStatus.property | gun.property));
-                Destroy(gameObject);
-            }
+            Destroy(gameObject);
         }
         
         [BurstCompile]
