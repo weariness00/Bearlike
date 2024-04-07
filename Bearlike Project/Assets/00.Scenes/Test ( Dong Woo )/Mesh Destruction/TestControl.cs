@@ -8,16 +8,29 @@ namespace Test
         public float speed;
         public float mouseSpeed;
         // Start is called before the first frame update
-        void Start()
+        public override void Spawned()
         {
-            var c = Camera.main;
-            c.transform.position = transform.position;
-            c.transform.rotation = transform.rotation;
-            c.transform.SetParent(transform);
+            if (HasInputAuthority)
+            {
+                name += "_Local";
+                var c = Camera.main;
+                c.transform.position = transform.position;
+                c.transform.rotation = transform.rotation;
+                c.transform.SetParent(transform);
+            }
+            else
+            {
+                name += "Remote";
+            }
         }
-        
+
         public override void FixedUpdateNetwork()
         {
+            if (HasStateAuthority == false)
+            {
+                return;
+            }
+            
             if (GetInput(out TsetServer.TestInputData data))
             {
                 if (data.Cursor)

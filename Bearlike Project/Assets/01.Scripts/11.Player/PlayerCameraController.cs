@@ -16,10 +16,10 @@ namespace Player
         {
             if (HasInputAuthority == false)
             {
-                Destroy(targetCamera.GetComponent<UniversalAdditionalCameraData>());
-                Destroy(targetCamera.GetComponent<AudioListener>());
-                Destroy(targetCamera);
-                Destroy(weaponCamera.gameObject);
+                targetCamera.GetComponent<AudioListener>().enabled = false;
+                targetCamera.enabled = false;
+                weaponCamera.enabled = false;
+
                 return;
             }
 

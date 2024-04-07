@@ -43,16 +43,13 @@ namespace Script.Photon
         public Action<GameObject> SpawnSuccessAction; // 스폰 되면 실행하는 이벤트
         private Coroutine _currentSpawnCoroutine = null; // 스폰 코루틴
 
-        public void Start()
+        public override void Spawned()
         {
             if (isStartSpawn)
             {
-                SpawnStart();
+                SpawnStartRPC();
             }
-        }
-
-        public override void Spawned()
-        {
+            
             if (spawnPlace.Length == 0)
             {
                 _currentSpawnPlace = gameObject.transform;
@@ -99,6 +96,17 @@ namespace Script.Photon
         {
             _currentSpawnCoroutine = StartCoroutine(SpawnCoroutine());
         }
+        
+        void NextObject()
+        {
+            if (isRandomObject)
+                _SpawnObjectOrderCount = Random.Range(0, spawnObjectOrders.Length);
+            else
+                _SpawnObjectOrderCount++;
+
+            if (spawnObjectOrders.Length - 1 < _SpawnObjectOrderCount) _SpawnObjectOrderCount = 0;
+            _currentSpawnObjectOrder = spawnObjectList[_SpawnObjectOrderCount];
+        }
 
         void NextPlace()
         {
@@ -122,20 +130,11 @@ namespace Script.Photon
             {
                 _spawnPlaceCount = Random.Range(0, length);
             }
+
+            if (_spawnPlaceCount >= length) _spawnPlaceCount = 0;
             
             // 위치 할당
             _currentSpawnPlace = spawnPlace.GetSpot(_spawnPlaceCount);
-        }
-
-        void NextObject()
-        {
-            if (isRandomObject)
-                _SpawnObjectOrderCount = Random.Range(0, spawnObjectOrders.Length);
-            else
-                _SpawnObjectOrderCount++;
-
-            if (spawnObjectOrders.Length - 1 < _SpawnObjectOrderCount) _SpawnObjectOrderCount = 0;
-            _currentSpawnObjectOrder = spawnObjectList[_SpawnObjectOrderCount];
         }
         
         void NextInterval()
@@ -150,8 +149,8 @@ namespace Script.Photon
                 _spawnIntervalCount =  Random.Range(0, spawnIntervals.Length);
             else
                 _spawnIntervalCount++;
-            
-            if (spawnIntervals.Length - 1 < _spawnIntervalCount) _spawnIntervalCount = 0;
+
+            if (_spawnIntervalCount >= spawnIntervals.Length) _spawnIntervalCount = 0;
             CurrentSpawnInterval = TickTimer.CreateFromSeconds(Runner, spawnIntervals[_spawnIntervalCount]);
         }
         
@@ -215,7 +214,7 @@ namespace Script.Photon
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void SetIsSpawnRPC(NetworkBool value) => IsSpawn = value;
 
-        [Rpc(RpcSources.All, RpcTargets.All)]
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
         public void SetSpawnCountRPC(StatusValueType type, int value)
         {
             switch (type)
@@ -231,6 +230,9 @@ namespace Script.Photon
                     break;
             }
         }
+        
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void SpawnStartRPC() => SpawnStart();
 
         #endregion
     }

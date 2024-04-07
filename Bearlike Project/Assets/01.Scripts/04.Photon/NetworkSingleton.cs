@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Photon
 {
-    public class NetworkSingleton<T> : NetworkBehaviour, ISingleton where T : Component, new()
+    public class NetworkSingleton<T> : NetworkBehaviourEx, ISingleton where T : Component, new()
     {
         public static T Instance
         {

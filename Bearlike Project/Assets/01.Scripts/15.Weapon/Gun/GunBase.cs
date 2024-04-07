@@ -1,6 +1,7 @@
 ﻿using Fusion;
 using Inho_Test_.Player;
 using Manager;
+using Player;
 using State.StateClass.Base;
 using Status;
 using UnityEngine;
@@ -12,6 +13,8 @@ namespace Script.Weapon.Gun
 {
     public class GunBase : WeaponBase
     {
+        private Camera _camera;
+        
         [Header("총 이펙트")] 
         public VisualEffect shootEffect; // 발사 이펙트
         
@@ -98,7 +101,7 @@ namespace Script.Weapon.Gun
         public Vector3 CheckRay()
         {
             Vector3 detination = Vector3.zero;
-            Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+            Ray ray = _camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
             
             DebugManager.DrawRay(ray.origin, ray.direction * int.MaxValue, Color.red, 1.0f);
             
@@ -196,6 +199,12 @@ namespace Script.Weapon.Gun
         {
             base.Equip();
             EquipAction?.Invoke();
+
+            var playerObject = Runner.GetPlayerObject(Runner.LocalPlayer);
+            if (playerObject.TryGetComponent(out PlayerCameraController pcc))
+            {
+                _camera = pcc.targetCamera;
+            }
         }
 
         #endregion

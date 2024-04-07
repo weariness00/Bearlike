@@ -1,11 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using _04.Photon;
 using Fusion;
 using Manager;
 using Monster;
 using Photon;
-using Player;
 using State.StateClass;
 using State.StateClass.Base;
 using UnityEngine;
@@ -13,7 +11,7 @@ using UnityEngine.VFX;
 
 namespace Skill.Container
 {
-    public class SkillCleanShoot : SkillBase
+    public class CleanShoot : SkillBase
     {
         public Canvas cleanShootCanvas;
         public GameObject areaObject;

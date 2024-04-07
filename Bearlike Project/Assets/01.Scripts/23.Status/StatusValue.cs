@@ -9,7 +9,10 @@ namespace Status
     {
         Min,
         Current,
-        Max
+        Max,
+        
+        CurrentAndMax,
+        CurrentAndMin,
     }
     
     [System.Serializable]

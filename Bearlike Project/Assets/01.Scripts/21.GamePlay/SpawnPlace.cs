@@ -31,7 +31,7 @@ namespace Script.GamePlay
         }
 
         public Transform GetSpot(string name) => _spotDictionary[name];
-        public Transform GetSpot(int value) => _spotDictionary.Values.ToArray()[value];
+        public Transform GetSpot(int value) => _spotList.Count > value ? _spotDictionary.Values.ToArray()[value] : null;
 
         public Transform GetRandomSpot()
         {
