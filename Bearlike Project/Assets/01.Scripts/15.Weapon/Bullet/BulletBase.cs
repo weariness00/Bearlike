@@ -5,6 +5,7 @@ using State.StateClass.Base;
 using Status;
 using Unity.Burst;
 using Unity.Mathematics;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -17,7 +18,10 @@ namespace Weapon.Bullet
         public StatusValue<float> speed = new StatusValue<float>(){Max = 100.0f, Current = 50.0f};
         public Vector3 destination = Vector3.zero;
 
-        public VisualEffect hitEffect; 
+        public VisualEffect hitEffect;
+
+        private Vector3 direction;
+        public bool bknock = false;
 
         #region 사정거리
 
@@ -32,16 +36,19 @@ namespace Weapon.Bullet
         protected void Start()
         {
             _oldPosition = transform.position;
-            
+
+            direction = (destination - transform.position).normalized;
             transform.rotation = Quaternion.LookRotation(destination);
+            
             Destroy(gameObject, 5f);
         }
         
         public override void FixedUpdateNetwork()
         { 
-            _oldPosition = transform.position;
-            transform.position += transform.forward * Runner.DeltaTime * speed;
-                
+            transform.position += direction * Runner.DeltaTime * speed;
+            // transform.position += transform.forward * Runner.DeltaTime * speed;
+            transform.Rotate(new Vector3(0, 90, 0), Space.Self);
+
             if (FastDistance(transform.position, _oldPosition) >= maxMoveDistance) Destroy(gameObject);
         }
         
@@ -53,12 +60,19 @@ namespace Weapon.Bullet
                 var playerStatus = player.transform.root.GetComponent<StatusBase>();
                 var gun = player.GetComponentInChildren<GunBase>();
 
+                Debug.Log($"{bknock}");
+                
                 StatusBase otherStatus;
                 if (other.TryGetComponent(out otherStatus) || other.transform.root.TryGetComponent(out otherStatus))
                 {
                     otherStatus.ApplyDamageRPC(
-                        (int)(((100.0f + (playerStatus.damage.Current)) / 100.0f) + (gun.attack.Current)),
+                        (int)(((100.0f + (playerStatus.damage.Current)) / 100.0f) + (gun.attack.Current)), 
                         (CrowdControl)(playerStatus.property | gun.property));
+                    
+                    if (bknock)
+                    {
+                        otherStatus.gameObject.transform.Translate(direction);
+                    }
                 }
 
                 var hitEffectObject = Instantiate(hitEffect.gameObject, transform.position, Quaternion.identity);
