@@ -12,7 +12,7 @@ using Random = UnityEngine.Random;
 
 namespace Monster.Container
 {
-    public class MonsterDice : MonsterBase
+    public class Dice : MonsterBase
     {
         private BehaviorTreeRunner _behaviorTreeRunner;
         private bool _isCollide = true; // 현재 충돌 중인지
