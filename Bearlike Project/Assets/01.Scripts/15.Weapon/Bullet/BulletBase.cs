@@ -5,7 +5,9 @@ using State.StateClass.Base;
 using Status;
 using Unity.Burst;
 using Unity.Mathematics;
+using UnityEditorInternal;
 using UnityEngine;
+using UnityEngine.VFX;
 
 namespace Weapon.Bullet
 {
@@ -13,8 +15,13 @@ namespace Weapon.Bullet
     public class BulletBase : NetworkBehaviourEx
     {
         public StatusValue<int> damage = new StatusValue<int>() {Max = 100, Current = 100 };
-        public StatusValue<int> speed = new StatusValue<int>(){Max = 100, Current = 100};
+        public StatusValue<float> speed = new StatusValue<float>(){Max = 100.0f, Current = 50.0f};
         public Vector3 destination = Vector3.zero;
+
+        public VisualEffect hitEffect;
+
+        private Vector3 direction;
+        public bool bknock = false;
 
         #region 사정거리
 
@@ -29,19 +36,22 @@ namespace Weapon.Bullet
         protected void Start()
         {
             _oldPosition = transform.position;
-            
+
+            direction = (destination - transform.position).normalized;
             transform.rotation = Quaternion.LookRotation(destination);
+            
             Destroy(gameObject, 5f);
         }
-
+        
         public override void FixedUpdateNetwork()
-        {
-            _oldPosition = transform.position;
-            transform.position += transform.forward * speed * Runner.DeltaTime;
+        { 
+            transform.position += direction * Runner.DeltaTime * speed;
+            // transform.position += transform.forward * Runner.DeltaTime * speed;
+            transform.Rotate(new Vector3(0, 90, 0), Space.Self);
 
             if (FastDistance(transform.position, _oldPosition) >= maxMoveDistance) Destroy(gameObject);
         }
-
+        
         private void OnTriggerEnter(Collider other)
         {
             StatusBase otherStatus;
@@ -54,6 +64,33 @@ namespace Weapon.Bullet
             else if (other.CompareTag("Destruction"))
             {
                 NetworkMeshDestructSystem.Instance.DestructRPC(other.GetComponent<NetworkObject>().Id,PrimitiveType.Cube, transform.position, Vector3.one * 2, transform.forward);
+            }
+            if (!other.CompareTag("Bullet"))
+            {
+                // // player가 건이다.
+                var playerStatus = player.transform.root.GetComponent<StatusBase>();
+                var gun = player.GetComponentInChildren<GunBase>();
+
+                Debug.Log($"{bknock}");
+                
+                StatusBase otherStatus;
+                if (other.TryGetComponent(out otherStatus) || other.transform.root.TryGetComponent(out otherStatus))
+                {
+                    otherStatus.ApplyDamageRPC(
+                        (int)(((100.0f + (playerStatus.damage.Current)) / 100.0f) + (gun.attack.Current)), 
+                        (CrowdControl)(playerStatus.property | gun.property));
+                    
+                    if (bknock)
+                    {
+                        otherStatus.gameObject.transform.Translate(direction);
+                    }
+                }
+
+                var hitEffectObject = Instantiate(hitEffect.gameObject, transform.position, Quaternion.identity);
+                hitEffectObject.transform.LookAt(gun.transform.position);
+                Destroy(hitEffectObject, 5f);
+                
+                // other.gameObject.GetComponent<StatusBase>().ApplyDamageRPC(playerStatus.damage.Current + gun.attack, (CrowdControl)(playerStatus.property | gun.property));
                 Destroy(gameObject);
             }
         }

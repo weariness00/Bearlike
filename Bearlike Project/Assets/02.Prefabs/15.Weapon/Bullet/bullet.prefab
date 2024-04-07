@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 7359014855915151186}
   m_Layer: 0
   m_Name: bullet
-  m_TagString: Untagged
+  m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -121,24 +121,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage:
     _min: 0
-    _max: 0
-    _current: 0
+    _max: 100
+    _current: 100
     isOverMax: 0
     isOverMin: 0
     isMin: 0
-    isMax: 0
+    isMax: 1
   speed:
     _min: 0
-    _max: 900
-    _current: 900
+    _max: 100
+    _current: 50
     isOverMax: 0
     isOverMin: 0
     isMin: 0
     isMax: 0
-  destination: {x: -11.766509, y: -4.285158, z: -33.88011}
+  destination: {x: 0, y: 0, z: 0}
   player: {fileID: 0}
-  moveDistance: 0
-  maxMoveDistance: 30
+  maxMoveDistance: 0
 --- !u!54 &-8670076698105449635
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -179,7 +178,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 14336
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0

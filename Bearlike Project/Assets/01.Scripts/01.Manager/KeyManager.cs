@@ -26,6 +26,7 @@ namespace Manager
         Reload,
         
         FirstSkill,
+        SecondSkill,
         Ultimate,
         
         LockCursor,

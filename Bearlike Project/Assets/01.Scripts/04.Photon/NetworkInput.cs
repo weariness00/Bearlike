@@ -26,6 +26,7 @@ namespace Photon
         public NetworkBool Cursor;
 
         public NetworkBool FirstSkill;
+        public NetworkBool SecondSkill;
         public NetworkBool Ultimate;
     }
 }

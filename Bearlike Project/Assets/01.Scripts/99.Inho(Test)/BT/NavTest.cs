@@ -4,14 +4,17 @@ using UnityEngine.AI;
 public class NavTest : MonoBehaviour
 {
     [SerializeField] private GameObject player;
-    public NavMeshAgent agent;
+    [SerializeField] private GameObject agentGameObject;
+    private NavMeshAgent _agent;
     
     void Start()
     {
+        _agent = agentGameObject.GetComponent<NavMeshAgent>();
     }
 
     void Update()
     {
-        agent.SetDestination(player.transform.position);
+        _agent.SetDestination(player.transform.position);
+        // Debug.Log($"{agentGameObject.transform.position}");   
     }
 }

@@ -274,57 +274,57 @@ namespace BehaviorTree
                     new ActionNode(CheckMoreHp),
                     new ActionNode(StartDefence),
                     new ActionNode(TermFuction)
-                ),
-                new SequenceNode
-                (
-                    new ActionNode(StartRun),
-                    new ActionNode(TermFuction),
-                    new ActionNode(StopRun)
-                ),
-                new SequenceNode
-                (
-                    new ActionNode(CheckAttackAction), // Kick
-                    new ActionNode(CheckAttackDistance),
-                    new ActionNode(StartRotate),
-                    new ActionNode(StartAttack),
-                    new ActionNode(TermFuction)
-                ),
-                new SequenceNode
-                (
-                    new ActionNode(CheckRushAction), // Rush
-                    new ActionNode(CheckRushDistance),
-                    new ActionNode(StartRotate),
-                    new ActionNode(StartRush),
-                    new ActionNode(TermFuction)
-                ),
-                new SequenceNode
-                (
-                    new ActionNode(CheckJumpAttackAction), // JumpAttack
-                    new ActionNode(StartRotate),
-                    new ActionNode(StartJumpAttack),
-                    new ActionNode(TermFuction)
-                ),
-                new SequenceNode
-                (
-                    new ActionNode(CheckFartAction), // fart
-                    new ActionNode(StartFart),
-                    new ActionNode(TermFuction)
-                ),
-                new SequenceNode
-                ( // take a rest
-                    new ActionNode(CheckRestAction),
-                    new ActionNode(CheckRestHp),
-                    new ActionNode(StartRest),
-                    new ActionNode(TermFuction)
-                ),
-                new SequenceNode
-                ( // CoinAttack
-                    new ActionNode(CheckCoinAttackAction),
-                    new ActionNode(CheckCoinAttackDistance),
-                    new ActionNode(StartCoinAttack),
-                    new ActionNode(TermFuction)
-                )
-                // // sleep
+                )//,
+                // new SequenceNode
+                // (
+                //     new ActionNode(StartRun),
+                //     new ActionNode(TermFuction),
+                //     new ActionNode(StopRun)
+                // ),
+                // new SequenceNode
+                // (
+                //     new ActionNode(CheckAttackAction), // Kick
+                //     new ActionNode(CheckAttackDistance),
+                //     new ActionNode(StartRotate),
+                //     new ActionNode(StartAttack),
+                //     new ActionNode(TermFuction)
+                // ),
+                // new SequenceNode
+                // (
+                //     new ActionNode(CheckRushAction), // Rush
+                //     new ActionNode(CheckRushDistance),
+                //     new ActionNode(StartRotate),
+                //     new ActionNode(StartRush),
+                //     new ActionNode(TermFuction)
+                // ),
+                // new SequenceNode
+                // (
+                //     new ActionNode(CheckJumpAttackAction), // JumpAttack
+                //     new ActionNode(StartRotate),
+                //     new ActionNode(StartJumpAttack),
+                //     new ActionNode(TermFuction)
+                // ),
+                // new SequenceNode
+                // (
+                //     new ActionNode(CheckFartAction), // fart
+                //     new ActionNode(StartFart),
+                //     new ActionNode(TermFuction)
+                // ),
+                // new SequenceNode
+                // ( // take a rest
+                //     new ActionNode(CheckRestAction),
+                //     new ActionNode(CheckRestHp),
+                //     new ActionNode(StartRest),
+                //     new ActionNode(TermFuction)
+                // ),
+                // new SequenceNode
+                // ( // CoinAttack
+                //     new ActionNode(CheckCoinAttackAction),
+                //     new ActionNode(CheckCoinAttackDistance),
+                //     new ActionNode(StartCoinAttack),
+                //     new ActionNode(TermFuction)
+                // )
+                // // // sleep
             );
         }
 
@@ -458,49 +458,14 @@ namespace BehaviorTree
 
         #region HPCheck
 
-        private struct CheckHpJob : IJob
-        {
-            public float Current;
-            public float Max;
-            public NativeArray<float> Result;
-
-            public void Execute()
-            {
-                Result[0] = Current / Max;
-            }
-        }
-
         INode.NodeState CheckMoreHp()
         {
-            NativeArray<float> results = new NativeArray<float>(1, Allocator.TempJob);
-
-            CheckHpJob Job = new CheckHpJob()
-            {
-                Current = _status.hp.Current,
-                Max = _status.hp.Max,
-                Result = results
-            };
-
-            JobHandle jobHandle = Job.Schedule();
-
-            jobHandle.Complete();
-
-            float result = results[0];
-            results.Dispose();
-
-            // Log.Debug($"CheckHP : {result}");
-
-            if (result >= 0.5f) // 정밀한 검사 필요
+            if ((_status.hp.Current / _status.hp.Max) >= 0.5f) // 정밀한 검사 필요
             {
                 return INode.NodeState.Success;
             }
 
             return INode.NodeState.Failure;
-
-            // if (_status.hp.Current / _status.hp.Max > 0.5f)
-            // {
-            //     return INode.NodeState.Success;
-            // }
         }
 
         #endregion
@@ -881,23 +846,7 @@ namespace BehaviorTree
 
         INode.NodeState CheckRestHp()
         {
-            NativeArray<float> results = new NativeArray<float>(1, Allocator.TempJob);
-
-            CheckHpJob Job = new CheckHpJob()
-            {
-                Current = _status.hp.Current,
-                Max = _status.hp.Max,
-                Result = results
-            };
-
-            JobHandle jobHandle = Job.Schedule();
-
-            jobHandle.Complete();
-
-            float result = results[0];
-            results.Dispose();
-
-            if (result <= 0.5f) // 정밀한 검사 필요
+            if ((_status.hp.Current / _status.hp.Max) <= 0.5f) // 정밀한 검사 필요
             {
                 return INode.NodeState.Success;
             }

@@ -294,6 +294,8 @@ namespace Photon
 
             if (KeyManager.InputAction(KeyToAction.FirstSkill))
                 playerInputData.FirstSkill = trueValue;
+            if (KeyManager.InputAction(KeyToAction.SecondSkill))
+                playerInputData.SecondSkill = trueValue;
             if (KeyManager.InputAction(KeyToAction.Ultimate))
                 playerInputData.Ultimate = trueValue;
 

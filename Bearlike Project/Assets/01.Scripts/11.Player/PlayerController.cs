@@ -26,6 +26,7 @@ namespace Player
         public PlayerCameraController cameraController;
         public SkillSystem skillSystem;
         public WeaponSystem weaponSystem;
+        public Canvas GunUI;
         public ItemInventory itemInventory;
         private NetworkMecanimAnimator _networkAnimator;
         [HideInInspector] public SimpleKCC simpleKcc;
@@ -78,6 +79,8 @@ namespace Player
                 // equipment?.Equip();
                 weaponSystem.gun?.Equip();
 
+                GunUI.gameObject.SetActive(true);
+                
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
             }
             else

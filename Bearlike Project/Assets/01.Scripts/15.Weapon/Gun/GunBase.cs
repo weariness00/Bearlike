@@ -81,6 +81,8 @@ namespace Script.Weapon.Gun
                     
                     if(shootEffect != null) shootEffect.Play();
                     bullet.destination = dst;
+                    bullet.hitEffect = hitEffect;
+                    bullet.bknock = false;
                     
                     var transform1 = transform;
                     Instantiate(bullet.gameObject, transform1.position, transform1.rotation);
@@ -204,6 +206,13 @@ namespace Script.Weapon.Gun
                 _camera = pcc.targetCamera;
             }
         }
+
+        #endregion
+
+        #region RPC Function
+
+        [Rpc(RpcSources.All,RpcTargets.StateAuthority)]
+        public void SetDestinationRPC(Vector3 dir) => bullet.destination = dir;
 
         #endregion
     }
