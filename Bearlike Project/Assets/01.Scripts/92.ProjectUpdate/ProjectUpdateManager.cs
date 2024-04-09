@@ -13,6 +13,7 @@ using Skill;
 using Status;
 using UnityEngine;
 using Util;
+using Weapon.Gun;
 
 namespace ProjectUpdate
 {
@@ -154,6 +155,28 @@ namespace ProjectUpdate
                     MonsterBase.AddLootingData(lootingData.TargetID, lootingData);
                 }
                 LoadingManager.EndWait("몬스터 아이템 드랍율 불러오기 성공");
+            }, true, true);
+            
+            // Weapon
+            GunBase.ClearInfosData();
+            GunBase.ClearStatusData();
+            WebRequestJson("Gun", "Gun", json =>
+            {
+                var data = JsonConvert.DeserializeObject<GunJsonData[]>(json);
+                foreach (var gunData in data)
+                {
+                    GunBase.AddInfoData(gunData.Id, gunData);
+                }
+                LoadingManager.EndWait("총 정보 불러오기 성공");
+            }, true, true);
+            WebRequestJson("Gun/Status", "GunStatus", json =>
+            {
+                var data = JsonConvert.DeserializeObject<StatusJsonData[]>(json);
+                foreach (var statusJsonData in data)
+                {
+                    GunBase.AddStatusData(statusJsonData.ID, statusJsonData);
+                }
+                LoadingManager.EndWait("총 정보 (Status) 불러오기 성공");
             }, true, true);
             
             // Stage 업데이트
