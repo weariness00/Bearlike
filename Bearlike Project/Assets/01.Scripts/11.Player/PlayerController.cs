@@ -67,24 +67,23 @@ namespace Player
             Cursor.lockState = CursorLockMode.Locked;
             simpleKcc = gameObject.GetOrAddComponent<SimpleKCC>();
             simpleKcc.Collider.tag = "Player";
-            
+            weaponSystem.gun?.Equip(gameObject);
+
             if (HasInputAuthority)
             {
                 Object.
                 name = "Local Player";
                 
                 Runner.SetPlayerObject(Runner.LocalPlayer, Object);
-                // equipment?.Equip();
-                weaponSystem.gun?.Equip();
 
                 GunUI.gameObject.SetActive(true);
-                
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
             }
             else
             {
                 name = "Remote Player";
             }
+            
         }
 
         public override void FixedUpdateNetwork()

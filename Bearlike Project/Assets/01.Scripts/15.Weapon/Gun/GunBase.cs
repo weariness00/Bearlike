@@ -1,6 +1,8 @@
-﻿using Status;
+﻿using System.Collections.Generic;
+using Status;
 using Fusion;
 using Manager;
+using Monster;
 using Player;
 using Status;
 using UnityEngine;
@@ -11,6 +13,22 @@ namespace Weapon.Gun
 {
     public abstract class GunBase : WeaponBase
     {
+        #region Static
+
+        // Info Data 캐싱
+        private static readonly Dictionary<int, MonsterJsonData> InfoDataCash = new Dictionary<int, MonsterJsonData>();
+        public static void AddInfoData(int id, MonsterJsonData data) => InfoDataCash.TryAdd(id, data);
+        public static MonsterJsonData GetInfoData(int id) => InfoDataCash.TryGetValue(id, out var data) ? data : new MonsterJsonData();
+        public static void ClearInfosData() => InfoDataCash.Clear();
+        
+        // Status Data 캐싱
+        private static readonly Dictionary<int, StatusJsonData> StatusDataChasing = new Dictionary<int, StatusJsonData>();
+        public static void AddStatusData(int id, StatusJsonData data) => StatusDataChasing.TryAdd(id, data);
+        public static StatusJsonData GetStatusData(int id) => StatusDataChasing.TryGetValue(id, out var data) ? data : new StatusJsonData();
+        public static void ClearStatusData() => StatusDataChasing.Clear();
+
+        #endregion
+        
         private Camera _camera;
 
         [Header("총 정보")] 
@@ -170,13 +188,12 @@ namespace Weapon.Gun
         // public bool IsEquip { get; set; }
         // public bool IsGun { get; set; }
 
-        public override void Equip()
+        public override void Equip(GameObject equipObject)
         {
-            base.Equip();
+            base.Equip(equipObject);
             EquipAction?.Invoke();
-
-            var playerObject = Runner.GetPlayerObject(Runner.LocalPlayer);
-            if (playerObject.TryGetComponent(out PlayerCameraController pcc))
+            
+            if (equipObject.TryGetComponent(out PlayerCameraController pcc))
             {
                 _camera = pcc.targetCamera;
             }

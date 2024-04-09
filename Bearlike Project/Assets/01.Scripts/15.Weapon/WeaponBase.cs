@@ -15,7 +15,7 @@ namespace Weapon
         public bool IsEquip { get; set; }
         public bool IsGun { get; set; }
 
-        public void Equip();
+        public void Equip(GameObject equipObject);
     }
 
     [RequireComponent(typeof(StatusBase))]
@@ -50,7 +50,7 @@ namespace Weapon
         public bool IsEquip { get; set; }
         public bool IsGun { get; set; }
         
-        public virtual void Equip()
+        public virtual void Equip(GameObject equipObject)
         {
             if (HasInputAuthority)
             {
