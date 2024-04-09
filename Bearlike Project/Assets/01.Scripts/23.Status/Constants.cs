@@ -1,4 +1,4 @@
-﻿namespace State
+﻿namespace Status
 {
     public class Define
     {

@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using UnityEngine.Networking;
 using Util;
 
-namespace ProjectUpdate
+namespace ProjectUpdate 
 {
     public class WebManager : Singleton<WebManager>
     {

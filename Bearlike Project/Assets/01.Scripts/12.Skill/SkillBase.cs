@@ -66,13 +66,12 @@ namespace Skill
 
         public SkillJsonData GetJsonData()
         {
-            
             return new SkillJsonData();
         }
         public void SetJsonData(SkillJsonData json)
         {
             explain = json.Explain;
-            coolTime.Current = coolTime.Max = json.CoolTime;
+            coolTime.Max = json.CoolTime;
             type = json.Type;
         }
                 

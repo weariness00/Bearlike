@@ -1,11 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Status;
 using Fusion;
 using Manager;
 using Monster;
 using Photon;
-using State.StateClass;
-using State.StateClass.Base;
 using UnityEngine;
 using UnityEngine.VFX;
 

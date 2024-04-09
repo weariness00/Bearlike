@@ -1,9 +1,9 @@
 ﻿using System;
+using Status;
 using BehaviorTree.Base;
 using Data;
 using Fusion;
 using Manager;
-using State.StateClass.Base;
 using Status;
 using UnityEngine;
 using UnityEngine.AI;
@@ -22,7 +22,6 @@ namespace Monster.Container
         {
             base.Start();
             _behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
-
             moveDelay.Max = 1f / status.moveSpeed;
         }
 
@@ -39,7 +38,7 @@ namespace Monster.Container
         public override void FixedUpdateNetwork()
         {
             base.FixedUpdateNetwork();
-            _behaviorTreeRunner.Operator();
+             _behaviorTreeRunner.Operator();
         }
 
         private INode InitBT()

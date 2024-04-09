@@ -160,7 +160,6 @@ Transform:
   - {fileID: 944830762}
   - {fileID: 838622476}
   - {fileID: 718548881}
-  - {fileID: 639417359}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &42810328
@@ -195,7 +194,7 @@ MonoBehaviour:
   ObjectInterest: 1
   Flags: 262145
   NestedObjects:
-  - {fileID: 639417358}
+  - {fileID: 217900966}
   NetworkedBehaviours:
   - {fileID: 42810328}
   - {fileID: 541677324}
@@ -664,97 +663,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 541677325}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &639417357
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 42810327}
-    m_Modifications:
-    - target: {fileID: -4131508351857705185, guid: 4d9a8e2cb506a9d4e9a99814933f74c1,
-        type: 3}
-      propertyPath: SortKey
-      value: 3941888310
-      objectReference: {fileID: 0}
-    - target: {fileID: 3904236033576063441, guid: 4d9a8e2cb506a9d4e9a99814933f74c1,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3904236033576063441, guid: 4d9a8e2cb506a9d4e9a99814933f74c1,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 4.28
-      objectReference: {fileID: 0}
-    - target: {fileID: 3904236033576063441, guid: 4d9a8e2cb506a9d4e9a99814933f74c1,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3904236033576063441, guid: 4d9a8e2cb506a9d4e9a99814933f74c1,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3904236033576063441, guid: 4d9a8e2cb506a9d4e9a99814933f74c1,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3904236033576063441, guid: 4d9a8e2cb506a9d4e9a99814933f74c1,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3904236033576063441, guid: 4d9a8e2cb506a9d4e9a99814933f74c1,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3904236033576063441, guid: 4d9a8e2cb506a9d4e9a99814933f74c1,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3904236033576063441, guid: 4d9a8e2cb506a9d4e9a99814933f74c1,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3904236033576063441, guid: 4d9a8e2cb506a9d4e9a99814933f74c1,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4424066798281067371, guid: 4d9a8e2cb506a9d4e9a99814933f74c1,
-        type: 3}
-      propertyPath: m_Name
-      value: PiggyBank(Original)
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 4d9a8e2cb506a9d4e9a99814933f74c1, type: 3}
---- !u!114 &639417358 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: -4131508351857705185, guid: 4d9a8e2cb506a9d4e9a99814933f74c1,
-    type: 3}
-  m_PrefabInstance: {fileID: 639417357}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &639417359 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3904236033576063441, guid: 4d9a8e2cb506a9d4e9a99814933f74c1,
-    type: 3}
-  m_PrefabInstance: {fileID: 639417357}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &718548880
 GameObject:
   m_ObjectHideFlags: 0
@@ -957,7 +865,7 @@ MonoBehaviour:
   isRandomObject: 0
   isRandomPlace: 0
   isRandomInterval: 0
-  parentTransform: {fileID: 0}
+  parentTransform: {fileID: 2096895239}
   spawnCount:
     _min: 0
     _max: 3
@@ -1813,7 +1721,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2069443426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1967,6 +1875,7 @@ GameObject:
   - component: {fileID: 1909804824607438215}
   - component: {fileID: 5293203567602218028}
   - component: {fileID: 690899804910927509}
+  - component: {fileID: 8430227219468163595}
   m_Layer: 0
   m_Name: Destory Stage Data
   m_TagString: Untagged
@@ -2034,7 +1943,6 @@ MonoBehaviour:
   nextStagePortal: {fileID: 1267372961}
   monsterSpawnerList:
   - {fileID: 541677324}
-  - {fileID: 2069443426}
   - {fileID: 825602875}
   aliveMonsterCount:
     _min: 0
@@ -2052,6 +1960,33 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+--- !u!54 &8430227219468163595
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3775322230690492626}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 4096
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

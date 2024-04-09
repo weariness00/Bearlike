@@ -1,6 +1,3 @@
-using Script.Weapon.Gun;
-using State.StateClass.Base;
-
 namespace Weapon.Gun
 {
     public class Sniper : GunBase
@@ -17,10 +14,6 @@ namespace Weapon.Gun
             base.Start();
 
             ammo.Max = ammo.Current = 36;
-            
-            attack.Max = attack.Current = 150;
-            property = (int)CrowdControl.Normality;
-            
         }
         
         #region Bullet Funtion
@@ -39,7 +32,7 @@ namespace Weapon.Gun
             attackRange = 150.0f;
             
             bullet.maxMoveDistance = attackRange;
-            bullet.player = gameObject;
+            // bullet.player = gameObject;
         }
         
         #endregion

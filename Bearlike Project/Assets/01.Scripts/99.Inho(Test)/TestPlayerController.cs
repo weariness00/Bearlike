@@ -1,7 +1,5 @@
 using Player;
-using State;
-using State.StateClass;
-using State.StateClass.Base;
+using Status;
 using UnityEngine;
 
 public class TestPlayerController : MonoBehaviour

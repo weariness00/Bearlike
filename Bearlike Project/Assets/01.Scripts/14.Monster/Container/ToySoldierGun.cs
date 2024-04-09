@@ -18,7 +18,7 @@ namespace Monster.Container
 
         [Header("Bullet")]
         public Transform fireTransform; // 총알이 발사할 Transform
-        public NetworkPrefabRef bulletRef;
+        public GameObject bulletPrefab;
         
         [Header("Animation Clip")] 
         public AnimationClip idleClip;
@@ -248,10 +248,10 @@ namespace Monster.Container
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public async void SpawnBulletRPC()
         {
-            var bulletObject = await Runner.SpawnAsync(bulletRef, fireTransform.position, fireTransform.rotation);
-            var bulletBase = bulletObject.GetComponent<BulletBase>();
+            var bulletBase = bulletPrefab.GetComponent<BulletBase>();
+            bulletBase.status.damage.Current += status.damage.Current;
             
-            bulletBase.SetDamageRPC(StatusValueType.Current, bulletBase.damage + status.damage);
+            await Runner.SpawnAsync(bulletPrefab, fireTransform.position, fireTransform.rotation);
         }
 
         #endregion

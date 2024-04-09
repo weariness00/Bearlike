@@ -1,9 +1,7 @@
-using System;
 using GamePlay;
-using Player;
-using Script.Weapon.Gun;
 using Status;
 using UnityEngine;
+using Weapon.Gun;
 
 namespace Skill.Container
 {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
-using ProjectUpdate;
-using Script.Util;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Util;
 

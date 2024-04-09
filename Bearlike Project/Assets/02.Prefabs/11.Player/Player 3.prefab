@@ -237,7 +237,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 1073755063
+    m_Bits: 1073836983
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -2789,11 +2789,16 @@ PrefabInstance:
     - target: {fileID: -6221961776782598227, guid: f6c35e07e452a16428614d0fe19d704a,
         type: 3}
       propertyPath: NetworkedBehaviours.Array.size
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: -6221961776782598227, guid: f6c35e07e452a16428614d0fe19d704a,
         type: 3}
       propertyPath: NetworkedBehaviours.Array.data[1]
+      value: 
+      objectReference: {fileID: 3667057779155650318}
+    - target: {fileID: -6221961776782598227, guid: f6c35e07e452a16428614d0fe19d704a,
+        type: 3}
+      propertyPath: NetworkedBehaviours.Array.data[2]
       value: 
       objectReference: {fileID: 8492191567513275886}
     - target: {fileID: 759577123440539581, guid: f6c35e07e452a16428614d0fe19d704a,
@@ -2935,6 +2940,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f004f444c2d4985913efbb03d4535dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3667057779155650318 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2187215379228652678, guid: f6c35e07e452a16428614d0fe19d704a,
+    type: 3}
+  m_PrefabInstance: {fileID: 3224169773136229256}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8717525271143722632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!2083052967 &4676699994387117703 stripped
 VisualEffect:
   m_CorrespondingSourceObject: {fileID: 7807118108788114703, guid: f6c35e07e452a16428614d0fe19d704a,
@@ -2977,6 +2994,8 @@ MonoBehaviour:
     m_Bits: 0
   hitEffect: {fileID: 4676699994387117703}
   hitSound: {fileID: 0}
+  id: 0
+  explain: 
   shootEffect: {fileID: 0}
   shootSound: {fileID: 770567390074563906}
   emptyAmmoSound: {fileID: 7323448868112527230}
@@ -3008,17 +3027,10 @@ MonoBehaviour:
     isMin: 0
     isMax: 1
   attackRange: 0
-  attack:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  property: 0
+  fireTransform: {fileID: 0}
   reloadSpeed: 0.5
   bulletRadian: 0
+  bknock: 0
 --- !u!4 &8954117791491062700 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5836075655250462756, guid: f6c35e07e452a16428614d0fe19d704a,
@@ -3615,3 +3627,5 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  playerStatus: {fileID: 0}
+  gun: {fileID: 0}

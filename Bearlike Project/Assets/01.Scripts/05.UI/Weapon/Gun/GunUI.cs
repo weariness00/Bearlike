@@ -1,6 +1,6 @@
-using Script.Weapon.Gun;
 using TMPro;
 using UnityEngine;
+using Weapon.Gun;
 
 namespace UI.Weapon.Gun
 {

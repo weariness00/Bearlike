@@ -107,6 +107,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: -336949238657750538}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: df3a8025e48f9fb439696fe9dcc052bb,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8693081974366723898}
   m_SourcePrefab: {fileID: 100100000, guid: df3a8025e48f9fb439696fe9dcc052bb, type: 3}
 --- !u!1 &2329913424436010335 stripped
 GameObject:
@@ -133,6 +137,7 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 3378261525420806705}
   - {fileID: -336949238657750538}
+  - {fileID: 8693081974366723898}
 --- !u!65 &5587209023860092417
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -146,9 +151,9 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 79872
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -173,10 +178,10 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 79872
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -209,22 +214,94 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9157c914e81496ca531aa847af40355, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  status: {fileID: 0}
+  destination: {x: -17.54316, y: 99.12152, z: -1.22813}
+  hitEffect: {fileID: 0}
+  bknock: 0
+  maxMoveDistance: 30
+--- !u!114 &8693081974366723898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2329913424436010335}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
   damage:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  defence:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  avoid:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 1
+    isMin: 0
+    isMax: 0
+  moveSpeed:
     _min: 0
     _max: 100
     _current: 100
     isOverMax: 0
     isOverMin: 0
     isMin: 0
-    isMax: 1
-  speed:
+    isMax: 0
+  attackSpeed:
     _min: 0
-    _max: 100
-    _current: 50
+    _max: 0
+    _current: 0
     isOverMax: 0
     isOverMin: 0
     isMin: 0
     isMax: 0
-  destination: {x: 0, y: 0, z: 0}
-  player: {fileID: 0}
-  maxMoveDistance: 0
+  attackLateTime:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  attackRange:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  force:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  condition: 0
+  property: 0

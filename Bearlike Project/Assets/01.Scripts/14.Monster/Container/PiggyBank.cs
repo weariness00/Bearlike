@@ -1,12 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Status;
 using BehaviorTree.Base;
 using Data;
 using Fusion;
 using GamePlay;
-using State.StateClass;
-using State.StateClass.Base;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;

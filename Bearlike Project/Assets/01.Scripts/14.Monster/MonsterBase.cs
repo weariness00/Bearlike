@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using Data;
 using Fusion;
+using GamePlay.DeadBodyObstacle;
 using Item.Looting;
 using Manager;
 using Photon;
-using State.StateClass;
 using Status;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -13,7 +13,7 @@ using UnityEngine.AI;
 
 namespace Monster
 {
-    [RequireComponent(typeof(MonsterStatus), typeof(LootingTable), typeof(Rigidbody))]
+    [RequireComponent(typeof(MonsterStatus), typeof(LootingTable), typeof(DeadBodyObstacleObject))]
     public class MonsterBase : NetworkBehaviourEx, IJsonData<MonsterJsonData>
     {
         #region Static
@@ -40,14 +40,15 @@ namespace Monster
         
         [HideInInspector] public Rigidbody rigidbody;
         [HideInInspector] public NetworkMecanimAnimator networkAnimator;
+        [HideInInspector] public MonsterStatus status;
+        [HideInInspector] public LootingTable lootingTable;
+        private DeadBodyObstacleObject _deadBody;
         public Transform pivot; // Pivot이 메쉬 가운데가 아닌 다리에 위치할 떄가 있다. 그때 진짜 pivot으로 사용할 변수
         
         [Header("Monster 정보")]
         public int id = 0;
         public string explain;
         public string type;
-        public MonsterStatus status;
-        public LootingTable lootingTable;
         
         public Transform targetTransform;
         public LayerMask targetMask;
@@ -60,21 +61,27 @@ namespace Monster
         {
             rigidbody = GetComponent<Rigidbody>();
             networkAnimator = GetComponent<NetworkMecanimAnimator>();
+            _deadBody = GetComponent<DeadBodyObstacleObject>();
             if (pivot == null) pivot = transform;
             
             status = gameObject.GetOrAddComponent<MonsterStatus>();
             lootingTable = gameObject.GetOrAddComponent<LootingTable>();
 
             gameObject.layer = LayerMask.NameToLayer("Monster");
-            
         }
         
         public virtual void Start()
         {
             lootingTable.CalLootingItem(GetLootingData(id).LootingItems);
+            DieAction += () => _deadBody.OnDeadBodyRPC();
             DieAction += lootingTable.SpawnDropItem;
             
             status.SetJsonData(GetStatusData(id));
+        }
+
+        private void OnDestroy()
+        {
+            Destroy(lootingTable);
         }
 
         public override void FixedUpdateNetwork()
@@ -164,7 +171,7 @@ namespace Monster
         public void DieRPC()
         {
             DieAction?.Invoke();
-            gameObject.SetActive(false);
+            Destroy(this);
             DebugManager.Log($"몬스터[{name}]이 사망했습니다.");
         }
         

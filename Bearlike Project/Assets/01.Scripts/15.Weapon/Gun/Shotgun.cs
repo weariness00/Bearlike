@@ -1,6 +1,4 @@
 ﻿using System.Collections;
-using Script.Weapon.Gun;
-using State.StateClass.Base;
 using UnityEngine;
 
 namespace Weapon.Gun
@@ -30,10 +28,6 @@ namespace Weapon.Gun
             
             ammo.Max = 36;
             ammo.Current = ammo.Max;
-            
-            attack.Max = 5;
-            attack.Current = attack.Max;
-            property = (int)CrowdControl.Normality;
         } 
         
         public override void Shoot()
@@ -48,7 +42,6 @@ namespace Weapon.Gun
                     
                     if(shootEffect != null) shootEffect.Play();
                     bullet.hitEffect = hitEffect;
-                    
                     bullet.bknock = bknock;
                     // var bulletStatus = bullet.GetComponent<StatusBase>();
                     // bulletStatus.damage.Max = 9999;
@@ -80,26 +73,8 @@ namespace Weapon.Gun
         }
         
         #region Bullet Funtion
-
-        public override void BulletInit()
-        {
-            bulletFirePerMinute = 80;
-            
-            magazine.Max = 5;
-            magazine.Current = magazine.Max;
-            
-            fireLateSecond.Max = 60 / bulletFirePerMinute;
-            fireLateSecond.Current = float.MaxValue;
-            
-            reloadLateSecond.Max = reloadLateSecond.Current = 0.5f;
-
-            attackRange = 30.0f;
-            
-            bullet.maxMoveDistance = attackRange;
-            bullet.player = gameObject;
-        }
         
-        public override void ReLoadBullet()
+        public override void ReLoadBullet(int bulletAmount = int.MaxValue)
         {
             if (reloadLateSecond.isMax && ammo.isMin == false)
             {
@@ -122,12 +97,9 @@ namespace Weapon.Gun
         {
             for (int i = 0; i < repeatCount; ++i)
             {
-                SoundManager.Play(reloadSound);
-                magazine.Current += 1;
-                ammo.Current -= 1;
+                base.ReLoadBullet(1);
                 yield return new WaitForSeconds(waitTime);
             }
-            yield break;
         }
 
         #endregion

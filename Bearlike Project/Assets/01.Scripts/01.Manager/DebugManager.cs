@@ -46,8 +46,6 @@ namespace Manager
 
         #endregion
 
-        
-        
         public static void DrawRay(Vector3 position, Vector3 direction, Color color, float time)
         {
             if (!DebugManager.Instance.isDebug || !DebugManager.Instance.drawRay) return;

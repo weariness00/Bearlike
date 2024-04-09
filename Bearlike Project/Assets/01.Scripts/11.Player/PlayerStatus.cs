@@ -1,15 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Fusion;
-using GamePlay;
-using Manager;
-using State;
-using State.StateClass.Base;
 using Status;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Serialization;
-using Random = UnityEngine.Random;
 
 namespace Player
 {
@@ -134,33 +128,9 @@ namespace Player
             hp.Current -= value;
         }
         
-        public override void ApplyDamage(int damage, CrowdControl enemyProperty) // MonsterRef instigator,
+        public override void ApplyDamage(int applyDamage, CrowdControl cc) // MonsterRef instigator,
         {
-            if (hp.Current < 0)
-            {
-                return;
-            }
-
-            if (IsImmortal)
-            {
-                return;
-            }
-
-            if ((Random.Range(0.0f, 99.9f) < avoid.Current))
-            {
-                return;
-            }
-            
-            AddCondition(enemyProperty);         // Monster의 속성을 Player상태에 적용
-            
-            var damageRate = math.log10((damage / defence.Current) * 10);
-
-            if (WeakIsOn())
-            {
-                damageRate *= 1.5f;
-            }
-
-            hp.Current -= (int)(damageRate * damage);
+            base.ApplyDamage(applyDamage, cc);
 
             HpControlRPC();
         }
@@ -213,27 +183,10 @@ namespace Player
         // DeBug Function
         public override void ShowInfo()
         {
-            Debug.Log($"{gameObject.name} - 체력 : " +  hp.Current + $" 공격력 : " + damage.Current + $" 공격 속도 : " + attackSpeed.Current + $" 상태 : " + (CrowdControl)condition);    // condition이 2개 이상인 경우에는 어떻게 출력?
-        }
-        
-        
-        // ICondition Interface Function
-        public override bool On(CrowdControl condition) { return (base.condition & (int)condition) == (int)condition; }
-
-        public override bool NormalityIsOn() { return On(CrowdControl.Normality); }
-        public override bool PoisonedIsOn() { return On(CrowdControl.Poisoned); }
-        public override bool WeakIsOn() { return On(CrowdControl.Weak); }
-        
-        public override void AddCondition(CrowdControl condition)
-        {
-            if(!On(condition)) base.condition |= (int)condition;
-        }
-        
-        public override void DelCondition(CrowdControl condition)
-        {
-            if(On(condition)) base.condition ^= (int)condition;
         }
 
+        #region RPC Function
+        
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void SetRecoveryInjuryTimeRPC(float time) => recoveryFromInjuryTime.Current = time;
 
@@ -248,5 +201,7 @@ namespace Player
 
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void HpControlRPC() => HpControl();
+        
+        #endregion
     }
 }

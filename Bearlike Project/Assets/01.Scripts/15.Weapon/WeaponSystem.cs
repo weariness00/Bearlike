@@ -1,6 +1,4 @@
 ﻿using Fusion;
-using Script.Weapon.Gun;
-using UI.Weapon.Gun;
 using Unity.VisualScripting;
 using Weapon.Gun;
 

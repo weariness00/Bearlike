@@ -1,8 +1,10 @@
 using Data;
 using Fusion;
-using Status;
+using Manager;
+using Unity.Mathematics;
+using Random = UnityEngine.Random;
 
-namespace State.StateClass.Base
+namespace Status
 {    
     /// <summary>
     /// Object의 상태를 나타내는 열거형
@@ -17,7 +19,7 @@ namespace State.StateClass.Base
     /// <summary>
     /// 기본 능력치를 나타내는 Class
     /// </summary>
-    public abstract class StatusBase : NetworkBehaviour, IJsonData<StatusJsonData>
+    public class StatusBase : NetworkBehaviour, IJsonData<StatusJsonData>
     {
         #region Member Variable
         
@@ -54,24 +56,60 @@ namespace State.StateClass.Base
 
         #region Member Function
 
-        public abstract void MainLoop();
-        public abstract void ApplyDamage(int damage, CrowdControl enemyProperty);
-        public abstract void ShowInfo();
+        public virtual void MainLoop(){}
+
+        public virtual void ApplyDamage(int applyDamage, CrowdControl cc)
+        {
+            if (hp.isMin)
+            {
+                return;
+            }
+
+            if ((Random.Range(0f, 1f) < avoid.Current))
+            {
+                return;
+            }
+            
+            AddCondition(cc);         // Monster의 속성을 Player상태에 적용
+            
+            var damageRate = math.log10((applyDamage / defence.Current) * 10);
+
+            if (WeakIsOn())
+            {
+                damageRate *= 1.5f;
+            }
+            
+            hp.Current -= (int)(damageRate * applyDamage);
+        }
+
+        public virtual void ShowInfo()
+        {
+            DebugManager.Log($"{gameObject.name} - 체력 : " +  hp.Current + $" 공격력 : " + damage.Current + $" 공격 속도 : " + attackSpeed.Current + $" 상태 : " + (CrowdControl)condition);    // condition이 2개 이상인 경우에는 어떻게 출력?
+        }
 
         #endregion
 
         #region Condition Interface Functon
 
         // ICondition Interface Function
-        public abstract bool On(CrowdControl condition);
-            
-        public abstract bool NormalityIsOn();
-        public abstract bool PoisonedIsOn();
-        public abstract bool WeakIsOn();
-            
-        public abstract void AddCondition(CrowdControl condition);
-        public abstract void DelCondition(CrowdControl condition);
+        public virtual bool On(CrowdControl cc)
+        {
+            return (condition & (int)cc) == (int)cc;
+        }
+        // ICondition Interface Function
+        public virtual bool NormalityIsOn() { return On(CrowdControl.Normality); }
+        public virtual bool PoisonedIsOn() { return On(CrowdControl.Poisoned); }
+        public virtual bool WeakIsOn() { return On(CrowdControl.Weak); }
+
+        public virtual void AddCondition(CrowdControl cc)
+        {
+            if(!On(cc)) condition |= (int)cc;
+        }
         
+        public virtual void DelCondition(CrowdControl cc)
+        {
+            if(On(cc)) condition ^= (int)cc;
+        }
         #endregion
 
         #region Json Data Interface

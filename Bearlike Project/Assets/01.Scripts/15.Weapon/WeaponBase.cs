@@ -1,6 +1,6 @@
 ﻿using System;
+using Status;
 using Fusion;
-using State.StateClass.Base;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.VFX;
@@ -18,6 +18,7 @@ namespace Weapon
         public void Equip();
     }
 
+    [RequireComponent(typeof(StatusBase))]
     public class WeaponBase : NetworkBehaviour, IEquipment
     {
         public StatusBase status;
@@ -42,7 +43,6 @@ namespace Weapon
         public override void Spawned()
         {
             base.Spawned();
-            // state = gameObject.GetOrAddComponent<StateBase>();
         }
 
         public Action AttackAction { get; set; }

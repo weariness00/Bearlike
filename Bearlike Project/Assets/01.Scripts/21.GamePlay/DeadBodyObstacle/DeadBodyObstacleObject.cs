@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
+using Status;
 using Fusion;
 using Photon;
-using State.StateClass.Base;
-using Status;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace GamePlay.DeadBodyObstacle
 {
@@ -12,8 +11,11 @@ namespace GamePlay.DeadBodyObstacle
     {
         private NetworkMecanimAnimator _networkAnimator;
         private StatusBase _statusBase;
+        private Rigidbody _rigidbody;
+        private Collider _collider;
         private Rigidbody[] _ragdollRigidBodies;
         private Collider[] _ragdollColliders;
+        private NavMeshObstacle[] _navMeshObstacles;
 
         private bool _isOn; // DeadBody가 활성화 되었는지
         
@@ -23,8 +25,11 @@ namespace GamePlay.DeadBodyObstacle
         {
             _networkAnimator = GetComponent<NetworkMecanimAnimator>();
             _statusBase = GetComponent<StatusBase>();
+            _rigidbody = GetComponent<Rigidbody>();
+            _collider = GetComponent<Collider>();
             _ragdollRigidBodies = GetComponentsInChildren<Rigidbody>();
             _ragdollColliders = GetComponentsInChildren<Collider>();
+            _navMeshObstacles = GetComponentsInChildren<NavMeshObstacle>();
 
             SetLagDoll(false);
         }
@@ -43,21 +48,33 @@ namespace GamePlay.DeadBodyObstacle
 
         public void OnDeadBody(int hp = 1000)
         {
+            name += "Dead Body";
+
             // 애니메이션 동작을 멈추기 위해 먼저 애니메이션 삭제
-            Destroy(_networkAnimator.Animator);
-            Destroy(_networkAnimator);
-            
+            if (_networkAnimator)
+            {
+                Destroy(_networkAnimator.Animator);
+                Destroy(_networkAnimator);
+            }
+
             // 특정 Componenet를 제외한 모든 Componenet 삭제
             Component[] components = GetComponents<Component>();
             foreach (var component in components)
             {
-                if (!(component is MeshRenderer) &&
+                if(component == null) continue;
+                
+                if (!(component is Transform) &&
+                    !(component is MeshRenderer) &&
                     !(component is MeshFilter) &&
+                    !(component is NetworkObject) &&
+                    !(component is NetworkTransform) &&
                     !(component is StatusBase))
                 {
                     Destroy(component);
                 }
             }
+            
+            // Nav Obstacle 활성화
 
             // 레그돌 활성화
             SetLagDoll(true);
@@ -76,10 +93,17 @@ namespace GamePlay.DeadBodyObstacle
             {
                 rb.isKinematic = !value;
             }
+            if (_rigidbody) _rigidbody.isKinematic = false;
 
             foreach (var col in _ragdollColliders)
             {
                 col.enabled = value;
+            }
+            if (_collider) _collider.enabled = true;
+            
+            foreach (var navMeshObstacle in _navMeshObstacles)
+            {
+                navMeshObstacle.enabled = value;
             }
 
             if(_networkAnimator != null) _networkAnimator.Animator.enabled = !value;

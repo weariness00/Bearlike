@@ -1,18 +1,16 @@
 using System;
-using System.Collections.Generic;
 using Data;
 using Fusion;
 using Fusion.Addons.SimpleKCC;
 using Item;
 using Manager;
 using Photon;
-using Script.Weapon.Gun;
 using Skill;
 using Status;
 using Unity.VisualScripting;
 using UnityEngine;
-using Util;
 using Weapon;
+using Weapon.Gun;
 
 namespace Player
 {

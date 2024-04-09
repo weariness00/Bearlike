@@ -1,19 +1,21 @@
-﻿using Fusion;
-using Inho_Test_.Player;
+﻿using Status;
+using Fusion;
 using Manager;
 using Player;
-using State.StateClass.Base;
 using Status;
 using UnityEngine;
 using UnityEngine.VFX;
-using Weapon;
 using Weapon.Bullet;
 
-namespace Script.Weapon.Gun
+namespace Weapon.Gun
 {
-    public class GunBase : WeaponBase
+    public abstract class GunBase : WeaponBase
     {
         private Camera _camera;
+
+        [Header("총 정보")] 
+        public int id;
+        public string explain;
         
         [Header("총 이펙트")] 
         public VisualEffect shootEffect; // 발사 이펙트
@@ -34,10 +36,8 @@ namespace Script.Weapon.Gun
 
         public float attackRange;       // 총알 사정거리
 
-        [Header("성능")] 
-        public StatusValue<int> attack = new StatusValue<int>();     // 공격력
-        public int property;                // 속성
-        
+        public Transform fireTransform;
+
         public override void Awake()
         {
             base.Awake();
@@ -49,7 +49,6 @@ namespace Script.Weapon.Gun
             AttackAction += Shoot;
             IsGun = true;
             
-
             BulletInit();
         }
 
@@ -83,9 +82,8 @@ namespace Script.Weapon.Gun
                     bullet.destination = dst;
                     bullet.hitEffect = hitEffect;
                     bullet.bknock = false;
-                    
-                    var transform1 = transform;
-                    Instantiate(bullet.gameObject, transform1.position, transform1.rotation);
+
+                    Runner.SpawnAsync(bullet.gameObject, fireTransform.position, fireTransform.rotation);
                 
                     magazine.Current--;
                     SoundManager.Play(shootSound);
@@ -131,44 +129,20 @@ namespace Script.Weapon.Gun
 
             return detination;
         }
-        
-        // public virtual void ApplyDamage(Hitbox enemyHitbox)
-        // {
-        //     var enemyState = enemyHitbox.Root.GetComponent<StatusBase>();
-        //
-        //     if (enemyState.gameObject.CompareTag("Player"))
-        //     {
-        //         return;
-        //     }
-        //     
-        //     if (enemyState == null || enemyState.hp.isMin)
-        //     {
-        //         return;
-        //     }
-        //     
-        //     float damageMultiplier = enemyHitbox is TestBodyHitbox bodyHitbox ? bodyHitbox.damageMultiplier : 1f;
-        //     
-        //     // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
-        //     enemyState.ApplyDamageRPC((int)((status.attack.Current + attack.Current) * damageMultiplier), (CrowdControl)(status.property | property));
-        // }
 
         #region Bullet Funtion
 
         public virtual void BulletInit()
         {
-            magazine.Max = 10;
             magazine.Current = int.MaxValue;
 
             fireLateSecond.Max = 60 / bulletFirePerMinute;
             fireLateSecond.Current = float.MaxValue;
-
-            attackRange = 100.0f;
             
             bullet.maxMoveDistance = attackRange;
-            bullet.player = gameObject;
         }
-        
-        public virtual void ReLoadBullet()
+
+        public virtual void ReLoadBullet(int bulletAmount = int.MaxValue)
         {
             if (reloadLateSecond.isMax && ammo.isMin == false)
             {
@@ -176,10 +150,11 @@ namespace Script.Weapon.Gun
                 
                 SoundManager.Play(reloadSound);
                 var needChargingAmmoCount = magazine.Max - magazine.Current;
+                
                 if (ammo.Current < needChargingAmmoCount)
-                {
                     needChargingAmmoCount = ammo.Current;
-                }
+                if (needChargingAmmoCount > bulletAmount)
+                    needChargingAmmoCount = bulletAmount;
             
                 magazine.Current += needChargingAmmoCount;
                 ammo.Current -= needChargingAmmoCount;

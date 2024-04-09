@@ -401,6 +401,7 @@ GameObject:
   - component: {fileID: 759577123440539581}
   - component: {fileID: 6280455438328380848}
   - component: {fileID: 8869054646874072246}
+  - component: {fileID: 2187215379228652678}
   m_Layer: 0
   m_Name: Gun
   m_TagString: Untagged
@@ -425,6 +426,7 @@ Transform:
   - {fileID: 5396528997066699335}
   - {fileID: 4450146830053471541}
   - {fileID: 1002374751094351610}
+  - {fileID: 2279048407192057117}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &-6221961776782598227
@@ -446,6 +448,7 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 4169207745072314073}
   - {fileID: 759577123440539581}
+  - {fileID: 2187215379228652678}
 --- !u!114 &4169207745072314073
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -477,6 +480,8 @@ MonoBehaviour:
     m_Bits: 1073748919
   hitEffect: {fileID: 7807118108788114703}
   hitSound: {fileID: 0}
+  id: 0
+  explain: 
   shootEffect: {fileID: 0}
   shootSound: {fileID: 2742436703845408458}
   emptyAmmoSound: {fileID: 5268244690611952886}
@@ -507,15 +512,9 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 1
-  attack:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  property: 0
+  attackRange: 0
+  fireTransform: {fileID: 2279048407192057117}
+  reloadSpeed: 0.5
 --- !u!23 &6280455438328380848
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -566,6 +565,123 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6072068737464605952}
   m_Mesh: {fileID: -8670151273213183110, guid: 72c949a46807fe140ba9564c14efe371, type: 3}
+--- !u!114 &2187215379228652678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6072068737464605952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  damage:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  defence:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  avoid:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 1
+    isMin: 0
+    isMax: 0
+  moveSpeed:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  attackSpeed:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  attackLateTime:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  attackRange:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  force:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  condition: 0
+  property: 0
+--- !u!1 &7601987253555321175
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2279048407192057117}
+  m_Layer: 0
+  m_Name: Fire Transform
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2279048407192057117
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7601987253555321175}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.033, z: 0.41}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5836075655250462756}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8970413935037277342
 GameObject:
   m_ObjectHideFlags: 0

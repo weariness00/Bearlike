@@ -7,7 +7,7 @@ namespace Skill
     {
         [JsonProperty("ID")] public int ID;
         [JsonProperty("Explain")] public string Explain;
-        [JsonProperty("CoolTime")] public float CoolTime;
+        [JsonProperty("Cool Time")] public float CoolTime;
         [JsonProperty("Type")] public SKillType Type;
     }
 }

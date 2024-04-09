@@ -22,7 +22,6 @@ namespace Manager
             Cursor.lockState = CursorLockMode.None;
             
             NetworkManager.Instance.LobbyConnect();
-
             LoadingManager.StartAction += () => SceneManager.LoadScene(lobbyLoading, LoadSceneMode.Additive);
             LoadingManager.EndAction += () => SceneManager.UnloadSceneAsync(lobbyLoading);
         }

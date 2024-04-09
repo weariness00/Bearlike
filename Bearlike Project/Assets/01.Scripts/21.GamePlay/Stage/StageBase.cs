@@ -94,7 +94,7 @@ namespace GamePlay.Stage
             if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
             {
                 SetIsStartRPC(true);
-                GetComponent<BoxCollider>().enabled = false;
+                Destroy(GetComponent<Collider>());
             }
         }
 
