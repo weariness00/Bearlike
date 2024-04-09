@@ -1,4 +1,5 @@
 using System.Collections;
+using Fusion;
 using UnityEngine;
 
 namespace Weapon.Gun
@@ -56,18 +57,17 @@ namespace Weapon.Gun
         
         public override void ReLoadBullet(int bulletAmount = int.MaxValue)
         {
-            if (reloadLateSecond.isMax && ammo.isMin == false)
+            if (ReloadLateTimer.Expired(Runner) && ammo.isMin == false)
             {
-                reloadLateSecond.Current = reloadLateSecond.Min;
-                
+                ReloadLateTimer = TickTimer.CreateFromSeconds(Runner, reloadLateSecond);
                 var needChargingAmmoCount = magazine.Max - magazine.Current;
-                
                 if (ammo.Current < needChargingAmmoCount)
                 {
                     needChargingAmmoCount = ammo.Current;
                 }
 
                 _reloadCorutine = ReloadCorutine(reloadSpeed, needChargingAmmoCount);
+                
                 StartCoroutine(_reloadCorutine);
             }
         }

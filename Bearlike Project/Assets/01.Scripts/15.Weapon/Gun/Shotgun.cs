@@ -1,4 +1,6 @@
 ﻿using System.Collections;
+using Fusion;
+using Status;
 using UnityEngine;
 
 namespace Weapon.Gun
@@ -10,7 +12,7 @@ namespace Weapon.Gun
         [SerializeField] private float bulletRadian;    // 산탄 정도(원의 반지름)
         public bool bknock;
 
-        private IEnumerator _reloadCorutine;
+        private Coroutine _reloadCoroutine;
         
         public override void Awake()
         {
@@ -33,9 +35,9 @@ namespace Weapon.Gun
         public override void Shoot()
         {                        
             // 다른 클라가 했으면 자기 말고 다른 클라의 코드를 실행해야지
-            if (fireLateSecond.isMax)
+            if (FireLateTimer.Expired(Runner))
             {
-                fireLateSecond.Current = fireLateSecond.Min;
+                FireLateTimer = TickTimer.CreateFromSeconds(Runner, fireLateSecond);
                 if (magazine.Current != 0)
                 {
                     var dst = CheckRay();
@@ -43,24 +45,21 @@ namespace Weapon.Gun
                     if(shootEffect != null) shootEffect.Play();
                     bullet.hitEffect = hitEffect;
                     bullet.bknock = bknock;
-                    // var bulletStatus = bullet.GetComponent<StatusBase>();
-                    // bulletStatus.damage.Max = 9999;
-                    // bulletStatus.damage.Current = (int)(((100.0f + (playerStatus.damage.Current)) / 100.0f) + (gun.attack.Current)),
-                    // (CrowdControl)(playerStatus.property | gun.property);
-                    
-                    for (int i = 0; i < 10; ++i)
-                    {
-                        Vector3 randomVector3 = new Vector3(Random.Range(-bulletRadian, bulletRadian), 
-                            Random.Range(-bulletRadian, bulletRadian), Random.Range(-bulletRadian, bulletRadian));
 
-                        // SetDestinationRPC((dst * attackRange) + randomVector3);
-                        bullet.destination = transform.position + (dst * attackRange) + randomVector3;
-                        
-                        var transform1 = transform;
-                        Runner.SpawnAsync(bullet.gameObject, transform1.position + dst, transform1.rotation);
+                    if (HasStateAuthority)
+                    {
+                        for (int i = 0; i < 10; ++i)
+                        {
+                            Vector3 randomVector3 = new Vector3(Random.Range(-bulletRadian, bulletRadian), 
+                                Random.Range(-bulletRadian, bulletRadian), Random.Range(-bulletRadian, bulletRadian));
+
+                            bullet.status.attackRange = status.attackRange;
+                            bullet.destination = transform.position + (dst * status.attackRange) + randomVector3;
+                            Runner.SpawnAsync(bullet.gameObject, transform.position + dst, transform.rotation);
+                        }
                     }
                  
-                    magazine.Current--;
+                    SetMagazineRPC(StatusValueType.Current, --magazine.Current);
                     SoundManager.Play(shootSound);
                 }
                 else
@@ -68,37 +67,33 @@ namespace Weapon.Gun
                     SoundManager.Play(emptyAmmoSound);
                 }
             }
-            if(_reloadCorutine != null)
-                StopCoroutine(_reloadCorutine);
+            if(_reloadCoroutine != null) StopCoroutine(_reloadCoroutine);
         }
         
         #region Bullet Funtion
         
         public override void ReLoadBullet(int bulletAmount = int.MaxValue)
         {
-            if (reloadLateSecond.isMax && ammo.isMin == false)
+            if (ReloadLateTimer.Expired(Runner) && ammo.isMin == false)
             {
-                reloadLateSecond.Current = reloadLateSecond.Min;
-                
+                ReloadLateTimer = TickTimer.CreateFromSeconds(Runner, reloadLateSecond);
                 var needChargingAmmoCount = magazine.Max - magazine.Current;
-                
                 if (ammo.Current < needChargingAmmoCount)
                 {
                     needChargingAmmoCount = ammo.Current;
                 }
 
-                _reloadCorutine = ReloadCorutine(reloadSpeed, needChargingAmmoCount);
-                
-                StartCoroutine(_reloadCorutine);
+                if(_reloadCoroutine != null) StopCoroutine(_reloadCoroutine);
+                _reloadCoroutine = StartCoroutine(ReloadCoroutine(reloadSpeed, needChargingAmmoCount));
             }
         }
 
-        IEnumerator ReloadCorutine(float waitTime, int repeatCount)
+        IEnumerator ReloadCoroutine(float waitTime, int repeatCount)
         {
             for (int i = 0; i < repeatCount; ++i)
             {
-                base.ReLoadBullet(1);
                 yield return new WaitForSeconds(waitTime);
+                base.ReLoadBullet(1);
             }
         }
 

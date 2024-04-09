@@ -1,24 +1,23 @@
 ﻿using System.Collections.Generic;
+using Data;
 using Status;
 using Fusion;
 using Manager;
-using Monster;
 using Player;
-using Status;
 using UnityEngine;
 using UnityEngine.VFX;
 using Weapon.Bullet;
 
 namespace Weapon.Gun
 {
-    public abstract class GunBase : WeaponBase
+    public abstract class GunBase : WeaponBase, IJsonData<GunJsonData>
     {
         #region Static
 
         // Info Data 캐싱
-        private static readonly Dictionary<int, MonsterJsonData> InfoDataCash = new Dictionary<int, MonsterJsonData>();
-        public static void AddInfoData(int id, MonsterJsonData data) => InfoDataCash.TryAdd(id, data);
-        public static MonsterJsonData GetInfoData(int id) => InfoDataCash.TryGetValue(id, out var data) ? data : new MonsterJsonData();
+        private static readonly Dictionary<int, GunJsonData> InfoDataCash = new Dictionary<int, GunJsonData>();
+        public static void AddInfoData(int id, GunJsonData data) => InfoDataCash.TryAdd(id, data);
+        public static GunJsonData GetInfoData(int id) => InfoDataCash.TryGetValue(id, out var data) ? data : new GunJsonData();
         public static void ClearInfosData() => InfoDataCash.Clear();
         
         // Status Data 캐싱
@@ -49,22 +48,32 @@ namespace Weapon.Gun
         public StatusValue<int> magazine = new StatusValue<int>() {Max = 10, Current = 10}; // max 최대 탄약, current 현재 장정된 탄약
 
         public float bulletFirePerMinute; // 분당 총알 발사량
-        public StatusValue<float> fireLateSecond = new StatusValue<float>(); // 총 발사후 기다리는 시간
-        public StatusValue<float> reloadLateSecond = new StatusValue<float>(){Max = 1, Current = float.MaxValue}; // 재장전 시간
-
-        public float attackRange;       // 총알 사정거리
+        [Networked] public TickTimer FireLateTimer { get; set; }
+        [Networked] public TickTimer ReloadLateTimer { get; set; }
+        public float fireLateSecond;
+        public float reloadLateSecond;
 
         public Transform fireTransform;
+
+        #region Unity Event Function
 
         public override void Awake()
         {
             base.Awake();
+            
+            // Json Data 가져오기
+            SetJsonData(GetInfoData(id));
+            var statusData = GetStatusData(id);
+            status.SetJsonData(statusData);
+            bulletFirePerMinute = statusData.GetInt("Bullet Fire Per Minute");  
+            reloadLateSecond = statusData.GetFloat("Reload Late Second");
+            magazine.Max = statusData.GetInt("Magazine Max");
+            magazine.Current = magazine.Max;
         }
         
         public override void Start()
         {
             base.Start();
-            AttackAction += Shoot;
             IsGun = true;
             
             BulletInit();
@@ -73,25 +82,18 @@ namespace Weapon.Gun
         public override void Spawned()
         {
             base.Spawned();
+            AttackAction += ShootRPC;
+            FireLateTimer = TickTimer.CreateFromSeconds(Runner, 0);
+            ReloadLateTimer = TickTimer.CreateFromSeconds(Runner, 0);
         }
 
-        public override void FixedUpdateNetwork()
-        {
-            if (Runner.IsPlayer == false)
-            {
-                return;
-            }
-            
-            base.FixedUpdateNetwork();
-            fireLateSecond.Current += Runner.DeltaTime;
-            reloadLateSecond.Current += Runner.DeltaTime;
-        }
+        #endregion
 
         public virtual void Shoot()
         {
-            if (reloadLateSecond.isMax && fireLateSecond.isMax)
+            if (FireLateTimer.Expired(Runner))
             {
-                fireLateSecond.Current = fireLateSecond.Min;
+                FireLateTimer = TickTimer.CreateFromSeconds(Runner, fireLateSecond);
                 if (magazine.Current != 0)
                 {
                     var dst = CheckRay();
@@ -101,9 +103,10 @@ namespace Weapon.Gun
                     bullet.hitEffect = hitEffect;
                     bullet.bknock = false;
 
-                    Runner.SpawnAsync(bullet.gameObject, fireTransform.position, fireTransform.rotation);
-                
-                    magazine.Current--;
+                    if(HasStateAuthority)
+                        Runner.SpawnAsync(bullet.gameObject, fireTransform.position, fireTransform.rotation);
+
+                    SetMagazineRPC(StatusValueType.Current, --magazine.Current);
                     SoundManager.Play(shootSound);
                 }
                 else
@@ -154,17 +157,15 @@ namespace Weapon.Gun
         {
             magazine.Current = int.MaxValue;
 
-            fireLateSecond.Max = 60 / bulletFirePerMinute;
-            fireLateSecond.Current = float.MaxValue;
-            
-            bullet.maxMoveDistance = attackRange;
+            fireLateSecond = 60 / bulletFirePerMinute;
+            bullet.maxMoveDistance = status.attackRange;
         }
 
         public virtual void ReLoadBullet(int bulletAmount = int.MaxValue)
         {
-            if (reloadLateSecond.isMax && ammo.isMin == false)
+            if (ReloadLateTimer.Expired(Runner) && ammo.isMin == false)
             {
-                reloadLateSecond.Current = reloadLateSecond.Min;
+                ReloadLateTimer = TickTimer.CreateFromSeconds(Runner, reloadLateSecond);
                 
                 SoundManager.Play(reloadSound);
                 var needChargingAmmoCount = magazine.Max - magazine.Current;
@@ -173,9 +174,12 @@ namespace Weapon.Gun
                     needChargingAmmoCount = ammo.Current;
                 if (needChargingAmmoCount > bulletAmount)
                     needChargingAmmoCount = bulletAmount;
-            
-                magazine.Current += needChargingAmmoCount;
+                
+                DebugManager.Log($"탄약 충전 : {magazine.Current} + {needChargingAmmoCount}");
+
                 ammo.Current -= needChargingAmmoCount;
+                magazine.Current += needChargingAmmoCount;
+                SetMagazineRPC(StatusValueType.Current, magazine.Current);
             }
         }
 
@@ -200,12 +204,44 @@ namespace Weapon.Gun
         }
 
         #endregion
+        
+        #region Json Interface
+
+        public GunJsonData GetJsonData()
+        {
+            throw new System.NotImplementedException();
+        }
+        
+        public void SetJsonData(GunJsonData json)
+        {
+            name = json.Name;
+            explain = json.Explain;
+        }
+        #endregion
 
         #region RPC Function
 
         [Rpc(RpcSources.All,RpcTargets.StateAuthority)]
         public void SetDestinationRPC(Vector3 dir) => bullet.destination = dir;
 
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        public void SetMagazineRPC(StatusValueType type, int value)
+        {
+            switch (type)
+            {
+                case StatusValueType.Current:
+                    magazine.Current = value;
+                    break;
+            }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void ShootRPC() => Shoot();
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void ReloadBulletRPC() => ReLoadBullet();
+
         #endregion
+
     }
 }

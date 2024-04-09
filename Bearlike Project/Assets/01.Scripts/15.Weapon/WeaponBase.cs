@@ -32,7 +32,7 @@ namespace Weapon
 
         public virtual void Awake()
         {
-            status = gameObject.transform.root.GetOrAddComponent<StatusBase>();
+            status = GetComponent<StatusBase>();
         }
 
         public virtual void Start()

@@ -11,7 +11,7 @@ namespace Weapon.Bullet
     [RequireComponent(typeof(StatusBase))]
     public class BulletBase : NetworkBehaviourEx
     {
-        [HideInInspector] public StatusBase status;
+        public StatusBase status;
         
         public Vector3 destination = Vector3.zero;
         public VisualEffect hitEffect;

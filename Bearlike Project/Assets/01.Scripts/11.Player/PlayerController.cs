@@ -200,8 +200,7 @@ namespace Player
 
             if (data.ReLoad && weaponSystem.gun.IsGun)
             {
-                var gun = weaponSystem.gun as GunBase;
-                gun.ReLoadBullet();
+                weaponSystem.gun.ReloadBulletRPC();
             }
         }
         

@@ -7,6 +7,7 @@ namespace Weapon.Gun
     {
         [JsonProperty("ID")] public int Id;
         [JsonProperty("Name")] public string Name;
+        [JsonProperty("Explain")] public string Explain;
     }
 }
 

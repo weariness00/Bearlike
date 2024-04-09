@@ -10,7 +10,7 @@ namespace Weapon
         
         private void Awake()
         {
-            gun = gameObject.GetOrAddComponent<Shotgun>();
+            gun = gameObject.GetComponent<GunBase>();
         }
 
         private void Start()

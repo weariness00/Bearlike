@@ -44,7 +44,7 @@ namespace Status
 
         public override void Spawned()
         {
-            attackLateTime.Max = 1 / attackSpeed.Current;
+            attackLateTime.Max = 1 / attackSpeed.Current == 0 ? 1 : attackSpeed.Current;
         }
 
         public override void FixedUpdateNetwork()
