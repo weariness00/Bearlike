@@ -1,27 +1,33 @@
-﻿using Fusion;
-using Unity.VisualScripting;
-using Weapon.Gun;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Fusion;
+using UnityEngine;
 
 namespace Weapon
 {
     public class WeaponSystem : NetworkBehaviour
     {
-        public GunBase gun;     // 소유한 무기
+        public IEquipment equipment; // 현재 장착 중인 무기
+
+        public List<WeaponBase> weaponList;
         
         private void Awake()
         {
-            gun = gameObject.GetComponent<GunBase>();
+            equipment = GetComponentInChildren<WeaponBase>();
+
+            weaponList = GetComponentsInChildren<WeaponBase>().ToList();
         }
 
-        private void Start()
+        public void ChangeEquipment(int index, GameObject equipTargetObject)
         {
-            // GunUI 스크립트에서 활성화 하도록 바꿈
-            // ui = GetComponentInChildren<GunUI>().gameObject.SetActive(true);
-        }
-
-        private void Update()
-        {
+            // 장비 해제
+            equipment.ReleaseEquipAction?.Invoke(equipTargetObject);
             
+            // 장비 변경
+            equipment = weaponList.Count > index ? weaponList.First() : weaponList[index];
+            
+            // 변경한 장비를 착용
+            equipment.EquipAction?.Invoke(equipTargetObject);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
-using Fusion;
+using System.Linq;
 using Manager;
+using Photon;
 using UnityEngine;
 
 namespace Skill
@@ -8,16 +9,10 @@ namespace Skill
     public class SkillSystem : MonoBehaviour
     {
         public List<SkillBase> skillList = new List<SkillBase>();
-        private Dictionary<string, SkillBase> _skillDictionary = new Dictionary<string, SkillBase>();
-
-        // private PlayerStatus _playerStatus;
 
         private void Start()
         {
-            // _playerStatus = gameObject.GetComponent<PlayerStatus>();
-            //
-            // // HACK : 테스트용
-            // skillList.Add(new FlippingCoin(_playerStatus));
+            skillList = GetComponentsInChildren<SkillBase>().ToList();
         }
 
         private void Update()
@@ -30,7 +25,7 @@ namespace Skill
                 }
             }
         }
-        
+
         public SkillBase GetSkillFromName(string skillName)
         {
             foreach (var skillBase in skillList)

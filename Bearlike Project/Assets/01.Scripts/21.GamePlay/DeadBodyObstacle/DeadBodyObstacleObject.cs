@@ -31,7 +31,7 @@ namespace GamePlay.DeadBodyObstacle
             _ragdollColliders = GetComponentsInChildren<Collider>();
             _navMeshObstacles = GetComponentsInChildren<NavMeshObstacle>();
 
-            SetLagDoll(false);
+            SetDeadBodyComponentActive(false);
         }
 
         public override void FixedUpdateNetwork()
@@ -68,16 +68,15 @@ namespace GamePlay.DeadBodyObstacle
                     !(component is MeshFilter) &&
                     !(component is NetworkObject) &&
                     !(component is NetworkTransform) &&
+                    !(component is NavMeshObstacle) &&
                     !(component is StatusBase))
                 {
                     Destroy(component);
                 }
             }
-            
-            // Nav Obstacle 활성화
 
             // 레그돌 활성화
-            SetLagDoll(true);
+            SetDeadBodyComponentActive(true);
 
             _statusBase.SetHpRPC(StatusValueType.CurrentAndMax, hp);
             StartCoroutine(CheckHpCoroutine()); // 시체에 정상적으로 hp가 부여되면 Update가 되도록 하는 코루틴
@@ -87,7 +86,7 @@ namespace GamePlay.DeadBodyObstacle
         /// 레그돌 관련 컴포넌트 활성화/비활성화
         /// </summary>
         /// <param name="value"></param>
-        private void SetLagDoll(bool value)
+        private void SetDeadBodyComponentActive(bool value)
         {
             foreach (var rb in _ragdollRigidBodies)
             {
@@ -101,9 +100,11 @@ namespace GamePlay.DeadBodyObstacle
             }
             if (_collider) _collider.enabled = true;
             
+            // Nav Obstacle 활성화
             foreach (var navMeshObstacle in _navMeshObstacles)
             {
                 navMeshObstacle.enabled = value;
+                navMeshObstacle.carving = value;
             }
 
             if(_networkAnimator != null) _networkAnimator.Animator.enabled = !value;

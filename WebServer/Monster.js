@@ -14,7 +14,7 @@ async function MonsterStatusQuery(){
         (
             SELECT JSON_OBJECTAGG(status.\`Status Name\`, status.Value)
             FROM bearlike.monster_status status
-            WHERE status.\`Monster ID\` = monster.ID AND status.\`Value Type\` = 0
+            WHERE status.\`Monster ID\` = monster.ID AND status.\`Value Type\` = 'Int'
         ),
         JSON_OBJECT()
     ) as 'Status Int' ,
@@ -22,7 +22,7 @@ async function MonsterStatusQuery(){
         (
             SELECT JSON_OBJECTAGG(status.\`Status Name\`, status.Value)
             FROM bearlike.monster_status status
-            WHERE status.\`Monster ID\` = monster.ID AND status.\`Value Type\` = 1
+            WHERE status.\`Monster ID\` = monster.ID AND status.\`Value Type\` = 'Float'
         ),
         JSON_OBJECT()
     ) AS 'Status Float'

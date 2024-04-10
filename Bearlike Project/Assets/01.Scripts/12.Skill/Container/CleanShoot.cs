@@ -62,6 +62,10 @@ namespace Skill.Container
             _findTime = new WaitForSeconds(0.2f);
         }
 
+        public override void Earn(GameObject earnTargetObject)
+        {
+        }
+
         public override void MainLoop()
         {
             if (coolTime.isMin == false)

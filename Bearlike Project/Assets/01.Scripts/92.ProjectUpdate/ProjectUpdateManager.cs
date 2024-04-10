@@ -220,8 +220,16 @@ namespace ProjectUpdate
                 // 컴퓨터에 저장된 Version 데이터 가져오기
                 var hasVersion = JsonConvertExtension.Load($"{fileName}_Version", prevVersionJson =>
                 {
-                    var nowVersionData = JsonConvert.DeserializeObject<TableVersion[]>(nowVersionJson).First();
-                    var prevVersionData = JsonConvert.DeserializeObject<TableVersion[]>(prevVersionJson).First();
+                    TableVersion nowVersionData = JsonConvert.DeserializeObject<TableVersion[]>(nowVersionJson).First();
+                    TableVersion prevVersionData;
+                    try
+                    {
+                        prevVersionData = JsonConvert.DeserializeObject<TableVersion[]>(prevVersionJson).First();
+                    }
+                    catch (Exception e)
+                    {
+                        prevVersionData.UnixTime = 0;
+                    }
 
                     // Version이 최신이 아니면 다운로드
                     if (nowVersionData.UnixTime > prevVersionData.UnixTime)

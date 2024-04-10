@@ -63,6 +63,10 @@ namespace Skill.Container
             _difference = 0;
         }
 
+        public override void Earn(GameObject earnTargetObject)
+        {
+        }
+
         public override void MainLoop()
         {
             _currentPlayTime = _gm.PlayTimer;

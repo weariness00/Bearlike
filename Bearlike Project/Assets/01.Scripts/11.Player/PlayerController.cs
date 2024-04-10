@@ -30,7 +30,6 @@ namespace Player
         [HideInInspector] public SimpleKCC simpleKcc;
         [HideInInspector] public Rigidbody rigidBody;
 
-        public IEquipment equipment;
         public StatusValue<int> ammo = new StatusValue<int>();
 
         [Tooltip("마우스 움직임에 따라 회전할 오브젝트")] public GameObject mouseRotateObject;
@@ -53,8 +52,6 @@ namespace Player
             cameraController = GetComponent<PlayerCameraController>();
             weaponSystem = gameObject.GetComponentInChildren<WeaponSystem>();
             _networkAnimator = GetComponent<NetworkMecanimAnimator>();
-
-            equipment = GetComponentInChildren<IEquipment>();
         }
 
         private void Start()
@@ -67,8 +64,17 @@ namespace Player
             Cursor.lockState = CursorLockMode.Locked;
             simpleKcc = gameObject.GetOrAddComponent<SimpleKCC>();
             simpleKcc.Collider.tag = "Player";
-            weaponSystem.gun?.Equip(gameObject);
-
+            
+            // 무기 초기화
+            weaponSystem.equipment?.EquipAction?.Invoke(gameObject);
+            
+            // 스킬 초기화
+            foreach (var skillBase in skillSystem.skillList)
+            {
+                skillBase.Earn(gameObject);
+            }
+            
+            // 권한에 따른 초기화
             if (HasInputAuthority)
             {
                 Object.
@@ -189,18 +195,25 @@ namespace Player
         {
             if (data.ChangeWeapon0)
             {
-                weaponSystem.gun = GetComponentInChildren<GunBase>();
+                // 장비 변경
+                weaponSystem.ChangeEquipment(0, gameObject);
+                
+                // 변경된 장비에 스킬이 적용되도록 스킬 초기화
+                foreach (var skillBase in skillSystem.skillList)
+                {
+                    skillBase.Earn(gameObject);
+                }
             }
 
-            if (data.Attack && weaponSystem.gun != null)
+            if (data.Attack && weaponSystem.equipment.IsGun)
             {
                 _networkAnimator.SetTrigger(AniShoot);
-                weaponSystem.gun.AttackAction?.Invoke();
+                weaponSystem.equipment.AttackAction?.Invoke();
             }
 
-            if (data.ReLoad && weaponSystem.gun.IsGun)
+            if (data.ReLoad && weaponSystem.equipment.IsGun)
             {
-                weaponSystem.gun.ReloadBulletRPC();
+                ((GunBase)weaponSystem.equipment).ReloadBulletRPC();
             }
         }
         

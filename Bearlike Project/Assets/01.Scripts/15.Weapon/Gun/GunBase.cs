@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Data;
 using Status;
 using Fusion;
@@ -52,8 +53,11 @@ namespace Weapon.Gun
         [Networked] public TickTimer ReloadLateTimer { get; set; }
         public float fireLateSecond;
         public float reloadLateSecond;
-
         public Transform fireTransform;
+
+        // 총을 쏘면 Bullet을 스폰하는데 스폰하기 전에 bullet에 적용할 메서드
+        // 해당 메서드는 총의 장착을 해제하면 null로 함
+        public Action<BulletBase> BeforeShootAction;
 
         #region Unity Event Function
 
@@ -69,6 +73,9 @@ namespace Weapon.Gun
             reloadLateSecond = statusData.GetFloat("Reload Late Second");
             magazine.Max = statusData.GetInt("Magazine Max");
             magazine.Current = magazine.Max;
+
+            EquipAction += SetCamera;
+            ReleaseEquipAction += (obj) => { BeforeShootAction = null; };
         }
         
         public override void Start()
@@ -89,6 +96,14 @@ namespace Weapon.Gun
 
         #endregion
 
+        private void SetCamera(GameObject equipObject)
+        {
+            if (equipObject.TryGetComponent(out PlayerCameraController pcc))
+            {
+                _camera = pcc.targetCamera;
+            }
+        }
+
         public virtual void Shoot()
         {
             if (FireLateTimer.Expired(Runner))
@@ -102,6 +117,8 @@ namespace Weapon.Gun
                     bullet.destination = dst;
                     bullet.hitEffect = hitEffect;
                     bullet.bknock = false;
+                    
+                    BeforeShootAction?.Invoke(bullet);
 
                     if(HasStateAuthority)
                         Runner.SpawnAsync(bullet.gameObject, fireTransform.position, fireTransform.rotation);
@@ -185,26 +202,6 @@ namespace Weapon.Gun
 
         #endregion
 
-        #region Equip
-
-        // public Action AttackAction { get; set; }
-        // public Action EquipAction { get; set; }
-        // public bool IsEquip { get; set; }
-        // public bool IsGun { get; set; }
-
-        public override void Equip(GameObject equipObject)
-        {
-            base.Equip(equipObject);
-            EquipAction?.Invoke();
-            
-            if (equipObject.TryGetComponent(out PlayerCameraController pcc))
-            {
-                _camera = pcc.targetCamera;
-            }
-        }
-
-        #endregion
-        
         #region Json Interface
 
         public GunJsonData GetJsonData()

@@ -26,10 +26,10 @@ namespace Monster.Container
         public AnimationClip longAttackClip;
 
         private bool _isInitAnimation = false;
-        private StatusValue<float> _aniIdleTime = new StatusValue<float>();
-        private StatusValue<float> _aniMoveTime = new StatusValue<float>();
-        private StatusValue<float> _aniLongAttackTime = new StatusValue<float>();
-        private static readonly int _aniPropertyMoveSpeed = Animator.StringToHash("f Move Speed");
+        [Networked] private TickTimer AniIdleTimer { get; set; }
+        [Networked] private TickTimer AniMoveTimer { get; set; }
+        [Networked] private TickTimer AniLongAttackTimer { get; set; }
+        private static readonly int AniPropertyMoveSpeed = Animator.StringToHash("f Move Speed");
 
         #region Unity Event Function
 
@@ -37,10 +37,6 @@ namespace Monster.Container
         {
             base.Start();
             _behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
-
-            _aniIdleTime.Max = idleClip.length;
-            _aniMoveTime.Max = moveClip.length;
-            _aniLongAttackTime.Max = longAttackClip.length;
         }
 
         public override void Spawned()
@@ -142,16 +138,15 @@ namespace Monster.Container
             if (_isInitAnimation == false)
             {
                 _isInitAnimation = true;
-                _aniIdleTime.Current = 0f;
-                networkAnimator.Animator.SetFloat(_aniPropertyMoveSpeed, 0f);
+                AniIdleTimer = TickTimer.CreateFromSeconds(Runner, idleClip.length);
+                networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 0f);
             }
-            if(_aniIdleTime.isMax == false)
+            if(AniIdleTimer.IsRunning)
             {
-                _aniIdleTime.Current += Runner.DeltaTime;
                 return INode.NodeState.Running;
             }
 
-            networkAnimator.Animator.SetFloat(_aniPropertyMoveSpeed, 0f);
+            networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 0f);
             _isInitAnimation = false;
             return INode.NodeState.Success;
         }
@@ -166,12 +161,12 @@ namespace Monster.Container
             if (_isInitAnimation == false)
             {
                 _isInitAnimation = true;
-                _aniMoveTime.Current = 0f;
-                networkAnimator.Animator.SetFloat(_aniPropertyMoveSpeed, 1f);
+                AniMoveTimer = TickTimer.CreateFromSeconds(Runner, moveClip.length);
+                networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 1f);
                 randomDir = Random.onUnitSphere;
                 randomDir.y = 0;
             }
-            if (_aniMoveTime.isMax == false)
+            if (AniMoveTimer.IsRunning)
             {
                 // 타겟 한테 이동
                 var path = new NavMeshPath();
@@ -180,24 +175,22 @@ namespace Monster.Container
                     if (path.corners.Length > 1)
                     {
                         var dir = path.corners[1] - transform.position;
-                        var nextPos = transform.position + Runner.DeltaTime * dir;
+                        var nextPos = transform.position + Time.deltaTime * dir;
                         transform.LookAt(nextPos);
-                        transform.position = nextPos;
+                        rigidbody.AddForce(ForceMagnitude * status.moveSpeed * transform.forward);
                     }
                 }
                 else
                 {
-                    var nextPos = transform.position + Runner.DeltaTime * randomDir;
+                    var nextPos = transform.position + Time.deltaTime * randomDir;
                     transform.LookAt(nextPos);
-                    transform.position = nextPos;
+                    rigidbody.AddForce(ForceMagnitude * status.moveSpeed * transform.forward);
                 }
-
                 
-                _aniMoveTime.Current += Runner.DeltaTime;
                 return INode.NodeState.Running;
             }
             
-            networkAnimator.Animator.SetFloat(_aniPropertyMoveSpeed, 0f);
+            networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 0f);
             _isInitAnimation = false;
             return INode.NodeState.Success;
         }
@@ -223,18 +216,20 @@ namespace Monster.Container
             // 처음 진입 초기화
             if (_isInitAnimation == false)
             {
+                rigidbody.velocity = Vector3.zero;
                 SpawnBulletRPC();
                 _isInitAnimation = true;
-                _aniLongAttackTime.Current = 0f;
+                AniLongAttackTimer = TickTimer.CreateFromSeconds(Runner, longAttackClip.length);
                 status.attackLateTime.Current = 0f;
                 networkAnimator.SetTrigger("tAttack");
             }
             
-            if (_aniLongAttackTime.isMax == false)
+            if (AniLongAttackTimer.IsRunning)
             {
-                _aniLongAttackTime.Current += Runner.DeltaTime;
                 return INode.NodeState.Running;
             }
+
+            _isInitAnimation = false;
             return INode.NodeState.Success;
         }
 

@@ -1,7 +1,6 @@
 using GamePlay;
 using Player;
 using Status;
-using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -65,7 +64,11 @@ namespace Skill.Container
             _bOn = false;
             _difference = 0;
         }
-        
+
+        public override void Earn(GameObject earnTargetObject)
+        {
+        }
+
         public override void MainLoop()
         {
             _currentPlayTime = _gm.PlayTimer;

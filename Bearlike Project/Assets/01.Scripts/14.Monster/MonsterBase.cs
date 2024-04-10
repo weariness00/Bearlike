@@ -36,6 +36,8 @@ namespace Monster
         public static LootingJsonData GetLootingData(int id) => LootingDataChasing.TryGetValue(id, out var data) ? data : new LootingJsonData();
         public static void ClearLootingData() => LootingDataChasing.Clear();
 
+        protected static readonly float ForceMagnitude = 13f;
+        
         #endregion
         
         [HideInInspector] public Rigidbody rigidbody;
@@ -72,6 +74,8 @@ namespace Monster
         
         public virtual void Start()
         {
+            rigidbody.drag = 0.6f;
+            
             lootingTable.CalLootingItem(GetLootingData(id).LootingItems);
             DieAction += () => _deadBody.OnDeadBodyRPC();
             DieAction += lootingTable.SpawnDropItem;

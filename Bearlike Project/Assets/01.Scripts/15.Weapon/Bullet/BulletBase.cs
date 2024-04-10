@@ -12,7 +12,8 @@ namespace Weapon.Bullet
     public class BulletBase : NetworkBehaviourEx
     {
         public StatusBase status;
-        
+
+        public int penetrateCount = 0; // 관통 가능 횟수
         public Vector3 destination = Vector3.zero;
         public VisualEffect hitEffect;
         
@@ -69,7 +70,11 @@ namespace Weapon.Bullet
             {
                 NetworkMeshDestructSystem.Instance.DestructRPC(other.GetComponent<NetworkObject>().Id,PrimitiveType.Cube, transform.position, Vector3.one * 2, transform.forward);
             }
-            Destroy(gameObject);
+
+            if (penetrateCount-- == 0)
+            {
+                Destroy(gameObject);
+            }
         }
         
         [BurstCompile]

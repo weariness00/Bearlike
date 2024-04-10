@@ -62,6 +62,11 @@ namespace Skill.Container
             // gameObject.SetActive(false);
         }
 
+        public override void Earn(GameObject earnTargetObject)
+        {
+            
+        }
+
         public override void MainLoop()
         {
             if (coolTime.isMin == false)

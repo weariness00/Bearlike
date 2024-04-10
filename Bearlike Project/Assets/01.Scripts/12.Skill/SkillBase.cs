@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Data;
 using Fusion;
+using Inventory;
 using Photon;
 using Status;
 using UnityEngine;
@@ -16,7 +17,7 @@ namespace Skill
     }
     
     [System.Serializable]
-    public abstract class SkillBase : NetworkBehaviourEx, IJsonData<SkillJsonData>, IJsonData<StatusJsonData>
+    public abstract class SkillBase : NetworkBehaviourEx, IJsonData<SkillJsonData>, IJsonData<StatusJsonData>, IInventoryItemAdd
     {
         #region Static
 
@@ -41,12 +42,13 @@ namespace Skill
         public string skillName;
         public string explain;
         public SKillType type;
+        public Texture2D icon;
         public StatusValue<float> coolTime = new StatusValue<float>();
 
-        public Texture2D icon;
         public bool isInvoke; // 현재 스킬이 발동 중인지
-        
-        public StatusValue<int> damage = new StatusValue<int>(){Max = 99999};
+
+        public StatusValue<int> level = new StatusValue<int>() { Max = 1 };
+        public StatusValue<int> damage = new StatusValue<int>() { Max = 99999 };
         public StatusValue<float> duration = new StatusValue<float>();
 
         #endregion
@@ -60,9 +62,34 @@ namespace Skill
         }
 
         #endregion
-        
+
+        #region Member Function
+
+        /// <summary>
+        /// 스킬을 습득 했을때 발동하도록 하는 함수
+        /// </summary>
+        /// <param name="earnTargetObject">해당 스킬을 습득한 대상</param>
+        public abstract void Earn(GameObject earnTargetObject);
         public abstract void MainLoop();
         public abstract void Run(GameObject runObject);
+
+        #endregion
+        
+        #region Inventory Interface
+
+        public AddItem AddItem<AddItem>(AddItem addItem)
+        {
+            if (addItem is SkillBase skillBase)
+            {
+                level.Current = skillBase.level.Current;
+            }
+
+            return addItem;
+        }
+
+        #endregion
+
+        #region Json Datra Interface
 
         public SkillJsonData GetJsonData()
         {
@@ -84,6 +111,9 @@ namespace Skill
             damage.Max = json.GetInt("Damage Max");
             damage.Current = json.GetInt("Damage Current");
         }
+        
+        #endregion
+        
         #region RPC Function
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]

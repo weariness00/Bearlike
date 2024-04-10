@@ -1,7 +1,6 @@
 ﻿using System;
 using Status;
 using Fusion;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -10,12 +9,11 @@ namespace Weapon
     public interface IEquipment
     {
         public Action AttackAction { get; set; }
-        public Action EquipAction { get; set; }
+        public Action<GameObject> EquipAction { get; set; }
+        public Action<GameObject> ReleaseEquipAction { get; set; }
     
         public bool IsEquip { get; set; }
         public bool IsGun { get; set; }
-
-        public void Equip(GameObject equipObject);
     }
 
     [RequireComponent(typeof(StatusBase))]
@@ -30,8 +28,11 @@ namespace Weapon
         [Header("기본 사운드")] 
         public AudioSource hitSound;
 
+        private Action<GameObject> _equipAction;
+
         public virtual void Awake()
         {
+            EquipAction += SetLayer;
             status = GetComponent<StatusBase>();
         }
 
@@ -44,13 +45,8 @@ namespace Weapon
         {
             base.Spawned();
         }
-
-        public Action AttackAction { get; set; }
-        public Action EquipAction { get; set; }
-        public bool IsEquip { get; set; }
-        public bool IsGun { get; set; }
         
-        public virtual void Equip(GameObject equipObject)
+        void SetLayer(GameObject equipObject)
         {
             if (HasInputAuthority)
             {
@@ -61,5 +57,15 @@ namespace Weapon
                 gameObject.layer = 0;
             }
         }
+        
+        #region Equipment Interface
+
+        public Action AttackAction { get; set; }
+        public Action<GameObject> EquipAction { get; set; }
+        public Action<GameObject> ReleaseEquipAction { get; set; }
+        public bool IsEquip { get; set; }
+        public bool IsGun { get; set; }
+        
+        #endregion
     }
 }

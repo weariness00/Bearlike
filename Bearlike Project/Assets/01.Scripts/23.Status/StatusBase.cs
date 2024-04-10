@@ -27,7 +27,7 @@ namespace Status
         public StatusValue<int> damage = new StatusValue<int>();              // 공격력
         public StatusValue<int> defence = new StatusValue<int>();             // 방어력
         public StatusValue<float> avoid = new StatusValue<float>(){Min = 0, Max = 1, isOverMax = true, isOverMin = true};           // 회피율 0 ~ 1 사이값
-        public StatusValue<int> moveSpeed = new StatusValue<int>();           // 이동 속도
+        public StatusValue<float> moveSpeed = new StatusValue<float>();           // 이동 속도
         public StatusValue<float> attackSpeed = new StatusValue<float>();     // 초당 공격 속도
         public StatusValue<float> attackLateTime = new StatusValue<float>();  // Attack Speed에 따른 딜레이
         public StatusValue<float> attackRange = new StatusValue<float>();
@@ -134,8 +134,8 @@ namespace Status
             
             avoid.Current = json.GetFloat("Avoid Current");
             
-            moveSpeed.Max = json.GetInt("MoveSpeed Max");
-            moveSpeed.Current = json.GetInt("MoveSpeed Current");
+            moveSpeed.Max = json.GetFloat("MoveSpeed Max");
+            moveSpeed.Current = json.GetFloat("MoveSpeed Current");
             
             attackSpeed.Max = json.GetFloat("AttackSpeed Max");
             attackSpeed.Current = json.GetFloat("AttackSpeed Current");
