@@ -61,7 +61,7 @@ namespace Item
 
         #region Unity Event Function
 
-        public void Awake()
+        public virtual void Awake()
         {
             rigidbody = GetComponent<Rigidbody>();
 

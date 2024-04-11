@@ -3585,6 +3585,55 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f89877a2442e4a09bd7c0a763fcd3009, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &2129275855
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2129275857}
+  - component: {fileID: 2129275856}
+  m_Layer: 0
+  m_Name: Skill List
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2129275856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2129275855}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc97487e0eda44438370ce2a253b8cfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skillList:
+  - {fileID: 734012965739966661, guid: 75919a1078d2e3f439fabba75a6d6402, type: 3}
+  - {fileID: 6214309504215176155, guid: e2bd8815c8e56094a9a4fb2d3b2d388c, type: 3}
+  - {fileID: 9214968381015799913, guid: 08d601a4a5a38a04ab26efede8c71ad7, type: 3}
+  - {fileID: 7856296637238042012, guid: cc580b57f8a4fcd4abaecfda0b38bc64, type: 3}
+--- !u!4 &2129275857
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2129275855}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 990.73865, y: 756.231, z: -107.01138}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1668841479655600141
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3669,3 +3718,4 @@ SceneRoots:
   - {fileID: 359810661}
   - {fileID: 1840794308}
   - {fileID: 1668841479655600141}
+  - {fileID: 2129275857}

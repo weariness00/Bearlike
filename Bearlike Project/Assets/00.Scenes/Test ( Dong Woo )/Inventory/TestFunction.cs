@@ -8,15 +8,15 @@ namespace Tset
     {
         public ItemInventory itemInventory;
         
-        public void OnAddRandomItem()
-        {
-            var itemObj = ItemObjectList.GetObject(0);
-            itemInventory.AddItem(itemObj.GetComponent<ItemBase>());
-        }
-
-        public void OnUseItem()
-        {
-            itemInventory.UseItem(ItemObjectList.GetObject(0).GetComponent<ItemBase>());
-        }
+        // public void OnAddRandomItem()
+        // {
+        //     var itemObj = ItemObjectList.GetObject(0);
+        //     itemInventory.AddItem(itemObj.GetComponent<ItemBase>());
+        // }
+        //
+        // public void OnUseItem()
+        // {
+        //     itemInventory.UseItem(ItemObjectList.GetObject(0).GetComponent<ItemBase>());
+        // }
     }
 }

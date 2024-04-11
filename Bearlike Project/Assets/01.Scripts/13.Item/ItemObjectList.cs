@@ -1,27 +1,49 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
+using Manager;
 using Util;
 
 namespace Item
 {
     public class ItemObjectList : Singleton<ItemObjectList>
     {
-        [SerializeField] private List<GameObject> itemObjectList = new List<GameObject>();
-        private readonly Dictionary<int, GameObject> _itemObjectDictionary = new Dictionary<int, GameObject>();
+        public List<ItemBase> itemList = new List<ItemBase>();
 
         protected override void Awake()
         {
             base.Awake();
             DontDestroyOnLoad(gameObject);
             
-            foreach (var itemObject in itemObjectList)
-            {
-                var itemBase = itemObject.GetComponent<ItemBase>();
-                _itemObjectDictionary.Add(itemBase.Id, itemObject);
-            }
         }
 
-        public static GameObject GetObject(int id) => Instance._itemObjectDictionary.TryGetValue(id, out var value) ? value : null;
+        public static ItemBase GetFromId(int id)
+        {
+            foreach (var item in Instance.itemList)
+            {
+                if (item.Id == id)
+                {
+                    return item;
+                }
+            }
+            
+            DebugManager.LogError($"ID : {id} 인 아이템이 존재하지 않습니다.");
+            
+            return null;
+        }
+
+        public static ItemBase GetObject(string itemName)
+        {
+            foreach (var item in Instance.itemList)
+            {
+                if (item.Name == itemName)
+                {
+                    return item;
+                }
+            }
+            
+            DebugManager.LogError($"Name : {itemName} 인 아이템이 존재하지 않습니다.");
+            
+            return null;
+        }
     }
 }
 

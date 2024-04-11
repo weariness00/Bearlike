@@ -26,6 +26,7 @@ namespace Skill
         public static void AddInfoData(int id, SkillJsonData data) => _infoDataCash.TryAdd(id, data);
         public static SkillJsonData GetInfoData(int id) => _infoDataCash.TryGetValue(id, out var data) ? data : new SkillJsonData();
         public static void ClearInfosData() => _infoDataCash.Clear();
+        public static bool IsInfoChasing;
         
         // Status Data 캐싱
         private static Dictionary<int, StatusJsonData> _statusDataChasing = new Dictionary<int, StatusJsonData>();
@@ -119,6 +120,16 @@ namespace Skill
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void SetIsInvokeRPC(NetworkBool value) => isInvoke = value;
 
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void SetLevelRPC(StatusValueType type, int value)
+        {
+            switch (type)
+            {
+                case StatusValueType.Current:
+                    level.Current = value;
+                    break;
+            }
+        }
         #endregion
     }
 }

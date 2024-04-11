@@ -7,6 +7,7 @@ using Manager;
 using Photon;
 using Skill;
 using Status;
+using UI.Skill;
 using Unity.VisualScripting;
 using UnityEngine;
 using Weapon;
@@ -20,12 +21,15 @@ namespace Player
         public PlayerRef PlayerRef => Object.InputAuthority;
         
         // public Status status;
-        [Header("컴포넌트")] public PlayerStatus status;
+        [Header("컴포넌트")] 
+        public PlayerStatus status;
         public PlayerCameraController cameraController;
         public SkillSystem skillSystem;
         public WeaponSystem weaponSystem;
         public Canvas GunUI;
         public ItemInventory itemInventory;
+        public SkillInventory skillInventory;
+        public SkillSelectUI skillSelectUI;
         private NetworkMecanimAnimator _networkAnimator;
         [HideInInspector] public SimpleKCC simpleKcc;
         [HideInInspector] public Rigidbody rigidBody;

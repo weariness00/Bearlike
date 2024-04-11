@@ -45,7 +45,7 @@ namespace Item.Looting
                 // 일반 객체라면 클라이언트에게만 보이도로 스폰
                 else
                 {
-                    var dropObjectPrefab = ItemObjectList.GetObject(dropItem.ItemID);
+                    var dropObjectPrefab = ItemObjectList.GetFromId(dropItem.ItemID).gameObject;
                     if (dropObjectPrefab == null)
                     {
                         DebugManager.LogError($"아이템이 리스트에 존재하지 않습니다. Item ID : {dropItem.ItemID}");

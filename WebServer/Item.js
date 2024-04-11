@@ -12,7 +12,7 @@ async function StatusQuery(){
         (
             SELECT JSON_OBJECTAGG(status.\`Status Name\`, status.Value)
             FROM bearlike.item_status status
-            WHERE status.\`Item ID\` = item.ID AND status.\`Value Type\` = 0
+            WHERE status.\`Item ID\` = item.ID AND status.\`Value Type\` = 'Int'
         ),
         JSON_OBJECT()
     ) as 'Status Int',
@@ -20,7 +20,7 @@ async function StatusQuery(){
         (
             SELECT JSON_OBJECTAGG(status.\`Status Name\`, status.Value)
             FROM bearlike.item_status status
-            WHERE status.\`Item ID\` = item.ID AND status.\`Value Type\` = 1
+            WHERE status.\`Item ID\` = item.ID AND status.\`Value Type\` = 'Float'
         ),
         JSON_OBJECT()
     ) as 'Status Float'

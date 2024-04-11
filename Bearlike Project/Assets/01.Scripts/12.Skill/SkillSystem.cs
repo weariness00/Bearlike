@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Manager;
-using Photon;
 using UnityEngine;
 
 namespace Skill
 {
+    /// <summary>
+    /// 객체가 가지고 있는 스킬들을 관리해주는 시스템
+    /// </summary>
     public class SkillSystem : MonoBehaviour
     {
         public List<SkillBase> skillList = new List<SkillBase>();
@@ -24,6 +26,21 @@ namespace Skill
                     skill.MainLoop();
                 }
             }
+        }
+
+        public SkillBase GetSkillFromId(int id)
+        {
+            foreach (var skillBase in skillList)
+            {
+                if (skillBase.id.Equals(id))
+                {
+                    return skillBase;
+                }
+            }
+            
+            DebugManager.LogError($"해당 ID[{id}]의 스킬이 존재하지 않습니다.");
+
+            return null;
         }
 
         public SkillBase GetSkillFromName(string skillName)
