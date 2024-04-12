@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 8192462808611450523}
   - component: {fileID: 5627064086237972378}
   - component: {fileID: 4514288882044486747}
+  - component: {fileID: 2836497472490090454}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Untagged
@@ -129,6 +130,7 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 5627064086237972378}
   - {fileID: 4514288882044486747}
+  - {fileID: 2836497472490090454}
 --- !u!114 &5627064086237972378
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157,23 +159,94 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9157c914e81496ca531aa847af40355, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage:
+  status: {fileID: 0}
+  destination: {x: 0, y: 0, z: 0}
+  hitEffect: {fileID: 0}
+  bknock: 0
+  maxMoveDistance: 0
+--- !u!114 &2836497472490090454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 175187448005685112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp:
     _min: 0
-    _max: 100
-    _current: 100
+    _max: 0
+    _current: 0
     isOverMax: 0
     isOverMin: 0
     isMin: 0
     isMax: 0
-  speed:
+  damage:
     _min: 0
-    _max: 100
-    _current: 100
+    _max: 0
+    _current: 0
     isOverMax: 0
     isOverMin: 0
     isMin: 0
-    isMax: 1
-  destination: {x: 0, y: 0, z: 0}
-  player: {fileID: 0}
-  moveDistance: 0
-  maxMoveDistance: 0
+    isMax: 0
+  defence:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  avoid:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 1
+    isMin: 0
+    isMax: 0
+  moveSpeed:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  attackSpeed:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  attackLateTime:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  attackRange:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  force:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  condition: 0
+  property: 0

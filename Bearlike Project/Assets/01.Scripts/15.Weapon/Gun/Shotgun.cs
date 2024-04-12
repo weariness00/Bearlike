@@ -25,7 +25,7 @@ namespace Weapon.Gun
 
             bknock = false;
             bulletRadian = 3;
-            
+            // json화
             ammo.Max = 36;
             ammo.Current = ammo.Max;
         } 
@@ -43,18 +43,14 @@ namespace Weapon.Gun
                     if(shootEffect != null) shootEffect.Play();
                     bullet.hitEffect = hitEffect;
                     bullet.bknock = bknock;
-                    // var bulletStatus = bullet.GetComponent<StatusBase>();
-                    // bulletStatus.damage.Max = 9999;
-                    // bulletStatus.damage.Current = (int)(((100.0f + (playerStatus.damage.Current)) / 100.0f) + (gun.attack.Current)),
-                    // (CrowdControl)(playerStatus.property | gun.property);
                     
                     for (int i = 0; i < 10; ++i)
                     {
                         Vector3 randomVector3 = new Vector3(Random.Range(-bulletRadian, bulletRadian), 
                             Random.Range(-bulletRadian, bulletRadian), Random.Range(-bulletRadian, bulletRadian));
 
-                        // SetDestinationRPC((dst * attackRange) + randomVector3);
-                        bullet.destination = transform.position + (dst * attackRange) + randomVector3;
+                        SetDestinationRPC(transform.position + (dst * attackRange) + randomVector3);
+                        // bullet.destination = transform.position + (dst * attackRange) + randomVector3;
                         
                         var transform1 = transform;
                         Runner.SpawnAsync(bullet.gameObject, transform1.position + dst, transform1.rotation);

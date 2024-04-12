@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Data;
 using Status;
 using Fusion;
 using Manager;
@@ -11,7 +12,7 @@ using Weapon.Bullet;
 
 namespace Weapon.Gun
 {
-    public abstract class GunBase : WeaponBase
+    public abstract class GunBase : WeaponBase, IJsonData<StatusJsonData>
     {
         #region Static
 
@@ -97,7 +98,8 @@ namespace Weapon.Gun
                     var dst = CheckRay();
                     
                     if(shootEffect != null) shootEffect.Play();
-                    bullet.destination = dst;
+                    SetDestinationRPC(transform.position + dst);
+                    // bullet.destination = dst;
                     bullet.hitEffect = hitEffect;
                     bullet.bknock = false;
 
@@ -123,29 +125,29 @@ namespace Weapon.Gun
             
             return ray.direction;
             
-            var hitOptions = HitOptions.IncludePhysX | HitOptions.IgnoreInputAuthority;
-            if(Runner.LagCompensation.Raycast(ray.origin, ray.direction, float.MaxValue, Object.InputAuthority, out var hit, includeCollide, hitOptions))
-            {
-                DebugManager.Log($"Ray충돌\n총 이름 : {name}\n맞은 대상 : {hit.GameObject.name}");
-
-                StatusBase hitState;
-                if (hit.GameObject.TryGetComponent(out hitState))
-                {
-                    // hitState.ApplyDamage(state.attack.Current, (ObjectProperty)state.property); // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
-                    // hitState.ApplyDamageRPC(status.attack.Current, (CrowdControl)status.property);
-                    var hitEffectObject = Instantiate(hitEffect.gameObject, hit.Point, Quaternion.identity);
-                    hitEffectObject.transform.LookAt(hit.Normal);
-                    Destroy(hitEffectObject, 5f);
-                }
-                
-                detination = hit.Point;
-            }
-            else
-            {
-                detination = ray.direction * int.MaxValue;
-            }
-
-            return detination;
+            // var hitOptions = HitOptions.IncludePhysX | HitOptions.IgnoreInputAuthority;
+            // if(Runner.LagCompensation.Raycast(ray.origin, ray.direction, float.MaxValue, Object.InputAuthority, out var hit, includeCollide, hitOptions))
+            // {
+            //     DebugManager.Log($"Ray충돌\n총 이름 : {name}\n맞은 대상 : {hit.GameObject.name}");
+            //
+            //     StatusBase hitState;
+            //     if (hit.GameObject.TryGetComponent(out hitState))
+            //     {
+            //         // hitState.ApplyDamage(state.attack.Current, (ObjectProperty)state.property); // 총의 공격력을 여기서 추가를 할지 아님 state에서 추가를 할지 고민해보자.
+            //         // hitState.ApplyDamageRPC(status.attack.Current, (CrowdControl)status.property);
+            //         var hitEffectObject = Instantiate(hitEffect.gameObject, hit.Point, Quaternion.identity);
+            //         hitEffectObject.transform.LookAt(hit.Normal);
+            //         Destroy(hitEffectObject, 5f);
+            //     }
+            //     
+            //     detination = hit.Point;
+            // }
+            // else
+            // {
+            //     detination = ray.direction * int.MaxValue;
+            // }
+            //
+            // return detination;
         }
 
         #region Bullet Funtion
@@ -207,5 +209,16 @@ namespace Weapon.Gun
         public void SetDestinationRPC(Vector3 dir) => bullet.destination = dir;
 
         #endregion
+
+        
+        public virtual StatusJsonData GetJsonData()
+        {
+            return new StatusJsonData();
+        }
+
+        public virtual void SetJsonData(StatusJsonData json)
+        {
+            
+        }
     }
 }

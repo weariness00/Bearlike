@@ -20,8 +20,6 @@ namespace Monster.Container
     [RequireComponent(typeof(Animator))]
     public class PiggyBank : MonsterBase
     {
-        [SerializeField] private float movementSpeed = 1.0f;
-
         #region Component
 
         private Rigidbody _rb;
@@ -40,7 +38,9 @@ namespace Monster.Container
         #endregion
 
         #region 속성
-
+        [Header("이동")]
+        [SerializeField] private float movementSpeed = 1.0f;
+        
         private float _playerCount;
         private float _durationTime; // Action간의 딜레이 시간
         private int _targetPlayerIndex; // target으로 지정되는 Player의 index
@@ -58,6 +58,7 @@ namespace Monster.Container
 
         private bool isDead = false;
 
+        [Header("공격 범위")]
         [SerializeField] private float attackRange = 10; // 발차기 감지 범위
         [SerializeField] private float rushRange = 100; // 돌진 감지 범위
         [SerializeField] private float coinAtaackMinRange = 10; // 코인 공격 최소 감지 범위
@@ -86,6 +87,8 @@ namespace Monster.Container
 
         private void Start()
         {
+            base.Start();
+            
             _gameManager = GameManager.Instance;
             _playerCount = _gameManager.AlivePlayerCount;
 

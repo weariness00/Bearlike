@@ -1,4 +1,6 @@
-﻿using Fusion;
+﻿using System.Collections.Generic;
+using Data;
+using Fusion;
 using Photon;
 using Status;
 using Unity.Burst;
@@ -9,16 +11,35 @@ using UnityEngine.VFX;
 namespace Weapon.Bullet
 {
     [RequireComponent(typeof(StatusBase))]
-    public class BulletBase : NetworkBehaviourEx
+    public class BulletBase : NetworkBehaviourEx, IJsonData<BulletJsonData>
     {
+        // Info Data 캐싱
+        private static readonly Dictionary<int, BulletJsonData> InfoDataCash = new Dictionary<int, BulletJsonData>();
+        public static void AddInfoData(int id, BulletJsonData data) => InfoDataCash.TryAdd(id, data);
+        public static BulletJsonData GetInfoData(int id) => InfoDataCash.TryGetValue(id, out var data) ? data : new BulletJsonData();
+        public static void ClearInfosData() => InfoDataCash.Clear();
+        
+        // Status Data 캐싱
+        private static readonly Dictionary<int, StatusJsonData> StatusDataChasing = new Dictionary<int, StatusJsonData>();
+        public static void AddStatusData(int id, StatusJsonData data) => StatusDataChasing.TryAdd(id, data);
+        public static StatusJsonData GetStatusData(int id) => StatusDataChasing.TryGetValue(id, out var data) ? data : new StatusJsonData();
+        public static void ClearStatusData() => StatusDataChasing.Clear();
+        
         [HideInInspector] public StatusBase status;
+
+        #region 속성
         
         public Vector3 destination = Vector3.zero;
         public VisualEffect hitEffect;
         
         private Vector3 direction;
         public bool bknock = false;
-
+        
+        public int id = 0;
+        public string explain;
+        
+        #endregion
+        
         #region 사정거리
         private Vector3 _oldPosition;
         public float maxMoveDistance;   // 최대 사정거리
@@ -36,6 +57,8 @@ namespace Weapon.Bullet
 
             direction = (destination - transform.position).normalized;
             transform.rotation = Quaternion.LookRotation(destination);
+            
+            status.SetJsonData(GetStatusData(id));
         }
         
         public override void FixedUpdateNetwork()
@@ -95,5 +118,16 @@ namespace Weapon.Bullet
         // }
         //
         // #endregion
+        
+        public BulletJsonData GetJsonData()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SetJsonData(BulletJsonData json)
+        {
+            name = json.Name;
+            explain = json.Explain;
+        }
     }
 }

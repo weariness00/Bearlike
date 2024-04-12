@@ -20,34 +20,14 @@ namespace Weapon.Gun
         {
             base.Start();
 
+            // json화
             ammo.Max = ammo.Current = 40;
         } 
         
         public override void Shoot()
         {
             base.Shoot();
-            // 코드의 재사용을 해야됨
-            // if (fireLateSecond.isMax)
-            // {
-            //     fireLateSecond.Current = fireLateSecond.Min;
-            //     if (magazine.Current != 0)
-            //     {
-            //         var dst = CheckRay();
-            //         
-            //         if(shootEffect != null) shootEffect.Play();
-            //         bullet.destination = dst;
-            //         
-            //         var transform1 = transform;
-            //         Instantiate(bullet.gameObject, transform1.position, transform1.rotation);
-            //     
-            //         magazine.Current--;
-            //         SoundManager.Play(shootSound);
-            //     }
-            //     else
-            //     {
-            //         SoundManager.Play(emptyAmmoSound);
-            //     }
-            // }
+            
             if(_reloadCorutine != null)
                 StopCoroutine(_reloadCorutine);
         }
