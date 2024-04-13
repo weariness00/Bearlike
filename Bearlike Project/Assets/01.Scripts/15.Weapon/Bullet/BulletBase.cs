@@ -57,7 +57,6 @@ namespace Weapon.Bullet
             _oldPosition = transform.position;
 
             direction = (destination - transform.position).normalized;
-            Debug.Log(direction);
             transform.rotation = Quaternion.LookRotation(destination);
             
             status.SetJsonData(GetStatusData(id));

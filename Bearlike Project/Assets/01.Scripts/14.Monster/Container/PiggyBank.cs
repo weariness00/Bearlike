@@ -142,7 +142,7 @@ namespace Monster.Container
                 yield return new WaitForSeconds(waitTime);
             }
         }
-
+        
         IEnumerator WalkCoroutine(float waitTime)
         {
             while (true)
@@ -540,7 +540,7 @@ namespace Monster.Container
         /// </summary>
         INode.NodeState CheckAttackAction()
         {
-            if (IsAnimationRunning("Attack_Blend"))
+            if (IsAnimationRunning("Attack"))
             {
                 return INode.NodeState.Running;
             }
@@ -640,7 +640,7 @@ namespace Monster.Container
 
         INode.NodeState CheckRushAction()
         {
-            if (IsAnimationRunning("Attack_Blend"))
+            if (IsAnimationRunning("Attack"))
             {
                 return INode.NodeState.Running;
             }
@@ -726,7 +726,7 @@ namespace Monster.Container
 
         INode.NodeState CheckJumpAttackAction()
         {
-            if (IsAnimationRunning("Attack_Blend"))
+            if (IsAnimationRunning("Attack"))
             {
                 return INode.NodeState.Running;
             }
@@ -796,7 +796,7 @@ namespace Monster.Container
             _animator.Animator.SetInteger(AttackType, 2);
             // y의 위치를 천천히 올려주는 코루틴 필요
 
-            StartCoroutine(JumpCoroutine(1.0f, 0.0f));
+            // StartCoroutine(JumpCoroutine(1.0f, 0.5f));
             
             return INode.NodeState.Success;
         }
@@ -805,15 +805,17 @@ namespace Monster.Container
         {
             while (true)
             {
-                if (IsAnimationRunning("Attack_Blend"))
+                if (IsAnimationRunning("Attack"))
                 {
-                    var position = transform.position;
-                    position.y += risingSpeed * Runner.DeltaTime;
+                    var localTransform = transform.position;
+                    transform.position = new Vector3(localTransform.x, localTransform.y + risingSpeed * Runner.DeltaTime, localTransform.z);
+                    
+                    Debug.Log(transform.position);
+                yield return new WaitForSeconds(waitTime);
                 }
 
                 if (transform.position.y >= jumpHeight)
                     yield break;
-                // yield return new WaitForSeconds(waitTime);
             }
         }
         
@@ -842,7 +844,7 @@ namespace Monster.Container
 
         INode.NodeState CheckFartAction()
         {
-            if (IsAnimationRunning("Attack_Blend"))
+            if (IsAnimationRunning("Attack"))
             {
                 return INode.NodeState.Running;
             }
@@ -912,7 +914,7 @@ namespace Monster.Container
 
         INode.NodeState CheckCoinAttackAction()
         {
-            if (IsAnimationRunning("Attack_Blend"))
+            if (IsAnimationRunning("Attack"))
             {
                 return INode.NodeState.Running;
             }
