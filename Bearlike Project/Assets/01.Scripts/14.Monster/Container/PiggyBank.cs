@@ -124,6 +124,8 @@ namespace Monster.Container
                 _btRunner.Operator();
         }
 
+        #region BT
+        
         IEnumerator DieCoroutine(float waitTime)
         {
             while (true)
@@ -168,175 +170,143 @@ namespace Monster.Container
             }
         }
 
-        // INode SettingBT()
-        // {
-        //     return new SequenceNode
-        //     (
-        //         new List<INode>()
-        //         {
-        //             new SelectorNode
-        //             (
-        //                 new List<INode>()
-        //                 {
-        //                     new SequenceNode
-        //                     (
-        //                         new List<INode>()
-        //                         {   // Deffence
-        //                             new ActionNode(CheckMoreHp), 
-        //                             new ActionNode(StartDefence),
-        //                             new ActionNode(TermFuction),
-        //                         }
-        //                     ),
-        //                     new SequenceNode
-        //                     (
-        //                         new List<INode>()
-        //                         {   // Run
-        //                             new ActionNode(StartRun),
-        //                             new ActionNode(TermFuction),
-        //                             new ActionNode(StopRun),
-        //                         }
-        //                     )
-        //                 }
-        //             ),
-        //             new SelectorNode(
-        //                 new List<INode>(){
-        //                     new SequenceNode
-        //                     (
-        //                         new List<INode>()
-        //                         {
-        //                             new ActionNode(CheckAttackAction), // Kick
-        //                             new ActionNode(CheckAttackDistance),
-        //                             new ActionNode(StartRotate),
-        //                             new ActionNode(StartAttack),
-        //                             new ActionNode(TermFuction),
-        //                         }
-        //                     ),
-        //                     new ActionNode(SuccessFunction),
-        //                 }
-        //             ),
-        //             new SelectorNode
-        //             (
-        //                 new List<INode>()
-        //                 {
-        //                     new SequenceNode(
-        //                         new List<INode>()
-        //                         {
-        //                             new ActionNode(CheckRushAction), // Rush
-        //                             new ActionNode(CheckRushDistance),
-        //                             new ActionNode(StartRotate),
-        //                             new ActionNode(StartRush),
-        //                             new ActionNode(TermFuction),
-        //                         }
-        //                     ),
-        //                     new SequenceNode
-        //                     (
-        //                         new List<INode>()
-        //                         {
-        //                             new ActionNode(CheckJumpAttackAction), // JumpAttack
-        //                             new ActionNode(StartRotate),
-        //                             new ActionNode(StartJumpAttack),
-        //                             new ActionNode(TermFuction),
-        //                         }
-        //                     )
-        //                 }
-        //             ),
-        //             new SequenceNode
-        //             (
-        //                 new List<INode>()
-        //                 {
-        //                     new ActionNode(CheckFartAction), // fart
-        //                     new ActionNode(StartFart),
-        //                     new ActionNode(TermFuction),
-        //                 }
-        //             ),
-        //             new SequenceNode
-        //             (    // take a rest
-        //                 new List<INode>()
-        //                 {
-        //                     new ActionNode(CheckRestAction),
-        //                     new ActionNode(CheckRestHp),
-        //                     new ActionNode(StartRest),
-        //                     new ActionNode(TermFuction),
-        //                 }
-        //             ),
-        //             new SequenceNode
-        //             (   // CoinAttack
-        //                 new List<INode>()
-        //                 {
-        //                     new ActionNode(CheckCoinAttackAction),
-        //                     new ActionNode(CheckCoinAttackDistance),
-        //                     new ActionNode(StartCoinAttack),
-        //                     new ActionNode(TermFuction),
-        //                 }
-        //             ),
-        //             
-        //             // // sleep
-        //         }
-        //     );
-        // }
-
         INode SettingBT()
         {
             return new SequenceNode
             (
-                new SequenceNode
+                new SelectorNode
                 (
-                    new ActionNode(CheckMoreHp),
-                    new ActionNode(StartDefence),
-                    new ActionNode(TermFuction)
+                    false,
+                    new SequenceNode
+                    (   // Deffence
+                        new ActionNode(CheckMoreHp), 
+                        new ActionNode(StartDefence),
+                        new ActionNode(TermFuction)
+                    ),
+                    new SequenceNode
+                    (   // Run
+                        new ActionNode(StartRun),
+                        new ActionNode(TermFuction),
+                        new ActionNode(StopRun)
+                    )
                 ),
-                new SequenceNode
-                (
-                    new ActionNode(StartRun),
-                    new ActionNode(TermFuction),
-                    new ActionNode(StopRun)
+                new SelectorNode(
+                    false,
+                    new SequenceNode
+                    (
+                        new ActionNode(CheckAttackAction), // Kick
+                        new ActionNode(CheckAttackDistance),
+                        new ActionNode(StartRotate),
+                        new ActionNode(StartAttack),
+                        new ActionNode(TermFuction)
+                    ),
+                    new ActionNode(SuccessFunction)
                 ),
-                new SequenceNode
-                (
-                    new ActionNode(CheckAttackAction), // Kick
-                    new ActionNode(CheckAttackDistance),
-                    new ActionNode(StartRotate),
-                    new ActionNode(StartAttack),
-                    new ActionNode(TermFuction)
-                ),
-                new SequenceNode
-                (
-                    new ActionNode(CheckRushAction), // Rush
-                    new ActionNode(CheckRushDistance),
-                    new ActionNode(StartRotate),
-                    new ActionNode(StartRush),
-                    new ActionNode(TermFuction)
-                ),
-                new SequenceNode
-                (
-                    new ActionNode(CheckJumpAttackAction), // JumpAttack
-                    new ActionNode(StartRotate),
-                    new ActionNode(StartJumpAttack),
-                    new ActionNode(TermFuction)
-                ),
-                new SequenceNode
-                (
-                    new ActionNode(CheckFartAction), // fart
-                    new ActionNode(StartFart),
-                    new ActionNode(TermFuction)
-                ),
-                new SequenceNode
-                ( // take a rest
-                    new ActionNode(CheckRestAction),
-                    new ActionNode(CheckRestHp),
-                    new ActionNode(StartRest),
-                    new ActionNode(TermFuction)
-                ),
-                new SequenceNode
-                ( // CoinAttack
-                    new ActionNode(CheckCoinAttackAction),
-                    new ActionNode(CheckCoinAttackDistance),
-                    new ActionNode(StartCoinAttack),
-                    new ActionNode(TermFuction)
-                )
-                // // sleep
+                    new SelectorNode
+                    (
+                        false,
+                        new SequenceNode(
+                            new ActionNode(CheckRushAction), // Rush
+                            new ActionNode(CheckRushDistance),
+                            new ActionNode(StartRotate),
+                            new ActionNode(StartRush),
+                            new ActionNode(TermFuction)
+                        ),
+                        new SequenceNode
+                        (
+                            new ActionNode(CheckJumpAttackAction), // JumpAttack
+                            new ActionNode(StartRotate),
+                            new ActionNode(StartJumpAttack),
+                            new ActionNode(TermFuction)
+                        )
+                    ),
+                    new SequenceNode
+                    (
+                        new ActionNode(CheckFartAction), // fart
+                        new ActionNode(StartFart),
+                        new ActionNode(TermFuction)
+                    ),
+                    new SequenceNode
+                    (    // take a rest
+                        new ActionNode(CheckRestAction),
+                        new ActionNode(CheckRestHp),
+                        new ActionNode(StartRest),
+                        new ActionNode(TermFuction)
+                    ),
+                    new SequenceNode
+                    (   // CoinAttack
+                        new ActionNode(CheckCoinAttackAction),
+                        new ActionNode(CheckCoinAttackDistance),
+                        new ActionNode(StartCoinAttack),
+                        new ActionNode(TermFuction)
+                    )
+                    
+                    // // sleep
             );
         }
+
+        // INode SettingBT()
+        // {
+        //     return new SequenceNode
+        //     (
+        //         new SequenceNode
+        //         (
+        //             new ActionNode(CheckMoreHp),
+        //             new ActionNode(StartDefence),
+        //             new ActionNode(TermFuction)
+        //         ),
+        //         new SequenceNode
+        //         (
+        //             new ActionNode(StartRun),
+        //             new ActionNode(TermFuction),
+        //             new ActionNode(StopRun)
+        //         ),
+        //         new SequenceNode
+        //         (
+        //             new ActionNode(CheckAttackAction), // Kick
+        //             new ActionNode(CheckAttackDistance),
+        //             new ActionNode(StartRotate),
+        //             new ActionNode(StartAttack),
+        //             new ActionNode(TermFuction)
+        //         ),
+        //         new SequenceNode
+        //         (
+        //             new ActionNode(CheckRushAction), // Rush
+        //             new ActionNode(CheckRushDistance),
+        //             new ActionNode(StartRotate),
+        //             new ActionNode(StartRush),
+        //             new ActionNode(TermFuction)
+        //         ),
+        //         new SequenceNode
+        //         (
+        //             new ActionNode(CheckJumpAttackAction), // JumpAttack
+        //             new ActionNode(StartRotate),
+        //             new ActionNode(StartJumpAttack),
+        //             new ActionNode(TermFuction)
+        //         ),
+        //         new SequenceNode
+        //         (
+        //             new ActionNode(CheckFartAction), // fart
+        //             new ActionNode(StartFart),
+        //             new ActionNode(TermFuction)
+        //         ),
+        //         new SequenceNode
+        //         ( // take a rest
+        //             new ActionNode(CheckRestAction),
+        //             new ActionNode(CheckRestHp),
+        //             new ActionNode(StartRest),
+        //             new ActionNode(TermFuction)
+        //         ),
+        //         new SequenceNode
+        //         ( // CoinAttack
+        //             new ActionNode(CheckCoinAttackAction),
+        //             new ActionNode(CheckCoinAttackDistance),
+        //             new ActionNode(StartCoinAttack),
+        //             new ActionNode(TermFuction)
+        //         )
+        //         // // sleep
+        //     );
+        // }
 
         bool IsAnimationRunning(string stateName)
         {
@@ -1013,6 +983,7 @@ namespace Monster.Container
             return INode.NodeState.Success;
         }
 
+        #endregion
         #endregion
     }
 }
