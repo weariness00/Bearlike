@@ -45,6 +45,7 @@ namespace Weapon.Gun
                     if(shootEffect != null) shootEffect.Play();
                     bullet.hitEffect = hitEffect;
                     bullet.bknock = bknock;
+                    // bullet.maxMoveDistance = status.attackRange;
 
                     if (HasStateAuthority)
                     {

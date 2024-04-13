@@ -6,14 +6,7 @@ namespace Item
 {
     public class ItemObjectList : Singleton<ItemObjectList>
     {
-        public List<ItemBase> itemList = new List<ItemBase>();
-
-        protected override void Awake()
-        {
-            base.Awake();
-            DontDestroyOnLoad(gameObject);
-            
-        }
+        #region Static
 
         public static ItemBase GetFromId(int id)
         {
@@ -30,7 +23,7 @@ namespace Item
             return null;
         }
 
-        public static ItemBase GetObject(string itemName)
+        public static ItemBase GetFromName(string itemName)
         {
             foreach (var item in Instance.itemList)
             {
@@ -43,6 +36,17 @@ namespace Item
             DebugManager.LogError($"Name : {itemName} 인 아이템이 존재하지 않습니다.");
             
             return null;
+        }
+
+        #endregion
+        
+        public List<ItemBase> itemList = new List<ItemBase>();
+        
+        
+        protected override void Awake()
+        {
+            base.Awake();
+            DontDestroyOnLoad(gameObject);
         }
     }
 }

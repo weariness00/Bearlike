@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Data;
 using Fusion;
 using Manager;
@@ -22,15 +24,20 @@ namespace Status
     public class StatusBase : NetworkBehaviour, IJsonData<StatusJsonData>
     {
         #region Member Variable
+
+        // 추가적인 스테이터스
+        // ex ) Gun은 Player의 소유 Gun에서 나가는 Bullet에는 Player와 Gun의 스텟이 필요 그때마다 불러오기가 힘드니 Gun의 추가적인 Status에 Player의 Status를 포함
+        public List<StatusBase> additionalStatusList = new List<StatusBase>();
         
-        public StatusValue<int> hp = new StatusValue<int>();                  // 체력        
-        public StatusValue<int> damage = new StatusValue<int>();              // 공격력
-        public StatusValue<int> defence = new StatusValue<int>();             // 방어력
+        public StatusValue<int> hp = new StatusValue<int>(){Max = 99999};                  // 체력        
+        public StatusValue<int> damage = new StatusValue<int>(){Max = 99999};              // 공격력
+        public float damageMagnification = 1; // 공격력 배율
+        public StatusValue<int> defence = new StatusValue<int>(){Max = 99999};             // 방어력
         public StatusValue<float> avoid = new StatusValue<float>(){Min = 0, Max = 1, isOverMax = true, isOverMin = true};           // 회피율 0 ~ 1 사이값
-        public StatusValue<float> moveSpeed = new StatusValue<float>();           // 이동 속도
-        public StatusValue<float> attackSpeed = new StatusValue<float>();     // 초당 공격 속도
+        public StatusValue<float> moveSpeed = new StatusValue<float>(){Max = 99999f};           // 이동 속도
+        public StatusValue<float> attackSpeed = new StatusValue<float>(){Max = 99999f};     // 초당 공격 속도
         public StatusValue<float> attackLateTime = new StatusValue<float>();  // Attack Speed에 따른 딜레이
-        public StatusValue<float> attackRange = new StatusValue<float>();
+        public StatusValue<float> attackRange = new StatusValue<float>(){Max = 99999f};
         
         public StatusValue<int> force = new StatusValue<int>();               // 힘
         public int condition;                                                 // 상태
@@ -57,6 +64,36 @@ namespace Status
         #region Member Function
 
         public virtual void MainLoop(){}
+
+        public virtual int CalDamage()
+        {
+            var d = AddAllDamage();
+            var dm = AddAllDamageMagnification();
+
+            return (int)Math.Round(dm * d);
+        }
+
+        private int AddAllDamage()
+        {
+            var d = damage.Current;
+            foreach (var statusBase in additionalStatusList)
+            {
+                d += statusBase.AddAllDamage();
+            }
+
+            return d;
+        }
+
+        private float AddAllDamageMagnification()
+        {
+            var dm = damageMagnification;
+            foreach (var statusBase in additionalStatusList)
+            {
+                dm += statusBase.AddAllDamageMagnification();
+            }
+
+            return dm;
+        }
 
         public virtual void ApplyDamage(int applyDamage, CrowdControl cc)
         {
@@ -127,6 +164,8 @@ namespace Status
             damage.Max = json.GetInt("Damage Max");
             damage.Min = json.GetInt("Damage Min");
             damage.Current = json.GetInt("Damage Current");
+
+            if(json.HasFloat("Damage Magnification")) damageMagnification = json.GetFloat("Damage Magnification");
             
             defence.Max = json.GetInt("Defence Max");
             defence.Min = json.GetInt("Defence Min");

@@ -300,6 +300,7 @@ GameObject:
   - component: {fileID: 1861588363286977636}
   - component: {fileID: 6214309504215176155}
   - component: {fileID: 1209440475239423227}
+  - component: {fileID: 7411951388076384888}
   m_Layer: 0
   m_Name: Clean Shoot
   m_TagString: Untagged
@@ -338,8 +339,8 @@ MonoBehaviour:
   id: 10
   skillName: Clean Shoot
   explain: 
-  icon: {fileID: 2800000, guid: 623e239f69e98084b9e76330f088da91, type: 3}
   type: 0
+  icon: {fileID: 2800000, guid: 623e239f69e98084b9e76330f088da91, type: 3}
   coolTime:
     _min: 0
     _max: 0
@@ -349,10 +350,11 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   isInvoke: 0
-  damage:
+  status: {fileID: 0}
+  level:
     _min: 0
-    _max: 99999
-    _current: 300
+    _max: 1
+    _current: 0
     isOverMax: 0
     isOverMin: 0
     isMin: 0
@@ -390,6 +392,95 @@ MonoBehaviour:
   - {fileID: 2396015473112401732}
   NetworkedBehaviours:
   - {fileID: 6214309504215176155}
+  - {fileID: 7411951388076384888}
+--- !u!114 &7411951388076384888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5663808322493869097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  additionalStatusList: []
+  hp:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  damage:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  damageMagnification: 1
+  defence:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  avoid:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 1
+    isMin: 0
+    isMax: 0
+  moveSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  attackSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  attackLateTime:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  attackRange:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  force:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  condition: 0
+  property: 0
 --- !u!1001 &9110570556081249256
 PrefabInstance:
   m_ObjectHideFlags: 0

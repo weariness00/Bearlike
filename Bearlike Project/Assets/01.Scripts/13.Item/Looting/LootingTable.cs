@@ -45,16 +45,13 @@ namespace Item.Looting
                 // 일반 객체라면 클라이언트에게만 보이도로 스폰
                 else
                 {
-                    var dropObjectPrefab = ItemObjectList.GetFromId(dropItem.ItemID).gameObject;
+                    var dropObjectPrefab = ItemObjectList.GetFromId(dropItem.ItemID);
                     if (dropObjectPrefab == null)
-                    {
-                        DebugManager.LogError($"아이템이 리스트에 존재하지 않습니다. Item ID : {dropItem.ItemID}");
                         continue;
-                    }
 
                     for (int i = 0; i < dropItem.Amount; i++)
                     {
-                        var item = Instantiate(dropObjectPrefab).GetComponent<ItemBase>();
+                        var item = Instantiate(dropObjectPrefab.gameObject).GetComponent<ItemBase>();
                         item.transform.position = gameObject.transform.position;
                     }
                 }

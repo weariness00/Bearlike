@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Newtonsoft.Json;
 using Skill;
 using UnityEditor;
 using UnityEngine;
+using Util;
 
 namespace Item.Editor
 {
@@ -26,6 +29,17 @@ namespace Item.Editor
                     if(gameObject.TryGetComponent(out ItemBase item)) 
                         itemList.Add(item);
                 }
+                
+                JsonConvertExtension.Load("Item", (json) =>
+                {
+                    var data = JsonConvert.DeserializeObject<ItemJsonData[]>(json);
+                    
+                    foreach (var itemBase in itemList)
+                    {
+                        itemBase.info.SetJsonData( data.FirstOrDefault(i => i.id == itemBase.Id));
+                    }
+                });
+
 
                 script.itemList = itemList;
             }

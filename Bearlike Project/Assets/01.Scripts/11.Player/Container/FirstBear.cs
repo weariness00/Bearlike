@@ -21,6 +21,9 @@ namespace Player.Container
         {
             base.FixedUpdateNetwork();
             
+            if(status.isInjury || status.isRevive)
+                return;
+            
             if (GetInput(out PlayerInputData data))
             {
                 if (data.Cursor)

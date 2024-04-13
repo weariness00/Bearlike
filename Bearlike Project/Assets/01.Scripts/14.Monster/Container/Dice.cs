@@ -4,7 +4,6 @@ using BehaviorTree.Base;
 using Data;
 using Fusion;
 using Manager;
-using Status;
 using UnityEngine;
 using UnityEngine.AI;
 using Util;
@@ -16,13 +15,14 @@ namespace Monster.Container
     {
         private BehaviorTreeRunner _behaviorTreeRunner;
         private bool _isCollide = true; // 현재 충돌 중인지
-        private StatusValue<float> moveDelay = new StatusValue<float>(); // 몇초에 한번씩 움직일지 1번의 움직임이 1m움직임이라 가정( 자연스러운 움직임 구현을 위해 사용 )
+        private float _moveDelay; // 몇초에 한번씩 움직일지 1번의 움직임이 1m움직임이라 가정( 자연스러운 움직임 구현을 위해 사용 )
+        [Networked] private TickTimer MoveDelayTimer { get; set; }
         
         public override void Start()
         {
             base.Start();
             _behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
-            moveDelay.Max = 1f / status.moveSpeed;
+            _moveDelay = 1f / status.moveSpeed;
         }
 
         private void OnCollisionStay(Collision other)
@@ -33,6 +33,11 @@ namespace Monster.Container
         private void OnCollisionExit(Collision other)
         {
             _isCollide = false;
+        }
+
+        public override void Spawned()
+        {
+            MoveDelayTimer = TickTimer.CreateFromSeconds(Runner, 0);
         }
 
         public override void FixedUpdateNetwork()
@@ -55,7 +60,6 @@ namespace Monster.Container
                     new Detector(() => CheckTargetDis(1f), selectAttack),
                     move
                 ));
-        
             return sqeunce;
         }
 
@@ -164,8 +168,7 @@ namespace Monster.Container
 
         private INode.NodeState Move()
         {
-            moveDelay.Current += Runner.DeltaTime;
-            if (_isCollide && moveDelay.isMax)
+            if (_isCollide && MoveDelayTimer.Expired(Runner))
             {
                 Vector3 dir = Vector3.zero;
                 if (targetTransform == null)
@@ -192,10 +195,10 @@ namespace Monster.Container
                     }
                 }
 
-                dir = rigidbody.mass * status.moveSpeed * dir;
+                dir = 300f * rigidbody.mass * status.moveSpeed * dir;
                 rigidbody.AddTorque(dir);
 
-                moveDelay.Current = moveDelay.Min;
+                MoveDelayTimer = TickTimer.CreateFromSeconds(Runner, _moveDelay);
                 return INode.NodeState.Success; 
             }
             return INode.NodeState.Running;
@@ -213,7 +216,7 @@ namespace Monster.Container
                 {
                     if (hit.Hitbox == null) return INode.NodeState.Failure;
                     var hitStatus = hit.GameObject.GetComponent<StatusBase>();
-                    hitStatus.ApplyDamageRPC(status.damage.Current, CrowdControl.Normality);
+                    hitStatus.ApplyDamageRPC(status.CalDamage(), CrowdControl.Normality);
                 }
             }
 
@@ -231,7 +234,7 @@ namespace Monster.Container
                 StatusBase playerStatus;
                 if (hit.transform.TryGetComponent(out playerStatus) || hit.transform.parent.TryGetComponent(out playerStatus))
                 {
-                    playerStatus.ApplyDamageRPC(status.damage.Current, CrowdControl.Normality);
+                    playerStatus.ApplyDamageRPC(status.CalDamage(), CrowdControl.Normality);
                 }
             }
             return INode.NodeState.Failure;

@@ -22,7 +22,7 @@ namespace Weapon.Bullet
 
         #region 사정거리
         private Vector3 _oldPosition;
-        public float maxMoveDistance;   // 최대 사정거리
+        // public float maxMoveDistance;   // 최대 사정거리 // 이거 대신 status.attackRange 씀
 
         #endregion
 
@@ -33,19 +33,24 @@ namespace Weapon.Bullet
 
         protected void Start()
         {
-            _oldPosition = transform.position;
 
             direction = (destination - transform.position).normalized;
             transform.rotation = Quaternion.LookRotation(destination);
         }
-        
+
+        public override void Spawned()
+        {
+            _oldPosition = transform.position;
+        }
+
         public override void FixedUpdateNetwork()
         { 
             transform.position += direction * Runner.DeltaTime * status.moveSpeed;
             // transform.position += transform.forward * Runner.DeltaTime * speed;
             transform.Rotate(new Vector3(0, 90, 0), Space.Self);
 
-            if (FastDistance(transform.position, _oldPosition) >= maxMoveDistance) Destroy(gameObject);
+            // if (FastDistance(transform.position, _oldPosition) >= maxMoveDistance) Destroy(gameObject);
+            if (FastDistance(transform.position, _oldPosition) >= status.attackRange.Current) Destroy(gameObject);
         }
         
         private void OnTriggerEnter(Collider other)
@@ -54,7 +59,7 @@ namespace Weapon.Bullet
             if (other.TryGetComponent(out otherStatus) || other.transform.root.TryGetComponent(out otherStatus))
             {
                 // player가 건이다.
-                otherStatus.ApplyDamageRPC(status.damage);
+                otherStatus.ApplyDamageRPC(status.CalDamage());
                     
                 if (bknock)
                 {

@@ -11,7 +11,7 @@ using Weapon.Bullet;
 
 namespace Weapon.Gun
 {
-    public abstract class GunBase : WeaponBase, IJsonData<GunJsonData>
+    public class GunBase : WeaponBase, IJsonData<GunJsonData>
     {
         #region Static
 
@@ -75,7 +75,7 @@ namespace Weapon.Gun
             magazine.Current = magazine.Max;
 
             EquipAction += SetCamera;
-            ReleaseEquipAction += (obj) => { BeforeShootAction = null; };
+            ReleaseEquipAction += (obj) => { BeforeShootAction = null; status.additionalStatusList.Clear();};
         }
         
         public override void Start()
@@ -114,14 +114,26 @@ namespace Weapon.Gun
                     var dst = CheckRay();
                     
                     if(shootEffect != null) shootEffect.Play();
-                    bullet.destination = dst;
-                    bullet.hitEffect = hitEffect;
-                    bullet.bknock = false;
-                    
-                    BeforeShootAction?.Invoke(bullet);
+                    // bullet.destination = dst;
+                    // bullet.hitEffect = hitEffect;
+                    // bullet.bknock = false;
+                    // bullet.maxMoveDistance = status.attackRange;
+                    // BeforeShootAction?.Invoke(bullet);
 
-                    if(HasStateAuthority)
-                        Runner.SpawnAsync(bullet.gameObject, fireTransform.position, fireTransform.rotation);
+                    if (HasStateAuthority)
+                    {
+                        Runner.SpawnAsync(bullet.gameObject, fireTransform.position, fireTransform.rotation, null,
+                            (runner, o) =>
+                            {
+                                var b = o.GetComponent<BulletBase>();
+
+                                b.destination = dst;
+                                b.hitEffect = hitEffect;
+                                b.bknock = false;
+                                
+                                BeforeShootAction?.Invoke(b);
+                            });
+                    }
 
                     SetMagazineRPC(StatusValueType.Current, --magazine.Current);
                     SoundManager.Play(shootSound);
@@ -175,7 +187,6 @@ namespace Weapon.Gun
             magazine.Current = int.MaxValue;
 
             fireLateSecond = 60 / bulletFirePerMinute;
-            bullet.maxMoveDistance = status.attackRange;
         }
 
         public virtual void ReLoadBullet(int bulletAmount = int.MaxValue)

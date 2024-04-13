@@ -14,7 +14,7 @@ namespace Skill.Editor
         {
             base.OnInspectorGUI();
 
-            if (GUILayout.Button("스킬 리스트 초기화"))
+            if (GUILayout.Button("스킬 리스트 불러오기"))
             {
                 var script = target as SkillObjectList;
 

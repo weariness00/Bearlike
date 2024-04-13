@@ -6,6 +6,7 @@ using Status;
 using UnityEngine;
 using UnityEngine.AI;
 using Weapon.Bullet;
+using Weapon.Gun;
 using Random = UnityEngine.Random;
 
 namespace Monster.Container
@@ -16,10 +17,8 @@ namespace Monster.Container
         private BehaviorTreeRunner _behaviorTreeRunner;
         private NetworkObject[] _playerObjects;
 
-        [Header("Bullet")]
-        public Transform fireTransform; // 총알이 발사할 Transform
-        public GameObject bulletPrefab;
-        
+        public GunBase gun;
+
         [Header("Animation Clip")] 
         public AnimationClip idleClip;
         public AnimationClip moveClip;
@@ -37,6 +36,7 @@ namespace Monster.Container
         {
             base.Start();
             _behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
+            gun.BeforeShootAction += BeforeShoot;
         }
 
         public override void Spawned()
@@ -63,6 +63,16 @@ namespace Monster.Container
             }
             var dis = StraightDistanceFromTarget(targetTransform.position);
             return dis < checkDis;
+        }
+
+        private void BeforeShoot(BulletBase bullet)
+        {
+            bullet.status.damage.Current = status.damage.Current + gun.status.damage.Current;
+            
+            bullet.status.attackRange.Max = gun.status.attackRange.Max;
+            bullet.status.attackRange.Current = gun.status.attackRange.Current;
+
+            bullet.status.moveSpeed.Current = gun.status.moveSpeed.Current;
         }
 
         #endregion
@@ -207,8 +217,9 @@ namespace Monster.Container
         // 원거리 공격
         private INode.NodeState LongAttack()
         {
-            // 공격 딜레이가 남아있으면 실패
-            if (status.attackLateTime.isMax == false)
+            // 공격 딜레이가 남아있으면 실패, 총을 쏠 수 있는 상태가 아니면 실패
+            if (status.attackLateTime.isMax == false ||
+                gun.FireLateTimer.Expired(Runner))
             {
                 return INode.NodeState.Failure;
             }
@@ -217,7 +228,8 @@ namespace Monster.Container
             if (_isInitAnimation == false)
             {
                 rigidbody.velocity = Vector3.zero;
-                SpawnBulletRPC();
+                gun.Shoot();
+                gun.SetMagazineRPC(StatusValueType.Current, 10);
                 _isInitAnimation = true;
                 AniLongAttackTimer = TickTimer.CreateFromSeconds(Runner, longAttackClip.length);
                 status.attackLateTime.Current = 0f;
@@ -231,22 +243,6 @@ namespace Monster.Container
 
             _isInitAnimation = false;
             return INode.NodeState.Success;
-        }
-
-        #endregion
-
-        #region RPC Function
-
-        /// <summary>
-        /// Bullet을 생성해 초기화 해주는 RPC 함수
-        /// </summary>
-        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-        public async void SpawnBulletRPC()
-        {
-            var bulletBase = bulletPrefab.GetComponent<BulletBase>();
-            bulletBase.status.damage.Current += status.damage.Current;
-            
-            await Runner.SpawnAsync(bulletPrefab, fireTransform.position, fireTransform.rotation);
         }
 
         #endregion

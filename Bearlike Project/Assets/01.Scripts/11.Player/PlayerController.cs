@@ -105,6 +105,9 @@ namespace Player
                 UserData.SetTeleportPosition(Runner.LocalPlayer, null);
             }
             
+            if(status.isRevive)
+                return;
+            
             if (GetInput(out PlayerInputData data))
             {
                 MouseRotateControl(data.MouseAxis);
@@ -197,6 +200,9 @@ namespace Player
 
         void WeaponControl(PlayerInputData data)
         {
+            if(status.isInjury)
+                return;
+            
             if (data.ChangeWeapon0)
             {
                 // 장비 변경
