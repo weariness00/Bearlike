@@ -38,6 +38,13 @@ namespace Player.Container
             FlippingCoin = skillSystem.GetSkillFromName("FlippingCoin");
             tmpSkill = skillSystem.GetSkillFromName("SniperContinousMode");
             ultimateSkill = skillSystem.GetSkillFromName("Clean Shoot");
+
+            if (HasInputAuthority)
+            {
+                FlippingCoin.Object.AssignInputAuthority(Object.InputAuthority);
+                tmpSkill.Object.AssignInputAuthority(Object.InputAuthority);
+                ultimateSkill.Object.AssignInputAuthority(Object.InputAuthority);
+            }
         }
 
         void SkillControl(PlayerInputData data)

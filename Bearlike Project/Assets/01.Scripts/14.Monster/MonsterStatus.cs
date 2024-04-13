@@ -1,4 +1,7 @@
-﻿namespace Status
+﻿using Fusion;
+using Player;
+
+namespace Status
 {
     /// <summary>
     /// Monster의 State을 나타내는 Class
@@ -9,6 +12,8 @@
         {
             InvokeRepeating(nameof(MainLoop), 0.0f, 1.0f);
         }
+
+        #region Member Function
         
         public override void MainLoop()
         {
@@ -23,6 +28,21 @@
         {
             hp.Current -= value;
         }
+
+        public override void ApplyDamage(int applyDamage, NetworkId ownerId, CrowdControl cc)
+        {
+            base.ApplyDamage(applyDamage, ownerId, cc);
+            if (IsDie)
+            {
+                var obj = Runner.FindObject(ownerId);
+                if (obj.TryGetComponent(out PlayerController pc))
+                {
+                    pc.MonsterKillAction?.Invoke(gameObject);
+                }
+            }
+        }
+
+        #endregion
 
         #region Json Data Interfacec
 

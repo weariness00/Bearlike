@@ -42,6 +42,8 @@ namespace Skill
         #endregion
 
         #region Member Variable
+        
+        [HideInInspector][Networked] public NetworkId OwnerId { get; set; }
 
         [Header("Skill 기본 정보")]
         public int id;
@@ -70,7 +72,9 @@ namespace Skill
         public virtual void Start()
         {
             SetJsonData(GetInfoData(id));
-            status.SetJsonData(GetStatusData(id));
+            var statusData = GetStatusData(id);
+            status.SetJsonData(statusData);
+            level.Max = statusData.GetInt("Level Max");
         }
 
         #endregion
@@ -120,6 +124,9 @@ namespace Skill
         
         #region RPC Function
 
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void SetOwnerIdRPC(NetworkId owner) => OwnerId = owner;
+
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void SetIsInvokeRPC(NetworkBool value) => isInvoke = value;
 
@@ -135,7 +142,11 @@ namespace Skill
         }
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public void LevelUpRPC() => LevelUp();
+        public void LevelUpRPC()
+        {
+            level.Current += 1;
+            LevelUp();
+        }
 
         #endregion
     }

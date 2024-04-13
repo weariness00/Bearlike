@@ -128,9 +128,9 @@ namespace Player
             hp.Current -= value;
         }
         
-        public override void ApplyDamage(int applyDamage, CrowdControl cc) // MonsterRef instigator,
+        public override void ApplyDamage(int applyDamage, NetworkId ownerId, CrowdControl cc) // MonsterRef instigator,
         {
-            base.ApplyDamage(applyDamage, cc);
+            base.ApplyDamage(applyDamage, ownerId, cc);
 
             HpControlRPC();
         }

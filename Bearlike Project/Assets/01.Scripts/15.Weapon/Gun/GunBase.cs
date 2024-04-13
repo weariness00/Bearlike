@@ -59,6 +59,12 @@ namespace Weapon.Gun
         // 해당 메서드는 총의 장착을 해제하면 null로 함
         public Action<BulletBase> BeforeShootAction;
 
+        /// <summary>
+        /// 총을 쏘고 난 뒤에 동작하게 할 Action
+        /// 정상적으로 총이 발사 되었을때만 동작함
+        /// </summary>
+        public Action AfterShootAction;
+
         #region Unity Event Function
 
         public override void Awake()
@@ -75,7 +81,12 @@ namespace Weapon.Gun
             magazine.Current = magazine.Max;
 
             EquipAction += SetCamera;
-            ReleaseEquipAction += (obj) => { BeforeShootAction = null; status.additionalStatusList.Clear();};
+            ReleaseEquipAction += (obj) =>
+            {
+                AfterShootAction = null;  
+                BeforeShootAction = null; 
+                status.additionalStatusList.Clear();
+            };
         }
         
         public override void Start()
@@ -127,6 +138,7 @@ namespace Weapon.Gun
                             {
                                 var b = o.GetComponent<BulletBase>();
 
+                                b.OwnerId = OwnerId;
                                 b.destination = dst;
                                 b.hitEffect = hitEffect;
                                 b.bknock = false;
@@ -137,6 +149,8 @@ namespace Weapon.Gun
 
                     SetMagazineRPC(StatusValueType.Current, --magazine.Current);
                     SoundManager.Play(shootSound);
+                    
+                    AfterShootAction?.Invoke();
                 }
                 else
                 {

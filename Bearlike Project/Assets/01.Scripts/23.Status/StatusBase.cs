@@ -31,7 +31,7 @@ namespace Status
         
         public StatusValue<int> hp = new StatusValue<int>(){Max = 99999};                  // 체력        
         public StatusValue<int> damage = new StatusValue<int>(){Max = 99999};              // 공격력
-        public float damageMagnification = 1; // 공격력 배율
+        public float damageMultiple = 1; // 공격력 배율
         public StatusValue<int> defence = new StatusValue<int>(){Max = 99999};             // 방어력
         public StatusValue<float> avoid = new StatusValue<float>(){Min = 0, Max = 1, isOverMax = true, isOverMin = true};           // 회피율 0 ~ 1 사이값
         public StatusValue<float> moveSpeed = new StatusValue<float>(){Max = 99999f};           // 이동 속도
@@ -86,7 +86,7 @@ namespace Status
 
         private float AddAllDamageMagnification()
         {
-            var dm = damageMagnification;
+            var dm = damageMultiple;
             foreach (var statusBase in additionalStatusList)
             {
                 dm += statusBase.AddAllDamageMagnification();
@@ -95,7 +95,7 @@ namespace Status
             return dm;
         }
 
-        public virtual void ApplyDamage(int applyDamage, CrowdControl cc)
+        public virtual void ApplyDamage(int applyDamage, NetworkId ownerId, CrowdControl cc)
         {
             if (hp.isMin)
             {
@@ -165,7 +165,7 @@ namespace Status
             damage.Min = json.GetInt("Damage Min");
             damage.Current = json.GetInt("Damage Current");
 
-            if(json.HasFloat("Damage Magnification")) damageMagnification = json.GetFloat("Damage Magnification");
+            if(json.HasFloat("Damage Magnification")) damageMultiple = json.GetFloat("Damage Magnification");
             
             defence.Max = json.GetInt("Defence Max");
             defence.Min = json.GetInt("Defence Min");
@@ -228,10 +228,17 @@ namespace Status
             }
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="damage"></param>
+        /// <param name="id">대미지를 준 대상의 Network ID</param>
+        /// <param name="enemyProperty"></param>
+        /// <param name="info"></param>
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public void ApplyDamageRPC(int damage, CrowdControl enemyProperty = CrowdControl.Normality, RpcInfo info = default)
+        public void ApplyDamageRPC(int damage, NetworkId id, CrowdControl enemyProperty = CrowdControl.Normality, RpcInfo info = default)
         {
-            ApplyDamage(damage, enemyProperty);
+            ApplyDamage(damage, id, enemyProperty);
             ShowInfo();
         }
 

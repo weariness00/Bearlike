@@ -4,6 +4,7 @@ using Fusion;
 using Fusion.Addons.SimpleKCC;
 using Item;
 using Manager;
+using Monster;
 using Photon;
 using Skill;
 using Status;
@@ -32,19 +33,19 @@ namespace Player
         public SkillSelectUI skillSelectUI;
         private NetworkMecanimAnimator _networkAnimator;
         [HideInInspector] public SimpleKCC simpleKcc;
-        [HideInInspector] public Rigidbody rigidBody;
 
         public StatusValue<int> ammo = new StatusValue<int>();
 
         [Tooltip("마우스 움직임에 따라 회전할 오브젝트")] public GameObject mouseRotateObject;
 
+        public Action<GameObject> MonsterKillAction;
+        
         #region Animation Parametar
 
         private static readonly int AniShoot = Animator.StringToHash("tShoot");
         private static readonly int AniFrontMove = Animator.StringToHash("fFrontMove");
         private static readonly int AniSideMove = Animator.StringToHash("fSideMove");
         private static readonly int AniDie = Animator.StringToHash("isDead");
-
 
         #endregion
 

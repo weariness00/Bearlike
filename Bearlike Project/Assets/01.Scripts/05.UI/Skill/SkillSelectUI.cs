@@ -93,11 +93,12 @@ namespace UI.Skill
             if (skill == null)
             {
                 await NetworkManager.Runner.SpawnAsync(
-                    SkillObjectList.GetFromID(handle.id).gameObject, Vector3.zero, Quaternion.identity, null,
+                    SkillObjectList.GetFromID(handle.id).gameObject, Vector3.zero, Quaternion.identity, playerController.Object.InputAuthority,
                     (runner, obj) =>
                     {
                         obj.transform.SetParent(playerController.transform);
                         skill = obj.GetComponent<SkillBase>();
+                        skill.SetOwnerIdRPC(playerController.Object.Id);
                         skill.LevelUp();
                     });
             }

@@ -19,6 +19,7 @@ namespace Weapon
     [RequireComponent(typeof(StatusBase))]
     public class WeaponBase : NetworkBehaviour, IEquipment
     {
+        [Networked] public NetworkId OwnerId { get; set; }
         public StatusBase status;
         public LayerMask includeCollide;
         
@@ -33,6 +34,7 @@ namespace Weapon
         public virtual void Awake()
         {
             EquipAction += SetLayer;
+            EquipAction += SetOwnerID;
             status = GetComponent<StatusBase>();
         }
 
@@ -44,6 +46,11 @@ namespace Weapon
         public override void Spawned()
         {
             base.Spawned();
+        }
+
+        void SetOwnerID(GameObject equipObject)
+        {
+            OwnerId = equipObject.GetComponent<NetworkObject>().Id;
         }
         
         void SetLayer(GameObject equipObject)

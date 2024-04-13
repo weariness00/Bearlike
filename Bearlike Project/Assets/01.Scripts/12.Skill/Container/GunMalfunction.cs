@@ -5,31 +5,26 @@ using Weapon.Gun;
 
 namespace Skill.Container
 {
-    public class StrongBullet : SkillBase
+    /// <summary>
+    /// 총기 오작동
+    /// 1발을 쏘면 1발이 더 나간다 추가적인 탄환 소모는 없다.
+    /// </summary>
+    public class GunMalfunction : SkillBase
     {
-        private float _damageMultiplePerLevel = 0f; // 레벨당 대미지 배율
-
-        #region Unity Event Function
-
-        public override void Start()
-        {
-            var statusData = GetStatusData(id);
-            _damageMultiplePerLevel = statusData.GetFloat("Damage Multiple Per Level");
-        }
-
-        #endregion
-        
-        
         public override void Earn(GameObject earnTargetObject)
         {
             if (earnTargetObject.TryGetComponent(out PlayerController pc))
             {
                 if (pc.weaponSystem.equipment is GunBase gun)
                 {
-                    gun.status.additionalStatusList.Add(status);
+                    gun.AfterShootAction += () =>
+                    {
+                        gun.SetMagazineRPC(StatusValueType.Current, ++gun.magazine.Current);
+                        gun.ShootRPC();
+                    };
                 }
             }
-        }
+        }   
 
         public override void MainLoop()
         {
@@ -41,7 +36,6 @@ namespace Skill.Container
 
         public override void LevelUp()
         {
-            status.damageMultiple = 1f + _damageMultiplePerLevel * level.Current;
         }
     }
 }

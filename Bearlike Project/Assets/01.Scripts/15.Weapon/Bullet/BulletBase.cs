@@ -11,9 +11,10 @@ namespace Weapon.Bullet
     [RequireComponent(typeof(StatusBase))]
     public class BulletBase : NetworkBehaviourEx
     {
+        [HideInInspector] [Networked] public NetworkId OwnerId { get; set; } // 이 총을 쏜 주인의 ID
         public StatusBase status;
-
         public int penetrateCount = 0; // 관통 가능 횟수
+
         public Vector3 destination = Vector3.zero;
         public VisualEffect hitEffect;
         
@@ -59,7 +60,7 @@ namespace Weapon.Bullet
             if (other.TryGetComponent(out otherStatus) || other.transform.root.TryGetComponent(out otherStatus))
             {
                 // player가 건이다.
-                otherStatus.ApplyDamageRPC(status.CalDamage());
+                otherStatus.ApplyDamageRPC(status.CalDamage(), OwnerId);
                     
                 if (bknock)
                 {
