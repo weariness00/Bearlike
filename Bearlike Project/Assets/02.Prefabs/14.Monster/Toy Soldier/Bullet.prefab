@@ -163,6 +163,8 @@ MonoBehaviour:
   destination: {x: 0, y: 0, z: 0}
   hitEffect: {fileID: 0}
   bknock: 0
+  id: 0
+  explain: 
   maxMoveDistance: 0
 --- !u!114 &2836497472490090454
 MonoBehaviour:
@@ -210,8 +212,8 @@ MonoBehaviour:
     isMax: 0
   moveSpeed:
     _min: 0
-    _max: 0
-    _current: 0
+    _max: 1
+    _current: 1
     isOverMax: 0
     isOverMin: 0
     isMin: 0

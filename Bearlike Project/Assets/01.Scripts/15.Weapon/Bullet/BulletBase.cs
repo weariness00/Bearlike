@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Data;
 using Fusion;
+using Manager;
 using Photon;
 using Status;
 using Unity.Burst;
@@ -56,16 +57,21 @@ namespace Weapon.Bullet
             _oldPosition = transform.position;
 
             direction = (destination - transform.position).normalized;
+            Debug.Log(direction);
             transform.rotation = Quaternion.LookRotation(destination);
             
             status.SetJsonData(GetStatusData(id));
+            
+            DebugManager.ToDo("Json으로 moveSpeed받아오도록 수정");
+            status.moveSpeed.Max = 30;
+            status.moveSpeed.Current = status.moveSpeed.Max;
         }
         
         public override void FixedUpdateNetwork()
         { 
             transform.position += direction * Runner.DeltaTime * status.moveSpeed;
             // transform.position += transform.forward * Runner.DeltaTime * speed;
-            transform.Rotate(new Vector3(0, 90, 0), Space.Self);
+            transform.Rotate(new Vector3(0, 10, 0), Space.Self);
 
             if (FastDistance(transform.position, _oldPosition) >= maxMoveDistance) Destroy(gameObject);
         }
