@@ -110,5 +110,10 @@ namespace Skill.Container
                 _bOn = true;
             }
         }
+
+        public override void LevelUp()
+        {
+            
+        }
     }
 }

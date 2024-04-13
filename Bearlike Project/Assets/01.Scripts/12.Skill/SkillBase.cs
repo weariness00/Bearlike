@@ -16,8 +16,13 @@ namespace Skill
         Passive
     }
     
+    /// <summary>
+    /// 스킬은 한번 습득하면 절대 버리지 못한다.
+    /// 레벨업 & 다운은 가능하다 버리기는 불가능
+    /// </summary>
     [System.Serializable]
-    public abstract class SkillBase : NetworkBehaviourEx, IJsonData<SkillJsonData>, IJsonData<StatusJsonData>, IInventoryItemAdd
+    [RequireComponent(typeof(StatusBase))]
+    public abstract class SkillBase : NetworkBehaviourEx, IJsonData<SkillJsonData>, IInventoryItemAdd
     {
         #region Static
 
@@ -48,18 +53,24 @@ namespace Skill
 
         public bool isInvoke; // 현재 스킬이 발동 중인지
 
+        public StatusBase status;
+
         public StatusValue<int> level = new StatusValue<int>() { Max = 1 };
-        public StatusValue<int> damage = new StatusValue<int>() { Max = 99999 };
         public StatusValue<float> duration = new StatusValue<float>();
 
         #endregion
 
         #region Unity Event Function
 
+        public virtual void Awake()
+        {
+            status = GetComponent<StatusBase>();
+        }
+
         public virtual void Start()
         {
             SetJsonData(GetInfoData(id));
-            SetJsonData(GetStatusData(id));
+            status.SetJsonData(GetStatusData(id));
         }
 
         #endregion
@@ -74,6 +85,8 @@ namespace Skill
         public abstract void MainLoop();
         public abstract void Run(GameObject runObject);
 
+        public abstract void LevelUp();
+        
         #endregion
         
         #region Inventory Interface
@@ -102,16 +115,6 @@ namespace Skill
             coolTime.Max = json.CoolTime;
             type = json.Type;
         }
-                
-        StatusJsonData IJsonData<StatusJsonData>.GetJsonData()
-        {
-            return new StatusJsonData();
-        }
-        public void SetJsonData(StatusJsonData json)
-        {
-            damage.Max = json.GetInt("Damage Max");
-            damage.Current = json.GetInt("Damage Current");
-        }
         
         #endregion
         
@@ -130,6 +133,10 @@ namespace Skill
                     break;
             }
         }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void LevelUpRPC() => LevelUp();
+
         #endregion
     }
 }

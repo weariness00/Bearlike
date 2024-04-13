@@ -5,6 +5,7 @@ using Fusion;
 using Manager;
 using Monster;
 using Photon;
+using Player;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -64,6 +65,10 @@ namespace Skill.Container
 
         public override void Earn(GameObject earnTargetObject)
         {
+            if (earnTargetObject.TryGetComponent(out PlayerController pc))
+            {
+                status.additionalStatusList.Add(pc.status);
+            }
         }
 
         public override void MainLoop()
@@ -85,6 +90,11 @@ namespace Skill.Container
                 StartCoroutine(AreaSetting(runObject));
                 StartCoroutine(AttackMonsterFromArea(runObject));
             }
+        }
+
+        public override void LevelUp()
+        {
+            
         }
 
         IEnumerator AttackMonsterFromArea(GameObject runObject)
@@ -110,7 +120,7 @@ namespace Skill.Container
                     foreach (var monster in _monsterList)
                     {
                         var status = monster.GetComponent<MonsterStatus>();
-                        status.ApplyDamageRPC(damage.Current, CrowdControl.Normality);
+                        status.ApplyDamageRPC(status.CalDamage(), CrowdControl.Normality);
                         
                         // 총알 궤적 VFX 생성
                         var monsterNetworkId = monster.GetComponent<NetworkObject>().Id;

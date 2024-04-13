@@ -131,5 +131,10 @@ namespace Skill.Container
                 Debug.Log($"남은 쿨타임 : {coolTime.Current}");
             }
         }
+
+        public override void LevelUp()
+        {
+            
+        }
     }
 }

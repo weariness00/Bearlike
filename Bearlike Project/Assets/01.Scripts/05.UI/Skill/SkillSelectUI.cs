@@ -29,7 +29,7 @@ namespace UI.Skill
         private void Update()
         {
             // 해당 스킬을 업그레이드
-            if (Input.GetKeyDown(KeyCode.KeypadEnter))
+            if (Input.GetKeyDown(KeyCode.Return))
             {
                 SelectSkill();
             }
@@ -92,16 +92,19 @@ namespace UI.Skill
             var skill = playerController.skillSystem.GetSkillFromId(handle.id);
             if (skill == null)
             {
-                var skillObj = await NetworkManager.Runner.SpawnAsync(
+                await NetworkManager.Runner.SpawnAsync(
                     SkillObjectList.GetFromID(handle.id).gameObject, Vector3.zero, Quaternion.identity, null,
                     (runner, obj) =>
                     {
                         obj.transform.SetParent(playerController.transform);
+                        skill = obj.GetComponent<SkillBase>();
+                        skill.LevelUp();
                     });
-                skill = skillObj.GetComponent<SkillBase>();
             }
-            
-            skill.SetLevelRPC(StatusValueType.Current, skill.level.Current + 1);
+            else
+            {
+                skill.LevelUpRPC(); 
+            }
             
             gameObject.SetActive(false);
         }

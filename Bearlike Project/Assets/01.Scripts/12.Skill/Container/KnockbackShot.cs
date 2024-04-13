@@ -91,8 +91,6 @@ namespace Skill.Container
             // if(Math.Abs(CoolTime.Current - CoolTime.Min) < 1E-6)
             if (_bOn == false && Mathf.Round((coolTime.Current - coolTime.Min) * 10) * 0.1f <= 0f)
             {
-                
-                
                 duration.Current = duration.Max;
                 coolTime.Current = coolTime.Max;
 
@@ -104,6 +102,11 @@ namespace Skill.Container
             {
                 Debug.Log($"남은 쿨타임 : {coolTime.Current}");
             }
+        }
+
+        public override void LevelUp()
+        {
+            
         }
     }
 }
