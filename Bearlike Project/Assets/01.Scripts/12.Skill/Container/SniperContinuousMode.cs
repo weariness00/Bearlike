@@ -37,8 +37,10 @@ namespace Skill.Container
 
         #endregion
 
-        private void Awake()
+        public override void Awake()
         {
+            base.Awake();
+            
             var tempCoolTime = new StatusValue<float>();
             tempCoolTime.Max = CoolTime;
             tempCoolTime.Min = tempCoolTime.Current = 0.0f;
@@ -50,8 +52,8 @@ namespace Skill.Container
             tempDuration.Min = tempDuration.Current = 0.0f;
     
             duration = tempDuration;
-                
-            _gm = GameObject.Find("GameManager").GetComponent<GameManager>();
+
+            _gm = GameManager.Instance;
                 
             _difference = 0;
         }

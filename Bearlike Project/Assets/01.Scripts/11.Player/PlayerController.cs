@@ -84,7 +84,6 @@ namespace Player
             {
                 Object.
                 name = "Local Player";
-                
                 Runner.SetPlayerObject(Runner.LocalPlayer, Object);
 
                 GunUI.gameObject.SetActive(true);

@@ -38,8 +38,10 @@ namespace Skill.Container
         private Dictionary<GameObject, GameObject> _aimDictionary = new Dictionary<GameObject, GameObject>(); // 타격할 몬스터를 UI로 표시할때 UI들을 담는 컨테이너 // L : Target , R : Aim
         private bool _isAttack;
 
-        private void Awake()
+        public override void Awake()
         {
+            base.Awake();
+            
             {
                 areaAnimation = areaObject.GetComponent<Animation>();
                 var clip = areaAnimation.GetClip("Open Clean Shoot Area");

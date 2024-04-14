@@ -39,8 +39,10 @@ namespace Skill.Container
 
         #endregion
         
-        private void Awake()
+        public override void Awake()
         {
+            base.Awake();
+            
             var tempCoolTime = new StatusValue<float>();
             tempCoolTime.Max = CoolTime;
             tempCoolTime.Min = tempCoolTime.Current = 0.0f;

@@ -19,6 +19,9 @@ namespace Item.Looting
         /// </summary>
         public void CalLootingItem(LootingItem[] lit)
         {
+            if(lit == null)
+                return;
+            
             DebugManager.ToDo("랜덤한 확률로 랜덤한 갯수를 떨구게 할지도 정하기");
             
             List<LootingItem> dropItemList = new List<LootingItem>();

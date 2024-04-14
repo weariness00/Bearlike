@@ -35,9 +35,6 @@ namespace Monster.Container
         #endregion
 
         #region 속성
-        [Header("이동")]
-        [SerializeField] private float movementSpeed = 1.0f;
-        
         private float _playerCount;
         private float _durationTime; // Action간의 딜레이 시간
         private int _targetPlayerIndex; // target으로 지정되는 Player의 index
@@ -146,11 +143,10 @@ namespace Monster.Container
                 {
                     if (FastDistance(transform.position, _players[0].transform.position) > 10.0f)
                     {
-                        _navMeshAgent.speed = movementSpeed;
+                        // _navMeshAgent.speed = status.moveSpeed.Current;
                         // _navMeshAgent.SetDestination(_players[0].transform.position);
-
+                        
                         NavMeshPath path = new NavMeshPath();
-
                         if (_navMeshAgent.CalculatePath(_players[0].transform.position, path))
                         {
                             Debug.Log($"{_players[0].transform.position}, {path.corners}");
