@@ -12,23 +12,11 @@ using UnityEngine.VFX;
 namespace Weapon.Bullet
 {
     [RequireComponent(typeof(StatusBase))]
-    public class BulletBase : NetworkBehaviourEx, IJsonData<BulletJsonData>
+    public class BulletBase : NetworkBehaviourEx
     {
         [HideInInspector] [Networked] public NetworkId OwnerId { get; set; } // 이 총을 쏜 주인의 ID
         public StatusBase status;
         public int penetrateCount = 0; // 관통 가능 횟수
-
-        // Info Data 캐싱
-        private static readonly Dictionary<int, BulletJsonData> InfoDataCash = new Dictionary<int, BulletJsonData>();
-        public static void AddInfoData(int id, BulletJsonData data) => InfoDataCash.TryAdd(id, data);
-        public static BulletJsonData GetInfoData(int id) => InfoDataCash.TryGetValue(id, out var data) ? data : new BulletJsonData();
-        public static void ClearInfosData() => InfoDataCash.Clear();
-        
-        // Status Data 캐싱
-        private static readonly Dictionary<int, StatusJsonData> StatusDataChasing = new Dictionary<int, StatusJsonData>();
-        public static void AddStatusData(int id, StatusJsonData data) => StatusDataChasing.TryAdd(id, data);
-        public static StatusJsonData GetStatusData(int id) => StatusDataChasing.TryGetValue(id, out var data) ? data : new StatusJsonData();
-        public static void ClearStatusData() => StatusDataChasing.Clear();
         
         #region 속성
         
@@ -37,9 +25,6 @@ namespace Weapon.Bullet
         
         private Vector3 direction;
         public bool bknock = false;
-        
-        public int id = 0;
-        public string explain;
         
         #endregion
         
@@ -59,8 +44,6 @@ namespace Weapon.Bullet
 
             direction = (destination - transform.position).normalized;
             transform.rotation = Quaternion.LookRotation(destination);
-            
-            status.SetJsonData(GetStatusData(id));
             
             DebugManager.ToDo("Json으로 moveSpeed받아오도록 수정");
             status.moveSpeed.Max = 50;
@@ -134,16 +117,5 @@ namespace Weapon.Bullet
         // }
         //
         // #endregion
-        
-        public BulletJsonData GetJsonData()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetJsonData(BulletJsonData json)
-        {
-            name = json.Name;
-            explain = json.Explain;
-        }
     }
 }

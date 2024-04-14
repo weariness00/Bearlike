@@ -84,8 +84,8 @@ namespace Weapon.Gun
             ReleaseEquipAction += (obj) =>
             {
                 AfterShootAction = null;  
-                BeforeShootAction = null; 
-                status.additionalStatusList.Clear();
+                BeforeShootAction = null;
+                status.ClearAdditionalStatus();
             };
         }
         

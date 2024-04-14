@@ -32,6 +32,7 @@ namespace Skill.Container
 
         #region Value
 
+        public StatusValue<float> duration = new StatusValue<float>();
         private const float AttackValue = 0.5f;
         private const float AttackSpeedValue = 0.2f;
         private const float CoolTime = 30.0f;
@@ -75,7 +76,7 @@ namespace Skill.Container
             
             _deltaPlayTime = _currentPlayTime - _previousPlayTime;
             
-            coolTime.Current -= _deltaPlayTime;
+            // coolTime.Current -= _deltaPlayTime;
             duration.Current -= _deltaPlayTime;
 
             if (_bOn && Mathf.Round((duration.Current - duration.Min) * 10) * 0.1f <= 0f)
@@ -91,19 +92,19 @@ namespace Skill.Container
         {
             // 둘중 하나 채택
             // if(Math.Abs(CoolTime.Current - CoolTime.Min) < 1E-6)
-            if (_bOn == false && Mathf.Round((coolTime.Current - coolTime.Min) * 10) * 0.1f <= 0f)
-            {
-                duration.Current = duration.Max;
-                coolTime.Current = coolTime.Max;
-
-                _bOn = true;
-                
-                Debug.Log($"현재 Attack : {playerStatus.damage.Current}, AttackSpeed : {playerStatus.attackSpeed.Current}");
-            }
-            else
-            {
-                Debug.Log($"남은 쿨타임 : {coolTime.Current}");
-            }
+            // if (_bOn == false && Mathf.Round((coolTime.Current - coolTime.Min) * 10) * 0.1f <= 0f)
+            // {
+            //     duration.Current = duration.Max;
+            //     coolTime.Current = coolTime.Max;
+            //
+            //     _bOn = true;
+            //     
+            //     Debug.Log($"현재 Attack : {playerStatus.damage.Current}, AttackSpeed : {playerStatus.attackSpeed.Current}");
+            // }
+            // else
+            // {
+            //     Debug.Log($"남은 쿨타임 : {coolTime.Current}");
+            // }
         }
 
         public override void LevelUp()

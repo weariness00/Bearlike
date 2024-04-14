@@ -31,7 +31,6 @@ namespace Skill
         public static void AddInfoData(int id, SkillJsonData data) => _infoDataCash.TryAdd(id, data);
         public static SkillJsonData GetInfoData(int id) => _infoDataCash.TryGetValue(id, out var data) ? data : new SkillJsonData();
         public static void ClearInfosData() => _infoDataCash.Clear();
-        public static bool IsInfoChasing;
         
         // Status Data 캐싱
         private static Dictionary<int, StatusJsonData> _statusDataChasing = new Dictionary<int, StatusJsonData>();
@@ -51,14 +50,13 @@ namespace Skill
         public string explain;
         public SKillType type;
         public Texture2D icon;
-        public StatusValue<float> coolTime = new StatusValue<float>();
+        public float coolTime;
 
         public bool isInvoke; // 현재 스킬이 발동 중인지
 
         public StatusBase status;
-
         public StatusValue<int> level = new StatusValue<int>() { Max = 1 };
-        public StatusValue<float> duration = new StatusValue<float>();
+        [Networked] public TickTimer CoolTimeTimer { get; set; }
 
         #endregion
 
@@ -75,6 +73,12 @@ namespace Skill
             var statusData = GetStatusData(id);
             status.SetJsonData(statusData);
             level.Max = statusData.GetInt("Level Max");
+
+        }
+
+        public override void Spawned()
+        {
+            CoolTimeTimer = TickTimer.CreateFromTicks(Runner, 0);
         }
 
         #endregion
@@ -88,7 +92,10 @@ namespace Skill
         public abstract void Earn(GameObject earnTargetObject);
         public abstract void MainLoop();
         public abstract void Run(GameObject runObject);
-
+        
+        /// <summary>
+        /// 레벨업 (스킬 강화) 할시 동작하는 함수
+        /// </summary>
         public abstract void LevelUp();
         
         #endregion
@@ -116,7 +123,7 @@ namespace Skill
         public void SetJsonData(SkillJsonData json)
         {
             explain = json.Explain;
-            coolTime.Max = json.CoolTime;
+            coolTime = json.CoolTime;
             type = json.Type;
         }
         

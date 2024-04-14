@@ -1,4 +1,5 @@
-﻿using GamePlay;
+﻿using Fusion;
+using GamePlay;
 using Player;
 using Status;
 using UnityEngine;
@@ -13,7 +14,7 @@ namespace Skill.Container
     {
         #region time
 
-        private GameManager _gm;
+        // private GameManager _gm;
         private float _currentPlayTime;
         private float _previousPlayTime;
 
@@ -34,8 +35,10 @@ namespace Skill.Container
         
         #region Value
 
+        public float duration = 10.0f;
         private const float AvoidValue = 0.3f;
         private const float CoolTime = 30.0f;
+        [Networked] private TickTimer DurationTimer { get; set; }
         private const float DurationTime = 10.0f;
 
         #endregion
@@ -55,13 +58,16 @@ namespace Skill.Container
 
             duration = tempDuration;
             
-            _gm = GameObject.Find("GameManager").GetComponent<GameManager>();
-
-            // playerStatus = GameObject.Find("Local Player").GetComponent<PlayerStatus>();
-            // playerStatus = status;
+            // _gm = GameObject.Find("GameManager").GetComponent<GameManager>();
             
             _bOn = false;
             _difference = 0;
+        }
+
+        public override void Spawned()
+        {
+            base.Spawned();
+            DurationTimer = TickTimer.CreateFromTicks(Runner, 0);
         }
 
         public override void Earn(GameObject earnTargetObject)
@@ -70,38 +76,38 @@ namespace Skill.Container
 
         public override void MainLoop()
         {
-            _currentPlayTime = _gm.PlayTimer;
+            // _currentPlayTime = _gm.PlayTimer;
             
             _deltaPlayTime = _currentPlayTime - _previousPlayTime;
             
-            coolTime.Current -= _deltaPlayTime;
-            duration.Current -= _deltaPlayTime;
-
-            if (_bOn && Mathf.Round((duration.Current - duration.Min) * 10) * 0.1f <= 0f)
-            {
-                playerStatus.avoid.Current -= _difference;
-                
-                duration.Current = duration.Min;
-                _bOn = false;
-            }
+            // coolTime.Current -= _deltaPlayTime;
+            // duration.Current -= _deltaPlayTime;
+            //
+            // if (_bOn && Mathf.Round((duration.Current - duration.Min) * 10) * 0.1f <= 0f)
+            // {
+            //     playerStatus.avoid.Current -= _difference;
+            //     
+            //     duration.Current = duration.Min;
+            //     _bOn = false;
+            // }
             
             _previousPlayTime = _currentPlayTime;
         }
 
         public override void Run(GameObject runObject)
         {
-            if (_bOn == false && Mathf.Round((coolTime.Current - coolTime.Min) * 10) * 0.1f <= 0f)
-            {
-                playerStatus = runObject.GetComponent<PlayerStatus>();
-
-                _difference = playerStatus.avoid * AvoidValue;
-                playerStatus.avoid.Current += _difference;
-
-                duration.Current = duration.Max;
-                coolTime.Current = coolTime.Max;
-
-                _bOn = true;
-            }
+            // if (_bOn == false && Mathf.Round((coolTime.Current - coolTime.Min) * 10) * 0.1f <= 0f)
+            // {
+            //     playerStatus = runObject.GetComponent<PlayerStatus>();
+            //
+            //     _difference = playerStatus.avoid * AvoidValue;
+            //     playerStatus.avoid.Current += _difference;
+            //
+            //     duration.Current = duration.Max;
+            //     coolTime.Current = coolTime.Max;
+            //
+            //     _bOn = true;
+            // }
         }
 
         public override void LevelUp()

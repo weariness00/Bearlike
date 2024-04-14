@@ -26,7 +26,7 @@ namespace Skill.Container
             {
                 if (pc.weaponSystem.equipment is GunBase gun)
                 {
-                    gun.status.additionalStatusList.Add(status);
+                    gun.status.AddAdditionalStatus(status);
                 }
             }
         }

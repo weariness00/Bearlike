@@ -35,6 +35,7 @@ namespace Status
             if (IsDie)
             {
                 var obj = Runner.FindObject(ownerId);
+                if(obj == null) return;
                 if (obj.TryGetComponent(out PlayerController pc))
                 {
                     pc.MonsterKillAction?.Invoke(gameObject);

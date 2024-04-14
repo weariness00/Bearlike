@@ -62,7 +62,8 @@ namespace Weapon.Gun
                                     b.OwnerId = OwnerId;
                                     b.hitEffect = hitEffect;
                                     b.bknock = bknock;
-                                    b.status.attackRange = status.attackRange;
+                                    b.status.attackRange.Max = status.attackRange.Max;
+                                    b.status.attackRange.Current = status.attackRange.Current;
                                     b.destination = fireTransform.position + (dst * status.attackRange) + randomVector3;
                                 });
                         }

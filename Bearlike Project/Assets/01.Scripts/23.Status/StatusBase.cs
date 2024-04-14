@@ -27,7 +27,7 @@ namespace Status
 
         // 추가적인 스테이터스
         // ex ) Gun은 Player의 소유 Gun에서 나가는 Bullet에는 Player와 Gun의 스텟이 필요 그때마다 불러오기가 힘드니 Gun의 추가적인 Status에 Player의 Status를 포함
-        public List<StatusBase> additionalStatusList = new List<StatusBase>();
+        private HashSet<StatusBase> _additionalStatusList = new HashSet<StatusBase>();
         
         public StatusValue<int> hp = new StatusValue<int>(){Max = 99999};                  // 체력        
         public StatusValue<int> damage = new StatusValue<int>(){Max = 99999};              // 공격력
@@ -65,6 +65,12 @@ namespace Status
 
         public virtual void MainLoop(){}
 
+        public void ClearAdditionalStatus() => _additionalStatusList.Clear();
+        public void AddAdditionalStatus(StatusBase otherStatus)
+        {
+            _additionalStatusList.Add(otherStatus);
+        }
+        
         public virtual int CalDamage()
         {
             var d = AddAllDamage();
@@ -76,7 +82,7 @@ namespace Status
         private int AddAllDamage()
         {
             var d = damage.Current;
-            foreach (var statusBase in additionalStatusList)
+            foreach (var statusBase in _additionalStatusList)
             {
                 d += statusBase.AddAllDamage();
             }
@@ -87,7 +93,7 @@ namespace Status
         private float AddAllDamageMagnification()
         {
             var dm = damageMultiple;
-            foreach (var statusBase in additionalStatusList)
+            foreach (var statusBase in _additionalStatusList)
             {
                 dm += statusBase.AddAllDamageMagnification();
             }

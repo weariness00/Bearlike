@@ -14,10 +14,9 @@ namespace Skill.Container
     {
         #region time
 
-        private GameManager _gm;
+        // private GameManager _gm;
         private float _currentPlayTime;
         private float _previousPlayTime;
-
         private float _deltaPlayTime;
 
         #endregion
@@ -28,12 +27,13 @@ namespace Skill.Container
         
         private int _type;              // 동전 앞뒷면
         private bool _bOn;              // 현재 발동 중인지 판단하는 bool
-
         private float _difference;      // 차이 값 
 
         #endregion
 
         #region Value
+
+        public float duration;
 
         private const float AttackValue = 0.5f;
         private const float AttackSpeedValue = 0.2f;
@@ -58,7 +58,7 @@ namespace Skill.Container
 
             duration = tempDuration;
             
-            _gm = GameObject.Find("GameManager").GetComponent<GameManager>();
+            // _gm = GameObject.Find("GameManager").GetComponent<GameManager>();
 
             // playerStatus = GameObject.Find("Local Player").GetComponent<PlayerStatus>();
             // playerStatus = status;
@@ -67,36 +67,47 @@ namespace Skill.Container
             _difference = 0;
         }
 
+        public override void Start()
+        {
+            base.Start();
+            var statusData = GetStatusData(id);
+            duration = statusData.GetFloat("Duration");
+        }
+        
         public override void Earn(GameObject earnTargetObject)
         {
+            if (earnTargetObject.TryGetComponent(out PlayerController pc))
+            {
+                pc.status.AddAdditionalStatus(status);
+            }
         }
 
         public override void MainLoop()
         {
-            _currentPlayTime = _gm.PlayTimer;
-            
-            _deltaPlayTime = _currentPlayTime - _previousPlayTime;
-            
-            coolTime.Current -= _deltaPlayTime;
-            duration.Current -= _deltaPlayTime;
-
-            if (_bOn && Mathf.Round((duration.Current - duration.Min) * 10) * 0.1f <= 0f)
-            {
-                if (_type == 0)
-                {
-                    playerStatus.SetAttackSpeedRPC(StatusValueType.Current, playerStatus.attackSpeed.Current - _difference);
-                }
-                else
-                {
-                    playerStatus.damage.Current -= (int)_difference;
-                }
-                
-                Debug.Log($"현재 Attack : {playerStatus.damage.Current}, AttackSpeed : {playerStatus.attackSpeed.Current}");
-                
-                duration.Current = duration.Min;
-                _bOn = false;
-            }
-            
+            // _currentPlayTime = _gm.PlayTimer;
+            //
+            // _deltaPlayTime = _currentPlayTime - _previousPlayTime;
+            //
+            // coolTime -= _deltaPlayTime;
+            // duration -= _deltaPlayTime;
+            //
+            // if (_bOn && Mathf.Round((duration.Current - duration.Min) * 10) * 0.1f <= 0f)
+            // {
+            //     if (_type == 0)
+            //     {
+            //         playerStatus.SetAttackSpeedRPC(StatusValueType.Current, playerStatus.attackSpeed.Current - _difference);
+            //     }
+            //     else
+            //     {
+            //         playerStatus.damage.Current -= (int)_difference;
+            //     }
+            //     
+            //     Debug.Log($"현재 Attack : {playerStatus.damage.Current}, AttackSpeed : {playerStatus.attackSpeed.Current}");
+            //     
+            //     duration.Current = duration.Min;
+            //     _bOn = false;
+            // }
+            //
             _previousPlayTime = _currentPlayTime;
         }
         
@@ -104,34 +115,34 @@ namespace Skill.Container
         {
             // 둘중 하나 채택
             // if(Math.Abs(CoolTime.Current - CoolTime.Min) < 1E-6)
-            if (_bOn == false && Mathf.Round((coolTime.Current - coolTime.Min) * 10) * 0.1f <= 0f)
-            {
-                _type = Random.Range(0, 2);
-
-                playerStatus = runObject.GetComponent<PlayerStatus>();
-                
-                if (_type == 0)
-                {
-                    _difference = playerStatus.attackSpeed.Current * AttackValue;
-                    playerStatus.attackSpeed.Current += _difference;
-                }
-                else
-                {
-                    _difference = playerStatus.damage.Current * AttackSpeedValue;
-                    playerStatus.damage.Current += (int)_difference;
-                }
-                
-                duration.Current = duration.Max;
-                coolTime.Current = coolTime.Max;
-
-                _bOn = true;
-                
-                Debug.Log($"현재 Attack : {playerStatus.damage.Current}, AttackSpeed : {playerStatus.attackSpeed.Current}");
-            }
-            else
-            {
-                Debug.Log($"남은 쿨타임 : {coolTime.Current}");
-            }
+            // if (_bOn == false && Mathf.Round((coolTime.Current - coolTime.Min) * 10) * 0.1f <= 0f)
+            // {
+            //     _type = Random.Range(0, 2);
+            //
+            //     playerStatus = runObject.GetComponent<PlayerStatus>();
+            //     
+            //     if (_type == 0)
+            //     {
+            //         _difference = playerStatus.attackSpeed.Current * AttackValue;
+            //         playerStatus.attackSpeed.Current += _difference;
+            //     }
+            //     else
+            //     {
+            //         _difference = playerStatus.damage.Current * AttackSpeedValue;
+            //         playerStatus.damage.Current += (int)_difference;
+            //     }
+            //     
+            //     duration.Current = duration.Max;
+            //     coolTime.Current = coolTime.Max;
+            //
+            //     _bOn = true;
+            //     
+            //     Debug.Log($"현재 Attack : {playerStatus.damage.Current}, AttackSpeed : {playerStatus.attackSpeed.Current}");
+            // }
+            // else
+            // {
+            //     Debug.Log($"남은 쿨타임 : {coolTime.Current}");
+            // }
         }
 
         public override void LevelUp()

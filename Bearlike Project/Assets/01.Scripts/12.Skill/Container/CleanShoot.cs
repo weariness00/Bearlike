@@ -69,22 +69,18 @@ namespace Skill.Container
         {
             if (earnTargetObject.TryGetComponent(out PlayerController pc))
             {
-                status.additionalStatusList.Add(pc.status);
+                status.AddAdditionalStatus(pc.status);
             }
         }
 
         public override void MainLoop()
         {
-            if (coolTime.isMin == false)
-            {
-                cleanShootCanvas.transform.position = Vector3.zero;
-                coolTime.Current -= Time.deltaTime;
-            }
+            
         }
 
         public override void Run(GameObject runObject)
         {
-            if (coolTime.isMin && isInvoke == false)
+            if (CoolTimeTimer.Expired(Runner) && isInvoke == false)
             {
                 isInvoke = true;
                 cleanShootCanvas.gameObject.SetActive(true);
@@ -109,7 +105,7 @@ namespace Skill.Container
                 {
                     // 스킬을 사용했으면 초기화 해야됨
                     cleanShootCanvas.gameObject.SetActive(false);
-                    coolTime.Current = coolTime.Max;
+                    CoolTimeTimer = TickTimer.CreateFromSeconds(Runner, coolTime);
                     isInvoke = false;
                     
                     foreach (var (monster, aim) in _aimDictionary)
@@ -117,7 +113,6 @@ namespace Skill.Container
                         Destroy(aim);
                     }
                     _aimDictionary.Clear();
-
                     
                     foreach (var monster in _monsterList)
                     {

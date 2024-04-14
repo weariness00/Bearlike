@@ -1,3 +1,4 @@
+using Fusion;
 using GamePlay;
 using Status;
 using UnityEngine;
@@ -11,6 +12,7 @@ namespace Skill.Container
     /// </summary>
     public class SniperContinuousMode : SkillBase
     {
+        [Networked] public TickTimer T { get; set; }
         #region time
 
         private GameManager _gm;
@@ -32,6 +34,7 @@ namespace Skill.Container
         
         #region Value
 
+        public StatusValue<float> duration = new StatusValue<float>();
         private const float CoolTime = 50.0f;
         private const float DurationTime = 7.0f;
 
@@ -71,46 +74,46 @@ namespace Skill.Container
 
         public override void MainLoop()
         {
-            if (coolTime.isMin == false)
-            {
-                _currentPlayTime = _gm.PlayTimer;
-
-                _deltaPlayTime = _currentPlayTime - _previousPlayTime;
-
-                coolTime.Current -= _deltaPlayTime;
-                duration.Current -= _deltaPlayTime;
-            }
-
-            if (_bOn && Mathf.Round((duration.Current - duration.Min) * 10) * 0.1f <= 0f)
-            {
-                _sniper.bulletFirePerMinute += _difference;
-                _sniper.fireLateSecond = 60 / _sniper.bulletFirePerMinute;
-                
-                duration.Current = duration.Min;
-                _bOn = false;
-                // gameObject.SetActive(false);
-            }
-
-            if (coolTime.isMin == false)
-            {
-                _previousPlayTime = _currentPlayTime;
-            }
+            // if (coolTime.isMin == false)
+            // {
+            //     _currentPlayTime = _gm.PlayTimer;
+            //
+            //     _deltaPlayTime = _currentPlayTime - _previousPlayTime;
+            //
+            //     coolTime.Current -= _deltaPlayTime;
+            //     duration.Current -= _deltaPlayTime;
+            // }
+            //
+            // if (_bOn && Mathf.Round((duration.Current - duration.Min) * 10) * 0.1f <= 0f)
+            // {
+            //     _sniper.bulletFirePerMinute += _difference;
+            //     _sniper.fireLateSecond = 60 / _sniper.bulletFirePerMinute;
+            //     
+            //     duration.Current = duration.Min;
+            //     _bOn = false;
+            //     // gameObject.SetActive(false);
+            // }
+            //
+            // if (coolTime.isMin == false)
+            // {
+            //     _previousPlayTime = _currentPlayTime;
+            // }
         }
     
         public override void Run(GameObject runObject)
         {
-            if (_bOn == false && Mathf.Round((coolTime.Current - coolTime.Min) * 10) * 0.1f <= 0f)
-            {
-                // gameObject.SetActive(true);
-                _difference = 2 * (_sniper.bulletFirePerMinute / 3);
-                _sniper.bulletFirePerMinute += _difference;
-                _sniper.fireLateSecond = 60 / _sniper.bulletFirePerMinute;
-                
-                duration.Current = duration.Max;
-                coolTime.Current = coolTime.Max;
-    
-                _bOn = true;
-            }
+            // if (_bOn == false && Mathf.Round((coolTime.Current - coolTime.Min) * 10) * 0.1f <= 0f)
+            // {
+            //     // gameObject.SetActive(true);
+            //     _difference = 2 * (_sniper.bulletFirePerMinute / 3);
+            //     _sniper.bulletFirePerMinute += _difference;
+            //     _sniper.fireLateSecond = 60 / _sniper.bulletFirePerMinute;
+            //     
+            //     duration.Current = duration.Max;
+            //     coolTime.Current = coolTime.Max;
+            //
+            //     _bOn = true;
+            // }
         }
 
         public override void LevelUp()
