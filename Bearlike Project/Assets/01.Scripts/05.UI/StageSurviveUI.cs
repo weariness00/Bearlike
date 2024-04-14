@@ -14,7 +14,7 @@ namespace UI
 
         public void Update()
         {
-            timeText.text = TimeString((int)stage.timeLimit.Current);
+            timeText.text = TimeString((int)stage.currentTime);
 
             if (stage.isStageClear)
             {

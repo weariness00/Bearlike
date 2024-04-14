@@ -91,7 +91,6 @@ namespace Inventory
             }
         }
 
-        #if UNITY_EDITOR
         #region Editor Function
         public void SetItem(Dictionary<Component, Component> items)
         {
@@ -103,14 +102,10 @@ namespace Inventory
         }
 
         #endregion
-        #endif
     }
-
-#if UNITY_EDITOR
 
     public interface IInventoryEditor
     {
         public void SetItem(Dictionary<Component, Component> items);
     }
-#endif
 }

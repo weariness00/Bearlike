@@ -37,9 +37,6 @@ namespace Photon
                     _instance = componet;
                     return;
                 }
-
-                var singletonObject = new GameObject(typeof(T).Name);
-                _instance = singletonObject.GetOrAddComponent<T>();
             }
         }
 

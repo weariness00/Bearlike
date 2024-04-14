@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Threading.Tasks;
 using Fusion;
 using Manager;
@@ -21,6 +22,7 @@ namespace Data
     {
         [Networked, Capacity(3)] public NetworkDictionary<PlayerRef, UserDataStruct> UserDictionary { get; }
 
+        public Action AfterSpawnedAction;
         public Action<PlayerRef> UserJoinAction;
         public Action<PlayerRef> UserLeftAction;
 
@@ -44,6 +46,7 @@ namespace Data
         public override void Spawned()
         {
             Runner.MakeDontDestroyOnLoad(gameObject);
+            AfterSpawnedAction?.Invoke();
         }
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]

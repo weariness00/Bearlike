@@ -7,6 +7,7 @@ using Photon;
 using Player;
 using Script.GamePlay;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using Util;
 
@@ -58,6 +59,9 @@ namespace GamePlay
                     return;
                 }
 
+                // 씬 이동
+                NetworkManager.Runner.MoveGameObjectToSameScene(targetObject, otherPortal.gameObject);
+                
                 var spot = otherPortal.spawnPlace.GetRandomSpot(); // 이동할 위치
 
                 if (targetObject.CompareTag("Player"))
@@ -65,6 +69,7 @@ namespace GamePlay
                     var pc = targetObject.GetComponent<PlayerController>();
                     pc.SetPositionRPC(spot.position);
                     pc.SetLookRotationRPC(spot.forward);
+                    
                 }
                 else if (targetObject.TryGetComponent(out NetworkBehaviourEx networkEx))
                 {

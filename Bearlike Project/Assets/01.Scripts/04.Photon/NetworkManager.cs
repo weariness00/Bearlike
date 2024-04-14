@@ -72,6 +72,7 @@ namespace Photon
             {
                 yield return null;
             }
+            yield return null;
             SceneLoadDoneAction?.Invoke();
             SceneLoadDoneAction = null;
         }
@@ -230,15 +231,21 @@ namespace Photon
 
         public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
-            Physics.SyncTransforms();
-            
             var data = new UserDataStruct
             {
                 PlayerRef = player,
                 Name = player.ToString()
             };
 
-            UserData.Instance.InsertUserDataRPC(player, data);
+            if (UserData.Instance == null)
+            {
+                SceneLoadDoneAction += () =>
+                {
+                    UserData.Instance.AfterSpawnedAction += () => UserData.Instance.InsertUserDataRPC(player, data);
+                };
+            }            
+            else
+                UserData.Instance.InsertUserDataRPC(player, data);
         }
 
         public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)

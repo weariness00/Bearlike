@@ -130,7 +130,7 @@ MonoBehaviour:
   info:
     id: 0
     name: Coin
-    icon: {fileID: 2800000, guid: 6d8b13cbbf4423b409b0215a92680f56, type: 3}
+    explain: 
     amount:
       _min: 0
       _max: 99999
@@ -139,7 +139,7 @@ MonoBehaviour:
       isOverMin: 0
       isMin: 1
       isMax: 0
-    explain: 
+    icon: {fileID: 2800000, guid: 6d8b13cbbf4423b409b0215a92680f56, type: 3}
 --- !u!135 &3372094020599251678
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -150,7 +150,7 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4096
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0

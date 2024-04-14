@@ -201,8 +201,8 @@ namespace UI
                         bicSelectIndex = i;
                     }
                 }
-                
-                SetSettingUIRPC(false);
+
+                IsSettingUI = false;
 
                 GameManager.Instance.SetStage(nextStageList[bicSelectIndex]);
             }
