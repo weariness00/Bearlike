@@ -26,17 +26,13 @@ public class NavTest : MonoBehaviour
         _agent = GetComponent<NavMeshAgent>();
         animator = GetComponentInChildren<Animator>();
         
+        animator.SetFloat("AttackBlend", 3);
         animator.SetTrigger("tAttack");
-        animator.SetFloat("AttackType", 2);
         
         _agent.speed = FastDistance(player.transform.position, transform.position) / 3.0f;
-        _agent.SetDestination(player.transform.position);
-        StartCoroutine(JumpUpCoroutine(risingSpeed, 0.0f, 1));
-    }
-
-    private void Update()
-    {
-        transform.position = new Vector3(transform.position.x, _height, transform.position.z);
+        // _agent.SetDestination(player.transform.position);
+        // _agent.SetDestination(player.transform.position);
+        StartCoroutine(JumpUpCoroutine(risingSpeed, 0.0f, 2));
     }
 
     IEnumerator JumpUpCoroutine(float risingSpeed, float waitTime, int type)
@@ -48,7 +44,7 @@ public class NavTest : MonoBehaviour
             _startTime += Time.deltaTime;
             _height += risingSpeed * Time.deltaTime * (11 - _height);
 
-            // transform.position = new Vector3(transform.position.x, _height, transform.position.z);
+            transform.position = new Vector3(transform.position.x, _height, transform.position.z);
 
             yield return new WaitForSeconds(waitTime);
 
@@ -56,9 +52,12 @@ public class NavTest : MonoBehaviour
             {
                 if(type == 2)
                 {
+                    animator.SetLayerWeight(1, 1.0f);
+                    animator.SetTrigger("tCoin");
                     animator.SetTrigger("tAttack");
-                    animator.SetFloat("AttackType", 3);
+                    animator.SetFloat("AttackBlend", 2);
                     yield return new WaitForSeconds(5.0f);
+                    animator.SetLayerWeight(1, 0.0f);
                 }
                 StartCoroutine(JumpDownCoroutine(downSpeed));
                 yield break;
@@ -72,7 +71,7 @@ public class NavTest : MonoBehaviour
         {
             _startTime += Time.deltaTime;
             _height -= downSpeed * Time.deltaTime * (11 - _height);
-            // transform.position = new Vector3(transform.position.x, _height, transform.position.z);
+            transform.position = new Vector3(transform.position.x, _height, transform.position.z);
             yield return new WaitForSeconds(0.0f);
 
             if (_height < 0.0f)
