@@ -418,7 +418,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8193292287546923427, guid: 69ac511c1bea7e540bd78ef6a91f798f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -1565,7 +1566,7 @@ Transform:
   m_GameObject: {fileID: 1593497752}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.19, y: 10, z: 3.94}
+  m_LocalPosition: {x: 10, y: 3, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1749,7 +1750,7 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   spawnObjectList:
-  - RawGuidValue: 3c4f5d8e828ae334e9864b912ebfdb6c
+  - RawGuidValue: 49e6dd3c7c6ddd644b475e794af5fdbd
   spawnObjectOrders: 
   spawnPlace:
     _spotList:
@@ -1944,6 +1945,7 @@ MonoBehaviour:
   monsterSpawnerList:
   - {fileID: 541677324}
   - {fileID: 825602875}
+  - {fileID: 2069443426}
   aliveMonsterCount:
     _min: 0
     _max: 100

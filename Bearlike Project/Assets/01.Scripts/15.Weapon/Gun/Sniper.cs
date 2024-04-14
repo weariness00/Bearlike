@@ -12,7 +12,7 @@ namespace Weapon.Gun
         public override void Start()
         {                           
             base.Start();
-
+            // json화
             ammo.Max = ammo.Current = 36;
         }
     }

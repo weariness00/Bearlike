@@ -1,4 +1,7 @@
-﻿using Fusion;
+﻿using System.Collections.Generic;
+using Data;
+using Fusion;
+using Manager;
 using Photon;
 using Status;
 using Unity.Burst;
@@ -9,18 +12,37 @@ using UnityEngine.VFX;
 namespace Weapon.Bullet
 {
     [RequireComponent(typeof(StatusBase))]
-    public class BulletBase : NetworkBehaviourEx
+    public class BulletBase : NetworkBehaviourEx, IJsonData<BulletJsonData>
     {
         [HideInInspector] [Networked] public NetworkId OwnerId { get; set; } // 이 총을 쏜 주인의 ID
         public StatusBase status;
         public int penetrateCount = 0; // 관통 가능 횟수
 
+        // Info Data 캐싱
+        private static readonly Dictionary<int, BulletJsonData> InfoDataCash = new Dictionary<int, BulletJsonData>();
+        public static void AddInfoData(int id, BulletJsonData data) => InfoDataCash.TryAdd(id, data);
+        public static BulletJsonData GetInfoData(int id) => InfoDataCash.TryGetValue(id, out var data) ? data : new BulletJsonData();
+        public static void ClearInfosData() => InfoDataCash.Clear();
+        
+        // Status Data 캐싱
+        private static readonly Dictionary<int, StatusJsonData> StatusDataChasing = new Dictionary<int, StatusJsonData>();
+        public static void AddStatusData(int id, StatusJsonData data) => StatusDataChasing.TryAdd(id, data);
+        public static StatusJsonData GetStatusData(int id) => StatusDataChasing.TryGetValue(id, out var data) ? data : new StatusJsonData();
+        public static void ClearStatusData() => StatusDataChasing.Clear();
+        
+        #region 속성
+        
         public Vector3 destination = Vector3.zero;
         public VisualEffect hitEffect;
         
         private Vector3 direction;
         public bool bknock = false;
-
+        
+        public int id = 0;
+        public string explain;
+        
+        #endregion
+        
         #region 사정거리
         private Vector3 _oldPosition;
         // public float maxMoveDistance;   // 최대 사정거리 // 이거 대신 status.attackRange 씀
@@ -37,6 +59,12 @@ namespace Weapon.Bullet
 
             direction = (destination - transform.position).normalized;
             transform.rotation = Quaternion.LookRotation(destination);
+            
+            status.SetJsonData(GetStatusData(id));
+            
+            DebugManager.ToDo("Json으로 moveSpeed받아오도록 수정");
+            status.moveSpeed.Max = 50;
+            status.moveSpeed.Current = status.moveSpeed.Max;
         }
 
         public override void Spawned()
@@ -48,7 +76,7 @@ namespace Weapon.Bullet
         { 
             transform.position += direction * Runner.DeltaTime * status.moveSpeed;
             // transform.position += transform.forward * Runner.DeltaTime * speed;
-            transform.Rotate(new Vector3(0, 90, 0), Space.Self);
+            transform.Rotate(new Vector3(0, 10, 0), Space.Self);
 
             // if (FastDistance(transform.position, _oldPosition) >= maxMoveDistance) Destroy(gameObject);
             if (FastDistance(transform.position, _oldPosition) >= status.attackRange.Current) Destroy(gameObject);
@@ -106,5 +134,16 @@ namespace Weapon.Bullet
         // }
         //
         // #endregion
+        
+        public BulletJsonData GetJsonData()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SetJsonData(BulletJsonData json)
+        {
+            name = json.Name;
+            explain = json.Explain;
+        }
     }
 }

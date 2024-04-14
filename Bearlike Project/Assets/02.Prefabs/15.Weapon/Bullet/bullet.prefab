@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: -8670076698105449635}
   - component: {fileID: 7086352021707528695}
   - component: {fileID: 7359014855915151186}
-  - component: {fileID: 5190341549437457947}
+  - component: {fileID: 6772358613166213106}
   m_Layer: 16
   m_Name: bullet
   m_TagString: Bullet
@@ -58,7 +58,7 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: -6395905962208903233}
   - {fileID: 7359014855915151186}
-  - {fileID: 5190341549437457947}
+  - {fileID: 6772358613166213106}
 --- !u!33 &56927467209638814
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -190,7 +190,7 @@ MonoBehaviour:
   SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0
---- !u!114 &5190341549437457947
+--- !u!114 &6772358613166213106
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -236,8 +236,8 @@ MonoBehaviour:
     isMax: 0
   moveSpeed:
     _min: 0
-    _max: 100
-    _current: 100
+    _max: 0
+    _current: 0
     isOverMax: 0
     isOverMin: 0
     isMin: 0

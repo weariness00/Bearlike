@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Weapon.Gun
+namespace Weapon.Bullet
 {
-    public struct GunJsonData
+    public class BulletJsonData
     {
-        [JsonProperty("ID")] public int Id;
+        [JsonProperty("ID")] public int ID;
         [JsonProperty("Name")] public string Name;
         [JsonProperty("Explain")] public string Explain;
     }
 }
-

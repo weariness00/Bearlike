@@ -10,13 +10,12 @@ GameObject:
   m_Component:
   - component: {fileID: 8849519140643557871}
   - component: {fileID: 8300805111394403827}
+  - component: {fileID: 2275401513258430574}
   - component: {fileID: 3864797936546459940}
-  - component: {fileID: 6467252800752926030}
   - component: {fileID: 4223805121481554381}
   - component: {fileID: 8569674826605292728}
   - component: {fileID: 2797698570917168137}
   - component: {fileID: 2689594114804352267}
-  - component: {fileID: 6335437694645795708}
   - component: {fileID: 8442735661980967818}
   - component: {fileID: 8622474459513446545}
   - component: {fileID: 7016311146224797749}
@@ -61,12 +60,40 @@ MonoBehaviour:
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 6467252800752926030}
+  - {fileID: 2275401513258430574}
   - {fileID: 4223805121481554381}
   - {fileID: 8569674826605292728}
-  - {fileID: 6335437694645795708}
   - {fileID: 8442735661980967818}
   - {fileID: 7016311146224797749}
+--- !u!114 &2275401513258430574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 732821387110091048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 618a5231b6aa4719bfbe95a195f92c29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rigidbody: {fileID: 0}
+  networkAnimator: {fileID: 0}
+  status: {fileID: 0}
+  lootingTable: {fileID: 0}
+  pivot: {fileID: 0}
+  id: 2
+  explain: 
+  type: 
+  targetTransform: {fileID: 0}
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 0
+  movementSpeed: 1
+  attackRange: 10
+  rushRange: 100
+  coinAtaackMinRange: 10
+  coinAtaackMaxRange: 100
 --- !u!95 &3864797936546459940
 Animator:
   serializedVersion: 5
@@ -77,7 +104,7 @@ Animator:
   m_GameObject: {fileID: 732821387110091048}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 23618c06251dfc448a4299a1dfb52ea3, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -88,23 +115,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &6467252800752926030
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 732821387110091048}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b9c6512e1f8fa8d46b40337565b53945, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  movementSpeed: 1
-  attackRange: 10
-  rushRange: 100
-  coinAtaackMinRange: 10
-  coinAtaackMaxRange: 100
 --- !u!114 &4223805121481554381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -118,11 +128,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Animator: {fileID: 3864797936546459940}
-  TotalWords: 0
+  TotalWords: 3
   ApplyTiming: 2
   SyncSettings: 79
-  StateHashes: 
-  TriggerHashes: 
+  StateHashes: 000000000d286c404e865f4350246bb8f5608c072cc35df51f7078c2e9576dd4dae448e3854d4fcb43accd36
+  TriggerHashes: 00000000e8a2e574e0e012b6
 --- !u!114 &8569674826605292728
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,30 +190,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &6335437694645795708
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 732821387110091048}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0dee67e2025f45d4a3233c2233fb66bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rigidbody: {fileID: 0}
-  networkAnimator: {fileID: 0}
-  status: {fileID: 0}
-  lootingTable: {fileID: 0}
-  pivot: {fileID: 0}
-  id: 0
-  explain: 
-  type: 
-  targetTransform: {fileID: 0}
-  targetMask:
-    serializedVersion: 2
-    m_Bits: 0
 --- !u!114 &8442735661980967818
 MonoBehaviour:
   m_ObjectHideFlags: 0

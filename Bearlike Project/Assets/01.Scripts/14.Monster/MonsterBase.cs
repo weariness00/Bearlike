@@ -59,7 +59,7 @@ namespace Monster
 
         #region Unity Evenet Function
 
-        private void Awake()
+        public void Awake()
         {
             rigidbody = GetComponent<Rigidbody>();
             networkAnimator = GetComponent<NetworkMecanimAnimator>();

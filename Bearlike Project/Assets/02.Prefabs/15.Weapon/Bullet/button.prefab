@@ -11,17 +11,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: df3a8025e48f9fb439696fe9dcc052bb,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: df3a8025e48f9fb439696fe9dcc052bb,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: df3a8025e48f9fb439696fe9dcc052bb,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: df3a8025e48f9fb439696fe9dcc052bb,
         type: 3}
@@ -214,12 +214,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9157c914e81496ca531aa847af40355, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  status: {fileID: 8693081974366723898}
-  penetrateCount: 0
+  status: {fileID: 0}
   destination: {x: -17.54316, y: 99.12152, z: -1.22813}
   hitEffect: {fileID: 0}
   bknock: 0
-  maxMoveDistance: 100
+  id: 0
+  explain: 
+  maxMoveDistance: 30
 --- !u!114 &8693081974366723898
 MonoBehaviour:
   m_ObjectHideFlags: 0

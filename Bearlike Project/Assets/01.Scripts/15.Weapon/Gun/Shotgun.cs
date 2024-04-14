@@ -28,7 +28,7 @@ namespace Weapon.Gun
 
             bknock = false;
             bulletRadian = 3;
-
+            // json화
             ammo.Max = 36;
             ammo.Current = ammo.Max;
         }
@@ -63,7 +63,7 @@ namespace Weapon.Gun
                                     b.hitEffect = hitEffect;
                                     b.bknock = bknock;
                                     b.status.attackRange = status.attackRange;
-                                    b.destination = transform.position + (dst * status.attackRange) + randomVector3;
+                                    b.destination = fireTransform.position + (dst * status.attackRange) + randomVector3;
                                 });
                         }
                     }
