@@ -21,11 +21,8 @@ namespace Monster.Container
     public class PiggyBank : MonsterBase
     {
         #region Component
-
-        private Rigidbody _rb;
+        
         private BehaviorTreeRunner _btRunner;
-        private NetworkMecanimAnimator _animator = null;
-        private StatusBase _status;
         private VisualEffect _visualEffect;
         private NavMeshAgent _navMeshAgent;
 
@@ -66,25 +63,23 @@ namespace Monster.Container
 
         private float jumpHeight = 30;
 
-        private static readonly int Walk = Animator.StringToHash("isWalk");
+        // private static readonly int Walk = Animator.StringToHash("isWalk");
 
-        private static readonly int Dead = Animator.StringToHash("Dead");
-        private static readonly int Rest = Animator.StringToHash("Rest");
-        private static readonly int Defence = Animator.StringToHash("Defence");
-        private static readonly int Attack = Animator.StringToHash("Attack");
+        private static readonly int Dead = Animator.StringToHash("isDead");
+        private static readonly int Rest = Animator.StringToHash("tRest");
+        private static readonly int Defence = Animator.StringToHash("tDefence");
+        private static readonly int Attack = Animator.StringToHash("tAttack");
 
-        private static readonly int AttackType = Animator.StringToHash("Attack_Type");
+        private static readonly int AttackType = Animator.StringToHash("AttackType");
 
         #endregion
 
         private void Awake()
         {
-            _rb = GetComponent<Rigidbody>();
-            _animator = GetComponent<NetworkMecanimAnimator>();
+            base.Awake();
             _btRunner = new BehaviorTreeRunner(SettingTestBT());
-            _status = GetComponent<MonsterStatus>();
             _visualEffect = GetComponentInChildren<VisualEffect>();
-            if(TryGetComponent(out _navMeshAgent)== false) _navMeshAgent = GetComponentInChildren<NavMeshAgent>();
+            if(TryGetComponent(out _navMeshAgent)== false) _navMeshAgent = GetComponent<NavMeshAgent>();
         }
 
         private void Start()
@@ -101,10 +96,10 @@ namespace Monster.Container
 
             isDead = false;
 
-            _animator.Animator.SetFloat(AttackType, 0);
-            _animator.Animator.SetBool(Walk, true);
+            networkAnimator.Animator.SetFloat(AttackType, 0);
+            // networkAnimator.Animator.SetBool(Walk, true);
 
-            StartCoroutine(WalkCoroutine(0.5f));
+            // StartCoroutine(WalkCoroutine(0.5f));
             StartCoroutine(DieCoroutine(0.5f));
         }
 
@@ -132,9 +127,9 @@ namespace Monster.Container
         {
             while (true)
             {
-                if (_status.IsDie)
+                if (status.IsDie)
                 {
-                    _animator.Animator.SetTrigger(Dead);
+                    networkAnimator.Animator.SetTrigger(Dead);
                     isDead = true;
                     yield break;
                 }
@@ -172,102 +167,104 @@ namespace Monster.Container
             }
         }
 
-        // INode SettingBT()
-        // {
-        //     return new SequenceNode
-        //     (
-        //         new SelectorNode
-        //         (
-        //             false,
-        //             new SequenceNode
-        //             (   // Deffence
-        //                 new ActionNode(CheckMoreHp), 
-        //                 new ActionNode(StartDefence),
-        //                 new ActionNode(TermFuction)
-        //             ),
-        //             new SequenceNode
-        //             (   // Run
-        //                 new ActionNode(StartRun),
-        //                 new ActionNode(TermFuction),
-        //                 new ActionNode(StopRun),
-        //                 
-        //                 // if player distance far?
-        //                 new ActionNode(CheckJumpAttackDistance),
-        //                 // jump
-        //                 new SequenceNode
-        //                 (
-        //                     new ActionNode(CheckJumpAttackAction),
-        //                     new ActionNode(StartJumpaction)
-        //                     ),
-        //                 // select node 
-        //                 // air coin attack
-        //                 // approach to player jump
-        //                 new SelectorNode
-        //                 (
-        //                     true,
-        //                     new SequenceNode
-        //                         (
-        //                         ),
-        //                     new SequenceNode
-        //                         (
-        //                         )
-        //                 )
-        //             )
-        //         ),
-        //         new SelectorNode(
-        //             false,
-        //             new SequenceNode
-        //             (
-        //                 new ActionNode(CheckAttackAction), // Kick
-        //                 new ActionNode(CheckAttackDistance),
-        //                 new ActionNode(StartRotate),
-        //                 new ActionNode(StartAttack),
-        //                 new ActionNode(TermFuction)
-        //             ),
-        //             new ActionNode(SuccessFunction)
-        //         ),
-        //             new SelectorNode
-        //             (
-        //                 false,
-        //                 new SequenceNode(
-        //                     new ActionNode(CheckRushAction), // Rush
-        //                     new ActionNode(CheckRushDistance),
-        //                     new ActionNode(StartRotate),
-        //                     new ActionNode(StartRush),
-        //                     new ActionNode(TermFuction)
-        //                 ),
-        //                 new SequenceNode
-        //                 (
-        //                     new ActionNode(CheckJumpAttackAction), // JumpAttack
-        //                     new ActionNode(StartRotate),
-        //                     new ActionNode(StartJumpAttack),
-        //                     new ActionNode(TermFuction)
-        //                 )
-        //             ),
-        //             new SequenceNode
-        //             (
-        //                 new ActionNode(CheckFartAction), // fart
-        //                 new ActionNode(StartFart),
-        //                 new ActionNode(TermFuction)
-        //             ),
-        //             new SequenceNode
-        //             (    // take a rest
-        //                 new ActionNode(CheckRestAction),
-        //                 new ActionNode(CheckRestHp),
-        //                 new ActionNode(StartRest),
-        //                 new ActionNode(TermFuction)
-        //             ),
-        //             new SequenceNode
-        //             (   // CoinAttack
-        //                 new ActionNode(CheckCoinAttackAction),
-        //                 new ActionNode(CheckCoinAttackDistance),
-        //                 new ActionNode(StartCoinAttack),
-        //                 new ActionNode(TermFuction)
-        //             )
-        //             
-        //             // // sleep
-        //     );
-        // }
+        #region BT
+
+        INode SettingBT()
+        {
+            return new SequenceNode
+            (
+                new SelectorNode
+                (
+                    false,
+                    new SequenceNode
+                    (   // Deffence
+                        new ActionNode(CheckMoreHp), 
+                        new ActionNode(StartDefence),
+                        new ActionNode(TermFuction)
+                    ),
+                    new SequenceNode
+                    (   // Run
+                        new ActionNode(StartRun),
+                        new ActionNode(TermFuction),
+                        new ActionNode(StopRun),
+                        
+                        // if player distance far?
+                        new ActionNode(CheckJumpAttackDistance),
+                        // jump
+                        new SequenceNode
+                        (
+                            new ActionNode(CheckJumpAttackAction),
+                            new ActionNode(StartJumpaction)
+                            ),
+                        // select node 
+                        // air coin attack
+                        // approach to player jump
+                        new SelectorNode
+                        (
+                            true,
+                            new SequenceNode
+                                (
+                                ),
+                            new SequenceNode
+                                (
+                                )
+                        )
+                    )
+                ),
+                new SelectorNode(
+                    false,
+                    new SequenceNode
+                    (
+                        new ActionNode(CheckAttackAction), // Kick
+                        new ActionNode(CheckAttackDistance),
+                        new ActionNode(StartRotate),
+                        new ActionNode(StartAttack),
+                        new ActionNode(TermFuction)
+                    ),
+                    new ActionNode(SuccessFunction)
+                ),
+                    new SelectorNode
+                    (
+                        false,
+                        new SequenceNode(
+                            new ActionNode(CheckRushAction), // Rush
+                            new ActionNode(CheckRushDistance),
+                            new ActionNode(StartRotate),
+                            new ActionNode(StartRush),
+                            new ActionNode(TermFuction)
+                        ),
+                        new SequenceNode
+                        (
+                            new ActionNode(CheckJumpAttackAction), // JumpAttack
+                            new ActionNode(StartRotate),
+                            new ActionNode(StartJumpAttack),
+                            new ActionNode(TermFuction)
+                        )
+                    ),
+                    new SequenceNode
+                    (
+                        new ActionNode(CheckFartAction), // fart
+                        new ActionNode(StartFart),
+                        new ActionNode(TermFuction)
+                    ),
+                    new SequenceNode
+                    (    // take a rest
+                        new ActionNode(CheckRestAction),
+                        new ActionNode(CheckRestHp),
+                        new ActionNode(StartRest),
+                        new ActionNode(TermFuction)
+                    ),
+                    new SequenceNode
+                    (   // CoinAttack
+                        new ActionNode(CheckCoinAttackAction),
+                        new ActionNode(CheckCoinAttackDistance),
+                        new ActionNode(StartCoinAttack),
+                        new ActionNode(TermFuction)
+                    )
+                    
+                    // // sleep
+            );
+        }
 
         INode SettingTestBT()
         {
@@ -281,13 +278,15 @@ namespace Monster.Container
             );
         }
 
+        #endregion
+
         bool IsAnimationRunning(string stateName)
         {
-            if (_animator != null)
+            if (networkAnimator != null)
             {
-                if (_animator.Animator.GetCurrentAnimatorStateInfo(0).IsName(stateName))
+                if (networkAnimator.Animator.GetCurrentAnimatorStateInfo(0).IsName(stateName))
                 {
-                    var normalizedTime = _animator.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
+                    var normalizedTime = networkAnimator.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
 
                     // DebugManager.ToDo($"{stateName}진행 시간 : {normalizedTime}");
 
@@ -335,7 +334,7 @@ namespace Monster.Container
             if (_gameManager.PlayTimer - _durationTime > 5.0f)
             {
                 _visualEffect.Stop();
-                _animator.Animator.Play("piggy_walk");
+                networkAnimator.Animator.Play("piggy_walk");
 
                 return INode.NodeState.Success;
             }
@@ -429,8 +428,8 @@ namespace Monster.Container
 
             CheckHpJob Job = new CheckHpJob()
             {
-                Current = _status.hp.Current,
-                Max = _status.hp.Max,
+                Current = status.hp.Current,
+                Max = status.hp.Max,
                 Result = results
             };
 
@@ -468,7 +467,7 @@ namespace Monster.Container
             }
 
             _visualEffect.Play();
-            _animator.Animator.SetTrigger(Defence);
+            networkAnimator.Animator.SetTrigger(Defence);
             _navMeshAgent.speed = 0.0f;
             _durationTime = _gameManager.PlayTimer;
 
@@ -486,7 +485,7 @@ namespace Monster.Container
                 return INode.NodeState.Running;
             }
 
-            _animator.SetTrigger("Run");
+            networkAnimator.SetTrigger("Run");
             _durationTime = _gameManager.PlayTimer;
 
             return INode.NodeState.Success;
@@ -494,7 +493,7 @@ namespace Monster.Container
 
         INode.NodeState StopRun()
         {
-            _animator.Animator.Play("piggy_idle");
+            networkAnimator.Animator.Play("piggy_idle");
 
             return INode.NodeState.Success;
         }
@@ -626,8 +625,8 @@ namespace Monster.Container
 
         INode.NodeState StartAttack()
         {
-            _animator.Animator.SetFloat(AttackType, 0.0f);
-            _animator.Animator.SetTrigger(Attack);
+            networkAnimator.Animator.SetFloat(AttackType, 0.0f);
+            networkAnimator.Animator.SetTrigger(Attack);
             _navMeshAgent.speed = 0.0f;
             _durationTime = _gameManager.PlayTimer;
 
@@ -709,8 +708,8 @@ namespace Monster.Container
 
         INode.NodeState StartRush()
         {
-            _animator.Animator.SetFloat(AttackType, 3);
-            _animator.Animator.SetTrigger(Attack);
+            networkAnimator.Animator.SetFloat(AttackType, 3);
+            networkAnimator.Animator.SetTrigger(Attack);
 
             _navMeshAgent.SetDestination(_players[_targetPlayerIndex].transform.position - _players[_targetPlayerIndex].transform.forward * 20);
             _navMeshAgent.speed = 10.0f;
@@ -793,9 +792,10 @@ namespace Monster.Container
 
         INode.NodeState StartJumpaction()
         {
-            _animator.Animator.SetInteger(AttackType, 2);
+            networkAnimator.Animator.SetTrigger(Attack);
+            networkAnimator.Animator.SetFloat(AttackType, 2);
+            
             // y의 위치를 천천히 올려주는 코루틴 필요
-
             // StartCoroutine(JumpCoroutine(1.0f, 0.5f));
             
             return INode.NodeState.Success;
@@ -811,7 +811,7 @@ namespace Monster.Container
                     transform.position = new Vector3(localTransform.x, localTransform.y + risingSpeed * Runner.DeltaTime, localTransform.z);
                     
                     Debug.Log(transform.position);
-                yield return new WaitForSeconds(waitTime);
+                    yield return new WaitForSeconds(waitTime);
                 }
 
                 if (transform.position.y >= jumpHeight)
@@ -825,7 +825,7 @@ namespace Monster.Container
 
         INode.NodeState StartJumpAttack()
         {
-            _animator.Animator.SetInteger(AttackType, 2);
+            networkAnimator.Animator.SetInteger(AttackType, 2);
 
             _navMeshAgent.SetDestination(_players[_targetPlayerIndex].transform.position);
             _navMeshAgent.speed = 10.0f;
@@ -854,7 +854,7 @@ namespace Monster.Container
 
         INode.NodeState StartFart()
         {
-            _animator.Animator.SetFloat(AttackType, 4);
+            networkAnimator.Animator.SetFloat(AttackType, 4);
             _navMeshAgent.speed = 0.0f;
 
             return INode.NodeState.Success;
@@ -880,8 +880,8 @@ namespace Monster.Container
 
             CheckHpJob Job = new CheckHpJob()
             {
-                Current = _status.hp.Current,
-                Max = _status.hp.Max,
+                Current = status.hp.Current,
+                Max = status.hp.Max,
                 Result = results
             };
 
@@ -902,7 +902,7 @@ namespace Monster.Container
 
         INode.NodeState StartRest()
         {
-            _animator.Animator.SetTrigger(Rest);
+            networkAnimator.Animator.SetTrigger(Rest);
             _navMeshAgent.speed = 0.0f;
 
             return INode.NodeState.Success;
@@ -989,8 +989,8 @@ namespace Monster.Container
 
         INode.NodeState StartCoinAttack()
         {
-            _animator.Animator.SetTrigger(Attack);
-            _animator.Animator.SetFloat(AttackType, 1);
+            networkAnimator.Animator.SetTrigger(Attack);
+            networkAnimator.Animator.SetFloat(AttackType, 1);
 
             // TODO : VFX를 받아와서 실행하고, 매개변수로 자식 객체의 이름를 받는 함수구현
 

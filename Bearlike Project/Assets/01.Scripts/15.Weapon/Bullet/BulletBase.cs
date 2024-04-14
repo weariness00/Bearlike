@@ -62,7 +62,7 @@ namespace Weapon.Bullet
             status.SetJsonData(GetStatusData(id));
             
             DebugManager.ToDo("Json으로 moveSpeed받아오도록 수정");
-            status.moveSpeed.Max = 30;
+            status.moveSpeed.Max = 50;
             status.moveSpeed.Current = status.moveSpeed.Max;
         }
         

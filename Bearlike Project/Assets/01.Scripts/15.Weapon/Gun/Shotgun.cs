@@ -32,7 +32,6 @@ namespace Weapon.Gun
         
         public override void Shoot()
         {                        
-            // 다른 클라가 했으면 자기 말고 다른 클라의 코드를 실행해야지
             if (fireLateSecond.isMax)
             {
                 fireLateSecond.Current = fireLateSecond.Min;
@@ -49,11 +48,10 @@ namespace Weapon.Gun
                         Vector3 randomVector3 = new Vector3(Random.Range(-bulletRadian, bulletRadian), 
                             Random.Range(-bulletRadian, bulletRadian), Random.Range(-bulletRadian, bulletRadian));
 
-                        SetDestinationRPC(transform.position + (dst * attackRange) + randomVector3);
+                        SetDestinationRPC(fireTransform.position + (dst * attackRange) + randomVector3);
                         // bullet.destination = transform.position + (dst * attackRange) + randomVector3;
                         
-                        var transform1 = transform;
-                        Runner.SpawnAsync(bullet.gameObject, transform1.position + dst, transform1.rotation);
+                        Runner.SpawnAsync(bullet.gameObject, fireTransform.position + dst, transform.rotation);
                     }
                  
                     magazine.Current--;
