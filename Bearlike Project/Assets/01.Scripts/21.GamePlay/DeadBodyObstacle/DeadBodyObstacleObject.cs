@@ -49,7 +49,7 @@ namespace GamePlay.DeadBodyObstacle
         public void OnDeadBody(int hp = 1000)
         {
             name += "Dead Body";
-            tag = "Default";
+            tag = "Untagged";
             gameObject.layer = 0;
 
             // 애니메이션 동작을 멈추기 위해 먼저 애니메이션 삭제
