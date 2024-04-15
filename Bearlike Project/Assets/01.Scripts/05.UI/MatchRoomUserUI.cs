@@ -15,6 +15,10 @@ public class MatchRoomUserUI : NetworkBehaviour
     private void Awake()
     {
         exitButton.onClick.AddListener(OnExit);
+    }
+
+    private void Start()
+    {
         UserData.Instance.UserJoinAction += UserActionToDataUpdate;
         UserData.Instance.UserLeftAction += UserActionToDataUpdate;
     }
@@ -33,10 +37,10 @@ public class MatchRoomUserUI : NetworkBehaviour
         UserData.Instance.UserLeftAction -= UserActionToDataUpdate;
     }
 
-    public override void Spawned()
-    {
-        DataUpdateRPC();
-    }
+    // public override void Spawned()
+    // {
+    //     DataUpdate();
+    // }
 
     // UserData의 Action들에 넣고 뺼 용으로 사용하는 함수
     private void UserActionToDataUpdate(PlayerRef playerRef) => DataUpdateRPC();
@@ -44,8 +48,15 @@ public class MatchRoomUserUI : NetworkBehaviour
     public void DataUpdateRPC() => DataUpdate();
     public void DataUpdate()
     {
-        var items = NetworkUtil.DictionaryItems(UserData.Instance.UserDictionary);
-        UpdateData(items);
+        try
+        {
+            var items = NetworkUtil.DictionaryItems(UserData.Instance.UserDictionary);
+            UpdateData(items);
+        }
+        catch (Exception e)
+        {
+            UserData.Instance.AfterSpawnedAction += DataUpdateRPC;
+        }
     }
     
     public void UpdateData(UserDataStruct[] dataList)

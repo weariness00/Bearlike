@@ -66,13 +66,20 @@ namespace Data
 
         public void InsertUserData(PlayerRef playerRef, UserDataStruct userData)
         {
-            var matchManager = FindObjectOfType<NetworkMatchManager>();
+            try
+            {
+                var matchManager = FindObjectOfType<NetworkMatchManager>();
 
-            userData.PrefabRef = matchManager.PlayerPrefabRefs[0]; // 임시 : 나중에는 유저가 선택하면 바꿀 수 있거나 아니면 이전 정보를 가져와 그 캐릭터로 잡아줌
+                userData.PrefabRef = matchManager.PlayerPrefabRefs[0]; // 임시 : 나중에는 유저가 선택하면 바꿀 수 있거나 아니면 이전 정보를 가져와 그 캐릭터로 잡아줌
 
-            UserDictionary.Add(playerRef, userData);
-            UserJoinAction?.Invoke(playerRef);
-            DebugManager.Log($"Add Player Data : {userData.Name}");
+                UserDictionary.Add(playerRef, userData);
+                UserJoinAction?.Invoke(playerRef);
+                DebugManager.Log($"Add Player Data : {userData.Name}");
+            }
+            catch (Exception e)
+            {
+                AfterSpawnedAction += () => InsertUserDataRPC(playerRef, userData);
+            }
         }
 
         public void ChangePlayerRef(PlayerRef playerRef, NetworkPrefabRef prefabRef)
