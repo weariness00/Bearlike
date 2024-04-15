@@ -59,9 +59,6 @@ namespace GamePlay
                     return;
                 }
 
-                // 씬 이동
-                NetworkManager.Runner.MoveGameObjectToSameScene(targetObject, otherPortal.gameObject);
-                
                 var spot = otherPortal.spawnPlace.GetRandomSpot(); // 이동할 위치
 
                 if (targetObject.CompareTag("Player"))

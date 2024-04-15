@@ -216,8 +216,8 @@ namespace GamePlay.Stage
                 Destroy(childCamera.gameObject);
             }
 
-            // Runner.MoveGameObjectToSameScene(gameObject, GameManager.Instance.gameObject);
-            // Runner.MoveGameObjectToSameScene(stageGameObject, GameManager.Instance.gameObject);
+            Runner.MoveGameObjectToSameScene(gameObject, GameManager.Instance.gameObject);
+            Runner.MoveGameObjectToSameScene(stageGameObject, GameManager.Instance.gameObject);
             
             var pos = new Vector3(0,(FindObjectsOfType<StageBase>().Length - 1) * 100,0);
             transform.position = pos;
@@ -234,7 +234,7 @@ namespace GamePlay.Stage
             }
             GameManager.Instance.currentStage = this;
             
-            // SetIsUnloadRPC(UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber, true);
+            SetIsUnloadRPC(UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber, true);
 
             StageInitAction?.Invoke();
             

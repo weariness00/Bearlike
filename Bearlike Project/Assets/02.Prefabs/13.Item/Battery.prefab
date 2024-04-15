@@ -52,7 +52,7 @@ MonoBehaviour:
   info:
     id: 10
     name: 
-    icon: {fileID: 0}
+    explain: 
     amount:
       _min: 0
       _max: 4
@@ -61,7 +61,7 @@ MonoBehaviour:
       isOverMin: 0
       isMin: 0
       isMax: 0
-    explain: 
+    icon: {fileID: 0}
 --- !u!33 &1390289849575138476
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -125,7 +125,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 65536
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
