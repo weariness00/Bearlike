@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
+  m_IndirectSpecularColor: {r: 0.17276841, g: 0.21589246, b: 0.2978262, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -193,8 +193,7 @@ MonoBehaviour:
   SortKey: 152746429
   ObjectInterest: 1
   Flags: 262145
-  NestedObjects:
-  - {fileID: 217900966}
+  NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 42810328}
   - {fileID: 541677324}
@@ -367,7 +366,7 @@ PrefabInstance:
         type: 3}
       propertyPath: NetworkedBehaviours.Array.data[0]
       value: 
-      objectReference: {fileID: 217900967}
+      objectReference: {fileID: 0}
     - target: {fileID: 6822735359699462654, guid: 69ac511c1bea7e540bd78ef6a91f798f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -429,30 +428,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 217900964}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &217900966 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5156906037214166286, guid: 69ac511c1bea7e540bd78ef6a91f798f,
-    type: 3}
-  m_PrefabInstance: {fileID: 217900964}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 217900968}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &217900967 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8984828093266996157, guid: 69ac511c1bea7e540bd78ef6a91f798f,
-    type: 3}
-  m_PrefabInstance: {fileID: 217900964}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 217900968}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d90174c1baf422943b76e333d74af420, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &217900968 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 399576629531323057, guid: 69ac511c1bea7e540bd78ef6a91f798f,
@@ -1384,7 +1359,7 @@ Transform:
   m_GameObject: {fileID: 1267372959}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -18.4, y: 0, z: 34.38}
+  m_LocalPosition: {x: -15.14, y: 0, z: 31.21}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
