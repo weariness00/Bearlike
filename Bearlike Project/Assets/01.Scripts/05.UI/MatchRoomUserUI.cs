@@ -37,10 +37,10 @@ public class MatchRoomUserUI : NetworkBehaviour
         UserData.Instance.UserLeftAction -= UserActionToDataUpdate;
     }
 
-    // public override void Spawned()
-    // {
-    //     DataUpdate();
-    // }
+    public override void Spawned()
+    {
+        DataUpdate();
+    }
 
     // UserData의 Action들에 넣고 뺼 용으로 사용하는 함수
     private void UserActionToDataUpdate(PlayerRef playerRef) => DataUpdateRPC();

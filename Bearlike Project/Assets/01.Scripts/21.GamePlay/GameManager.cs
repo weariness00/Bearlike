@@ -109,7 +109,7 @@ namespace GamePlay
             async void OnSceneLoadDoneAction()
             {
                  foreach (var stageLevelBase in FindObjectsOfType<StageBase>())
-                {
+                 {
                     // 이미 활성화된 스테이지
                     if (stageLevelBase.stageGameObject.activeSelf)
                     {
@@ -123,7 +123,7 @@ namespace GamePlay
                         DebugManager.Log($"씬 생성 후 초기화 완료 {stageData.sceneReference}");
                         break;
                     }
-                }
+                 }
             }
             NetworkManager.SceneLoadDoneAction += OnSceneLoadDoneAction;
         }

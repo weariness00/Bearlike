@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Linq;
 using Fusion;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Photon
 {
     public class NetworkBehaviourEx : NetworkBehaviour
     {
+        [Networked, Capacity(3)] public NetworkArray<NetworkBool> IsAsyncClient { get; }
+        [Networked] public NetworkBool IsSpawnSuccess { get; set; }
+        
         [Rpc(RpcSources.All, RpcTargets.StateAuthority, Channel = RpcChannel.Reliable)]
         public void DestroyRPC(float time = 0f)
         {
@@ -33,6 +36,20 @@ namespace Photon
         {
             Debug.Log("정상 삭제됨");
             Runner.Despawn(Object);
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void SpawnedSuccessRPC(int clientNumber, NetworkBool value)
+        {
+            IsAsyncClient.Set(clientNumber, value);
+
+            var count = Runner.ActivePlayers.ToArray().Length;
+            foreach (var asyncValue in IsAsyncClient)
+            {
+                if (asyncValue) --count;
+            }
+
+            if (count == 0) IsSpawnSuccess = true;
         }
     }
 }

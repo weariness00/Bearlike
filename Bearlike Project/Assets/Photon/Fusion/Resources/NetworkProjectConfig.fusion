@@ -4,9 +4,9 @@
     "PeerMode": 0,
     "LagCompensation": {
         "Enabled": false,
-        "HitboxBufferLengthInMs": 200,
-        "HitboxDefaultCapacity": 512,
-        "CachedStaticCollidersSize": 64
+        "HitboxBufferLengthInMs": 30,
+        "HitboxDefaultCapacity": 16,
+        "CachedStaticCollidersSize": 2
     },
     "EnqueueIncompleteSynchronousSpawns": true,
     "InvokeRenderInBatchMode": true,
@@ -14,7 +14,7 @@
     "HideNetworkObjectInactivityGuard": false,
     "Simulation": {
         "InputDataWordCount": 0,
-        "ReplicationFeatures": 0,
+        "ReplicationFeatures": 1,
         "InputTransferMode": 0,
         "PlayerCount": 3,
         "TickRateSelection": {
@@ -50,7 +50,7 @@
     },
     "Heap": {
         "PageShift": 18,
-        "PageCount": 512,
+        "PageCount": 128,
         "GlobalsSize": 0
     },
     "AssembliesToWeave": [

@@ -86,7 +86,7 @@ namespace GamePlay.Stage
             StageInfo.SetJsonData(GetInfoData(StageInfo.id));
             lootingTable.CalLootingItem(GetLootingData(StageInfo.id).LootingItems);
         }
-
+        
         public void OnTriggerEnter(Collider other)
         {
             // 플레이어가 스테이지에 입장하면 스테이지 시작
@@ -111,14 +111,15 @@ namespace GamePlay.Stage
             {
                 StageInit();
             }
+            
+            SpawnedSuccessRPC(UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber, true);
         }
 
         public override void FixedUpdateNetwork()
         {
             if (IsStageStart &&isStageClear == false && isStageOver == false)
             {
-                StageUpdate();
-                DebugManager.Log("스테이지 업데이트");
+                StageUpdateRPC();
             }
         }
 
@@ -128,20 +129,22 @@ namespace GamePlay.Stage
             {
                 switch (change)
                 {
+                    case nameof(IsSpawnSuccess):
+                        if (IsSpawnSuccess)
+                        {
+                            Runner.MoveGameObjectToSameScene(gameObject, GameManager.Instance.gameObject);
+                            Runner.MoveGameObjectToSameScene(stageGameObject, GameManager.Instance.gameObject);
+                        }
+                        break;
                     case nameof(IsStageUnload): // 스테이지 초기화 되면 스테이지를 부른 Scene을 Unload
                         if (stageData.info.stageType == StageType.None)
                             continue;
                         int count = Runner.ActivePlayers.ToArray().Length;
                         foreach (var value in IsStageUnload)
-                        {
                             if (value) --count;
-                        }
 
-                        if (count == 0)
-                        {
+                        if (count == 0 && HasStateAuthority)
                             NetworkManager.UnloadScene(sceneReference.ScenePath);
-                        }
-
                         break;
                     case nameof(IsInit): // 스테이지 초기화 동기화를 위해 사용
                         if (IsInit)
@@ -215,9 +218,6 @@ namespace GamePlay.Stage
             {
                 Destroy(childCamera.gameObject);
             }
-
-            Runner.MoveGameObjectToSameScene(gameObject, GameManager.Instance.gameObject);
-            Runner.MoveGameObjectToSameScene(stageGameObject, GameManager.Instance.gameObject);
             
             var pos = new Vector3(0,(FindObjectsOfType<StageBase>().Length - 1) * 100,0);
             transform.position = pos;
@@ -234,8 +234,6 @@ namespace GamePlay.Stage
             }
             GameManager.Instance.currentStage = this;
             
-            SetIsUnloadRPC(UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber, true);
-
             StageInitAction?.Invoke();
             
             DebugManager.Log($"스테이지 초기화 {stageData.info.title}");
@@ -259,9 +257,10 @@ namespace GamePlay.Stage
 
         public virtual void StageClear()
         {
+            SetIsUnloadRPC(UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber, true);
             if (isStageClear)
                 return;
-
+            
             GameManager.Instance.stageCount.Current++;
             StopMonsterSpawn();
 
@@ -337,7 +336,9 @@ namespace GamePlay.Stage
                     break;
             }
         }
-        
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        public void StageUpdateRPC() => StageUpdate();
+
         #endregion
     }
 }
