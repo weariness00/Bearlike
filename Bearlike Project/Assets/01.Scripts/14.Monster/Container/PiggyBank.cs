@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using BehaviorTree.Base;
 using Data;
 using GamePlay;
@@ -696,6 +697,7 @@ namespace Monster.Container
             DebugManager.ToDo("돼지 BT : status에서 속도를 받아오도록 수정");
             StartCoroutine(JumpCoroutine(1.0f, 1.0f, type));
             
+            _durationTime = _gameManager.PlayTimer;
             return INode.NodeState.Success;
         }
 
@@ -776,6 +778,7 @@ namespace Monster.Container
             // 분진 VFX
             // PlayVFX("");
 
+            _durationTime = _gameManager.PlayTimer;
             return INode.NodeState.Success;
         }
 
@@ -808,7 +811,27 @@ namespace Monster.Container
             networkAnimator.Animator.SetTrigger(Rest);
             _navMeshAgent.SetDestination(transform.position);
 
+            StartCoroutine(RestCoroutine());
+
+            _durationTime = _gameManager.PlayTimer;
             return INode.NodeState.Success;
+        }
+
+        IEnumerator RestCoroutine()
+        {
+            int count = 0;
+            while (true)
+            {
+                // TODO : 상수화 시키자
+                status.hp.Current += (int)((status.hp.Max - status.hp.Current) / 0.05f);
+                yield return new WaitForSeconds(0.5f);
+                count++;
+                // TODO: 상수화 시키자
+                if (count >= 10)
+                {
+                    yield break;
+                }
+            }
         }
 
         #endregion
