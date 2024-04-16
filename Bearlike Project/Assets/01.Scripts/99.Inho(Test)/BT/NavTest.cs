@@ -18,20 +18,31 @@ public class NavTest : MonoBehaviour
 
     public float risingSpeed = 1.0f;
     public float downSpeed = 1.0f;
-    
+
+    public int attackType = 2;
+    // 1 : 점프 공격
+    // 2 : 점프 코인공격
+
     void Start()
     {
         _height = 0.0f;
         _path = new NavMeshPath();
         _agent = GetComponent<NavMeshAgent>();
         animator = GetComponentInChildren<Animator>();
-        
+
         animator.SetFloat("AttackBlend", 3);
         animator.SetTrigger("tAttack");
-        
-        _agent.speed = FastDistance(player.transform.position, transform.position) / 3.0f;
-        _agent.SetDestination(player.transform.position);
-        StartCoroutine(JumpUpCoroutine(risingSpeed, 0.0f, 2));
+
+        if (attackType == 1)
+        {
+            _agent.speed = FastDistance(player.transform.position, transform.position) / 3.0f;
+            _agent.SetDestination(player.transform.position);
+            StartCoroutine(JumpUpCoroutine(risingSpeed, 0.0f, 1));
+        }
+        else if (attackType == 2)
+        {
+            StartCoroutine(JumpUpCoroutine(risingSpeed, 0.0f, 2));
+        }
     }
 
     private void Update()
@@ -80,7 +91,6 @@ public class NavTest : MonoBehaviour
 
             if (_height < 0.0f)
             {
-                Debug.Log(_startTime);
                 _height = 0.0f;
                 yield break;
             }
