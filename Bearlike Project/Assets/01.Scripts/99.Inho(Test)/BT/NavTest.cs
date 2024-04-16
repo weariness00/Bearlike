@@ -30,9 +30,13 @@ public class NavTest : MonoBehaviour
         animator.SetTrigger("tAttack");
         
         _agent.speed = FastDistance(player.transform.position, transform.position) / 3.0f;
-        // _agent.SetDestination(player.transform.position);
-        // _agent.SetDestination(player.transform.position);
+        _agent.SetDestination(player.transform.position);
         StartCoroutine(JumpUpCoroutine(risingSpeed, 0.0f, 2));
+    }
+
+    private void Update()
+    {
+        transform.position = new Vector3(transform.position.x, _height, transform.position.z);
     }
 
     IEnumerator JumpUpCoroutine(float risingSpeed, float waitTime, int type)
