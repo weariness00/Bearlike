@@ -20,7 +20,7 @@ AnimatorStateTransition:
   m_TransitionDuration: 0.25
   m_TransitionOffset: 0
   m_ExitTime: 0.75
-  m_HasExitTime: 0
+  m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
@@ -196,7 +196,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -623603649343465320, guid: 54404bf7d076031408ee92ad89ad4337,
+  m_Motion: {fileID: -8309397525901271381, guid: fc410eeea1ea4524da318cbe7f7682a2,
     type: 3}
   m_Tag: 
   m_SpeedParameter: 
@@ -214,7 +214,7 @@ AnimatorController:
   m_AnimatorParameters:
   - m_Name: AttackBlend
     m_Type: 1
-    m_DefaultFloat: 4
+    m_DefaultFloat: 5
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
@@ -498,7 +498,7 @@ AnimatorStateMachine:
     m_Position: {x: 330, y: -50, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 3877481349161786345}
-    m_Position: {x: 330, y: 50, z: 0}
+    m_Position: {x: 340, y: 30, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 8361690516905350399}
     m_Position: {x: 330, y: 120, z: 0}
@@ -528,7 +528,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: New State
+  m_Name: Empty
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []

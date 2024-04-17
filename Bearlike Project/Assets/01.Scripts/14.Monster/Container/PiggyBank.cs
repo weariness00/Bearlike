@@ -71,6 +71,12 @@ namespace Monster.Container
 
         private static readonly int AttackBlend = Animator.StringToHash("AttackType");
 
+        private const int ATTACK_TYPE = 0;
+        private const int FART_TYPE = 1;
+        private const int COIN_TYPE = 2;
+        private const int JUMP_TYPE = 3;
+        private const int RUSH_TYPE = 4;
+
         #endregion
 
         private void Awake()
@@ -175,17 +181,17 @@ namespace Monster.Container
                 (
                     false,
                     new SequenceNode
-                    (   // Deffence
-                        new ActionNode(CheckMoreHp), 
+                    ( // Deffence
+                        new ActionNode(CheckMoreHp),
                         new ActionNode(StartDefence),
                         new ActionNode(TermFuction)
                     ),
                     new SequenceNode
-                    (   // Run
+                    ( // Run
                         new ActionNode(StartRun),
                         new ActionNode(TermFuction),
                         new ActionNode(StopRun),
-                        
+
                         new ActionNode(CheckJumpAttackDistance),
                         new ActionNode(CheckJumpAttackAction),
                         new ActionNode(StartJumpAction),
@@ -212,41 +218,42 @@ namespace Monster.Container
                 new SelectorNode
                 (
                     true,
-                    new SequenceNode(
-                        new ActionNode(CheckRushAction), // Rush
-                        new ActionNode(CheckRushDistance),
-                        new ActionNode(StartRush),
-                        new ActionNode(TermFuction)
+                    new SelectorNode(
+                        true,
+                        new SequenceNode(
+                            new ActionNode(CheckRushAction), // Rush
+                            new ActionNode(CheckRushDistance),
+                            new ActionNode(StartRush),
+                            new ActionNode(TermFuction)
+                        ),
+                        new SequenceNode
+                        (
+                            new ActionNode(CheckJumpAttackAction), // JumpAttack
+                            new ActionNode(StartJumpAttackAction),
+                            new ActionNode(TermFuction)
+                        )
                     ),
                     new SequenceNode
                     (
-                        new ActionNode(CheckJumpAttackAction), // JumpAttack
-                        new ActionNode(StartJumpAttackAction),
+                        new ActionNode(CheckFartAction), // fart
+                        new ActionNode(StartFart),
                         new ActionNode(TermFuction)
                     )
-                , 
+                ),
                 new SequenceNode
-                (
-                    new ActionNode(CheckFartAction), // fart
-                    new ActionNode(StartFart),
+                ( // CoinAttack
+                    new ActionNode(CheckCoinAttackAction),
+                    new ActionNode(CheckCoinAttackDistance),
+                    new ActionNode(StartCoinAttack),
                     new ActionNode(TermFuction)
                 ),
                 new SequenceNode
-                (    // take a rest
+                ( // take a rest
                     new ActionNode(CheckRestAction),
                     new ActionNode(CheckRestHp),
                     new ActionNode(StartRest),
                     new ActionNode(TermFuction)
-                ),
-                    new SequenceNode
-                    (   // CoinAttack
-                        new ActionNode(CheckCoinAttackAction),
-                        new ActionNode(CheckCoinAttackDistance),
-                        new ActionNode(StartCoinAttack),
-                        new ActionNode(TermFuction)
-                    )
-                    
-                    // // sleep
+                )
             );
         }
 
@@ -423,7 +430,7 @@ namespace Monster.Container
             // _visualEffect.Play();
             PlayVFX("shield_vfx");
             networkAnimator.Animator.SetTrigger(Defence);
-            _navMeshAgent.speed = 0.0f;
+            _navMeshAgent.SetDestination(transform.position);
             _durationTime = _gameManager.PlayTimer;
 
             return INode.NodeState.Success;
@@ -442,7 +449,8 @@ namespace Monster.Container
             
             //TODO: 방향 설정하는 코드 필요
             
-            networkAnimator.SetTrigger("Run");
+            networkAnimator.Animator.SetInteger(AttackBlend, RUSH_TYPE);
+            networkAnimator.Animator.SetTrigger(Attack);
             _durationTime = _gameManager.PlayTimer;
 
             return INode.NodeState.Success;
@@ -532,7 +540,7 @@ namespace Monster.Container
 
         INode.NodeState StartAttack()
         {
-            networkAnimator.Animator.SetFloat(AttackBlend, 0.0f);
+            networkAnimator.Animator.SetFloat(AttackBlend, ATTACK_TYPE);
             networkAnimator.Animator.SetTrigger(Attack);
             _navMeshAgent.speed = 0.0f;
             _durationTime = _gameManager.PlayTimer;
@@ -590,8 +598,8 @@ namespace Monster.Container
         }
 
         INode.NodeState StartRush()
-        {
-            networkAnimator.Animator.SetFloat(AttackBlend, 2);
+        {   
+            networkAnimator.Animator.SetFloat(AttackBlend, RUSH_TYPE);
             networkAnimator.Animator.SetTrigger(Attack);
 
             // TODO : player가 쳐다보고있는 방향이 아닌 돼지와 player의 벡터만큼 뒤로 가자
@@ -664,7 +672,7 @@ namespace Monster.Container
         INode.NodeState StartJumpAction()
         {
             networkAnimator.Animator.SetTrigger(Attack);
-            networkAnimator.Animator.SetFloat(AttackBlend, 3);
+            networkAnimator.Animator.SetFloat(AttackBlend, JUMP_TYPE);
             
             // 가장 먼 플레이어를 지정
             _navMeshAgent.speed = FastDistance(_players[_targetPlayerIndex].transform.position, transform.position) / 3.0f;
@@ -687,7 +695,7 @@ namespace Monster.Container
         INode.NodeState StartJumpAttackAction()
         {
             networkAnimator.Animator.SetTrigger(Attack);
-            networkAnimator.Animator.SetFloat(AttackBlend, 3);
+            networkAnimator.Animator.SetFloat(AttackBlend, JUMP_TYPE);
             int type;
             if (status.hp.Current / status.hp.Max > 0.5f)
                 type = 3;
@@ -772,7 +780,7 @@ namespace Monster.Container
 
         INode.NodeState StartFart()
         {
-            networkAnimator.Animator.SetFloat(AttackBlend, 4);
+            networkAnimator.Animator.SetFloat(AttackBlend, FART_TYPE);
             _navMeshAgent.SetDestination(transform.position);
             
             // 분진 VFX
@@ -871,38 +879,17 @@ namespace Monster.Container
 
         INode.NodeState CheckCoinAttackDistance()
         {
-            NativeArray<bool> results = new NativeArray<bool>((int)_playerCount, Allocator.TempJob);
-            NativeArray<Vector3> playerPosition = new NativeArray<Vector3>((int)_playerCount, Allocator.TempJob);
-
-            Vector3 piggyPosition = transform.position;
-
-            for (int index = 0; index < (int)_playerCount; index++)
-            {
-                playerPosition[index] = _players[index].transform.position;
-            }
-
-            CheckCoinAttackDistanceJob job = new CheckCoinAttackDistanceJob()
-            {
-                Results = results,
-                PlayerPosition = playerPosition,
-                PiggyPosition = piggyPosition,
-                DetectingMaxRange = coinAtaackMaxRange,
-                DetectingMinRange = coinAtaackMinRange,
-            };
-
-            JobHandle jobHandle = job.Schedule((int)_playerCount, 3);
-
-            jobHandle.Complete();
-
             bool checkResult = false;
-
-            foreach (var result in results)
+            
+            for (int index = 0; index < _playerCount; ++index)
             {
-                checkResult |= result;
+                // 동전 유무 판단도 넣을까?
+                var distance = FastDistance(transform.position, _players[index].transform.position);
+                if (coinAtaackMinRange <= distance && distance <= coinAtaackMaxRange)
+                {
+                    checkResult |= true;
+                }
             }
-
-            results.Dispose();
-            playerPosition.Dispose();
 
             if (checkResult)
             {
@@ -915,7 +902,7 @@ namespace Monster.Container
         INode.NodeState StartCoinAttack()
         {
             networkAnimator.Animator.SetTrigger(Attack);
-            networkAnimator.Animator.SetFloat(AttackBlend, 1);
+            networkAnimator.Animator.SetFloat(AttackBlend, COIN_TYPE);
 
             // TODO : VFX를 받아와서 실행하고, 매개변수로 자식 객체의 이름를 받는 함수구현
 
