@@ -394,7 +394,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4748870830279182150, guid: 54046c7806e811b4ebc8d24b42b61055,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 323666943}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 106754097049536907, guid: 54046c7806e811b4ebc8d24b42b61055,
         type: 3}
@@ -459,7 +463,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!73398921 &323666941
 VFXRenderer:
   serializedVersion: 1
@@ -468,7 +472,7 @@ VFXRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 323666940}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -554,7 +558,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1952071568}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &352570900
 GameObject:
@@ -730,7 +734,7 @@ Transform:
   m_GameObject: {fileID: 974999925}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -16.44, y: 0, z: 5.18}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1477,6 +1481,12 @@ MonoBehaviour:
   rushRange: 100
   coinAtaackMinRange: 10
   coinAtaackMaxRange: 100
+--- !u!4 &1952071568 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4748870830279182150, guid: 54046c7806e811b4ebc8d24b42b61055,
+    type: 3}
+  m_PrefabInstance: {fileID: 116453404}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2119354383
 GameObject:
   m_ObjectHideFlags: 0
@@ -1772,5 +1782,4 @@ SceneRoots:
   - {fileID: 352570901}
   - {fileID: 1339143051}
   - {fileID: 116453404}
-  - {fileID: 323666943}
   - {fileID: 1324415169}

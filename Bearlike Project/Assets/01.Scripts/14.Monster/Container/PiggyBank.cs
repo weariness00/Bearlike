@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using BehaviorTree.Base;
 using Data;
 using GamePlay;
@@ -13,7 +12,6 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.VFX;
-using Allocator = Unity.Collections.Allocator;
 using Random = UnityEngine.Random;
 
 namespace Monster.Container

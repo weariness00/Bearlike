@@ -119,7 +119,6 @@ public class NavTest : MonoBehaviour
         private NavMeshAgent _navMeshAgent;
         private Animator _animator;
 
-        private GameManager _gameManager;
         private UserData _userData;
         [SerializeField]private GameObject[] _players;
 
@@ -154,14 +153,14 @@ public class NavTest : MonoBehaviour
         private float jumpHeight = 30;
         private float _height = 0;
 
-        // private static readonly int Walk = Animator.StringToHash("isWalk");
+        private static readonly int Walk = Animator.StringToHash("isWalk");
 
         private static readonly int Dead = Animator.StringToHash("isDead");
         private static readonly int Rest = Animator.StringToHash("tRest");
         private static readonly int Defence = Animator.StringToHash("tDefence");
         private static readonly int Attack = Animator.StringToHash("tAttack");
 
-        private static readonly int AttackBlend = Animator.StringToHash("AttackType");
+        private static readonly int AttackBlend = Animator.StringToHash("AttackBlend");
 
         private const int ATTACK_TYPE = 0;
         private const int FART_TYPE = 1;
@@ -175,13 +174,13 @@ public class NavTest : MonoBehaviour
         {
             _btRunner = new BehaviorTreeRunner(SettingBT());
             _visualEffect = GetComponentInChildren<VisualEffect>();
+            _animator = GetComponentInChildren<Animator>();
             if(TryGetComponent(out _navMeshAgent)== false) _navMeshAgent = GetComponent<NavMeshAgent>();
         }
 
         private void Start()
         {
-            _gameManager = GameManager.Instance;
-            _playerCount = _gameManager.AlivePlayerCount;
+            _playerCount = 1;
 
             attackRange = 10;
             rushRange = 100;
@@ -191,7 +190,7 @@ public class NavTest : MonoBehaviour
             isDead = false;
 
             _animator.SetFloat(AttackBlend, 0);
-            // networkAnimator.Animator.SetBool(Walk, true);
+            // _animator.SetBool(Walk, true);
 
             // StartCoroutine(WalkCoroutine(0.5f));
             // StartCoroutine(DieCoroutine(0.5f));
@@ -228,15 +227,8 @@ public class NavTest : MonoBehaviour
                 {
                     if (FastDistance(transform.position, _players[0].transform.position) > 10.0f)
                     {
-                        // _navMeshAgent.speed = status.moveSpeed.Current;
-                        // _navMeshAgent.SetDestination(_players[0].transform.position);
-                        
-                        NavMeshPath path = new NavMeshPath();
-                        if (_navMeshAgent.CalculatePath(_players[0].transform.position, path))
-                        {
-                            Debug.Log($"{_players[0].transform.position}, {path.corners}");
-                            _navMeshAgent.SetPath(path);
-                        }
+                        _navMeshAgent.speed = 1;
+                        _navMeshAgent.SetDestination(_players[0].transform.position);
                     }
                     else
                     {
@@ -254,28 +246,26 @@ public class NavTest : MonoBehaviour
             (
                 new SelectorNode
                 (
-                    false,
+                    true,   // test : 원래는 false
                     new SequenceNode
                     ( // Deffence
-                        new ActionNode(CheckMoreHp),
+                        // new ActionNode(CheckMoreHp),
                         new ActionNode(StartDefence),
                         new ActionNode(TermFuction)
                     ),
                     new SequenceNode
                     ( // Run
-                        new ActionNode(StartRun),
-                        new ActionNode(TermFuction),
-                        new ActionNode(StopRun),
-
-                        new ActionNode(CheckJumpAttackDistance),
-                        new ActionNode(CheckJumpAttackAction),
-                        new ActionNode(StartJumpAction),
-                        new ActionNode(TermFuction)
-                        // new SelectorNode
-                        // (
-                        //     true,
-                        //     new ActionNode(StartJumpAttackAction), new ActionNode(StartJumpCoinAction)
-                        // ),
+                        new SequenceNode(
+                            new ActionNode(StartRun),
+                            new ActionNode(TermFuction),
+                            new ActionNode(StopRun)
+                        ),
+                        new SequenceNode(
+                            new ActionNode(CheckJumpAttackAction),
+                            // new ActionNode(CheckJumpAttackDistance),
+                            new ActionNode(StartJumpAction),
+                            new ActionNode(TermFuction)
+                        )
                     )
                 ),
                 new SelectorNode(
@@ -283,8 +273,8 @@ public class NavTest : MonoBehaviour
                     new SequenceNode
                     (
                         new ActionNode(CheckAttackAction), // Kick
-                        new ActionNode(CheckAttackDistance),
-                        new ActionNode(StartRotate),
+                        // new ActionNode(CheckAttackDistance),
+                        // new ActionNode(StartRotate),
                         new ActionNode(StartAttack),
                         new ActionNode(TermFuction)
                     ),
@@ -297,7 +287,7 @@ public class NavTest : MonoBehaviour
                         true,
                         new SequenceNode(
                             new ActionNode(CheckRushAction), // Rush
-                            new ActionNode(CheckRushDistance),
+                            // new ActionNode(CheckRushDistance),
                             new ActionNode(StartRush),
                             new ActionNode(TermFuction)
                         ),
@@ -318,14 +308,14 @@ public class NavTest : MonoBehaviour
                 new SequenceNode
                 ( // CoinAttack
                     new ActionNode(CheckCoinAttackAction),
-                    new ActionNode(CheckCoinAttackDistance),
+                    // new ActionNode(CheckCoinAttackDistance),
                     new ActionNode(StartCoinAttack),
                     new ActionNode(TermFuction)
                 ),
                 new SequenceNode
                 ( // take a rest
-                    new ActionNode(CheckRestAction),
-                    new ActionNode(CheckRestHp),
+                    // new ActionNode(CheckRestAction),
+                    // new ActionNode(CheckRestHp),
                     new ActionNode(StartRest),
                     new ActionNode(TermFuction)
                 )
@@ -351,13 +341,14 @@ public class NavTest : MonoBehaviour
 
         void PlayVFX(string vfxName)
         {
-            GameObject targetObject = transform.Find(vfxName).gameObject;
+            var target = transform.Find(vfxName);
 
-            if (targetObject != null)
+            if (target != null)
             {
-                _visualEffect = targetObject.GetComponent<VisualEffect>();
+                _visualEffect = target.gameObject.GetComponent<VisualEffect>();
                 if (_visualEffect != null)
                 {
+                    target.gameObject.SetActive(true);
                     _visualEffect.Play();
                 }
             }
@@ -372,6 +363,7 @@ public class NavTest : MonoBehaviour
                 _visualEffect = targetObject.GetComponent<VisualEffect>();
                 if (_visualEffect != null)
                 {
+                    targetObject.SetActive(false);
                     _visualEffect.Stop();
                 }
             }
@@ -381,18 +373,28 @@ public class NavTest : MonoBehaviour
 
         INode.NodeState TermFuction()
         {
-            if (_gameManager.PlayTimer - _durationTime > 5.0f)
+            if (_durationTime > 5.0f)
             {
                 // TODO : 일단 _visualEffect에 참조 되기에 문제는 없을것 같은데 문제가 있을시에 함수를 써서 멈추자
-                _visualEffect.Stop();
+                // _visualEffect.Stop();
                 // StopVFX();
-                _animator.Play("piggy_walk");
+                // _animator.Play("piggy_walk");
+
+                _durationTime = 0.0f;
 
                 return INode.NodeState.Success;
             }
-
             return INode.NodeState.Running;
         }
+
+        IEnumerator TimeCoroutine()
+        {
+                yield return new WaitForSeconds(5.0f);
+                
+                _durationTime = 6.0f;
+                yield break;
+        }
+
 
         INode.NodeState SuccessFunction()
         {
@@ -434,11 +436,14 @@ public class NavTest : MonoBehaviour
                 return INode.NodeState.Running;
             }
 
+            Debug.Log("Defence");
             // _visualEffect.Play();
             PlayVFX("shield_vfx");
             _animator.SetTrigger(Defence);
-            _navMeshAgent.SetDestination(transform.position);
-            _durationTime = _gameManager.PlayTimer;
+            _navMeshAgent.SetDestination(transform.position);    
+            _durationTime = 0;
+
+            StartCoroutine(TimeCoroutine());
 
             return INode.NodeState.Success;
         }
@@ -455,11 +460,11 @@ public class NavTest : MonoBehaviour
             }
             
             //TODO: 방향 설정하는 코드 필요
-            
-            _animator.SetInteger(AttackBlend, RUSH_TYPE);
+            Debug.Log("Run");
+            _animator.SetFloat(AttackBlend, RUSH_TYPE);
             _animator.SetTrigger(Attack);
-            _durationTime = _gameManager.PlayTimer;
-
+            _durationTime = 0;
+            StartCoroutine(TimeCoroutine());
             return INode.NodeState.Success;
         }
 
@@ -519,8 +524,6 @@ public class NavTest : MonoBehaviour
                 Vector3 targetDirection = _players[_targetPlayerIndex].transform.position - transform.position;
                 _targetRotation = Quaternion.LookRotation(targetDirection);
 
-                _rotationlastTime = _gameManager.PlayTimer;
-
                 return INode.NodeState.Success;
             }
 
@@ -529,7 +532,7 @@ public class NavTest : MonoBehaviour
 
         INode.NodeState StartRotate()
         {
-            _timePassed += _gameManager.PlayTimer - _rotationlastTime;
+            _timePassed += Time.deltaTime;
 
             transform.rotation = Quaternion.Slerp(transform.rotation, _targetRotation, _timePassed / RotationDuration);
 
@@ -539,18 +542,17 @@ public class NavTest : MonoBehaviour
                 return INode.NodeState.Success;
             }
 
-            _rotationlastTime = _gameManager.PlayTimer;
-
             return INode.NodeState.Running;
         }
 
         INode.NodeState StartAttack()
         {
+            Debug.Log("Attack");
             _animator.SetFloat(AttackBlend, ATTACK_TYPE);
             _animator.SetTrigger(Attack);
             _navMeshAgent.speed = 0.0f;
-            _durationTime = _gameManager.PlayTimer;
-
+            _durationTime = 0;
+            StartCoroutine(TimeCoroutine());
             return INode.NodeState.Success;
         }
 
@@ -595,8 +597,6 @@ public class NavTest : MonoBehaviour
                 Vector3 targetDirection = _players[_targetPlayerIndex].transform.position - transform.position;
                 _targetRotation = Quaternion.LookRotation(targetDirection);
 
-                _rotationlastTime = _gameManager.PlayTimer;
-
                 return INode.NodeState.Success;
             }
 
@@ -605,18 +605,19 @@ public class NavTest : MonoBehaviour
 
         INode.NodeState StartRush()
         {   
+            Debug.Log("Rush");
             _animator.SetFloat(AttackBlend, RUSH_TYPE);
             _animator.SetTrigger(Attack);
 
             // TODO : player가 쳐다보고있는 방향이 아닌 돼지와 player의 벡터만큼 뒤로 가자
             Vector3 backVec = math.normalize(_players[_targetPlayerIndex].transform.position - transform.position);
-            _navMeshAgent.SetDestination(_players[_targetPlayerIndex].transform.position + backVec * 20);
+            _navMeshAgent.SetDestination(_players[_targetPlayerIndex].transform.position + backVec * 5);
             
             // TODO : 돌진 속도를 Status로 조절해주기 조절해주기
             _navMeshAgent.speed = 10.0f;
 
-            _durationTime = _gameManager.PlayTimer;
-
+            _durationTime = 0;
+            StartCoroutine(TimeCoroutine());
             return INode.NodeState.Success;
         }
 
@@ -664,7 +665,7 @@ public class NavTest : MonoBehaviour
             Vector3 targetDirection = _players[_targetPlayerIndex].transform.position - transform.position;
             _targetRotation = Quaternion.LookRotation(targetDirection);
 
-            _rotationlastTime = _gameManager.PlayTimer;
+            _rotationlastTime = 0;
 
             return INode.NodeState.Success;
         }
@@ -677,6 +678,7 @@ public class NavTest : MonoBehaviour
         /// <returns></returns>
         INode.NodeState StartJumpAction()
         {
+            Debug.Log("JumpAttack1");
             _animator.SetTrigger(Attack);
             _animator.SetFloat(AttackBlend, JUMP_TYPE);
             
@@ -686,10 +688,10 @@ public class NavTest : MonoBehaviour
 
             int type = Random.Range(1, 3); // 1 or 2
             
-            StartCoroutine(JumpCoroutine(1.0f, 1.0f, type));
+            StartCoroutine(JumpCoroutine(1.0f, 3.0f, type));
             
-            _durationTime = _gameManager.PlayTimer;
-            
+            _durationTime = 0;
+            StartCoroutine(TimeCoroutine());
             return INode.NodeState.Success;
         }
         
@@ -699,6 +701,7 @@ public class NavTest : MonoBehaviour
         /// <returns></returns>
         INode.NodeState StartJumpAttackAction()
         {
+            Debug.Log("JumpAttack2");
             _animator.SetTrigger(Attack);
             _animator.SetFloat(AttackBlend, JUMP_TYPE);
             int type;
@@ -707,9 +710,10 @@ public class NavTest : MonoBehaviour
             // else
             //     type = 4;
             
-            StartCoroutine(JumpCoroutine(1.0f, 1.0f, type));
+            StartCoroutine(JumpCoroutine(1.0f, 3.0f, type));
             
-            _durationTime = _gameManager.PlayTimer;
+            _durationTime = 0;
+            StartCoroutine(TimeCoroutine());            
             return INode.NodeState.Success;
         }
 
@@ -784,13 +788,16 @@ public class NavTest : MonoBehaviour
 
         INode.NodeState StartFart()
         {
+            Debug.Log("Fart");
             _animator.SetFloat(AttackBlend, FART_TYPE);
+            _animator.SetTrigger(Attack);
             _navMeshAgent.SetDestination(transform.position);
             
             // 분진 VFX
             // PlayVFX("");
 
-            _durationTime = _gameManager.PlayTimer;
+            _durationTime = 0;
+            StartCoroutine(TimeCoroutine());
             return INode.NodeState.Success;
         }
 
@@ -820,12 +827,13 @@ public class NavTest : MonoBehaviour
 
         INode.NodeState StartRest()
         {
+            Debug.Log("Rest");
             _animator.SetTrigger(Rest);
             _navMeshAgent.SetDestination(transform.position);
 
+            _durationTime = 0;
             StartCoroutine(RestCoroutine());
 
-            _durationTime = _gameManager.PlayTimer;
             return INode.NodeState.Success;
         }
 
@@ -841,6 +849,7 @@ public class NavTest : MonoBehaviour
                 // TODO: 상수화 시키자
                 if (count >= 10)
                 {
+                    _durationTime = 6.0f;
                     yield break;
                 }
             }
@@ -905,11 +914,14 @@ public class NavTest : MonoBehaviour
 
         INode.NodeState StartCoinAttack()
         {
+            Debug.Log("Coin");
             _animator.SetTrigger(Attack);
             _animator.SetFloat(AttackBlend, COIN_TYPE);
 
             // TODO : VFX를 받아와서 실행하고, 매개변수로 자식 객체의 이름를 받는 함수구현
 
+            _durationTime = 0;
+            StartCoroutine(TimeCoroutine());
 
             return INode.NodeState.Success;
         }
