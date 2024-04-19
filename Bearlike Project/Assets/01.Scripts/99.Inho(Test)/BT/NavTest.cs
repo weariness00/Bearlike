@@ -184,7 +184,7 @@ public class NavTest : MonoBehaviour
 
             attackRange = 10;
             rushRange = 100;
-            coinAtaackMinRange = 50;
+            coinAtaackMinRange = 30;
             coinAtaackMaxRange = 150;
 
             isDead = false;
