@@ -1,25 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
-namespace Photon
+namespace Photon.MeshDestruct
 {
-    public class NetworkMeshDestructObject : NetworkBehaviourEx
+    public class NetworkMeshDestructObject : MonoBehaviour
     {
-        public static Dictionary<string, Material> MaterialDictionary = new Dictionary<string, Material>();
-        public static Material GetMaterial(string matName) => MaterialDictionary.TryGetValue(matName, out var mat) ? mat : null;
+        private static int ObjectCounting = 0;
+        public int id;
 
-        #region Unity Event Function
-        private void Start()
+        private void Awake()
         {
-            var mat = GetComponent<MeshRenderer>().sharedMaterial;
-            MaterialDictionary.TryAdd(mat.name, mat);
+            id = ObjectCounting++;
         }
-        
-        private void OnApplicationQuit()
+
+        public void OnApplicationQuit()
         {
-            MaterialDictionary.Clear();
+            ObjectCounting = 0;
         }
-        
-        #endregion
     }
 }
+

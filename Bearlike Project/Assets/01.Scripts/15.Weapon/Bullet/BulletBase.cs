@@ -3,6 +3,7 @@ using Data;
 using Fusion;
 using Manager;
 using Photon;
+using Photon.MeshDestruct;
 using Status;
 using Unity.Burst;
 using Unity.Mathematics;
@@ -85,7 +86,7 @@ namespace Weapon.Bullet
             // 메쉬 붕괴 객체와 충돌 시
             else if (other.CompareTag("Destruction"))
             {
-                NetworkMeshDestructSystem.Instance.DestructRPC(other.GetComponent<NetworkObject>().Id,PrimitiveType.Cube, transform.position, Vector3.one * 2, transform.forward);
+                NetworkMeshDestructSystem.Instance.NetworkDestruct(other.gameObject, PrimitiveType.Cube, transform.position, Vector3.one * 2, transform.forward);
             }
 
             if (penetrateCount-- == 0)

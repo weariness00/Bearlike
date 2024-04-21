@@ -1,22 +1,20 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Fusion;
 using Manager;
 using Parabox.CSG;
-using Unity.VisualScripting;
 using UnityEngine;
 using Object = UnityEngine.Object;
-using Random = UnityEngine.Random;
 
 namespace Util
 {
     public static class MeshDestruction
     {
-        public static List<GameObject> Destruction(GameObject targetObject, PrimitiveType shapeType, Vector3 position, Vector3 size, bool isDestroyOrigin = true, params Type[] components)
+        public static GameObject[] Destruction(GameObject targetObject, PrimitiveType shapeType, Vector3 position, Vector3 size, bool isDestroyOrigin = true, params Type[] components)
         {
             var targetMeshFilter = targetObject.GetComponent<MeshFilter>();
-            List<GameObject> destructionObjects = new List<GameObject>();
+            GameObject[] destructionObjects = new GameObject[2];
             if (targetMeshFilter == null)
             {
                 DebugManager.LogError($"{targetObject.name} 에 Mesh Filter가 존재하지 않아 Destruction을 진행 할 수 없습니다.");
@@ -29,8 +27,8 @@ namespace Util
             if ((max - min).magnitude < size.magnitude) return destructionObjects;
             if ((max - min).magnitude < 5f) // 일정 크기 이하면 slice 하기
             {
-                var sliceObjects = MeshSlicing.Slice(targetObject, Random.onUnitSphere.normalized, position, components);
-                return sliceObjects.ToList();
+                // var sliceObjects = MeshSlicing.Slice(targetObject, Random.onUnitSphere.normalized, position, components);
+                return Array.Empty<GameObject>();
             }
 
             var componentList = new List<Type>{ typeof(MeshFilter), typeof(MeshRenderer) };
@@ -49,6 +47,8 @@ namespace Util
                 var intersectModel = CSG.Intersect(targetObject, shapeObject);
                 intersectObject = CreateDestructionGameObject(targetObject, intersectModel, components);
                 if(intersectObject.name.Contains("_Intersect") == false) intersectObject.name += "_Intersect";
+                
+                destructionObjects[0] = intersectObject;
             }
             catch (Exception e)
             {
@@ -57,7 +57,7 @@ namespace Util
 
                 if(intersectObject != null) Object.Destroy(intersectObject);
                 Object.Destroy(shapeObject);
-                return destructionObjects;
+                return Array.Empty<GameObject>();
             }
             
             // 겹치는 영역제외하고 만들기
@@ -67,6 +67,8 @@ namespace Util
                 subtractObject = CreateDestructionGameObject(targetObject, subtractModel, components);
                 
                 if(subtractObject.name.Contains("_Subtract") == false) subtractObject.name += "_Subtract";
+                
+                destructionObjects[1] = subtractObject;
             }
             catch (Exception e)
             {
@@ -75,35 +77,8 @@ namespace Util
 
                 Object.Destroy(intersectObject);
                 Object.Destroy(shapeObject);
-                return destructionObjects;
+                return Array.Empty<GameObject>();
             }
-
-            // 겹치는 영역 Slicing 하기
-            try
-            {
-                destructionObjects.AddRange(MeshSlicing.Slice(intersectObject, Random.onUnitSphere.normalized, position, components));
-
-                if (destructionObjects.Count == 1)
-                {
-                    destructionObjects.Clear();
-                    destructionObjects.Add(intersectObject);
-                }
-            }
-            catch (Exception e)
-            {
-                DebugManager.LogWarning($"Slicing에 실패했습니다.");
-
-                if(intersectObject != null) Object.Destroy(intersectObject);
-                Object.Destroy(subtractObject);
-                Object.Destroy(shapeObject);
-                foreach (var destructionObject in destructionObjects)
-                {
-                    Object.Destroy(destructionObject);
-                }
-                return destructionObjects;
-            }
-
-            destructionObjects.Add(subtractObject);
             
             if(isDestroyOrigin) Object.Destroy(targetObject);
             Object.Destroy(shapeObject);
@@ -132,13 +107,13 @@ namespace Util
             obj.GetComponent<MeshFilter>().sharedMesh = copyMesh;
             obj.GetComponent<MeshRenderer>().sharedMaterials = model.materials.ToArray();
                 
-            obj.tag = "Destruction";
+            // obj.tag = "Destruction";
             obj.transform.position += centerVertex;
             if(targetObject.transform.parent) obj.transform.SetParent(targetObject.transform.parent);
 
             return obj;
         }
-
+        
         private static Vector3 VectorMultiple(Vector3 a, Vector3 b)
         {
             Vector3 v = Vector3.zero;

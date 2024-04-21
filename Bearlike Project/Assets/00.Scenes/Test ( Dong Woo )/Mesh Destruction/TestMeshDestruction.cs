@@ -43,7 +43,7 @@ namespace _00.Scenes.Test___Dong_Woo__
                         {
                             if (hit.GameObject.CompareTag("Destruction"))
                             {
-                                NetworkMeshDestructSystem.Instance.DestructRPC(hit.GameObject.GetComponent<NetworkObject>().Id,PrimitiveType.Cube, hit.Point, Vector3.one * 2, ray.direction);
+                                // NetworkMeshDestructSystem.Instance.DestructRPC(hit.GameObject.GetComponent<NetworkObject>().Id,PrimitiveType.Cube, hit.Point, Vector3.one * 2, ray.direction);
                                 // MeshDestruction.Destruction(hit.GameObject, PrimitiveType.Cube, hit.Point, Vector3.one * 2, ray.direction);
                             }
                         }   

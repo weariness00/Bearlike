@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Data;
 using Inventory;
@@ -75,6 +76,11 @@ namespace Item
         public virtual void Start()
         {
             RiseUp();
+        }
+
+        private void OnDestroy()
+        {
+            StopCoroutine(nameof(MoveTargetCoroutine));
         }
 
         #endregion

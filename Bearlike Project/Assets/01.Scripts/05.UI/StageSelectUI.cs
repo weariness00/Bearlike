@@ -41,6 +41,11 @@ namespace UI
             StageBase.StageClearAction += SettingStageInfo;
         }
 
+        private void OnDestroy()
+        {
+            StageBase.StageClearAction -= SettingStageInfo;
+        }
+
         public override void Spawned()
         {
             _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);

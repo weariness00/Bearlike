@@ -302,6 +302,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 594133a82dc5435aa0469131d4affb89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
   _PlayTimer: 0
   _AlivePlayerCount: 0
   _IsClearBossStage:
@@ -1168,7 +1171,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!1 &688013223
+--- !u!1 &698045668
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1176,9 +1179,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 688013226}
-  - component: {fileID: 688013225}
-  - component: {fileID: 688013224}
+  - component: {fileID: 698045671}
+  - component: {fileID: 698045670}
+  - component: {fileID: 698045669}
   m_Layer: 0
   m_Name: Network Mesh Destruct System
   m_TagString: Untagged
@@ -1186,52 +1189,51 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &688013224
+--- !u!114 &698045669
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 688013223}
+  m_GameObject: {fileID: 698045668}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SortKey: 393196366
+  SortKey: 868141261
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 688013225}
---- !u!114 &688013225
+  - {fileID: 698045670}
+--- !u!114 &698045670
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 688013223}
+  m_GameObject: {fileID: 698045668}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 09521ec508067ab4eb30dc0cc47126af, type: 3}
+  m_Script: {fileID: 11500000, guid: 070a9fa1f7494dfebb3c05d3a8dab535, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _IsSuccessDestructionDict:
-    _items: []
-  emptyPrefab:
-    RawGuidValue: 388af551f06bf5d4ea7ef235dbf43744
-  socketPrefab:
-    RawGuidValue: 08a7c030936fac144bfd7a32e14994df
---- !u!4 &688013226
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
+  slicePrefab:
+    RawGuidValue: b7d1c7845912aa54e91402af53fb78d6
+--- !u!4 &698045671
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 688013223}
+  m_GameObject: {fileID: 698045668}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.3456726, y: 0.55198216, z: 0.13964105}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2667,6 +2669,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cee097a6de9140a5a4efef8c767d3366, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
   isStartSpawn: 1
   isLoop: 0
   isRandomObject: 0
@@ -2877,6 +2882,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee50bbc78ce44e48bf6377f60ce7f201, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
   _IsStageUnload: []
   _IsInit:
     _value: 0
@@ -3599,5 +3607,5 @@ SceneRoots:
   - {fileID: 962364571}
   - {fileID: 556872186}
   - {fileID: 1751381620}
-  - {fileID: 688013226}
   - {fileID: 685587447}
+  - {fileID: 698045671}
