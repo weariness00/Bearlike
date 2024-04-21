@@ -113,7 +113,7 @@ namespace Player
         // Loop
         public override void MainLoop()
         {
-            if (PoisonedIsOn())
+            if (ConditionPoisonedIsOn())
             {
                 BePoisoned(Define.PoisonDamage);
                 ShowInfo();

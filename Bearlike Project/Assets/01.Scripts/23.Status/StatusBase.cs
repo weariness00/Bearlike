@@ -16,6 +16,7 @@ namespace Status
         Normality = 0b_0000_0000,           // 정상
         Poisoned = 0b_0000_0001,            // 중독
         Weak = 0b_0000_0010,                // 취약 => 최종 데미지 1.5배 증가
+        Defence = 0b_0000_0100,             // 방어 => 데미지 감소 || 무효
     }
     
     /// <summary>
@@ -108,21 +109,24 @@ namespace Status
                 return;
             }
 
-            if ((Random.Range(0f, 1f) < avoid.Current))
+            if (Random.Range(0f, 1f) < avoid.Current)
             {
                 return;
             }
-            
-            AddCondition(cc);         // Monster의 속성을 Player상태에 적용
-            
-            var damageRate = math.log10((applyDamage / defence.Current) * 10);
 
-            if (WeakIsOn())
+            if (!ConditionDefenceIsOn())
             {
-                damageRate *= 1.5f;
+                AddCondition(cc); // Monster의 속성을 Player상태에 적용
+
+                var damageRate = math.log10((applyDamage / defence.Current) * 10);
+
+                if (ConditionWeakIsOn())
+                {
+                    damageRate *= 1.5f;
+                }
+
+                hp.Current -= (int)(damageRate * applyDamage);
             }
-            
-            hp.Current -= (int)(damageRate * applyDamage);
         }
 
         public virtual void ShowInfo()
@@ -135,24 +139,40 @@ namespace Status
         #region Condition Interface Functon
 
         // ICondition Interface Function
-        public virtual bool On(CrowdControl cc)
+
+        #region Condition
+
+        public bool ConditionOn(CrowdControl cc)
         {
             return (condition & (int)cc) == (int)cc;
         }
         // ICondition Interface Function
-        public virtual bool NormalityIsOn() { return On(CrowdControl.Normality); }
-        public virtual bool PoisonedIsOn() { return On(CrowdControl.Poisoned); }
-        public virtual bool WeakIsOn() { return On(CrowdControl.Weak); }
+        public bool ConditionNormalityIsOn() { return ConditionOn(CrowdControl.Normality); }
+        public bool ConditionPoisonedIsOn() { return ConditionOn(CrowdControl.Poisoned); }
+        public bool ConditionWeakIsOn() { return ConditionOn(CrowdControl.Weak); }
+        public bool ConditionDefenceIsOn() { return ConditionOn(CrowdControl.Defence); }
 
-        public virtual void AddCondition(CrowdControl cc)
+        public void AddCondition(CrowdControl cc)
         {
-            if(!On(cc)) condition |= (int)cc;
+            if(!ConditionOn(cc)) condition |= (int)cc;
         }
         
-        public virtual void DelCondition(CrowdControl cc)
+        public void DelCondition(CrowdControl cc)
         {
-            if(On(cc)) condition ^= (int)cc;
+            if(ConditionOn(cc)) condition ^= (int)cc;
         }
+
+        #endregion
+
+        #region Property
+
+        // public bool PropertyOn(CrowdControl cc)
+        // {
+        //     return (property & (int)cc) == (int)cc;
+        // }
+
+        #endregion
+        
         #endregion
 
         #region Json Data Interface

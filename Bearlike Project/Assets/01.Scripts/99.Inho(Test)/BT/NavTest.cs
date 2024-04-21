@@ -264,7 +264,8 @@ public class NavTest : MonoBehaviour
                             new ActionNode(CheckJumpAttackAction),
                             // new ActionNode(CheckJumpAttackDistance),
                             new ActionNode(StartJumpAction),
-                            new ActionNode(TermFuction)
+                            new ActionNode(TermFuction),
+                            new ActionNode(StopJumpAttack)
                         )
                     )
                 ),
@@ -295,7 +296,8 @@ public class NavTest : MonoBehaviour
                         (
                             new ActionNode(CheckJumpAttackAction), // JumpAttack
                             new ActionNode(StartJumpAttackAction),
-                            new ActionNode(TermFuction)
+                            new ActionNode(TermFuction),
+                            new ActionNode(StopJumpAttack)
                         )
                     ),
                     new SequenceNode
@@ -346,7 +348,12 @@ public class NavTest : MonoBehaviour
             if (target != null)
             {
                 _visualEffect = target.gameObject.GetComponent<VisualEffect>();
-                if (_visualEffect != null)
+                if (vfxName == "GroundCrack_vfx")
+                {
+                    target.gameObject.SetActive(true);
+                    _visualEffect.SendEvent("OnCrack");
+                }
+                else if (_visualEffect != null)
                 {
                     target.gameObject.SetActive(true);
                     _visualEffect.Play();
@@ -690,8 +697,6 @@ public class NavTest : MonoBehaviour
             
             StartCoroutine(JumpCoroutine(1.0f, 3.0f, type));
             
-            _durationTime = 0;
-            StartCoroutine(TimeCoroutine());
             return INode.NodeState.Success;
         }
         
@@ -712,8 +717,6 @@ public class NavTest : MonoBehaviour
             
             StartCoroutine(JumpCoroutine(1.0f, 3.0f, type));
             
-            _durationTime = 0;
-            StartCoroutine(TimeCoroutine());            
             return INode.NodeState.Success;
         }
 
@@ -731,12 +734,13 @@ public class NavTest : MonoBehaviour
                 {
                     if (type == 2)
                     {
-                        _animator.SetLayerWeight(1, 1.0f);
-                        _animator.SetTrigger("tCoin");
                         _animator.SetTrigger("tAttack");
                         _animator.SetFloat("AttackBlend", 2);
-                        yield return new WaitForSeconds(5.0f);
-                        _animator.SetLayerWeight(1, 0.0f);
+                        while (IsAnimationRunning("Attack"))
+                        {
+                            transform.position = new Vector3(transform.position.x, _height, transform.position.z);
+                            yield return new WaitForSeconds(0.0f);
+                        }
                     }
 
                     StartCoroutine(JumpDownCoroutine(downSpeed, type));
@@ -755,19 +759,31 @@ public class NavTest : MonoBehaviour
 
                     if (_height < 0.0f)
                     {
-                        if (type == 3)
+                        if (type == 3 || type == 1)
                         {
-                            // VFX실행
-                            // PlayVFX("");
+                            PlayVFX("GroundCrack_vfx");
+                            
                             
                             // 데미지 입히기
                             // TODO : 데미지 비율 상수로 조절하자
                             // _status.hp.Current -= (int)(_status.hp.Max / 0.05f);
                         }
                         _height = 0.0f;
+                        _durationTime = 0;
+                        StartCoroutine(TimeCoroutine());   
                         yield break;
                     }
                 }
+            }
+        
+            INode.NodeState StopJumpAttack()
+            {
+                GameObject targetObject = transform.Find("GroundCrack_vfx").gameObject;
+            
+                if(true == targetObject.activeSelf)
+                    StopVFX("GroundCrack_vfx");
+            
+                return INode.NodeState.Success;
             }
         
         #endregion
