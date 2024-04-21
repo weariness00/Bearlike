@@ -76,6 +76,7 @@ namespace Weapon.Bullet
                     
                 if (bknock)
                 {
+                    // TODO : 수정 필요
                     otherStatus.gameObject.transform.Translate(direction);
                 }
                 
