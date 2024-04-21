@@ -13,7 +13,7 @@ using UnityEngine.AI;
 
 namespace Monster
 {
-    [RequireComponent(typeof(MonsterStatus), typeof(LootingTable), typeof(DeadBodyObstacleObject))]
+    [RequireComponent(typeof(MonsterStatus), typeof(LootingTable))]
     public class MonsterBase : NetworkBehaviourEx, IJsonData<MonsterJsonData>
     {
         #region Static

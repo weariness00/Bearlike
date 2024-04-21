@@ -203,6 +203,7 @@ namespace Script.Photon
                 {
                     if (isLoop) continue;
                     SpawnStop();
+                    yield break;
                 }
                 yield return SpawnTask();
                 SetSpawnCountRPC(StatusValueType.Current,++spawnCount.Current);

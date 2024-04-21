@@ -11,14 +11,12 @@ GameObject:
   - component: {fileID: 8849519140643557871}
   - component: {fileID: 8300805111394403827}
   - component: {fileID: 2275401513258430574}
-  - component: {fileID: 3864797936546459940}
   - component: {fileID: 4223805121481554381}
   - component: {fileID: 8569674826605292728}
   - component: {fileID: 2797698570917168137}
   - component: {fileID: 2689594114804352267}
   - component: {fileID: 8442735661980967818}
   - component: {fileID: 8622474459513446545}
-  - component: {fileID: 7016311146224797749}
   m_Layer: 0
   m_Name: Piggy_Bank_Prefab
   m_TagString: Untagged
@@ -65,7 +63,6 @@ MonoBehaviour:
   - {fileID: 4223805121481554381}
   - {fileID: 8569674826605292728}
   - {fileID: 8442735661980967818}
-  - {fileID: 7016311146224797749}
 --- !u!114 &2275401513258430574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78,6 +75,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 618a5231b6aa4719bfbe95a195f92c29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
   rigidbody: {fileID: 0}
   networkAnimator: {fileID: 0}
   status: {fileID: 0}
@@ -100,27 +100,6 @@ MonoBehaviour:
   runDistance: 3
   rushDistance: 5
   jumpHeight: 10
---- !u!95 &3864797936546459940
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 732821387110091048}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 23618c06251dfc448a4299a1dfb52ea3, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &4223805121481554381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -133,12 +112,12 @@ MonoBehaviour:
   m_Script: {fileID: 506319458, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Animator: {fileID: 3864797936546459940}
-  TotalWords: 3
+  Animator: {fileID: 1096627193265244338}
+  TotalWords: 2
   ApplyTiming: 2
   SyncSettings: 79
-  StateHashes: 000000000d286c404e865f4350246bb8f5608c072cc35df51f7078c2e9576dd4dae448e36c0ce8a45fbfcd93fa2e61ea385ca048854d4fcb43accd36c01206a9937df5ff
-  TriggerHashes: 00000000e8a2e574e0e012b66d566f1ec5418e8e148823a6
+  StateHashes: 000000000d286c404e865f4350246bb8f5608c072cc35df51f7078c2e9576dd4dae448e36c0ce8a45fbfcd93fa2e61ea385ca048
+  TriggerHashes: 00000000e8a2e574e0e012b66d566f1ec5418e8e148823a665bb97c6
 --- !u!114 &8569674826605292728
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -192,7 +171,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -290,7 +269,7 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 732821387110091048}
-  m_Enabled: 1
+  m_Enabled: 0
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 3.5
@@ -305,18 +284,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &7016311146224797749
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 732821387110091048}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 976988bbbf77b424b9d026909af37b01, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &3157966269820884812
 GameObject:
   m_ObjectHideFlags: 0
@@ -674,6 +641,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 54046c7806e811b4ebc8d24b42b61055, type: 3}
+--- !u!95 &1096627193265244338 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 7480009061323234916, guid: 54046c7806e811b4ebc8d24b42b61055,
+    type: 3}
+  m_PrefabInstance: {fileID: 7563324996232419030}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2959204562579575184 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4748870830279182150, guid: 54046c7806e811b4ebc8d24b42b61055,

@@ -17,7 +17,6 @@ using Random = UnityEngine.Random;
 
 namespace Monster.Container
 {
-    [RequireComponent(typeof(Animator))]
     public class PiggyBank : MonsterBase
     {
         #region Component
@@ -31,7 +30,6 @@ namespace Monster.Container
         private GameObject[] _players;
 
         //[field:SerializeField] // 프로퍼티도 인스펙터에서 보여줌
-
         #endregion
 
         #region 속성
@@ -92,13 +90,14 @@ namespace Monster.Container
             base.Awake();
             _btRunner = new BehaviorTreeRunner(SettingBT());
             _visualEffect = GetComponentInChildren<VisualEffect>();
-            if(TryGetComponent(out _navMeshAgent)== false) _navMeshAgent = GetComponent<NavMeshAgent>();
+            _navMeshAgent = GetComponent<NavMeshAgent>();
+
+            _navMeshAgent.enabled = false;
         }
 
         private void Start()
         {
             base.Start();
-            
             _gameManager = GameManager.Instance; 
             _playerCount = _gameManager.AlivePlayerCount;
             
@@ -114,6 +113,8 @@ namespace Monster.Container
         public override void Spawned()
         {
             base.Spawned();
+
+            _navMeshAgent.enabled = true;   
             
             List<GameObject> playerObjects = new List<GameObject>();
             foreach (var playerRef in Runner.ActivePlayers.ToArray())
@@ -397,7 +398,7 @@ namespace Monster.Container
         /// <returns></returns>
         INode.NodeState CheckWalkAction()
         {
-            if (IsAnimationRunning("piggy_walk"))
+            if (IsAnimationRunning("Piggy_Walk"))
             {
                 return INode.NodeState.Running;
             }
@@ -410,7 +411,7 @@ namespace Monster.Container
         /// </summary>
         INode.NodeState WalkAround()
         {
-            if (IsAnimationRunning("piggy_idle"))
+            if (IsAnimationRunning("Piggy_Idle"))
             {
                 networkAnimator.Animator.SetTrigger(Walk);
                 
@@ -479,7 +480,7 @@ namespace Monster.Container
         /// <returns></returns>
         INode.NodeState StartDefence()
         {
-            if (IsAnimationRunning("piggy_defence"))
+            if (IsAnimationRunning("Piggy_Defence"))
             {
                 return INode.NodeState.Running;
             }
@@ -519,7 +520,7 @@ namespace Monster.Container
         /// <returns></returns>
         INode.NodeState StartRun()
         {
-            if (IsAnimationRunning("piggy_run"))
+            if (IsAnimationRunning("Piggy_Run"))
             {
                 return INode.NodeState.Running;
             }
@@ -941,11 +942,10 @@ namespace Monster.Container
         /// <returns></returns>
         INode.NodeState CheckRestAction()
         {
-            if (IsAnimationRunning("piggy_rest"))
+            if (IsAnimationRunning("Piggy_Rest"))
             {
                 return INode.NodeState.Running;
             }
-
             return INode.NodeState.Success;
         }
 
