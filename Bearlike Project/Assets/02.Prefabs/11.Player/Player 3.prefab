@@ -2356,9 +2356,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ownerObject: {fileID: 0}
+  mode: 0
   targetCamera: {fileID: 7251487793613596239}
   weaponCamera: {fileID: 4931533912480079503}
   offset: {x: 0, y: 0, z: 0}
+  firstOffset: 0.27
+  thirdOffset: -2
 --- !u!114 &3630061050747534706
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4143,6 +4146,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6198660998370685422}
   - component: {fileID: 5462640940224501418}
+  - component: {fileID: 7751958121810232000}
   m_Layer: 12
   m_Name: Camera Owner
   m_TagString: Untagged
@@ -4182,6 +4186,22 @@ MonoBehaviour:
   SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0
+--- !u!114 &7751958121810232000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8897159019937030371}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d8fb6186b1243f2aa5ae3d506bb40a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetTransform: {fileID: 0}
+  isPosition: 1
+  isRotate: 0
+  isScale: 0
 --- !u!1 &8901504163148195745
 GameObject:
   m_ObjectHideFlags: 0

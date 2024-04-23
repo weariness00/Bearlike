@@ -67,8 +67,8 @@ namespace Player
         public override void Spawned()
         {
             _gunLayer = _networkAnimator.Animator.GetLayerIndex("Gun Layer");
-            status.injuryAction += () => { _networkAnimator.SetTrigger(AniInjury); };
-
+            status.InjuryAction += () => { _networkAnimator.SetTrigger(AniInjury); cameraController.ChangeCameraMode(CameraMode.ThirdPerson); };
+            
             Cursor.lockState = CursorLockMode.Locked;
             simpleKcc = gameObject.GetOrAddComponent<SimpleKCC>();
             simpleKcc.Collider.tag = "Player";
@@ -89,6 +89,8 @@ namespace Player
                 Object.
                 name = "Local Player";
                 Runner.SetPlayerObject(Runner.LocalPlayer, Object);
+
+                status.RecoveryFromInjuryAction += () => cameraController.ChangeCameraMode(CameraMode.FirstPerson);
 
                 GunUI.gameObject.SetActive(true);
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
@@ -111,7 +113,7 @@ namespace Player
             
             if(status.isRevive)
                 return;
-            
+
             if (GetInput(out PlayerInputData data))
             {
                 MouseRotateControl(data.MouseAxis);
@@ -125,7 +127,12 @@ namespace Player
 
                 if (data.SkillInventory)
                 {
-                    
+
+                }
+
+                if (data.DebugKeyF1)
+                {
+                    status.ApplyDamageRPC(10, Object.Id);
                 }
             }
         }
@@ -188,10 +195,8 @@ namespace Player
         float xRotate, yRotate, xRotateMove, yRotateMove;
         public void MouseRotateControl(Vector2 mouseAxis = default)
         {
-            if (HasStateAuthority == false)
-            {
+            if (HasStateAuthority == false || status.isInjury)
                 return;
-            }
             
             xRotateMove = mouseAxis.y * Runner.DeltaTime * rotateSpeed;
             yRotateMove = mouseAxis.x * Runner.DeltaTime * rotateSpeed;

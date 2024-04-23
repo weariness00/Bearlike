@@ -29,10 +29,11 @@ namespace Player
         public StatusValue<float> jumpPower = new StatusValue<float>();
         
         public bool isInjury; // 부상 상태인지
-        public Action injuryAction;
+        public Action InjuryAction;
+        public Action RecoveryFromInjuryAction;
         public StatusValue<float> injuryTime = new StatusValue<float>() { Max = 30f }; // 부상 상태로 있을 수 있는 시간
         public StatusValue<float> recoveryFromInjuryTime = new StatusValue<float>(){Max = 12}; // 다른 플레이어를 부상에서 회복시키는데 걸리는 시간
-
+        
         public bool isRevive; // 소생 상태인지
         public bool isHelpOtherPlayer; // 다른 플레이어와 상호작용중인지
         
@@ -101,6 +102,13 @@ namespace Player
         {
             base.Spawned();
             ImmortalTimer = TickTimer.CreateFromSeconds(Runner, immortalDurationAfterSpawn);
+
+            RecoveryFromInjuryAction += () =>
+            {
+                hp.Current = hp.Max / 3;
+                recoveryFromInjuryTime.Current = 0;
+                isInjury = false;
+            };
         }
 
         public override void Render()
@@ -162,7 +170,7 @@ namespace Player
                 isInjury = true;
                 injuryTime.Current = injuryTime.Max; // 이건 부상 상태를 유지하는 시간
                 
-                injuryAction?.Invoke(); // 부상상태에 되면 발동한는 함수
+                InjuryAction?.Invoke(); // 부상상태에 되면 발동한는 함수
             }
         }
         
@@ -195,6 +203,9 @@ namespace Player
 
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void SetInjuryTimeRPC(float time) => injuryTime.Current = time;
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void RecoveryFromInjuryActionRPC() => RecoveryFromInjuryAction?.Invoke();
 
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void SetHelpOtherPlayerRPC(NetworkBool value) => isHelpOtherPlayer = value;

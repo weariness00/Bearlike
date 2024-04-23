@@ -28,5 +28,8 @@ namespace Photon
         public NetworkBool FirstSkill;
         public NetworkBool SecondSkill;
         public NetworkBool Ultimate;
+
+
+        public NetworkBool DebugKeyF1;
     }
 }
