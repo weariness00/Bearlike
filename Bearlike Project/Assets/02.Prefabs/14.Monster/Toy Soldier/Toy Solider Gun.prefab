@@ -133,6 +133,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  damageMultiple: 1
   defence:
     _min: 0
     _max: 0
@@ -161,14 +162,6 @@ MonoBehaviour:
     _min: 0
     _max: 1
     _current: 1
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  attackLateTime:
-    _min: 0
-    _max: 0
-    _current: 0
     isOverMax: 0
     isOverMin: 0
     isMin: 0
@@ -244,6 +237,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 229bb55798ef33648afbeca6e10b2fb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
   rigidbody: {fileID: 0}
   networkAnimator: {fileID: 0}
   status: {fileID: 0}
@@ -354,6 +350,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 976988bbbf77b424b9d026909af37b01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
 --- !u!1001 &3783443060632113221
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1071,6 +1070,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  damageMultiple: 1
   defence:
     _min: 0
     _max: 0
@@ -1098,14 +1098,6 @@ MonoBehaviour:
   attackSpeed:
     _min: 0
     _max: 10000
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  attackLateTime:
-    _min: 0
-    _max: 0
     _current: 0
     isOverMax: 0
     isOverMin: 0
@@ -1141,19 +1133,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7525f686c63047f3bb190326523b134b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _OwnerId:
+    Raw: 0
   status: {fileID: 0}
   includeCollide:
     serializedVersion: 2
     m_Bits: 0
   hitEffect: {fileID: 0}
   hitSound: {fileID: 0}
-  id: 0
+  id: 1000
   explain: 
   shootEffect: {fileID: 0}
   shootSound: {fileID: 0}
   emptyAmmoSound: {fileID: 0}
   reloadSound: {fileID: 0}
-  bullet: {fileID: -6395905962208903233, guid: 4d5ab57928fac524b89ae76e0691aa9e, type: 3}
+  bullet: {fileID: 2887491460358813640, guid: 2a4ee24c85c44304ba2e300e6ad44313, type: 3}
   magazine:
     _min: 0
     _max: 10
@@ -1165,7 +1159,7 @@ MonoBehaviour:
   bulletFirePerMinute: 0
   fireLateSecond: 0
   reloadLateSecond: 0
-  fireTransform: {fileID: 0}
+  fireTransform: {fileID: 7922809730294241763}
 --- !u!4 &3678249121432057774 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1b41998b475852b4b87c7c182731e594,

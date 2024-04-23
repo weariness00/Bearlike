@@ -115,14 +115,16 @@ namespace Weapon.Gun
             }
         }
 
-        public virtual void Shoot()
+        public virtual void Shoot(bool isDst = true)
         {
             if (FireLateTimer.Expired(Runner))
             {
                 FireLateTimer = TickTimer.CreateFromSeconds(Runner, fireLateSecond);
                 if (magazine.Current != 0)
                 {
-                    var dst = CheckRay();
+                    var dst = fireTransform.forward * 2f;
+                    if(isDst)
+                        dst = CheckRay();
                     
                     if(shootEffect != null) shootEffect.Play();
                     // bullet.destination = dst;
@@ -139,9 +141,11 @@ namespace Weapon.Gun
                                 var b = o.GetComponent<BulletBase>();
 
                                 b.OwnerId = OwnerId;
-                                b.destination = dst;
                                 b.hitEffect = hitEffect;
                                 b.bknock = false;
+                                b.status.attackRange.Max = status.attackRange.Max;
+                                b.status.attackRange.Current = status.attackRange.Current;
+                                b.destination = fireTransform.position + (dst * status.attackRange);
                                 
                                 BeforeShootAction?.Invoke(b);
                             });

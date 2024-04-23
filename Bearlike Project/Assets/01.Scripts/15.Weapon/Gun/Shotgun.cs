@@ -33,7 +33,7 @@ namespace Weapon.Gun
             ammo.Current = ammo.Max;
         }
 
-        public override void Shoot()
+        public override void Shoot(bool isDst = true)
         {
             // 다른 클라가 했으면 자기 말고 다른 클라의 코드를 실행해야지
             if (FireLateTimer.Expired(Runner))

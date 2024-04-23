@@ -54,6 +54,7 @@ namespace Weapon.Bullet
         public override void Spawned()
         {
             _oldPosition = transform.position;
+            Destroy(gameObject, 30f);
         }
 
         public override void FixedUpdateNetwork()

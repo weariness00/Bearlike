@@ -25,7 +25,7 @@ namespace Weapon.Gun
             ammo.Max = ammo.Current = 40;
         } 
         
-        public override void Shoot()
+        public override void Shoot(bool isDst = true)
         {
             base.Shoot();
             

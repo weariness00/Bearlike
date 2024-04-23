@@ -2321,6 +2321,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5407f140e05f2f4ab5a63049007db7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
   status: {fileID: 3591252219797454216}
   cameraController: {fileID: 8389592379722413424}
   skillSystem: {fileID: 4719698784326777624}
@@ -2436,8 +2439,8 @@ MonoBehaviour:
   TotalWords: 5
   ApplyTiming: 2
   SyncSettings: 79
-  StateHashes: 000000006bd5a32d398fdc0428a981077af3fe2e1ae6174d48bc68648527350b827885c8181c141c9e708b00
-  TriggerHashes: 0000000026c7b5ec
+  StateHashes: 000000006bd5a32d398fdc0428a981077af3fe2e31c91b79b38657fc25f3d42d665de72e1ae6174d48bc68648527350b827885c8181c141c9e708b00
+  TriggerHashes: 0000000026c7b5ecc0795d19cf3e30d8
 --- !u!114 &-4627320855333868288
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2502,7 +2505,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d784a47bb9047c4aaac7e21de867e17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  additionalStatusList: []
   hp:
     _min: 0
     _max: 0
@@ -2545,14 +2547,6 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   attackSpeed:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  attackLateTime:
     _min: 0
     _max: 0
     _current: 0
@@ -2635,6 +2629,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f515678cf5541e488314bacd2155f3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
   interactLength: 1
 --- !u!1 &5293648659765142871
 GameObject:
@@ -5374,6 +5371,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc6a9ab5adb7bdc4fb9980305c8dc212, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
   _OwnerId:
     Raw: 0
   id: 0
@@ -5381,14 +5381,7 @@ MonoBehaviour:
   explain: 
   type: 0
   icon: {fileID: 0}
-  coolTime:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
+  coolTime: 0
   isInvoke: 0
   status: {fileID: 0}
   level:
@@ -5399,6 +5392,8 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  playerStatus: {fileID: 0}
+  gun: {fileID: 0}
   duration:
     _min: 0
     _max: 0
@@ -5407,8 +5402,6 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
-  playerStatus: {fileID: 0}
-  gun: {fileID: 0}
 --- !u!114 &5686567187024387660
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5421,7 +5414,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  additionalStatusList: []
   hp:
     _min: 0
     _max: 99999
@@ -5466,14 +5458,6 @@ MonoBehaviour:
   attackSpeed:
     _min: 0
     _max: 99999
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  attackLateTime:
-    _min: 0
-    _max: 0
     _current: 0
     isOverMax: 0
     isOverMin: 0

@@ -37,7 +37,8 @@ namespace Status
         public StatusValue<float> avoid = new StatusValue<float>(){Min = 0, Max = 1, isOverMax = true, isOverMin = true};           // 회피율 0 ~ 1 사이값
         public StatusValue<float> moveSpeed = new StatusValue<float>(){Max = 99999f};           // 이동 속도
         public StatusValue<float> attackSpeed = new StatusValue<float>(){Max = 99999f};     // 초당 공격 속도
-        public StatusValue<float> attackLateTime = new StatusValue<float>();  // Attack Speed에 따른 딜레이
+        [Networked] public TickTimer AttackLateTimer { get; set; }
+        // public StatusValue<float> attackLateTime = new StatusValue<float>();  // Attack Speed에 따른 딜레이
         public StatusValue<float> attackRange = new StatusValue<float>(){Max = 99999f};
         
         public StatusValue<int> force = new StatusValue<int>();               // 힘
@@ -52,12 +53,13 @@ namespace Status
 
         public override void Spawned()
         {
-            attackLateTime.Max = 1 / attackSpeed.Current == 0 ? 1 : attackSpeed.Current;
+            AttackLateTimer = TickTimer.CreateFromSeconds(Runner, 0);
+            // attackLateTime.Max = 1 / attackSpeed.Current == 0 ? 1 : attackSpeed.Current;
         }
 
         public override void FixedUpdateNetwork()
         {
-            attackLateTime.Current += Runner.DeltaTime;
+            // attackLateTime.Current += Runner.DeltaTime;
         }
 
         #endregion
@@ -246,12 +248,18 @@ namespace Status
                 // min 값은 0으로 고정이기에 변하면 안된다.
                 case StatusValueType.Current:
                     attackSpeed.Current = value;
-                    attackLateTime.Max = 1 / attackSpeed.Current;
+                    // attackLateTime.Max = 1 / attackSpeed.Current;
                     break;
                 case StatusValueType.Max:
                     attackSpeed.Max = value;
                     break;
             }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void StartAttackTimerRPC()
+        {
+            AttackLateTimer = TickTimer.CreateFromSeconds(Runner, 1f / attackSpeed.Current);
         }
         
         /// <summary>
