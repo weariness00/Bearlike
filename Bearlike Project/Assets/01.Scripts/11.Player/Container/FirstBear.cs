@@ -49,7 +49,7 @@ namespace Player.Container
 
         void SkillControl(PlayerInputData data)
         {
-            if (HasInputAuthority == false)
+            if (HasInputAuthority == false || status.isInjury)
             {
                 return;
             }

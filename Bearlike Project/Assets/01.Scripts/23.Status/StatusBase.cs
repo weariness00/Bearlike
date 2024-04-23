@@ -38,7 +38,6 @@ namespace Status
         public StatusValue<float> moveSpeed = new StatusValue<float>(){Max = 99999f};           // 이동 속도
         public StatusValue<float> attackSpeed = new StatusValue<float>(){Max = 99999f};     // 초당 공격 속도
         [Networked] public TickTimer AttackLateTimer { get; set; }
-        // public StatusValue<float> attackLateTime = new StatusValue<float>();  // Attack Speed에 따른 딜레이
         public StatusValue<float> attackRange = new StatusValue<float>(){Max = 99999f};
         
         public StatusValue<int> force = new StatusValue<int>();               // 힘
@@ -54,12 +53,10 @@ namespace Status
         public override void Spawned()
         {
             AttackLateTimer = TickTimer.CreateFromSeconds(Runner, 0);
-            // attackLateTime.Max = 1 / attackSpeed.Current == 0 ? 1 : attackSpeed.Current;
         }
 
         public override void FixedUpdateNetwork()
         {
-            // attackLateTime.Current += Runner.DeltaTime;
         }
 
         #endregion
@@ -248,7 +245,6 @@ namespace Status
                 // min 값은 0으로 고정이기에 변하면 안된다.
                 case StatusValueType.Current:
                     attackSpeed.Current = value;
-                    // attackLateTime.Max = 1 / attackSpeed.Current;
                     break;
                 case StatusValueType.Max:
                     attackSpeed.Max = value;

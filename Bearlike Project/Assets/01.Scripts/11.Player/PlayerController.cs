@@ -42,11 +42,16 @@ namespace Player
         
         #region Animation Parametar
 
+        private int _gunLayer;
+
         private static readonly int AniShoot = Animator.StringToHash("tShoot");
+        private static readonly int AniInjuryMove = Animator.StringToHash("Faint");
         private static readonly int AniFrontMove = Animator.StringToHash("fFrontMove");
         private static readonly int AniSideMove = Animator.StringToHash("fSideMove");
+        private static readonly int AniJump = Animator.StringToHash("tJump");
         private static readonly int AniDie = Animator.StringToHash("isDead");
-
+        private static readonly int AniInjury = Animator.StringToHash("tInJury");
+        
         #endregion
 
         private void Awake()
@@ -59,19 +64,18 @@ namespace Player
             _networkAnimator = GetComponent<NetworkMecanimAnimator>();
         }
 
-        private void Start()
-        {
-            status.injuryAction += () => { _networkAnimator.Animator.SetBool(AniDie, true); };
-        }
-
         public override void Spawned()
         {
+            _gunLayer = _networkAnimator.Animator.GetLayerIndex("Gun Layer");
+            status.injuryAction += () => { _networkAnimator.SetTrigger(AniInjury); };
+
             Cursor.lockState = CursorLockMode.Locked;
             simpleKcc = gameObject.GetOrAddComponent<SimpleKCC>();
             simpleKcc.Collider.tag = "Player";
             
             // 무기 초기화
             weaponSystem.equipment?.EquipAction?.Invoke(gameObject);
+            _networkAnimator.Animator.SetLayerWeight(_gunLayer, 1);
             
             // 스킬 초기화
             foreach (var skillBase in skillSystem.skillList)
@@ -160,6 +164,7 @@ namespace Player
                 isMoveY = true;
             }
 
+            _networkAnimator.Animator.SetFloat(AniInjuryMove, isMoveX || isMoveY ? 1 : 0);
             _networkAnimator.Animator.SetFloat(AniFrontMove, isMoveX ? 1 : 0);
             _networkAnimator.Animator.SetFloat(AniSideMove, isMoveY ? 1 : 0);
             
@@ -172,6 +177,7 @@ namespace Player
                 if (Runner.LagCompensation.Raycast(transform.position + new Vector3(0,0.03f,0), -transform.up, 0.1f, Runner.LocalPlayer, out var hit,Int32.MaxValue , hitOptions))
                 {
                     jumpImpulse = Vector3.up * status.jumpPower;
+                    _networkAnimator.SetTrigger(AniJump);
                 }
             }
 
@@ -207,6 +213,11 @@ namespace Player
             {
                 // 장비 변경
                 weaponSystem.ChangeEquipment(0, gameObject);
+                
+                // 장비에 맞는 애니메이터 Layer Weight 주기
+                _networkAnimator.Animator.SetLayerWeight(_gunLayer, 0);
+                if (weaponSystem.equipment.IsGun)
+                    _networkAnimator.Animator.SetLayerWeight(_gunLayer, 1);
                 
                 // 변경된 장비에 스킬이 적용되도록 스킬 초기화
                 foreach (var skillBase in skillSystem.skillList)
