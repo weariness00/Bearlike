@@ -141,7 +141,8 @@ namespace Item
 
         public virtual void SetJsonData(StatusJsonData json)
         {
-            
+            Amount.Max = json.GetInt("Amount Max");
+            Amount.Current = json.GetInt("Amount Current");
         }
 
         #endregion

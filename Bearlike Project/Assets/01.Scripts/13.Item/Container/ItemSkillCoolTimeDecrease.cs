@@ -1,6 +1,5 @@
 ﻿using Player;
 using Status;
-using UnityEngine;
 
 namespace Item.Container
 {
@@ -11,7 +10,6 @@ namespace Item.Container
     public class ItemSkillCoolTimeDecrease : ItemBase
     {
         public StatusValue<float> decreasePercentage = new StatusValue<float>();
-
     }
 }
 

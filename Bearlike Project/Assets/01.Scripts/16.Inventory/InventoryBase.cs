@@ -56,12 +56,12 @@ namespace Inventory
 
                 var handle = Instantiate(blockUIPrefab, uiParentTransform).GetComponent<UIHandle>();
                 handle.gameObject.SetActive(true);
-                
-                uiHandleDictionary.Add(item, handle);
                 if (handle.TryGetComponent(out IInventoryUIUpdate handleUpdateInterface))
                 {
                     handleUpdateInterface.UIUpdateFromItem(item);
                 }
+                
+                uiHandleDictionary.Add(item, handle);
             }
 
             DebugManager.Log($"[{name}] Inventory에 {item.name}을 추가");

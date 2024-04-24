@@ -1,4 +1,5 @@
 ﻿using System;
+using Player;
 using UnityEngine;
 
 namespace Item.Container
@@ -12,7 +13,8 @@ namespace Item.Container
 
         private void OnCollisionEnter(Collision other)
         {
-            if (other.gameObject.CompareTag("Player") && other.transform.parent.name == "Local Player")
+            if (other.gameObject.CompareTag("Player") &&
+                other.gameObject.TryGetComponent(out PlayerController pc) && pc.HasInputAuthority)
             {
                 GetItem(other.gameObject);
                 Destroy(gameObject);
