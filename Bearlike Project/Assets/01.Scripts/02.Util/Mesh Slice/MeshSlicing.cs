@@ -160,7 +160,7 @@ namespace Util
         /// <param name="slicePoint">자를 단면의 평면 위의 한 점</param>
         public static GameObject[] Slice(GameObject targetObject, Vector3 sliceNormal, Vector3 slicePoint, params Type[] components)
         {
-            var targetMesh = targetObject.GetComponent<MeshFilter>().sharedMesh;
+            Mesh targetMesh = targetObject.GetComponent<MeshFilter>().sharedMesh;
             SliceInfo[] sliceInfos = new []{new SliceInfo(), new SliceInfo()};
             SliceInfo createdSliceInfo = new SliceInfo();
 
