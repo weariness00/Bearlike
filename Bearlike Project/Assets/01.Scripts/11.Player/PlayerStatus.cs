@@ -33,7 +33,9 @@ namespace Player
         public Action RecoveryFromInjuryAction;
         public StatusValue<float> injuryTime = new StatusValue<float>() { Max = 30f }; // 부상 상태로 있을 수 있는 시간
         public StatusValue<float> recoveryFromInjuryTime = new StatusValue<float>(){Max = 12}; // 다른 플레이어를 부상에서 회복시키는데 걸리는 시간
-        
+
+        public Action ReviveAction; // 소생 상태에 빠졌을때 발동
+        public Action RecoveryFromReviveAction;
         public bool isRevive; // 소생 상태인지
         public bool isHelpOtherPlayer; // 다른 플레이어와 상호작용중인지
         
@@ -109,6 +111,12 @@ namespace Player
                 recoveryFromInjuryTime.Current = 0;
                 isInjury = false;
             };
+
+            RecoveryFromReviveAction += () =>
+            {
+                hp.Current = hp.Max;
+                isRevive = false;
+            };
         }
 
         public override void Render()
@@ -162,6 +170,7 @@ namespace Player
                 {
                     isInjury = false;
                     isRevive = true;
+                    ReviveAction?.Invoke();
                 }
             }
             // 부상 상태로 전환
@@ -206,6 +215,9 @@ namespace Player
 
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void RecoveryFromInjuryActionRPC() => RecoveryFromInjuryAction?.Invoke();
+        
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void RecoveryFromReviveActionRPC() => RecoveryFromReviveAction?.Invoke();
 
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void SetHelpOtherPlayerRPC(NetworkBool value) => isHelpOtherPlayer = value;

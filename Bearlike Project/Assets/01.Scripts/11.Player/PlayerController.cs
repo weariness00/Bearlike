@@ -67,7 +67,10 @@ namespace Player
         public override void Spawned()
         {
             _gunLayer = _networkAnimator.Animator.GetLayerIndex("Gun Layer");
-            status.InjuryAction += () => { _networkAnimator.SetTrigger(AniInjury); cameraController.ChangeCameraMode(CameraMode.ThirdPerson); };
+            
+            // Status 관련 초기화
+            status.InjuryAction += () => { _networkAnimator.SetTrigger(AniInjury); };
+            status.ReviveAction += () => { _networkAnimator.SetTrigger(AniDie); };
             
             Cursor.lockState = CursorLockMode.Locked;
             simpleKcc = gameObject.GetOrAddComponent<SimpleKCC>();
@@ -90,7 +93,10 @@ namespace Player
                 name = "Local Player";
                 Runner.SetPlayerObject(Runner.LocalPlayer, Object);
 
+                status.InjuryAction += () => cameraController.ChangeCameraMode(CameraMode.ThirdPerson);
                 status.RecoveryFromInjuryAction += () => cameraController.ChangeCameraMode(CameraMode.FirstPerson);
+                status.ReviveAction += () => cameraController.ChangeCameraMode(CameraMode.Free);
+                status.RecoveryFromReviveAction += () => cameraController.ChangeCameraMode(CameraMode.FirstPerson);
 
                 GunUI.gameObject.SetActive(true);
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
@@ -249,7 +255,7 @@ namespace Player
         public new void SetPositionRPC(Vector3 pos) => simpleKcc.SetPosition(pos);
         [Rpc(RpcSources.All,RpcTargets.StateAuthority)]
         public void SetLookRotationRPC(Vector2 look) => simpleKcc.SetLookRotation(look);
-
+        
         #endregion
     }
 }

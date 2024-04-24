@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Fusion;
+using Item;
 using Manager;
 using Photon;
 using Status;
@@ -95,9 +96,29 @@ namespace Player
         {
             if (_playerController.status.isRevive)
             {
-                var remotePlayerStatus = targetObject.GetComponent<PlayerStatus>();
+                var remotePlayerController = targetObject.GetComponent<PlayerController>();
+                RequestReviveOtherPlayerRPC(Object.Id);
 
                 DebugManager.ToDo("배터리가 있는 플레이어만 살릴 수 있어야 된다. 배터리가 있는지에 대한 여부와 살릴떄 배터리를 사용했다는 것을 알려줘야한다.");
+            }
+        }
+
+        #endregion
+
+        #region RPC Function
+
+        [Rpc(RpcSources.All, RpcTargets.InputAuthority)]
+        public void RequestReviveOtherPlayerRPC(NetworkId targetPlayerID)
+        {
+            var battery = ItemObjectList.GetFromName("Battery");
+            if (_playerController.itemInventory.HasItem(battery.Id))
+            {
+                _playerController.itemInventory.UseItem(battery); // 아이템 사용
+                
+                var targetPlayer = Runner.FindObject(targetPlayerID);
+                var targetPC = targetPlayer.GetComponent<PlayerController>();
+
+                targetPC.status.RecoveryFromReviveActionRPC(); // 대상을 부활
             }
         }
 
