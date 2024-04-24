@@ -241,6 +241,7 @@ namespace Monster.Container
                 AniLongAttackTimer = TickTimer.CreateFromSeconds(Runner, longAttackClip.length);
                 status.StartAttackTimerRPC();
                 networkAnimator.SetTrigger("tAttack");
+                transform.LookAt(targetTransform);
             }
             
             if (AniLongAttackTimer.Expired(Runner) == false)

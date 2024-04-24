@@ -1,4 +1,5 @@
 ﻿using Manager;
+using Monster;
 using Status;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,6 +20,11 @@ namespace UI.Status
             
             if(_status == null)
                 Destroy(gameObject);
+
+            if (TryGetComponent(out MonsterBase mb))
+            {
+                mb.DieAction += () => Destroy(gameObject);
+            }
 
             var mesh = gameObject.GetComponentsInChildren<MeshFilter>();
             var skinnedMesh = gameObject.GetComponentsInChildren<SkinnedMeshRenderer>();

@@ -22,7 +22,7 @@ namespace UI.Status
             
             foreach (var statusBarUI in barList)
             {
-                statusBarUI.SetBarActive((Vector3.Distance(statusBarUI.transform.position, _camera.transform.position) < visibleDistance) && IsBehindCamera(_camera, statusBarUI.transform));
+                statusBarUI.SetBarActive((Vector3.Distance(statusBarUI.transform.position, _camera.transform.position) < visibleDistance) && IsBehindCamera(_camera, statusBarUI.transform) == false);
                 statusBarUI.BarUpdate(_camera);
             }
         }
