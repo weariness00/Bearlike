@@ -884,28 +884,6 @@ public class NavTest : MonoBehaviour
             return INode.NodeState.Success;
         }
 
-        private struct CheckCoinAttackDistanceJob : IJobParallelFor
-        {
-            public NativeArray<bool> Results;
-            public NativeArray<Vector3> PlayerPosition;
-            public Vector3 PiggyPosition;
-            public float DetectingMaxRange;
-            public float DetectingMinRange;
-
-            public void Execute(int index)
-            {
-                var distance = FastDistance(PiggyPosition, PlayerPosition[index]);
-                if (DetectingMinRange <= distance && distance <= DetectingMaxRange)
-                {
-                    Results[index] = true;
-                }
-                else
-                {
-                    Results[index] = false;
-                }
-            }
-        }
-
         INode.NodeState CheckCoinAttackDistance()
         {
             bool checkResult = false;
