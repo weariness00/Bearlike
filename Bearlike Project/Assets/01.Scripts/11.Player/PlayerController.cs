@@ -11,6 +11,7 @@ using Status;
 using UI.Skill;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 using Weapon;
 using Weapon.Gun;
 
@@ -33,6 +34,8 @@ namespace Player
         public SkillSelectUI skillSelectUI;
         private NetworkMecanimAnimator _networkAnimator;
         [HideInInspector] public SimpleKCC simpleKcc;
+        [HideInInspector] public RigBuilder rigBuilder;
+        private Rig _headRig;
 
         public StatusValue<int> ammo = new StatusValue<int>();
 
@@ -45,12 +48,13 @@ namespace Player
         private int _gunLayer;
 
         private static readonly int AniShoot = Animator.StringToHash("tShoot");
-        private static readonly int AniInjuryMove = Animator.StringToHash("Faint");
         private static readonly int AniFrontMove = Animator.StringToHash("fFrontMove");
         private static readonly int AniSideMove = Animator.StringToHash("fSideMove");
         private static readonly int AniJump = Animator.StringToHash("tJump");
-        private static readonly int AniDie = Animator.StringToHash("isDead");
         private static readonly int AniInjury = Animator.StringToHash("tInJury");
+        private static readonly int AniRevive = Animator.StringToHash("tRevive");
+        private static readonly int AniInjuryMove = Animator.StringToHash("Faint");
+        private static readonly int AniDie = Animator.StringToHash("isDead");
         
         #endregion
 
@@ -62,14 +66,33 @@ namespace Player
             cameraController = GetComponent<PlayerCameraController>();
             weaponSystem = gameObject.GetComponentInChildren<WeaponSystem>();
             _networkAnimator = GetComponent<NetworkMecanimAnimator>();
+
+            rigBuilder = GetComponentInChildren<RigBuilder>();
+            _headRig = rigBuilder.layers.Find(rig => rig.name == "Head Rig").rig;
         }
 
         public override void Spawned()
         {
             _gunLayer = _networkAnimator.Animator.GetLayerIndex("Gun Layer");
-            
+                
             // Status 관련 초기화
-            status.InjuryAction += () => { _networkAnimator.SetTrigger(AniInjury); };
+            status.InjuryAction += () =>
+            {
+                _networkAnimator.SetTrigger(AniInjury); 
+                _networkAnimator.Animator.SetLayerWeight(_gunLayer, 0);
+                _headRig.weight = 0;
+                if(weaponSystem.equipment is WeaponBase weapon)
+                    weapon.gameObject.SetActive(false);
+            };
+            status.RecoveryFromInjuryAction += () =>
+            {
+                _networkAnimator.SetTrigger(AniRevive);
+                _networkAnimator.Animator.SetLayerWeight(_gunLayer, 1);
+                _headRig.weight = 1;
+                
+                if(weaponSystem.equipment is WeaponBase weapon)
+                    weapon.gameObject.SetActive(true);
+            };
             status.ReviveAction += () => { _networkAnimator.SetTrigger(AniDie); };
             
             Cursor.lockState = CursorLockMode.Locked;
@@ -201,7 +224,7 @@ namespace Player
         float xRotate, yRotate, xRotateMove, yRotateMove;
         public void MouseRotateControl(Vector2 mouseAxis = default)
         {
-            if (HasStateAuthority == false || status.isInjury)
+            if (HasStateAuthority == false || status.isRevive)
                 return;
             
             xRotateMove = mouseAxis.y * Runner.DeltaTime * rotateSpeed;

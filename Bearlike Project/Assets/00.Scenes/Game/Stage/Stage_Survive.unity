@@ -1084,6 +1084,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d58208cb0ec04d46a679924b05261970, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
   _IsStageUnload: []
   _IsInit:
     _value: 0
@@ -1117,7 +1120,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
-  surviveTime: 1
+  surviveTime: 10
   currentTime: 0
 --- !u!65 &2253607827834575800
 BoxCollider:

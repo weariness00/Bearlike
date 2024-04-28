@@ -66,6 +66,7 @@ namespace Player
         public void InteractInit()
         {
             _playerController.status.InjuryAction += () => IsInteract = true;
+            _playerController.status.RecoveryFromInjuryAction += () => IsInteract = false;
             InteractEnterAction += InjuryInteractEnter;
             InteractEnterAction += DieInteract;
         }
@@ -87,7 +88,6 @@ namespace Player
                     remotePlayerStatus.SetHelpOtherPlayerRPC(false); 
                     remotePlayerStatus.SetRecoveryInjuryTimeRPC(0); 
                     _playerController.status.RecoveryFromInjuryActionRPC();
-                    IsInteract = false;
                 }
             }
         }
