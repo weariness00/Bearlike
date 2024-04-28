@@ -72,7 +72,7 @@ namespace Photon.MeshDestruct
             { // 부서진 부분
                 var obj = destructObjects[0];
                 var sliceObjects = MeshSlicing.Slice(obj, destructInfo.SliceNormal, destructInfo.ShapePosition);
-                if (sliceObjects.Length == 1)
+                if (sliceObjects.Count == 1)
                 {
                     var interactObject = sliceObjects[0];
                     var networkObjectOp = Runner.SpawnAsync(slicePrefab, interactObject.transform.position, interactObject.transform.rotation, null, (runner, o) =>
@@ -108,7 +108,7 @@ namespace Photon.MeshDestruct
                     
                     yield return null;
                 }
-                else if (sliceObjects.Length == 2)
+                else if (sliceObjects.Count == 2)
                 {
                     NetworkId[] sliceIds = new NetworkId[2];
                     for (int i = 0; i < 2; i++)
@@ -199,7 +199,7 @@ namespace Photon.MeshDestruct
                 var obj = destructObjects[0];
                 var sliceObjects = MeshSlicing.Slice(obj, destructInfo.SliceNormal, destructInfo.ShapePosition);
                 
-                if (sliceObjects.Length == 1)
+                if (sliceObjects.Count == 1)
                 {
                     var interactObject = sliceObjects[0];
                     var networkObject = Runner.FindObject(destructInfo.InteractObjectId).gameObject;
@@ -223,7 +223,7 @@ namespace Photon.MeshDestruct
                     
                     Destroy(interactObject);
                 }
-                else if (sliceObjects.Length == 2)
+                else if (sliceObjects.Count == 2)
                 {
                     GameObject[] networkObjects = new GameObject[2];
                     networkObjects[0] = Runner.FindObject(destructInfo.SliceObjectId0).gameObject;
