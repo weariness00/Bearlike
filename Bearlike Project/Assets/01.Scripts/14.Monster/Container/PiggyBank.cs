@@ -104,9 +104,6 @@ namespace Monster.Container
             isDead = false;
 
             networkAnimator.Animator.SetFloat(AttackBlend, 0);
-            // networkAnimator.Animator.SetBool(Walk, true);
-
-            // StartCoroutine(WalkCoroutine(0.5f));
             StartCoroutine(DieCoroutine(1.0f));
         }
 
@@ -146,30 +143,14 @@ namespace Monster.Container
                 yield return new WaitForSeconds(waitTime);
             }
         }
-        
-        IEnumerator WalkCoroutine(float waitTime)
-        {
-            while (true)
-            {
-                if (IsAnimationRunning("piggy_walk"))
-                {
-                    if (FastDistance(transform.position, _players[0].transform.position) > 10.0f)
-                    {
-                        _navMeshAgent.speed = status.moveSpeed.Current;
-                        _navMeshAgent.SetDestination(_players[0].transform.position);
-                    }
-                }
-                
-                yield return new WaitForSeconds(waitTime);
-            }
-        }
 
         #region BT
 
         INode SettingBT()
         {
-            return new SequenceNode // TODO : 아예 랜덤으로 하고 싶으면 selectorNode로 변경하자
+            return new SelectorNode
             (
+                true,
                 new SequenceNode
                 (
                     new ActionNode(CheckWalkAction),
@@ -197,16 +178,16 @@ namespace Monster.Container
                         ),
                         new SequenceNode
                         (   // JumpAttack OR Jump CoinAttack
-                            new ActionNode(CheckJumpAttackDistance),
                             new ActionNode(CheckJumpAttackAction),
+                            // new ActionNode(CheckJumpAttackDistance),
                             new ActionNode(StartJumpAction),
                             new ActionNode(TermFuction),
                             new ActionNode(StopJumpAttack)
                         )
                     )
                 ),
-                new SelectorNode(
-                    false,
+                // new SelectorNode(
+                //     false,
                     new SequenceNode
                     (   // Kick
                         new ActionNode(CheckAttackAction),
@@ -215,8 +196,8 @@ namespace Monster.Container
                         new ActionNode(StartAttack),
                         new ActionNode(TermFuction)
                     ),
-                    new ActionNode(SuccessFunction)
-                ),
+                //     new ActionNode(SuccessFunction)
+                // ),
                 new SelectorNode
                 (
                     true,
@@ -229,32 +210,38 @@ namespace Monster.Container
                             new ActionNode(StartRush),
                             new ActionNode(TermFuction)
                         ),
-                        new SequenceNode
-                        (    // JumpAttack OR Fake JumpAttack
-                            new ActionNode(CheckJumpAttackAction), 
-                            new ActionNode(StartJumpAttackAction),
-                            new ActionNode(TermFuction),
-                            new ActionNode(StopJumpAttack)
+                        new SelectorNode(
+                            false,
+                            new SequenceNode
+                            (    // JumpAttack OR Fake JumpAttack
+                                new ActionNode(CheckJumpAttackAction), 
+                                new ActionNode(StartJumpAttackAction),
+                                new ActionNode(TermFuction),
+                                new ActionNode(StopJumpAttack)
+                            ),
+                            new ActionNode(SuccessFunction)
                         )
                     ),
                     new SequenceNode
                     (   // fart
                         new ActionNode(CheckFartAction), 
                         new ActionNode(StartFart),
-                        new ActionNode(TermFuction)
+                        new ActionNode(TermFuction),
+                        new ActionNode(StopFart)
                     )
                 ),
                 new SequenceNode
                 (   // Ground CoinAttack
                     new ActionNode(CheckCoinAttackAction),
-                    new ActionNode(CheckCoinAttackDistance),
+                    // new ActionNode(CheckCoinAttackDistance),
                     new ActionNode(StartCoinAttack),
-                    new ActionNode(TermFuction)
+                    new ActionNode(TermFuction),
+                    new ActionNode(StopCoinAttack)
                 ),
                 new SequenceNode
                 (   // Rest
                     new ActionNode(CheckRestAction),
-                    new ActionNode(CheckRestHp),
+                    // new ActionNode(CheckRestHp),
                     new ActionNode(StartRest),
                     new ActionNode(TermFuction)
                 )
@@ -266,9 +253,11 @@ namespace Monster.Container
             return new SequenceNode
             (
                 new SequenceNode
-                (
-                    new ActionNode(CheckJumpAttackAction),
-                    new ActionNode(StartJumpAttackAction)
+                (   // fart
+                    new ActionNode(CheckFartAction), 
+                    new ActionNode(StartFart),
+                    new ActionNode(TermFuction),
+                    new ActionNode(StopFart)
                 )
             );
         }
@@ -308,10 +297,10 @@ namespace Monster.Container
 
                 if (_visualEffect != null)
                 {
-                    if (vfxName == "GroundCrack_vfx")
+                    if (vfxName == "GroundCrack_vfx" || vfxName == "Fart_vfx")
                     {
                         targetObject.gameObject.SetActive(true);
-                        _visualEffect.SendEvent("OnCrack");
+                        _visualEffect.SendEvent("OnPlay");
                     }
                     else
                     {
@@ -411,42 +400,40 @@ namespace Monster.Container
         /// </summary>
         INode.NodeState WalkAround()
         {
-            if (IsAnimationRunning("Piggy_Idle"))
+            networkAnimator.Animator.SetTrigger(Walk);
+                
+            // TODO: 위치를 어디 잡을까 ==> 
+            // 가장 피가 적은 플레이어에게 이동?
+            int minHp = Int32.MaxValue;
+            Vector3 direction = new Vector3();
+                
+            foreach (var player in _players)
             {
-                networkAnimator.Animator.SetTrigger(Walk);
-                
-                // TODO: 위치를 어디 잡을까 ==> 
-                // 가장 피가 적은 플레이어에게 이동?
-                int minHp = Int32.MaxValue;
-                Vector3 direction = new Vector3();
-                
-                foreach (var player in _players)
+                var hp = player.GetComponent<PlayerStatus>().hp;
+                if (hp < minHp)
                 {
-                    var hp = player.GetComponent<PlayerStatus>().hp;
-                    if (hp < minHp)
-                    {
-                        minHp = hp;
-                        direction = player.transform.position - transform.position;
-                    }
+                    minHp = hp;
+                    direction = player.transform.position - transform.position;
                 }
-                direction = direction.normalized * (direction.magnitude - (attackRange - 5.0f));
-                // TODO : 속도를 잘 설정해야한다.
-                _navMeshAgent.speed = 10.0f;
-                _navMeshAgent.SetDestination(transform.position + direction);
-                // 무게 중심으로 이동?
-                // 아니면 플레이어에게서 멀어지는 방향으로 이동?
-                
-                _durationTime = _gameManager.PlayTimer;
-                
-                return INode.NodeState.Success;
             }
-            
-            return INode.NodeState.Running;
+            direction = direction.normalized * (direction.magnitude - (attackRange - 5.0f));
+            // TODO : 속도를 잘 설정해야한다.
+            _navMeshAgent.speed = direction.magnitude / 5.0f;
+            _navMeshAgent.SetDestination(transform.position + direction);
+            // 무게 중심으로 이동?
+            // 아니면 플레이어에게서 멀어지는 방향으로 이동?
+                
+            _durationTime = _gameManager.PlayTimer;
+                
+            DebugManager.Log("Pig Walk");
+                
+            return INode.NodeState.Success;
         }
 
         INode.NodeState WalkStop()
         {
             _navMeshAgent.SetDestination(transform.position);
+            // networkAnimator.Animator.Play("Piggy_Idle");
 
             return INode.NodeState.Success;
         }
@@ -494,6 +481,7 @@ namespace Monster.Container
             
             _durationTime = _gameManager.PlayTimer;
 
+            DebugManager.Log("Pig Defence");
             return INode.NodeState.Success;
         }
 
@@ -506,7 +494,7 @@ namespace Monster.Container
             status.DelCondition(CrowdControl.Defence);
             StopVFX("Shield_vfx");
             
-            return INode.NodeState.Failure;
+            return INode.NodeState.Success;
         }
         
         #endregion
@@ -538,14 +526,15 @@ namespace Monster.Container
             var position1 = transform.position;
             var direction = position1 - centroid;
             
-            networkAnimator.Animator.SetInteger(AttackBlend, RUSH_TYPE);
+            networkAnimator.Animator.SetFloat(AttackBlend, RUSH_TYPE);
             networkAnimator.Animator.SetTrigger(Attack);
             
-            _navMeshAgent.speed = FastDistance(position1, centroid) * runDistance / 3.0f;   // animation의 길이가 3초
+            _navMeshAgent.speed = direction.magnitude * runDistance / 3.0f;   // animation의 길이가 3초
             _navMeshAgent.SetDestination(position1 + direction * runDistance);
 
             _durationTime = _gameManager.PlayTimer;
 
+            DebugManager.Log("Pig Run");
             return INode.NodeState.Success;
         }
 
@@ -646,8 +635,18 @@ namespace Monster.Container
             networkAnimator.Animator.SetFloat(AttackBlend, ATTACK_TYPE);
             networkAnimator.Animator.SetTrigger(Attack);
             _navMeshAgent.speed = 0.0f;
+            
+            // TODO : 피격 처리 해주는 코드 필요
+            Vector3 targetDirection = _players[_targetPlayerIndex].transform.position - transform.position;
+
+            if (targetDirection.magnitude <= attackRange)
+            {
+                
+            }
+            
             _durationTime = _gameManager.PlayTimer;
 
+            DebugManager.Log("Pig Attack");
             return INode.NodeState.Success;
         }
 
@@ -696,11 +695,6 @@ namespace Monster.Container
 
             if (checkResult)
             {
-                // Vector3 targetDirection = _players[_targetPlayerIndex].transform.position - transform.position;
-                // _targetRotation = Quaternion.LookRotation(targetDirection);
-                //
-                // _rotationlastTime = _gameManager.PlayTimer;
-
                 return INode.NodeState.Success;
             }
 
@@ -723,6 +717,7 @@ namespace Monster.Container
             
             _durationTime = _gameManager.PlayTimer;
 
+            DebugManager.Log("Pig Rush");
             return INode.NodeState.Success;
         }
 
@@ -798,6 +793,8 @@ namespace Monster.Container
             DebugManager.ToDo("돼지 BT : status에서 속도를 받아오도록 수정");
             StartCoroutine(JumpCoroutine(upSpeed, downSpeed, type));
             
+            _durationTime = _gameManager.PlayTimer;
+            DebugManager.Log($"Pig Jump{type}");
             return INode.NodeState.Success;
         }
         
@@ -818,6 +815,8 @@ namespace Monster.Container
             DebugManager.ToDo("돼지 BT : status에서 속도를 받아오도록 수정");
             StartCoroutine(JumpCoroutine(upSpeed, downSpeed, type));
             
+            _durationTime = _gameManager.PlayTimer;
+            DebugManager.Log($"Pig Jump{type}");
             return INode.NodeState.Success;
         }
 
@@ -826,13 +825,14 @@ namespace Monster.Container
             while (true)
             {
                 _height += risingSpeed * Runner.DeltaTime * (jumpHeight + 1 - _height);
-
-                transform.position = new Vector3(transform.position.x, _height, transform.position.z);
+                var transform1 = transform;
+                transform.position = new Vector3(transform1.position.x, transform1.position.y + _height, transform1.position.z);
 
                 yield return new WaitForSeconds(0.0f);
 
                 if (_height >= jumpHeight)
                 {
+                    _durationTime = _gameManager.PlayTimer;
                     if (type == 2)
                     {
                         networkAnimator.Animator.SetTrigger("tAttack");
@@ -840,12 +840,11 @@ namespace Monster.Container
                         
                         // TODO : Coin VFX
                         //PlayVFX("CoinUp");
-                        // TODO : Coin object active false
-                        
+                        PlayVFX("CoinMeteor_vfx");
                         
                         while (IsAnimationRunning("Attack"))
                         {
-                            transform.position = new Vector3(transform.position.x, _height, transform.position.z);
+                            transform.position = new Vector3(transform1.position.x, transform1.position.y + _height, transform1.position.z);
                             yield return new WaitForSeconds(0.0f);
                         }
                         
@@ -862,8 +861,9 @@ namespace Monster.Container
             {
                 while (true)
                 {
-                    _height -= downSpeed * Runner.DeltaTime * (jumpHeight + 1 - _height);
-                    transform.position = new Vector3(transform.position.x, _height, transform.position.z);
+                    _height -= downSpeed * Runner.DeltaTime * (jumpHeight + 1 - _height);                
+                    var transform1 = transform;
+                    transform.position = new Vector3(transform1.position.x, transform1.position.y + _height, transform1.position.z);
                     yield return new WaitForSeconds(0.0f);
 
                     if (_height < 0.0f)
@@ -875,9 +875,10 @@ namespace Monster.Container
                             
                             // 데미지 입히기
                             // TODO : 데미지 비율 상수로 조절하자
-                            if(type == 3)
-                                status.hp.Current -= (int)(status.hp.Max / 0.05f);
+                            // if(type == 3)
+                            //     status.hp.Current -= (int)(status.hp.Max / 0.05f);
                         }
+                        
                         _height = 0.0f;
                         _durationTime = _gameManager.PlayTimer;
                         yield break;
@@ -887,10 +888,13 @@ namespace Monster.Container
 
         INode.NodeState StopJumpAttack()
         {
-            GameObject targetObject = transform.Find("GroundCrack_vfx").gameObject;
+            GameObject targetGroundObject = transform.Find("GroundCrack_vfx").gameObject;
+            GameObject targetMeteorObject = transform.Find("CoinMeteor_vfx").gameObject;
             
-            if(true == targetObject.activeSelf)
+            if(true == targetGroundObject.activeSelf)
                 StopVFX("GroundCrack_vfx");
+            else if(true == targetMeteorObject.activeSelf)
+                StopVFX("CoinMeteor_vfx");
             
             return INode.NodeState.Success;
         }
@@ -926,12 +930,20 @@ namespace Monster.Container
             _navMeshAgent.SetDestination(transform.position);
             
             // 분진 VFX
-            // PlayVFX("");
+            PlayVFX("Fart_vfx");
 
+            DebugManager.Log($"Pig Fart");
             _durationTime = _gameManager.PlayTimer;
             return INode.NodeState.Success;
         }
 
+        INode.NodeState StopFart()
+        {
+            StopVFX("Fart_vfx");
+
+            return INode.NodeState.Success;
+        }
+        
         #endregion
 
         #region Rest
@@ -973,7 +985,7 @@ namespace Monster.Container
             _navMeshAgent.SetDestination(transform.position);
 
             StartCoroutine(RestCoroutine());
-
+            DebugManager.Log($"Pig Rest");
             _durationTime = _gameManager.PlayTimer;
             return INode.NodeState.Success;
         }
@@ -1047,14 +1059,20 @@ namespace Monster.Container
         {
             networkAnimator.Animator.SetTrigger(Attack);
             networkAnimator.Animator.SetFloat(AttackBlend, COIN_TYPE);
-
-            // TODO : VFX를 받아와서 실행하고, 매개변수로 자식 객체의 이름를 받는 함수구현
-
+            
+            PlayVFX("CoinMeteor_vfx");
+            
             _durationTime = _gameManager.PlayTimer;
-
+            DebugManager.Log($"Pig Coin");
             return INode.NodeState.Success;
         }
 
+        INode.NodeState StopCoinAttack()
+        {
+            StopVFX("CoinMeteor_vfx");
+
+            return INode.NodeState.Success;
+        }
         #endregion
         #endregion
     }

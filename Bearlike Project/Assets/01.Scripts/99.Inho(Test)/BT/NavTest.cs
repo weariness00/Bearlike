@@ -172,7 +172,7 @@ public class NavTest : MonoBehaviour
 
         private void Awake()
         {
-            _btRunner = new BehaviorTreeRunner(SettingBT());
+            _btRunner = new BehaviorTreeRunner(TestSettingBT());
             _visualEffect = GetComponentInChildren<VisualEffect>();
             _animator = GetComponentInChildren<Animator>();
             if(TryGetComponent(out _navMeshAgent)== false) _navMeshAgent = GetComponent<NavMeshAgent>();
@@ -324,6 +324,17 @@ public class NavTest : MonoBehaviour
             );
         }
 
+        INode TestSettingBT()
+        {
+            return new SequenceNode
+            (
+                new ActionNode(CheckAttackAction), // Kick
+                new ActionNode(StartAttack),
+                new ActionNode(TermFuction)
+                // stopAttack
+            );
+        }
+
         bool IsAnimationRunning(string stateName)
         {
             if (_animator != null)
@@ -348,10 +359,10 @@ public class NavTest : MonoBehaviour
             if (target != null)
             {
                 _visualEffect = target.gameObject.GetComponent<VisualEffect>();
-                if (vfxName == "GroundCrack_vfx")
+                if (vfxName == "GroundCrack_vfx" || vfxName == "NormalAttack_vfx")
                 {
                     target.gameObject.SetActive(true);
-                    _visualEffect.SendEvent("OnCrack");
+                    _visualEffect.SendEvent("OnPlay");
                 }
                 else if (_visualEffect != null)
                 {
@@ -554,12 +565,14 @@ public class NavTest : MonoBehaviour
 
         INode.NodeState StartAttack()
         {
-            Debug.Log("Attack");
             _animator.SetFloat(AttackBlend, ATTACK_TYPE);
             _animator.SetTrigger(Attack);
             _navMeshAgent.speed = 0.0f;
             _durationTime = 0;
             StartCoroutine(TimeCoroutine());
+            
+            PlayVFX("NormalAttack_vfx");
+            
             return INode.NodeState.Success;
         }
 
@@ -882,28 +895,6 @@ public class NavTest : MonoBehaviour
                 return INode.NodeState.Running;
             }
             return INode.NodeState.Success;
-        }
-
-        private struct CheckCoinAttackDistanceJob : IJobParallelFor
-        {
-            public NativeArray<bool> Results;
-            public NativeArray<Vector3> PlayerPosition;
-            public Vector3 PiggyPosition;
-            public float DetectingMaxRange;
-            public float DetectingMinRange;
-
-            public void Execute(int index)
-            {
-                var distance = FastDistance(PiggyPosition, PlayerPosition[index]);
-                if (DetectingMinRange <= distance && distance <= DetectingMaxRange)
-                {
-                    Results[index] = true;
-                }
-                else
-                {
-                    Results[index] = false;
-                }
-            }
         }
 
         INode.NodeState CheckCoinAttackDistance()
