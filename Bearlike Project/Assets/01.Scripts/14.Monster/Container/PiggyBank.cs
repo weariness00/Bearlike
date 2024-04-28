@@ -148,8 +148,9 @@ namespace Monster.Container
 
         INode SettingBT()
         {
-            return new SequenceNode // TODO : 아예 랜덤으로 하고 싶으면 selectorNode로 변경하자
+            return new SelectorNode
             (
+                true,
                 new SequenceNode
                 (
                     new ActionNode(CheckWalkAction),
@@ -185,8 +186,8 @@ namespace Monster.Container
                         )
                     )
                 ),
-                new SelectorNode(
-                    false,
+                // new SelectorNode(
+                //     false,
                     new SequenceNode
                     (   // Kick
                         new ActionNode(CheckAttackAction),
@@ -195,8 +196,8 @@ namespace Monster.Container
                         new ActionNode(StartAttack),
                         new ActionNode(TermFuction)
                     ),
-                    new ActionNode(SuccessFunction)
-                ),
+                //     new ActionNode(SuccessFunction)
+                // ),
                 new SelectorNode
                 (
                     true,
