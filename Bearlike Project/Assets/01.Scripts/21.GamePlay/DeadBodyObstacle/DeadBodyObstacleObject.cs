@@ -4,6 +4,7 @@ using System.Linq;
 using Status;
 using Fusion;
 using Photon;
+using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -11,6 +12,8 @@ namespace GamePlay.DeadBodyObstacle
 {
     public class DeadBodyObstacleObject : NetworkBehaviourEx
     {
+        public static NavMeshSurface stageSurface;
+        
         private NetworkMecanimAnimator _networkAnimator;
         private StatusBase _statusBase;
         private Rigidbody _rigidbody;
@@ -19,7 +22,7 @@ namespace GamePlay.DeadBodyObstacle
         private Collider[] _ragdollColliders;
 
         private bool _isOn; // DeadBody가 활성화 되었는지
-        
+
         #region Unity Event Function
 
         private void Awake()
@@ -45,12 +48,12 @@ namespace GamePlay.DeadBodyObstacle
         #endregion
         
         #region Member Function
-
+        
         public void OnDeadBody(int hp = 1000)
         {
             name += "Dead Body";
             tag = "Untagged";
-            gameObject.layer = 0;
+            gameObject.layer = LayerMask.NameToLayer("DeadBody");
 
             // 애니메이션 동작을 멈추기 위해 먼저 애니메이션 삭제
             if (_networkAnimator)
@@ -85,6 +88,7 @@ namespace GamePlay.DeadBodyObstacle
             // 시체의 체력 설정
             _statusBase.SetHpRPC(StatusValueType.CurrentAndMax, hp);
             StartCoroutine(CheckHpCoroutine()); // 시체에 정상적으로 hp가 부여되면 Update가 되도록 하는 코루틴
+            StartCoroutine(BakeNavMesh());
         }
 
         /// <summary>
@@ -136,6 +140,29 @@ namespace GamePlay.DeadBodyObstacle
                 obstacle.carving = true;
                 obstacle.carveOnlyStationary = true;
             }
+        }
+
+        private IEnumerator BakeNavMesh()
+        {
+            bool isContinue;
+            while (true)
+            {
+                yield return null;
+                isContinue = true;
+                foreach (var rb in _ragdollRigidBodies)
+                {
+                    if (rb.IsSleeping() == false)
+                    {
+                        isContinue = false;
+                        break;
+                    }
+                }
+
+                if (isContinue)
+                    break;
+            }
+            if(stageSurface)
+                stageSurface.BuildNavMesh();
         }
 
         private IEnumerator CheckHpCoroutine()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Data;
 using Fusion;
+using GamePlay.DeadBodyObstacle;
 using GamePlay.StageLevel;
 using Item.Looting;
 using Manager;
@@ -10,6 +11,7 @@ using Monster;
 using Photon;
 using Script.Photon;
 using Status;
+using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -60,8 +62,8 @@ namespace GamePlay.Stage
 
         [Header("맵 정보")] 
         public GameObject stageGameObject;
-
         public GameObject destructObject; // 스테이지 클리어시 붕괴가능하게 할 객체
+        public NavMeshSurface navMeshSurface;
         
         public Portal prevStagePortal;
         public Portal nextStagePortal;
@@ -218,6 +220,8 @@ namespace GamePlay.Stage
             {
                 Destroy(childCamera.gameObject);
             }
+
+            DeadBodyObstacleObject.stageSurface = navMeshSurface;
             
             var pos = new Vector3(0,(FindObjectsOfType<StageBase>().Length - 1) * 100,0);
             transform.position = pos;
