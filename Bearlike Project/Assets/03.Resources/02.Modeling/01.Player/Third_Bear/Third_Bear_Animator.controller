@@ -7,7 +7,7 @@ AnimatorStateMachine:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Shot Layer
+  m_Name: Gun Layer
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: -1177714225563672924}
@@ -46,7 +46,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 813205851fa25fd4ebe4c37075b82ebd,
+  m_Motion: {fileID: 1827226128182048838, guid: e51cab4fe65a3b242bbffda9a941de19,
     type: 3}
   m_Tag: 
   m_SpeedParameter: 
@@ -324,7 +324,7 @@ AnimatorController:
     m_SyncedLayerAffectsTiming: 0
     m_Controller: {fileID: 9100000}
   - serializedVersion: 5
-    m_Name: Shot Layer
+    m_Name: Gun Layer
     m_StateMachine: {fileID: -8195991538273078708}
     m_Mask: {fileID: 31900000, guid: fbbb67862c0744b4da43431a37a05284, type: 2}
     m_Motions: []

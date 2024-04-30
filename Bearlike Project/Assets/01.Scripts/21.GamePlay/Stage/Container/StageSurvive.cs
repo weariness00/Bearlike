@@ -8,7 +8,7 @@ namespace GamePlay.StageLevel.Container
     public class StageSurvive : StageBase
     {
         [Header("생존 스테이지 정보")] 
-        public float surviveTime = 1f;
+        public int surviveTime = 1;
         [Networked] private TickTimer LimitTimer { get; set; }
 
         [HideInInspector] 
@@ -18,6 +18,11 @@ namespace GamePlay.StageLevel.Container
         public override void StageInit()
         {
             base.StageInit();
+        }
+
+        public override void StageStart()
+        {
+            base.StageStart();
             LimitTimer = TickTimer.CreateFromSeconds(Runner, surviveTime);
             currentTime = 0f;
             _startTime = GameManager.Instance.PlayTimer;

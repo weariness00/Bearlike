@@ -643,7 +643,7 @@ GameObject:
   - component: {fileID: 4594747919976527787}
   - component: {fileID: 8006215120877921605}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Head Multi Aim
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2265,7 +2265,7 @@ GameObject:
   - component: {fileID: 7657534624384605871}
   - component: {fileID: 3565162867108409977}
   m_Layer: 0
-  m_Name: Rig
+  m_Name: Head Rig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2543,6 +2543,7 @@ MonoBehaviour:
   skillInventory: {fileID: 1207115465948429785}
   skillSelectUI: {fileID: 776465977080344823}
   simpleKcc: {fileID: 0}
+  rigBuilder: {fileID: 0}
   ammo:
     _min: 0
     _max: 0
@@ -2569,9 +2570,8 @@ MonoBehaviour:
   mode: 0
   targetCamera: {fileID: 7251487793613596239}
   weaponCamera: {fileID: 4931533912480079503}
-  offset: {x: 0, y: 0, z: 0}
-  firstOffset: 0.27
-  thirdOffset: -2
+  firstOffset: {x: 0, y: 0, z: 0.27}
+  thirdOffset: {x: 0, y: 0, z: -2}
 --- !u!114 &3630061050747534706
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2652,7 +2652,7 @@ MonoBehaviour:
   TotalWords: 5
   ApplyTiming: 2
   SyncSettings: 79
-  StateHashes: 000000006bd5a32d398fdc0428a981077af3fe2e31c91b79b38657fc25f3d42d665de72e1ae6174d48bc68648527350b827885c8181c141c9e708b00
+  StateHashes: 000000006bd5a32d398fdc0428a981077af3fe2e31c91b79b38657fc25f3d42d665de72e1ae6174d48bc68648527350ba6858ea2181c141cf9f954dc
   TriggerHashes: 0000000026c7b5ecc0795d19cf3e30d8
 --- !u!114 &-4627320855333868288
 MonoBehaviour:

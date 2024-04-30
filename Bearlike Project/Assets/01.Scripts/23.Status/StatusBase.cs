@@ -110,6 +110,7 @@ namespace Status
 
             if (Random.Range(0f, 1f) < avoid.Current)
             {
+                DebugManager.Log($"{name} 회피 성공");
                 return;
             }
 

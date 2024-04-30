@@ -1,6 +1,7 @@
 ﻿using Fusion;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.Serialization;
 
 namespace Player
 {
@@ -18,9 +19,8 @@ namespace Player
         [Header("카메라")] 
         public Camera targetCamera;
         public Camera weaponCamera;
-        public Vector3 offset;
-        public float firstOffset = 1f;
-        public float thirdOffset = -5f;
+        public Vector3 firstOffset;
+        public Vector3 thirdOffset;
 
         public override void Spawned()
         {
@@ -59,24 +59,27 @@ namespace Player
             Transform targetCameraTransform = targetCamera.transform;
             Transform ownerTransform = ownerObject.transform;
             targetCameraTransform.SetParent(ownerTransform);
-            targetCameraTransform.position = ownerTransform.position + offset;
-            targetCameraTransform.rotation = ownerTransform.rotation;
+            SetFirstPersonCamera();
         }
 
         private void SetFirstPersonCamera()
         {
             Transform targetCameraTransform = targetCamera.transform;
 
-            targetCameraTransform.position = Vector3.zero;
-            targetCameraTransform.position = thirdOffset * targetCameraTransform.forward;
+            targetCameraTransform.localPosition = Vector3.zero;
+            targetCameraTransform.localPosition = firstOffset;
+            
+            weaponCamera.enabled = true;
         }
 
         private void SetThirdPersonCamera()
         {
             Transform targetCameraTransform = targetCamera.transform;
             
-            targetCameraTransform.position = Vector3.zero;
-            targetCameraTransform.position = thirdOffset * targetCameraTransform.forward;
+            targetCameraTransform.localPosition = Vector3.zero;
+            targetCameraTransform.localPosition = thirdOffset;
+
+            weaponCamera.enabled = false;
         }
 
         public void WeaponClipping()

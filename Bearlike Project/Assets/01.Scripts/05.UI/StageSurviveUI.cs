@@ -8,16 +8,16 @@ namespace UI
     public class StageSurviveUI : MonoBehaviour
     {   
         public StageSurvive stage;
-        
         [Header("Canvas")]
         public TMP_Text timeText;
 
         public void Update()
         {
-            timeText.text = TimeString((int)stage.currentTime);
+            timeText.text = TimeString((int)stage.surviveTime - (int)stage.currentTime);
 
             if (stage.isStageClear)
             {
+                timeText.text = "00:00";
                 Destroy(gameObject);
             }
         }
