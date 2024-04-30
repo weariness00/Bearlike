@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BehaviorTree.Base;
 using Data;
+using Fusion;
 using GamePlay;
 using Manager;
 using Player;
@@ -65,8 +66,8 @@ namespace Monster.Container
         [SerializeField]private float runDistance = 3.0f;
         [SerializeField] private float rushDistance = 5.0f;
         [SerializeField]private float jumpHeight = 10.0f;
-        
-        private float _height = 0;
+
+        [Networked] private float _height { get; set; }
         private float _delayTime = 5.0f;
 
         private static readonly int Walk = Animator.StringToHash("tWalk");
@@ -111,6 +112,7 @@ namespace Monster.Container
         {
             base.Spawned();
 
+            _height = 0;
             _navMeshAgent.enabled = true;   
             
             List<GameObject> playerObjects = new List<GameObject>();
@@ -297,16 +299,16 @@ namespace Monster.Container
 
                 if (_visualEffect != null)
                 {
-                    if (vfxName == "GroundCrack_vfx" || vfxName == "Fart_vfx")
-                    {
-                        targetObject.gameObject.SetActive(true);
+                    // if (vfxName == "GroundCrack_vfx" || vfxName == "Fart_vfx")
+                    // {
+                        // targetObject.gameObject.SetActive(true);
                         _visualEffect.SendEvent("OnPlay");
-                    }
-                    else
-                    {
-                        targetObject.SetActive(true);
-                        _visualEffect.Play();
-                    }
+                    // }
+                    // else
+                    // {
+                    //     targetObject.gameObject.SetActive(true);
+                    //     _visualEffect.Play();
+                    // }
                 }
             }
             else
@@ -324,8 +326,9 @@ namespace Monster.Container
                 _visualEffect = targetObject.GetComponent<VisualEffect>();
                 if (_visualEffect != null)
                 {
-                    _visualEffect.Stop();
-                    targetObject.SetActive(false);
+                    _visualEffect.SendEvent("OffPlay");
+                    // _visualEffect.Stop();
+                    // targetObject.gameObject.SetActive(false);
                 }
             }
         }
@@ -473,7 +476,8 @@ namespace Monster.Container
             }
             
             // _visualEffect.Play();
-            PlayVFX("Shield_vfx");
+            // PlayVFX("Shield_vfx");
+            PlayVFXRPC("Shield_vfx");
             networkAnimator.Animator.SetTrigger(Defence);
             _navMeshAgent.SetDestination(transform.position);
             
@@ -492,7 +496,8 @@ namespace Monster.Container
         INode.NodeState StopDefence()
         {
             status.DelCondition(CrowdControl.Defence);
-            StopVFX("Shield_vfx");
+            // StopVFX("Shield_vfx");
+            StopVFXRPC("Shield_vfx");
             
             return INode.NodeState.Success;
         }
@@ -826,8 +831,9 @@ namespace Monster.Container
             {
                 _height += risingSpeed * Runner.DeltaTime * (jumpHeight + 1 - _height);
                 var transform1 = transform;
-                transform.position = new Vector3(transform1.position.x, transform1.position.y + _height, transform1.position.z);
-
+                // transform.position = new Vector3(transform1.position.x, transform1.position.y + _height, transform1.position.z);
+                SetPositionRPC();
+                
                 yield return new WaitForSeconds(0.0f);
 
                 if (_height >= jumpHeight)
@@ -840,7 +846,8 @@ namespace Monster.Container
                         
                         // TODO : Coin VFX
                         //PlayVFX("CoinUp");
-                        PlayVFX("CoinMeteor_vfx");
+                        // PlayVFX("CoinMeteor_vfx");
+                        PlayVFXRPC("CoinMeteor_vfx");
                         
                         while (IsAnimationRunning("Attack"))
                         {
@@ -861,9 +868,9 @@ namespace Monster.Container
             {
                 while (true)
                 {
-                    _height -= downSpeed * Runner.DeltaTime * (jumpHeight + 1 - _height);                
-                    var transform1 = transform;
-                    transform.position = new Vector3(transform1.position.x, transform1.position.y + _height, transform1.position.z);
+                    _height -= downSpeed * Runner.DeltaTime * (jumpHeight + 1 - _height); 
+                    // transform.position = new Vector3(transform1.position.x, transform1.position.y + _height, transform1.position.z);
+                    SetPositionRPC();
                     yield return new WaitForSeconds(0.0f);
 
                     if (_height < 0.0f)
@@ -871,8 +878,8 @@ namespace Monster.Container
                         if (type == 3 || type == 1)
                         {
                             // VFX실행
-                            PlayVFX("GroundCrack_vfx");
-                            
+                            // PlayVFX("GroundCrack_vfx");
+                            PlayVFXRPC("GroundCrack_vfx");
                             // 데미지 입히기
                             // TODO : 데미지 비율 상수로 조절하자
                             // if(type == 3)
@@ -890,11 +897,13 @@ namespace Monster.Container
         {
             GameObject targetGroundObject = transform.Find("GroundCrack_vfx").gameObject;
             GameObject targetMeteorObject = transform.Find("CoinMeteor_vfx").gameObject;
-            
-            if(true == targetGroundObject.activeSelf)
-                StopVFX("GroundCrack_vfx");
-            else if(true == targetMeteorObject.activeSelf)
-                StopVFX("CoinMeteor_vfx");
+
+            if (true == targetGroundObject.activeSelf)
+                // StopVFX("GroundCrack_vfx");
+                StopVFXRPC("GroundCrack_vfx");
+            else if (true == targetMeteorObject.activeSelf)
+                // StopVFX("CoinMeteor_vfx");
+                StopVFXRPC("CoinMeteor_vfx");
             
             return INode.NodeState.Success;
         }
@@ -930,8 +939,9 @@ namespace Monster.Container
             _navMeshAgent.SetDestination(transform.position);
             
             // 분진 VFX
-            PlayVFX("Fart_vfx");
+            // PlayVFX("Fart_vfx");
 
+            PlayVFXRPC("Fart_vfx");
             DebugManager.Log($"Pig Fart");
             _durationTime = _gameManager.PlayTimer;
             return INode.NodeState.Success;
@@ -939,8 +949,9 @@ namespace Monster.Container
 
         INode.NodeState StopFart()
         {
-            StopVFX("Fart_vfx");
-
+            // StopVFX("Fart_vfx");
+            StopVFXRPC("Fart_vfx");
+            
             return INode.NodeState.Success;
         }
         
@@ -985,6 +996,8 @@ namespace Monster.Container
             _navMeshAgent.SetDestination(transform.position);
 
             StartCoroutine(RestCoroutine());
+            // PlayVFX("Rest_vfx");
+            PlayVFXRPC("Rest_vfx");
             DebugManager.Log($"Pig Rest");
             _durationTime = _gameManager.PlayTimer;
             return INode.NodeState.Success;
@@ -1002,6 +1015,8 @@ namespace Monster.Container
                 // TODO: 상수화 시키자
                 if (count >= 10)
                 {
+                    // StopVFX("Rest_vfx");
+                    StopVFXRPC("Rest_vfx");
                     // TODO : 시간 동기화 필요
                     yield break;
                 }
@@ -1060,8 +1075,8 @@ namespace Monster.Container
             networkAnimator.Animator.SetTrigger(Attack);
             networkAnimator.Animator.SetFloat(AttackBlend, COIN_TYPE);
             
-            PlayVFX("CoinMeteor_vfx");
-            
+            // PlayVFX("CoinMeteor_vfx");
+            PlayVFXRPC("CoinMeteor_vfx");
             _durationTime = _gameManager.PlayTimer;
             DebugManager.Log($"Pig Coin");
             return INode.NodeState.Success;
@@ -1069,11 +1084,58 @@ namespace Monster.Container
 
         INode.NodeState StopCoinAttack()
         {
-            StopVFX("CoinMeteor_vfx");
-
+            // StopVFX("CoinMeteor_vfx");
+            StopVFXRPC("CoinMeteor_vfx");
+            
             return INode.NodeState.Success;
         }
         #endregion
         #endregion
+        
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void SetPositionRPC() => transform.position = new Vector3(transform.position.x, transform.position.y + _height, transform.position.z);
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void PlayVFXRPC(string vfxName)
+        {
+            GameObject targetObject = transform.Find(vfxName).gameObject;
+
+            if (targetObject != null)
+            {
+                _visualEffect = targetObject.GetComponent<VisualEffect>();
+
+                if (_visualEffect != null)
+                {
+                    // if (vfxName == "GroundCrack_vfx" || vfxName == "Fart_vfx")
+                    // {
+                    targetObject.gameObject.SetActive(true);
+                    _visualEffect.SendEvent("OnPlay");
+                    // }
+                    // else
+                    // {
+                    //     targetObject.gameObject.SetActive(true);
+                    //     _visualEffect.Play();
+                    // }
+                }
+            }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void StopVFXRPC(string vfxName)
+        {
+            GameObject targetObject = transform.Find(vfxName).gameObject;
+
+            if (targetObject != null)
+            {
+                _visualEffect = targetObject.GetComponent<VisualEffect>();
+                if (_visualEffect != null)
+                {
+                    _visualEffect.SendEvent("OffPlay");
+                    // _visualEffect.Stop();
+                    targetObject.gameObject.SetActive(false);
+                }
+            }
+        }
+        
     }
 }
