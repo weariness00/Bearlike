@@ -98,7 +98,7 @@ namespace UI.Skill
                     {
                         obj.transform.SetParent(playerController.transform);
                         skill = obj.GetComponent<SkillBase>();
-                        skill.SetOwnerIdRPC(playerController.Object.Id);
+                        skill.ownerPlayer = playerController;
                         skill.LevelUp();
                     });
             }

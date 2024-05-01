@@ -46,7 +46,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  additionalStatusList: []
   hp:
     _min: 0
     _max: 99999
@@ -96,14 +95,6 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
-  attackLateTime:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
   attackRange:
     _min: 0
     _max: 99999
@@ -134,32 +125,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a59aff8312db49248be0f8c9b9dea34f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 101
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
+  _OwnerId:
+    Raw: 0
+  id: 102
   skillName: 
   explain: 
   type: 0
   icon: {fileID: 0}
-  coolTime:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
+  coolTime: 0
   isInvoke: 0
   status: {fileID: 0}
   level:
     _min: 0
     _max: 1
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  duration:
-    _min: 0
-    _max: 0
     _current: 0
     isOverMax: 0
     isOverMin: 0

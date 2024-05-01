@@ -107,9 +107,5 @@ namespace Skill.Container
             // }
         }
 
-        public override void LevelUp()
-        {
-            
-        }
     }
 }

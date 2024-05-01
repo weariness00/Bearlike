@@ -63,6 +63,7 @@ namespace Skill.Container
 
         private void Start()
         {
+            base.Start();
             _sniper = transform.root.GetComponentInChildren<GunBase>();    // or 인스펙터에서 추가하는 방식
             // gameObject.SetActive(false);
         }
@@ -116,9 +117,5 @@ namespace Skill.Container
             // }
         }
 
-        public override void LevelUp()
-        {
-            
-        }
     }
 }

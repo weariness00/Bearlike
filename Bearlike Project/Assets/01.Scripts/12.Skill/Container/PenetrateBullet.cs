@@ -30,11 +30,6 @@ namespace Skill.Container
         {
         }
 
-        public override void LevelUp()
-        {
-            
-        }
-
         /// <summary>
         /// 총알이 관통이 되도록 하는 함수
         /// </summary>

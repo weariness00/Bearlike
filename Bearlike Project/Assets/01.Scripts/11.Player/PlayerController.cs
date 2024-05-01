@@ -156,7 +156,7 @@ namespace Player
 
                 if (data.SkillInventory)
                 {
-
+                    skillInventory.canvas.gameObject.SetActive(!skillInventory.canvas.gameObject.activeSelf);
                 }
 
                 if (data.DebugKeyF1)

@@ -90,11 +90,6 @@ namespace Skill.Container
             }
         }
 
-        public override void LevelUp()
-        {
-            
-        }
-
         IEnumerator AttackMonsterFromArea(GameObject runObject)
         {
             yield return _areaOpenAniTime;
@@ -117,7 +112,7 @@ namespace Skill.Container
                     foreach (var monster in _monsterList)
                     {
                         var status = monster.GetComponent<MonsterStatus>();
-                        status.ApplyDamageRPC(status.CalDamage(), OwnerId, CrowdControl.Normality);
+                        status.ApplyDamageRPC(status.CalDamage(), ownerPlayer.Object.Id, CrowdControl.Normality);
                         
                         // 총알 궤적 VFX 생성
                         var monsterNetworkId = monster.GetComponent<NetworkObject>().Id;

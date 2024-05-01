@@ -41,13 +41,21 @@ namespace Status
         public T Min
         {
             get => _min;
-            set => _min = value;
+            set
+            {
+                _min = value; 
+                CheckCurrent();
+            }
         }
         
         public T Max
         {
             get => _max;
-            set => _max = value;
+            set
+            {
+                _max = value;
+                CheckCurrent();
+            }
         }
         
         [SerializeField] private T _min;

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 972581711291099202}
   - component: {fileID: 7856296637238042012}
+  - component: {fileID: 8310383764273831033}
   m_Layer: 12
   m_Name: SniperContinousMode
   m_TagString: Untagged
@@ -44,22 +45,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba8fe09c62f1a864b93710174108726c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
+  _OwnerId:
+    Raw: 0
+  id: 22
   skillName: 
   explain: 
-  icon: {fileID: 0}
   type: 0
-  coolTime:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
+  icon: {fileID: 0}
+  coolTime: 0
   isInvoke: 0
-  damage:
+  status: {fileID: 0}
+  level:
     _min: 0
-    _max: 99999
+    _max: 1
     _current: 0
     isOverMax: 0
     isOverMin: 0
@@ -73,3 +74,82 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+--- !u!114 &8310383764273831033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3483298176811181930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  damage:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  damageMultiple: 1
+  defence:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  avoid:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 1
+    isMin: 0
+    isMax: 0
+  moveSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  attackSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  attackRange:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  force:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  condition: 0
+  property: 0

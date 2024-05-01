@@ -41,6 +41,8 @@ namespace Skill.Container
 
         public override void LevelUp()
         {
+            base.LevelUp();
+            
             status.damageMultiple = 1f + _damageMultiplePerLevel * level.Current;
         }
     }

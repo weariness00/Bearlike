@@ -33,10 +33,6 @@ namespace Skill.Container
         public override void Run(GameObject runObject)
         {
         }
-
-        public override void LevelUp()
-        {
-        }
     }
 }
 

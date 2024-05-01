@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 998571648622284062}
   - component: {fileID: 734012965739966661}
+  - component: {fileID: 7087066790294729455}
   m_Layer: 12
   m_Name: AvoidSystemOperation
   m_TagString: Untagged
@@ -44,20 +45,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7af539e2280d4f9a9e0fee59211a4bd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 0
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
+  _OwnerId:
+    Raw: 0
+  id: 21
   skillName: 
   explain: 
   type: 0
-  coolTime:
+  icon: {fileID: 0}
+  coolTime: 0
+  isInvoke: 0
+  status: {fileID: 0}
+  level:
     _min: 0
-    _max: 0
+    _max: 1
     _current: 0
     isOverMax: 0
     isOverMin: 0
     isMin: 0
     isMax: 0
-  icon: {fileID: 0}
-  isInvoke: 0
+  playerStatus: {fileID: 0}
+  duration: 10
+--- !u!114 &7087066790294729455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 243888990454671735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
   damage:
     _min: 0
     _max: 99999
@@ -66,7 +96,48 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
-  duration:
+  damageMultiple: 1
+  defence:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  avoid:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 1
+    isMin: 0
+    isMax: 0
+  moveSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  attackSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  attackRange:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  force:
     _min: 0
     _max: 0
     _current: 0
@@ -74,4 +145,5 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
-  playerStatus: {fileID: 0}
+  condition: 0
+  property: 0

@@ -4,6 +4,7 @@ using Data;
 using Fusion;
 using Inventory;
 using Photon;
+using Player;
 using Status;
 using UnityEngine;
 
@@ -42,7 +43,7 @@ namespace Skill
 
         #region Member Variable
         
-        [HideInInspector][Networked] public NetworkId OwnerId { get; set; }
+        [HideInInspector] public PlayerController ownerPlayer;
 
         [Header("Skill 기본 정보")]
         public int id;
@@ -92,11 +93,16 @@ namespace Skill
         public abstract void Earn(GameObject earnTargetObject);
         public abstract void MainLoop();
         public abstract void Run(GameObject runObject);
-        
+
         /// <summary>
         /// 레벨업 (스킬 강화) 할시 동작하는 함수
         /// </summary>
-        public abstract void LevelUp();
+        public virtual void LevelUp()
+        {
+            level.Current += 1;
+            var pc = ownerPlayer.GetComponent<PlayerController>();
+            pc.skillInventory.AddItem(this);
+        }
         
         #endregion
         
@@ -122,6 +128,7 @@ namespace Skill
         }
         public void SetJsonData(SkillJsonData json)
         {
+            skillName = json.Name;
             explain = json.Explain;
             coolTime = json.CoolTime;
             type = json.Type;
@@ -132,7 +139,12 @@ namespace Skill
         #region RPC Function
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public void SetOwnerIdRPC(NetworkId owner) => OwnerId = owner;
+        public void SetOwnerIdRPC(NetworkId owner)
+        {
+            var obj = Runner.FindObject(owner);
+            var pc = obj.GetComponent<PlayerController>();
+            ownerPlayer = pc;
+        }
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void SetIsInvokeRPC(NetworkBool value) => isInvoke = value;

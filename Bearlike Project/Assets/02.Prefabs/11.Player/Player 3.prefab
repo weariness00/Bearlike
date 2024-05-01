@@ -1923,7 +1923,7 @@ GameObject:
   - component: {fileID: 610731742149690281}
   - component: {fileID: 3841433149067554426}
   m_Layer: 5
-  m_Name: Count
+  m_Name: Level
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2397,8 +2397,8 @@ MonoBehaviour:
   - {fileID: 8769995844807618821}
   - {fileID: 1570449933029124202}
   - {fileID: 9218170556045526821}
-  - {fileID: 2560679525707469697}
-  - {fileID: 5686567187024387660}
+  - {fileID: 3046559224266524848}
+  - {fileID: 8977006672173418926}
 --- !u!54 &7507528767881361376
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2544,7 +2544,7 @@ MonoBehaviour:
   moveSpeed:
     _min: 0
     _max: 400
-    _current: 300
+    _current: 400
     isOverMax: 0
     isOverMin: 0
     isMin: 0
@@ -3562,6 +3562,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f630d3c29c3440b99839070d62ca31e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  icon: {fileID: 4925585993351585507}
+  levelText: {fileID: 3841433149067554426}
 --- !u!1 &7713537147908698985
 GameObject:
   m_ObjectHideFlags: 0
@@ -3895,7 +3897,7 @@ MonoBehaviour:
   - {fileID: 2205082202529722068}
   - {fileID: 1279204350436242223}
   - {fileID: 1570449933029124202}
-  - {fileID: 2560679525707469697}
+  - {fileID: 3046559224266524848}
 --- !u!1 &8339735508567356426
 GameObject:
   m_ObjectHideFlags: 0
@@ -4394,7 +4396,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -5299,11 +5301,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: KnockbackShot
       objectReference: {fileID: 0}
-    - target: {fileID: 2274422846459070080, guid: 2e367ffe1c14ba14796531dc6471ebd0,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5600621591736803518, guid: 2e367ffe1c14ba14796531dc6471ebd0,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -5357,147 +5354,35 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2274422846459070080, guid: 2e367ffe1c14ba14796531dc6471ebd0,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2560679525707469697}
-    - targetCorrespondingSourceObject: {fileID: 2274422846459070080, guid: 2e367ffe1c14ba14796531dc6471ebd0,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 5686567187024387660}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e367ffe1c14ba14796531dc6471ebd0, type: 3}
+--- !u!114 &3046559224266524848 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6016579880466552673, guid: 2e367ffe1c14ba14796531dc6471ebd0,
+    type: 3}
+  m_PrefabInstance: {fileID: 8734910694264152017}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc6a9ab5adb7bdc4fb9980305c8dc212, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &3783522131447054191 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5600621591736803518, guid: 2e367ffe1c14ba14796531dc6471ebd0,
     type: 3}
   m_PrefabInstance: {fileID: 8734910694264152017}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &7397441081880205649 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2274422846459070080, guid: 2e367ffe1c14ba14796531dc6471ebd0,
+--- !u!114 &8977006672173418926 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 408735745228232319, guid: 2e367ffe1c14ba14796531dc6471ebd0,
     type: 3}
   m_PrefabInstance: {fileID: 8734910694264152017}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2560679525707469697
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7397441081880205649}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc6a9ab5adb7bdc4fb9980305c8dc212, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _IsAsyncClient: []
-  _IsSpawnSuccess:
-    _value: 0
-  _OwnerId:
-    Raw: 0
-  id: 0
-  skillName: 
-  explain: 
-  type: 0
-  icon: {fileID: 0}
-  coolTime: 0
-  isInvoke: 0
-  status: {fileID: 0}
-  level:
-    _min: 0
-    _max: 1
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  playerStatus: {fileID: 0}
-  gun: {fileID: 0}
-  duration:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
---- !u!114 &5686567187024387660
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7397441081880205649}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp:
-    _min: 0
-    _max: 99999
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  damage:
-    _min: 0
-    _max: 99999
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  damageMultiple: 1
-  defence:
-    _min: 0
-    _max: 99999
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  avoid:
-    _min: 0
-    _max: 1
-    _current: 0
-    isOverMax: 1
-    isOverMin: 1
-    isMin: 0
-    isMax: 0
-  moveSpeed:
-    _min: 0
-    _max: 99999
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  attackSpeed:
-    _min: 0
-    _max: 99999
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  attackRange:
-    _min: 0
-    _max: 99999
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  force:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  condition: 0
-  property: 0
