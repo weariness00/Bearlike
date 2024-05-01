@@ -158,11 +158,6 @@ namespace Player
                 {
                     skillInventory.canvas.gameObject.SetActive(!skillInventory.canvas.gameObject.activeSelf);
                 }
-
-                if (data.DebugKeyF1)
-                {
-                    status.ApplyDamageRPC(10, Object.Id);
-                }
             }
         }
 

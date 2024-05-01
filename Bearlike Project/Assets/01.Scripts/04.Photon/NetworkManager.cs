@@ -316,9 +316,6 @@ namespace Photon
             playerInputData.MouseAxis.x = Input.GetAxis("Mouse X");
             playerInputData.MouseAxis.y = Input.GetAxis("Mouse Y");
 
-            if (Input.GetKeyDown(KeyCode.F1))
-                playerInputData.DebugKeyF1 = trueValue;
-
             input.Set(playerInputData);
         }
 
