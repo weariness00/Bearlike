@@ -1,12 +1,15 @@
 ﻿using System;
 using Manager;
 using Status;
+using UnityEngine;
+using UnityEngine.Serialization;
 using Util;
 
 namespace Loading
 {
     public class LoadingManager : Singleton<LoadingManager>
     {
+        [HideInInspector] public StatusValue<int> refValue;
         private int _waitCount; // 현재 로딩되어야 할 카운트
         private StatusValue<int> _downByte = new StatusValue<int>(); // 로딩에 필요한게 용량 부분인지
 
@@ -46,6 +49,7 @@ namespace Loading
             EndAction = null;
             LoadingProcessSuccess = null;
 
+            Instance.refValue.Max = 0;
             Instance._waitCount = 0;
             Instance._downByte.Max = 0;
         }
@@ -71,7 +75,8 @@ namespace Loading
                 
                 StartAction?.Invoke();
             }
-            
+
+            ++Instance.refValue.Max;
             ++Instance._waitCount;
             Instance._downByte.Max += downByte;
         }
@@ -87,6 +92,7 @@ namespace Loading
                 DebugManager.Log($"Loading 완료");
 
                 EndAction?.Invoke();
+                ++Instance.refValue.Current;
             }
             
             if(processName != null) LoadingProcessSuccess?.Invoke(processName);

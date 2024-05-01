@@ -4,8 +4,10 @@ using Data;
 using Fusion;
 using GamePlay.Stage;
 using GamePlay.StageLevel;
+using Loading;
 using Manager;
 using Photon;
+using Script.Data;
 using Script.GamePlay;
 using Status;
 using UnityEngine;
@@ -14,6 +16,7 @@ using Random = UnityEngine.Random;
 
 namespace GamePlay
 {
+    [DefaultExecutionOrder((int)DefaultExecutionOrderType.GameSceneStart)]
     public class GameManager : NetworkSingleton<GameManager>
     {
         #region Network Variable
@@ -35,11 +38,14 @@ namespace GamePlay
         public StageBase currentStage;
         public StatusValue<int> stageCount = new StatusValue<int>();// 현재 몇번째 스테이지 인지
 
+        public SceneReference loadingScene;
+        
         #region Unity Event Function
         protected override void Awake()
         {
             base.Awake();
             _spawnPlace.Initialize();
+            NetworkManager.LoadScene(loadingScene, LoadSceneMode.Additive);
         }
 
         public override void Spawned()
