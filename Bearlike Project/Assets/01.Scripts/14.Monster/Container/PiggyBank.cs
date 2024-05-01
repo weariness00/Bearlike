@@ -1107,6 +1107,8 @@ namespace Monster.Container
                 new Vector3(transform.position.x, transform.position.y + Height, transform.position.z);
         }
 
+        #region RestRPC
+
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void PressDownActionRPC()
         {
@@ -1134,6 +1136,8 @@ namespace Monster.Container
             networkAnimator.Animator.SetTrigger(EndRest);
             transform.GetChild(0).DOMoveY(100f, 1.0f).SetEase(Ease.InOutQuad);
         }
+
+        #endregion
         
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void PlayVFXRPC(string vfxName)
