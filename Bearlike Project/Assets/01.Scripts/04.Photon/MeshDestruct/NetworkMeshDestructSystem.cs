@@ -32,6 +32,55 @@ namespace Photon.MeshDestruct
             StartCoroutine(NetworkDestructCoroutine(targetObject, shapeType, position, size, force));
         }
 
+        public void NetworkSlice(GameObject targetObject, Vector3 sliceNormal, Vector3 slicePoint)
+        {
+            if(!HasStateAuthority || !targetObject || isDestruct) return;
+
+            isDestruct = true;
+            StartCoroutine(NetworkSliceCoroutine(targetObject, sliceNormal, slicePoint));
+        }
+
+        private IEnumerator NetworkSliceCoroutine(GameObject targetObject, Vector3 sliceNormal, Vector3 slicePoint)
+        {
+            var sliceObjects = MeshSlicing.Slice(targetObject, sliceNormal, slicePoint);
+
+            if (sliceObjects.Count == 1)
+                yield break;
+            
+            NetworkSliceInfo sliceInfo = default;
+            
+            for (var i = 0; i < sliceObjects.Count; i++)
+            {
+                var sliceObject = sliceObjects[i];
+                var networkObjectOp = Runner.SpawnAsync(slicePrefab, sliceObject.transform.position, sliceObject.transform.rotation, null, (runner, o) =>
+                {
+                    o.transform.parent = sliceObject.transform.parent;
+                });
+                
+                while (networkObjectOp.IsSpawned == false)
+                    yield return null;
+
+                var networkObj = networkObjectOp.Object;
+                var networkMeshFilter = networkObj.GetComponent<MeshFilter>();
+                var networkMeshRenderer = networkObj.GetComponent<MeshRenderer>();
+
+                networkMeshFilter.sharedMesh = sliceObject.GetComponent<MeshFilter>().sharedMesh;
+                networkMeshRenderer.sharedMaterials = sliceObject.GetComponent<MeshRenderer>().sharedMaterials;
+
+                if(i == 0)
+                    sliceInfo.SliceID0 = networkObjectOp.Object.Id;
+                else
+                    sliceInfo.SliceID1 = networkObjectOp.Object.Id;
+            }
+            
+            for (int i = 0; i < 3; i++)
+            {
+                IsOtherClientDestruct.Set(i, true);
+            }
+            SetIsDestructRPC(0, false);
+            NetworkSliceRPC(sliceInfo);
+        }
+
         private IEnumerator NetworkDestructCoroutine(GameObject targetObject, PrimitiveType shapeType, Vector3 position, Vector3 size, Vector3 force)
         {
             var networkMeshDestructObject = targetObject.GetComponent<NetworkMeshDestructObject>();
@@ -185,6 +234,19 @@ namespace Photon.MeshDestruct
             if(HasStateAuthority) return;
 
             StartCoroutine(NetworkDestructCoroutine(destructInfo));
+        }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        void NetworkSliceRPC(NetworkSliceInfo sliceInfo)
+        {
+            if(HasStateAuthority) return;
+            
+            StartCoroutine(NetworkSliceCoroutine(sliceInfo));
+        }
+
+        private IEnumerator NetworkSliceCoroutine(NetworkSliceInfo sliceInfo)
+        {
+            
         }
 
         private IEnumerator NetworkDestructCoroutine(NetworkDestructInfo destructInfo)

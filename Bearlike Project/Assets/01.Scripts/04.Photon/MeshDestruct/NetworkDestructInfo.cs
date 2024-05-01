@@ -16,4 +16,13 @@ namespace Photon.MeshDestruct
 
         public NetworkId InteractObjectId; // Is Slice가 false 경우 부서진 객체 정보 수신
     }
+
+    public struct NetworkSliceInfo : INetworkStruct
+    {
+        public NetworkId SliceID0;
+        public NetworkId SliceID1;
+        
+        public Vector3 SliceNormal;
+        public Vector3 SlicePoint;
+    }
 }
