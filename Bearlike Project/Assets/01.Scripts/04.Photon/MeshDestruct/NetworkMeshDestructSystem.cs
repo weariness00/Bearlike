@@ -15,6 +15,8 @@ namespace Photon.MeshDestruct
         [Networked, Capacity(3)]private NetworkArray<NetworkBool> IsOtherClientDestruct { get;}
         public NetworkPrefabRef slicePrefab;
         public bool isDestruct;
+
+        private GameObject _sliceTargetObject;
         
         public GameObject FindDestructObject(int id)
         {
@@ -37,7 +39,7 @@ namespace Photon.MeshDestruct
             if(!HasStateAuthority || !targetObject || isDestruct) return;
             isDestruct = true;
             
-            var sliceObjects = MeshSlicing.Slice(targetObject, sliceNormal, slicePoint);
+            var sliceObjects = MeshSlicing.Slice(targetObject, sliceNormal, slicePoint, false);
 
             if (sliceObjects.Count == 1)
             {
@@ -45,13 +47,13 @@ namespace Photon.MeshDestruct
                 return;
             }
             
-            Debug.Log(targetObject.name);
-
-            
             NetworkSliceInfo sliceInfo = default;
-            sliceInfo.Id = targetObject.GetComponent<NetworkMeshDestructObject>().id;
+            sliceInfo.TargetId = targetObject.GetComponent<NetworkObject>().Id;
             sliceInfo.SliceNormal = sliceNormal;
             sliceInfo.SlicePoint = slicePoint;
+            
+            _sliceTargetObject = targetObject;
+            targetObject.SetActive(false);
             
             for (var i = 0; i < sliceObjects.Count; i++)
             {
@@ -59,13 +61,21 @@ namespace Photon.MeshDestruct
                 var networkObj = await Runner.SpawnAsync(slicePrefab, sliceObject.transform.position, sliceObject.transform.rotation, null, (runner, o) =>
                 {
                     o.transform.parent = sliceObject.transform.parent;
+                    o.tag = "Destruction";
                 });
-                
+
+                var sliceMeshFilter = sliceObject.GetComponent<MeshFilter>();
                 var networkMeshFilter = networkObj.GetComponent<MeshFilter>();
                 var networkMeshRenderer = networkObj.GetComponent<MeshRenderer>();
+                var networkMeshCollider = networkObj.GetComponent<MeshCollider>();
+                var networkObjRigidBody = networkObj.GetComponent<Rigidbody>();
 
-                networkMeshFilter.sharedMesh = sliceObject.GetComponent<MeshFilter>().sharedMesh;
+                networkMeshFilter.sharedMesh = sliceMeshFilter.sharedMesh;
                 networkMeshRenderer.sharedMaterials = sliceObject.GetComponent<MeshRenderer>().sharedMaterials;
+                networkMeshCollider.sharedMesh = sliceMeshFilter.sharedMesh;
+                networkMeshCollider.convex = true;
+                networkMeshCollider.enabled = true;
+                networkObjRigidBody.useGravity = true;
 
                 if(i == 0)
                     sliceInfo.SliceID0 = networkObj.Id;
@@ -222,8 +232,11 @@ namespace Photon.MeshDestruct
                     --count;
             }
 
-            if(count <= 0)
+            if (count <= 0)
+            {
+                Destroy(_sliceTargetObject);
                 isDestruct = false;
+            }
         } 
         
         /// <summary>
@@ -243,8 +256,10 @@ namespace Photon.MeshDestruct
         {
             if(HasStateAuthority) return;
             
-            var targetObject = FindDestructObject(sliceInfo.Id);
+            var targetNetworkObject = Runner.FindObject(sliceInfo.TargetId);
+            var targetObject = targetNetworkObject.gameObject;
             var sliceObjects = MeshSlicing.Slice(targetObject, sliceInfo.SliceNormal, sliceInfo.SlicePoint);
+            targetObject.SetActive(false);
             
             GameObject[] networkObjects = new GameObject[2];
             networkObjects[0] = Runner.FindObject(sliceInfo.SliceID0).gameObject;

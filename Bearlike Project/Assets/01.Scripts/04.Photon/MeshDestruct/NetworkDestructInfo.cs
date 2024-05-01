@@ -19,7 +19,7 @@ namespace Photon.MeshDestruct
 
     public struct NetworkSliceInfo : INetworkStruct
     {
-        public int Id;
+        public NetworkId TargetId;
         
         public NetworkId SliceID0;
         public NetworkId SliceID1;
