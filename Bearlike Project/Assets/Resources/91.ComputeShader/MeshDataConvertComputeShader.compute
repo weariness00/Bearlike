@@ -52,8 +52,8 @@ void CSMeshSlice(uint3 id : SV_DispatchThreadID)
     int indices[3];
     float dots[3]; // 단면이 바라보는 방향인지 판단하기 위한 내적
     DotData polygon[3];
-
-    for (int i = 0; i < 3; ++i)
+    int i = 0;
+    for (i = 0; i < 3; ++i)
     {
         polygon[i] = (DotData)0;
         indices[i] = triangles[idx * 3 + i];
@@ -100,7 +100,7 @@ void CSMeshSlice(uint3 id : SV_DispatchThreadID)
         DotData otherPolygonData[3];
         float otherToPlaneDistances[3];
         float ratios[3]; // 0번째 원소는 의미 없는 값이다.
-        for (int i = 0; i < 3; ++i)
+        for (i = 0; i < 3; ++i)
         {
             otherPolygonData[i] = (DotData) 0;
             otherPolygonData[i].Vertex = vertices[otherVertexIndices[i]];
@@ -116,7 +116,7 @@ void CSMeshSlice(uint3 id : SV_DispatchThreadID)
         uint dotIndex;
         InterlockedAdd(newDotCount[0], 2, newDotIndex);
         InterlockedAdd(dotLength[0],2,dotIndex);
-        for (int i = 1; i < 3; ++i)
+        for (i = 1; i < 3; ++i)
         {
             newDotData[newDotIndex + i - 1].Vertex = lerp(otherPolygonData[0].Vertex, otherPolygonData[i].Vertex, ratios[i]);
             newDotData[newDotIndex + i - 1].Normal = otherPolygonData[0].Normal;
@@ -179,7 +179,7 @@ StructuredBuffer<DotData> newDotCenter;
 [numthreads(32,1,1)]
 void CSMakeCap(uint3 id : SV_DispatchThreadID)
 {
-    const int idx = id.x;
+    const uint idx = id.x;
     if (idx >= newDotCount[0])
         return;
 
@@ -264,7 +264,7 @@ void CSMakeCap(uint3 id : SV_DispatchThreadID)
 
 // Slice된 Polygon은 triangle의 index가 기존 Mesh의 순서대로 되있어 이를 다시 정리해주어야함.
 
-int slicePolygonLength;
+uint slicePolygonLength;
 int sliceDotDataLength;
 
 RWStructuredBuffer<PolygonData> slicePolygon;
