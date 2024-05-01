@@ -15,6 +15,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.VFX;
 using Random = UnityEngine.Random;
+using DG.Tweening;
 
 namespace Monster.Container
 {
@@ -67,12 +68,13 @@ namespace Monster.Container
         [SerializeField] private float rushDistance = 5.0f;
         [SerializeField]private float jumpHeight = 10.0f;
 
-        [Networked] private float _height { get; set; }
+        [Networked] private float Height { get; set; }
         private float _delayTime = 5.0f;
 
         private static readonly int Walk = Animator.StringToHash("tWalk");
         private static readonly int Dead = Animator.StringToHash("tDead");
         private static readonly int Rest = Animator.StringToHash("tRest");
+        private static readonly int EndRest = Animator.StringToHash("tEndRest");
         private static readonly int Defence = Animator.StringToHash("tDefence");
         private static readonly int Attack = Animator.StringToHash("tAttack");
 
@@ -89,7 +91,7 @@ namespace Monster.Container
         private void Awake()
         {
             base.Awake();
-            _btRunner = new BehaviorTreeRunner(SettingBT());
+            _btRunner = new BehaviorTreeRunner(SettingTestBT());
             _visualEffect = GetComponentInChildren<VisualEffect>();
             _navMeshAgent = GetComponent<NavMeshAgent>();
 
@@ -112,7 +114,7 @@ namespace Monster.Container
         {
             base.Spawned();
 
-            _height = 0;
+            Height = 0;
             _navMeshAgent.enabled = true;   
             
             List<GameObject> playerObjects = new List<GameObject>();
@@ -253,14 +255,11 @@ namespace Monster.Container
         INode SettingTestBT()
         {
             return new SequenceNode
-            (
-                new SequenceNode
-                (   // fart
-                    new ActionNode(CheckFartAction), 
-                    new ActionNode(StartFart),
-                    new ActionNode(TermFuction),
-                    new ActionNode(StopFart)
-                )
+            ( // Rest
+                new ActionNode(CheckRestAction),
+                // new ActionNode(CheckRestHp),
+                new ActionNode(StartRest),
+                new ActionNode(TermFuction)
             );
         }
 
@@ -428,8 +427,6 @@ namespace Monster.Container
                 
             _durationTime = _gameManager.PlayTimer;
                 
-            DebugManager.Log("Pig Walk");
-                
             return INode.NodeState.Success;
         }
 
@@ -485,7 +482,6 @@ namespace Monster.Container
             
             _durationTime = _gameManager.PlayTimer;
 
-            DebugManager.Log("Pig Defence");
             return INode.NodeState.Success;
         }
 
@@ -539,7 +535,6 @@ namespace Monster.Container
 
             _durationTime = _gameManager.PlayTimer;
 
-            DebugManager.Log("Pig Run");
             return INode.NodeState.Success;
         }
 
@@ -651,7 +646,6 @@ namespace Monster.Container
             
             _durationTime = _gameManager.PlayTimer;
 
-            DebugManager.Log("Pig Attack");
             return INode.NodeState.Success;
         }
 
@@ -722,7 +716,6 @@ namespace Monster.Container
             
             _durationTime = _gameManager.PlayTimer;
 
-            DebugManager.Log("Pig Rush");
             return INode.NodeState.Success;
         }
 
@@ -786,20 +779,21 @@ namespace Monster.Container
         /// <returns></returns>
         INode.NodeState StartJumpAction()
         {
-            networkAnimator.Animator.SetTrigger(Attack);
-            networkAnimator.Animator.SetFloat(AttackBlend, JUMP_TYPE);
-            
             // 가장 먼 플레이어를 지정
             _navMeshAgent.speed = FastDistance(_players[_targetPlayerIndex].transform.position, transform.position) / 3.0f;
             _navMeshAgent.SetDestination(_players[_targetPlayerIndex].transform.position);
 
             int type = Random.Range(1, 3); // 1 or 2
             
+            networkAnimator.Animator.SetTrigger(Attack);
+            networkAnimator.Animator.SetFloat(AttackBlend, JUMP_TYPE);
+            
+            
+            
             DebugManager.ToDo("돼지 BT : status에서 속도를 받아오도록 수정");
             StartCoroutine(JumpCoroutine(upSpeed, downSpeed, type));
             
             _durationTime = _gameManager.PlayTimer;
-            DebugManager.Log($"Pig Jump{type}");
             return INode.NodeState.Success;
         }
         
@@ -809,19 +803,19 @@ namespace Monster.Container
         /// <returns></returns>
         INode.NodeState StartJumpAttackAction()
         {
-            networkAnimator.Animator.SetTrigger(Attack);
-            networkAnimator.Animator.SetFloat(AttackBlend, JUMP_TYPE);
             int type;
             if (status.hp.Current / status.hp.Max > 0.5f)
                 type = 3;
             else
                 type = 4;
             
+            networkAnimator.Animator.SetTrigger(Attack);
+            networkAnimator.Animator.SetFloat(AttackBlend, JUMP_TYPE);
+            
             DebugManager.ToDo("돼지 BT : status에서 속도를 받아오도록 수정");
             StartCoroutine(JumpCoroutine(upSpeed, downSpeed, type));
             
             _durationTime = _gameManager.PlayTimer;
-            DebugManager.Log($"Pig Jump{type}");
             return INode.NodeState.Success;
         }
 
@@ -829,14 +823,14 @@ namespace Monster.Container
         {
             while (true)
             {
-                _height += risingSpeed * Runner.DeltaTime * (jumpHeight + 1 - _height);
                 var transform1 = transform;
+                Height += risingSpeed * Runner.DeltaTime * (jumpHeight + 1 - Height);
                 // transform.position = new Vector3(transform1.position.x, transform1.position.y + _height, transform1.position.z);
-                SetPositionRPC();
+                SetPositionRPC(0, risingSpeed);
                 
                 yield return new WaitForSeconds(0.0f);
 
-                if (_height >= jumpHeight)
+                if (Height >= jumpHeight)
                 {
                     _durationTime = _gameManager.PlayTimer;
                     if (type == 2)
@@ -851,7 +845,7 @@ namespace Monster.Container
                         
                         while (IsAnimationRunning("Attack"))
                         {
-                            transform.position = new Vector3(transform1.position.x, transform1.position.y + _height, transform1.position.z);
+                            transform.position = new Vector3(transform1.position.x, transform1.position.y + Height, transform1.position.z);
                             yield return new WaitForSeconds(0.0f);
                         }
                         
@@ -868,12 +862,12 @@ namespace Monster.Container
             {
                 while (true)
                 {
-                    _height -= downSpeed * Runner.DeltaTime * (jumpHeight + 1 - _height); 
+                    Height -= downSpeed * Runner.DeltaTime * (jumpHeight + 1 - Height);
                     // transform.position = new Vector3(transform1.position.x, transform1.position.y + _height, transform1.position.z);
-                    SetPositionRPC();
+                    SetPositionRPC(1, downSpeed);
                     yield return new WaitForSeconds(0.0f);
 
-                    if (_height < 0.0f)
+                    if (Height < 0.0f)
                     {
                         if (type == 3 || type == 1)
                         {
@@ -886,7 +880,7 @@ namespace Monster.Container
                             //     status.hp.Current -= (int)(status.hp.Max / 0.05f);
                         }
                         
-                        _height = 0.0f;
+                        Height = 0.0f;
                         _durationTime = _gameManager.PlayTimer;
                         yield break;
                     }
@@ -942,7 +936,6 @@ namespace Monster.Container
             // PlayVFX("Fart_vfx");
 
             PlayVFXRPC("Fart_vfx");
-            DebugManager.Log($"Pig Fart");
             _durationTime = _gameManager.PlayTimer;
             return INode.NodeState.Success;
         }
@@ -992,14 +985,16 @@ namespace Monster.Container
         /// <returns></returns>
         INode.NodeState StartRest()
         {
-            networkAnimator.Animator.SetTrigger(Rest);
+            RestDownRPC(0);
             _navMeshAgent.SetDestination(transform.position);
 
             StartCoroutine(RestCoroutine());
+            StartCoroutine(StartPressCoroutine());
             // PlayVFX("Rest_vfx");
+            
             PlayVFXRPC("Rest_vfx");
-            DebugManager.Log($"Pig Rest");
             _durationTime = _gameManager.PlayTimer;
+            
             return INode.NodeState.Success;
         }
         
@@ -1008,6 +1003,7 @@ namespace Monster.Container
             int count = 0;
             while (true)
             {
+                _durationTime = _gameManager.PlayTimer;
                 // TODO : 상수화 시키자
                 status.hp.Current += (int)((status.hp.Max - status.hp.Current) / 0.05f);
                 yield return new WaitForSeconds(0.5f);
@@ -1015,14 +1011,22 @@ namespace Monster.Container
                 // TODO: 상수화 시키자
                 if (count >= 10)
                 {
-                    // StopVFX("Rest_vfx");
                     StopVFXRPC("Rest_vfx");
+                    PressUpActionRPC();
+                    RestUpRPC();
                     // TODO : 시간 동기화 필요
                     yield break;
                 }
             }
         }
 
+        IEnumerator StartPressCoroutine()
+        {
+            yield return new WaitForSeconds(2.0f);
+            RestDownRPC(1);
+            PressDownActionRPC();
+        }
+        
         #endregion
 
         #region CoinAttack
@@ -1078,7 +1082,6 @@ namespace Monster.Container
             // PlayVFX("CoinMeteor_vfx");
             PlayVFXRPC("CoinMeteor_vfx");
             _durationTime = _gameManager.PlayTimer;
-            DebugManager.Log($"Pig Coin");
             return INode.NodeState.Success;
         }
 
@@ -1091,10 +1094,47 @@ namespace Monster.Container
         }
         #endregion
         #endregion
+
+        #region RPC Function
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void SetPositionRPC(int type, float speed)
+        {
+            // if (type == 0)  Height += speed * Runner.DeltaTime * (jumpHeight + 1 - Height);
+            // else Height -= speed * Runner.DeltaTime * (jumpHeight + 1 - Height);
+            
+            transform.position =
+                new Vector3(transform.position.x, transform.position.y + Height, transform.position.z);
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void PressDownActionRPC()
+        {
+            transform.DOScaleY(0.9f, 1.0f).SetEase(Ease.InOutQuad);
+        }
         
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public void SetPositionRPC() => transform.position = new Vector3(transform.position.x, transform.position.y + _height, transform.position.z);
-
+        public void PressUpActionRPC()
+        {
+            transform.DOScaleY(1.0f, 1.0f).SetEase(Ease.InOutQuad);
+        }
+        
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void RestDownRPC(int type)
+        {
+            if(type == 0)
+                networkAnimator.Animator.SetTrigger(Rest);
+            else
+                transform.GetChild(0).DOMoveY(100f - 0.1f, 1.0f).SetEase(Ease.InOutQuad);
+        }
+        
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void RestUpRPC()
+        {
+            networkAnimator.Animator.SetTrigger(EndRest);
+            transform.GetChild(0).DOMoveY(100f, 1.0f).SetEase(Ease.InOutQuad);
+        }
+        
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void PlayVFXRPC(string vfxName)
         {
@@ -1136,6 +1176,7 @@ namespace Monster.Container
                 }
             }
         }
-        
+
+        #endregion
     }
 }
