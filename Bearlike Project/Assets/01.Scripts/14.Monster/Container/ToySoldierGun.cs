@@ -225,10 +225,17 @@ namespace Monster.Container
         private INode.NodeState LongAttack()
         {
             // 공격 딜레이가 남아있으면 실패, 총을 쏠 수 있는 상태가 아니면 실패
-            if (status.AttackLateTimer.Expired(Runner) == false ||
-                gun.FireLateTimer.Expired(Runner) == false)
+            if (status.AttackLateTimer.Expired(Runner) == false)
             {
                 return INode.NodeState.Failure;
+            }
+
+            if (gun.FireLateTimer.Expired(Runner))
+            {
+                Vector3 dir = (transform.position - targetTransform.transform.position).normalized;
+                Quaternion lookRotation = Quaternion.LookRotation(dir);
+                transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime);
+                return INode.NodeState.Running;
             }
             
             // 처음 진입 초기화
@@ -241,7 +248,6 @@ namespace Monster.Container
                 AniLongAttackTimer = TickTimer.CreateFromSeconds(Runner, longAttackClip.length);
                 status.StartAttackTimerRPC();
                 networkAnimator.SetTrigger("tAttack");
-                transform.LookAt(targetTransform);
             }
             
             if (AniLongAttackTimer.Expired(Runner) == false)
