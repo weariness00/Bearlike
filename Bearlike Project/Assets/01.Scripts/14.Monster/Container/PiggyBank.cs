@@ -788,10 +788,9 @@ namespace Monster.Container
             networkAnimator.Animator.SetTrigger(Attack);
             networkAnimator.Animator.SetFloat(AttackBlend, JUMP_TYPE);
             
-            
-            
             DebugManager.ToDo("돼지 BT : status에서 속도를 받아오도록 수정");
             StartCoroutine(JumpCoroutine(upSpeed, downSpeed, type));
+            JumpUpRPC();
             
             _durationTime = _gameManager.PlayTimer;
             return INode.NodeState.Success;
@@ -804,7 +803,7 @@ namespace Monster.Container
         INode.NodeState StartJumpAttackAction()
         {
             int type;
-            if (status.hp.Current / status.hp.Max > 0.5f)
+            if ((float)(status.hp.Current) / status.hp.Max > 0.5f)
                 type = 3;
             else
                 type = 4;
@@ -814,6 +813,7 @@ namespace Monster.Container
             
             DebugManager.ToDo("돼지 BT : status에서 속도를 받아오도록 수정");
             StartCoroutine(JumpCoroutine(upSpeed, downSpeed, type));
+            JumpUpRPC();
             
             _durationTime = _gameManager.PlayTimer;
             return INode.NodeState.Success;
@@ -821,20 +821,17 @@ namespace Monster.Container
 
         IEnumerator JumpCoroutine(float risingSpeed, float downSpeed, int type)
         {
-            float time = _gameManager.PlayTimer;
             while (true)
             {
+                // var transform1 = transform;
+                // Height += risingSpeed * Runner.DeltaTime * (jumpHeight + 1 - Height);
+                // // transform.position = new Vector3(transform1.position.x, transform1.position.y + _height, transform1.position.z);
+                // SetPositionRPC(0, risingSpeed);
                 
-                var transform1 = transform;
-                Height += risingSpeed * Runner.DeltaTime * (jumpHeight + 1 - Height);
-                // transform.position = new Vector3(transform1.position.x, transform1.position.y + _height, transform1.position.z);
-                SetPositionRPC(0, risingSpeed);
-                
-                yield return new WaitForSeconds(0.0f);
+                yield return new WaitForSeconds(3.0f);
 
-                if (Height >= jumpHeight)
+                // if (Height >= jumpHeight)
                 {
-                    DebugManager.Log(_gameManager.PlayTimer - time);
                     _durationTime = _gameManager.PlayTimer;
                     if (type == 2)
                     {
@@ -842,13 +839,10 @@ namespace Monster.Container
                         networkAnimator.Animator.SetFloat("AttackBlend", 2);
                         
                         // TODO : Coin VFX
-                        //PlayVFX("CoinUp");
-                        // PlayVFX("CoinMeteor_vfx");
                         PlayVFXRPC("CoinMeteor_vfx");
                         
                         while (IsAnimationRunning("Attack"))
                         {
-                            transform.position = new Vector3(transform1.position.x, transform1.position.y + Height, transform1.position.z);
                             yield return new WaitForSeconds(0.0f);
                         }
                         
@@ -856,6 +850,7 @@ namespace Monster.Container
                     }
 
                     StartCoroutine(JumpDownCoroutine(downSpeed, type));
+                    JumpDownRPC();
                     yield break;
                 }
             }
@@ -863,29 +858,27 @@ namespace Monster.Container
 
         IEnumerator JumpDownCoroutine(float downSpeed, float type)
             {
-                float time = _gameManager.PlayTimer;
                 while (true)
                 {
-                    Height -= downSpeed * Runner.DeltaTime * (jumpHeight + 1 - Height);
-                    // transform.position = new Vector3(transform1.position.x, transform1.position.y + _height, transform1.position.z);
-                    SetPositionRPC(1, downSpeed);
-                    yield return new WaitForSeconds(0.0f);
+                    // Height -= downSpeed * Runner.DeltaTime * (jumpHeight + 1 - Height);
+                    // // transform.position = new Vector3(transform1.position.x, transform1.position.y + _height, transform1.position.z);
+                    // SetPositionRPC(1, downSpeed);
+                    yield return new WaitForSeconds(1.0f);
 
-                    if (Height < 0.0f)
+                    // if (Height < 0.0f)
                     {
-                        DebugManager.Log(_gameManager.PlayTimer - time);
                         if (type == 3 || type == 1)
                         {
-                            // VFX실행
-                            // PlayVFX("GroundCrack_vfx");
                             PlayVFXRPC("GroundCrack_vfx");
+                            
                             // 데미지 입히기
                             // TODO : 데미지 비율 상수로 조절하자
-                            // if(type == 3)
-                            //     status.hp.Current -= (int)(status.hp.Max / 0.05f);
+                            DebugManager.ToDo("데미지를 받을때 id받아오는 형식을 변수에 담아서 받아오자");
+                            if (type == 3)
+                                // status.hp.Current -= (int)(status.hp.Current / 100.0f);
+                                status.ApplyDamageRPC((int)(status.hp.Current / 100.0f), gameObject.GetComponent<NetworkObject>().Id);
                         }
-                        
-                        Height = 0.0f;
+                        DebugManager.Log($"type : {type}, HP : {status.hp.Current} / {status.hp.Max}");
                         _durationTime = _gameManager.PlayTimer;
                         yield break;
                     }
@@ -898,10 +891,8 @@ namespace Monster.Container
             GameObject targetMeteorObject = transform.Find("CoinMeteor_vfx").gameObject;
 
             if (true == targetGroundObject.activeSelf)
-                // StopVFX("GroundCrack_vfx");
                 StopVFXRPC("GroundCrack_vfx");
             else if (true == targetMeteorObject.activeSelf)
-                // StopVFX("CoinMeteor_vfx");
                 StopVFXRPC("CoinMeteor_vfx");
             
             return INode.NodeState.Success;
@@ -1112,6 +1103,22 @@ namespace Monster.Container
                 new Vector3(transform.position.x, transform.position.y + Height, transform.position.z);
         }
 
+        #region JumpRPC
+        
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void JumpUpRPC()
+        {
+            transform.GetChild(0).DOMoveY(110f, 3.0f).SetEase(Ease.OutCirc);
+        }
+        
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void JumpDownRPC()
+        {
+            transform.GetChild(0).DOMoveY(100f, 1.0f).SetEase(Ease.InCirc);
+        }
+
+        #endregion
+        
         #region RestRPC
 
         [Rpc(RpcSources.All, RpcTargets.All)]
