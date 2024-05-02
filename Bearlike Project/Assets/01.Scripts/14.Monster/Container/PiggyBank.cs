@@ -255,11 +255,11 @@ namespace Monster.Container
         INode SettingTestBT()
         {
             return new SequenceNode
-            ( // Rest
-                new ActionNode(CheckRestAction),
-                // new ActionNode(CheckRestHp),
-                new ActionNode(StartRest),
-                new ActionNode(TermFuction)
+            (
+                new ActionNode(CheckJumpAttackAction), 
+                new ActionNode(StartJumpAttackAction),
+                new ActionNode(TermFuction),
+                new ActionNode(StopJumpAttack)
             );
         }
 
@@ -821,8 +821,10 @@ namespace Monster.Container
 
         IEnumerator JumpCoroutine(float risingSpeed, float downSpeed, int type)
         {
+            float time = _gameManager.PlayTimer;
             while (true)
             {
+                
                 var transform1 = transform;
                 Height += risingSpeed * Runner.DeltaTime * (jumpHeight + 1 - Height);
                 // transform.position = new Vector3(transform1.position.x, transform1.position.y + _height, transform1.position.z);
@@ -832,6 +834,7 @@ namespace Monster.Container
 
                 if (Height >= jumpHeight)
                 {
+                    DebugManager.Log(_gameManager.PlayTimer - time);
                     _durationTime = _gameManager.PlayTimer;
                     if (type == 2)
                     {
@@ -860,6 +863,7 @@ namespace Monster.Container
 
         IEnumerator JumpDownCoroutine(float downSpeed, float type)
             {
+                float time = _gameManager.PlayTimer;
                 while (true)
                 {
                     Height -= downSpeed * Runner.DeltaTime * (jumpHeight + 1 - Height);
@@ -869,6 +873,7 @@ namespace Monster.Container
 
                     if (Height < 0.0f)
                     {
+                        DebugManager.Log(_gameManager.PlayTimer - time);
                         if (type == 3 || type == 1)
                         {
                             // VFX실행
@@ -990,8 +995,8 @@ namespace Monster.Container
 
             StartCoroutine(RestCoroutine());
             StartCoroutine(StartPressCoroutine());
-            // PlayVFX("Rest_vfx");
             
+            // PlayVFX("Rest_vfx");
             PlayVFXRPC("Rest_vfx");
             _durationTime = _gameManager.PlayTimer;
             
@@ -1150,16 +1155,9 @@ namespace Monster.Container
 
                 if (_visualEffect != null)
                 {
-                    // if (vfxName == "GroundCrack_vfx" || vfxName == "Fart_vfx")
-                    // {
-                    targetObject.gameObject.SetActive(true);
+                    if(!targetObject.activeSelf)
+                        targetObject.gameObject.SetActive(true);
                     _visualEffect.SendEvent("OnPlay");
-                    // }
-                    // else
-                    // {
-                    //     targetObject.gameObject.SetActive(true);
-                    //     _visualEffect.Play();
-                    // }
                 }
             }
         }
@@ -1175,8 +1173,7 @@ namespace Monster.Container
                 if (_visualEffect != null)
                 {
                     _visualEffect.SendEvent("OffPlay");
-                    // _visualEffect.Stop();
-                    targetObject.gameObject.SetActive(false);
+                    // targetObject.gameObject.SetActive(false);
                 }
             }
         }
