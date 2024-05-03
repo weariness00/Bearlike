@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-
-namespace Inventory
+﻿namespace UI.Inventory
 {
     public interface IInventoryItemAdd
     {

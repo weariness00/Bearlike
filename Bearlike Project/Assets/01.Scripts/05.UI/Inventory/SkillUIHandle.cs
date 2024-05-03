@@ -1,10 +1,9 @@
-﻿using Inventory;
-using Skill;
+﻿using Skill;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI
+namespace UI.Inventory
 {
     public class SkillUIHandle : MonoBehaviour, IInventoryUIUpdate
     {

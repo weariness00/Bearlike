@@ -4,7 +4,6 @@ using Fusion;
 using Fusion.Addons.SimpleKCC;
 using Item;
 using Manager;
-using Monster;
 using Photon;
 using Skill;
 using Status;

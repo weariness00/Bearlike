@@ -1,6 +1,4 @@
-﻿using Inventory;
-using Player;
-using Status;
+﻿using Player;
 using UnityEngine;
 
 namespace Item.Container

@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Inventory;
 using UI.Inventory;
 
 namespace Item

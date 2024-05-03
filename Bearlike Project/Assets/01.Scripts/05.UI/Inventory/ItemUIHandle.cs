@@ -1,5 +1,4 @@
-﻿using Inventory;
-using Item;
+﻿using Item;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

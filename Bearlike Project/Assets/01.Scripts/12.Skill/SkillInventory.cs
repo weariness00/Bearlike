@@ -1,5 +1,4 @@
-﻿using Inventory;
-using UI;
+﻿using UI.Inventory;
 
 namespace Skill
 {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using UI.Inventory;
 using UnityEditor;
-using Inventory;
 using UnityEngine;
 
 [CustomEditor(typeof(InventoryBase<,>), true)]

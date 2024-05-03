@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Manager;
-using Unity.VisualScripting;
 using UnityEngine;
 
-namespace Inventory
+namespace UI.Inventory
 {
     /// <summary>
     /// Inventory를 관리하는 클래스
@@ -18,6 +16,7 @@ namespace Inventory
         where UIHandle : Component
     {
         public Canvas canvas;
+        public InventoryItemExplainHandle explainHandel;
         public GameObject blockUIPrefab;
         public Transform uiParentTransform;
         

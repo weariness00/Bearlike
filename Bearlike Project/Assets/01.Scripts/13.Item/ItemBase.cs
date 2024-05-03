@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Data;
-using Inventory;
 using Player;
 using Status;
+using UI.Inventory;
 using UnityEngine;
 using Random = UnityEngine.Random;
 

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Data;
 using Fusion;
-using Inventory;
 using Photon;
 using Player;
 using Status;
+using UI.Inventory;
 using UnityEngine;
 
 namespace Skill
