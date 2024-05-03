@@ -9,7 +9,7 @@ namespace Item.Container
 
         public void Update()
         {
-            transform.Rotate(0, Time.deltaTime * 360f,0);
+            transform.Rotate(0, Time.deltaTime * 90f,0);
         }
 
         private void OnTriggerEnter(Collider other)

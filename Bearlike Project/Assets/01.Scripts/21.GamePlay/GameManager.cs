@@ -23,7 +23,6 @@ namespace GamePlay
         
         [Networked] public float PlayTimer { get; set; }
         [Networked] public float AlivePlayerCount { get; set; }
-        [Networked] public NetworkBool IsClearBossStage { get; set; }
         
         #endregion
 
@@ -136,13 +135,6 @@ namespace GamePlay
 
         public void SetStage(int index) => SetStage(stageList.Count < index ? null : stageList[index]);
         
-        #endregion
-
-        #region RPC Function
-
-        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-        public void SetIsClearBossStageRPC(NetworkBool value) => IsClearBossStage = value;
-
         #endregion
     }
 }

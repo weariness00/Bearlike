@@ -44,11 +44,11 @@ namespace Player.Container
                 FlippingCoin.Object.AssignInputAuthority(Object.InputAuthority);
                 tmpSkill.Object.AssignInputAuthority(Object.InputAuthority);
                 ultimateSkill.Object.AssignInputAuthority(Object.InputAuthority);
-
-                FlippingCoin.ownerPlayer = this;
-                tmpSkill.ownerPlayer = this;
-                ultimateSkill.ownerPlayer = this;
             }
+            
+            FlippingCoin.ownerPlayer = this;
+            tmpSkill.ownerPlayer = this;
+            ultimateSkill.ownerPlayer = this;
             
             FlippingCoin.LevelUp();
             tmpSkill.LevelUp();

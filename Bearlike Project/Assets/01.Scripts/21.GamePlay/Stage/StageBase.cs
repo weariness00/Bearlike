@@ -224,6 +224,7 @@ namespace GamePlay.Stage
             stageGameObject.transform.position = pos;
             
             stageGameObject.SetActive(true);
+            if(destructObject) destructObject.SetActive(true);
             
             // 포탈 연결
             if (GameManager.Instance.currentStage != null)

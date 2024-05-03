@@ -2,6 +2,7 @@
 using GamePlay.StageLevel;
 using Manager;
 using Monster;
+using Photon;
 using Script.Photon;
 using Status;
 using UnityEngine;
@@ -49,8 +50,15 @@ namespace GamePlay.Stage.Container
 
         public override void StageClear()
         {
-            base.StageClear();
-            GameManager.Instance.SetIsClearBossStageRPC(true);
+            if (isStageClear)
+                return;
+            
+            if (destructObject != null) destructObject.tag = "Destruction";
+            
+            nextStagePortal.InteractEnterAction = (obj) => NetworkManager.Runner.Shutdown();
+            
+            DebugManager.Log("스테이지 클리어\n" +
+                             $"스테이지 모드 :{stageData.info.stageType}");
         }
     }
 }

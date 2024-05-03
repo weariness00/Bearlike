@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 4138702410140647342}
   - component: {fileID: 2200967895971564388}
   - component: {fileID: 8082968756175958697}
-  - component: {fileID: 3907019514734640716}
-  - component: {fileID: 2471128068947553950}
+  - component: {fileID: 6885141499465597650}
+  - component: {fileID: 8794831679462418456}
   m_Layer: 0
   m_Name: Door
   m_TagString: Untagged
@@ -104,25 +104,9 @@ MonoBehaviour:
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 3907019514734640716}
---- !u!114 &3907019514734640716
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 399576629531323057}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SyncScale: 0
-  SyncParent: 0
-  _autoAOIOverride: 1
-  DisableSharedModeInterpolation: 0
---- !u!64 &2471128068947553950
-MeshCollider:
+  - {fileID: 0}
+--- !u!65 &6885141499465597650
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -138,11 +122,25 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 2619086233303812490, guid: d5bcb6a4668b8cf42b946640be644764, type: 3}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.2140833, y: 13.561593, z: 27.123184}
+  m_Center: {x: 0, y: 6.7807956, z: 13.561592}
+--- !u!114 &8794831679462418456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 399576629531323057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 155c6172120a428e9bdcb2611c04119c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
 --- !u!1 &997071116625677936
 GameObject:
   m_ObjectHideFlags: 0

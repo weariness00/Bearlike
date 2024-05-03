@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.17276841, g: 0.21589246, b: 0.2978262, a: 1}
+  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -191,6 +191,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8082968756175958697, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+        type: 3}
+      propertyPath: SortKey
+      value: 130135829
+      objectReference: {fileID: 0}
+    - target: {fileID: 8082968756175958697, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+        type: 3}
+      propertyPath: NetworkedBehaviours.Array.data[0]
+      value: 
+      objectReference: {fileID: 466974298}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -202,15 +212,9 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 466974295}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &466974299 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 399576629531323057, guid: 69ac511c1bea7e540bd78ef6a91f798f,
-    type: 3}
-  m_PrefabInstance: {fileID: 466974295}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &466974301 stripped
+--- !u!114 &466974297 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2269728812820294520, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+  m_CorrespondingSourceObject: {fileID: 8082968756175958697, guid: 69ac511c1bea7e540bd78ef6a91f798f,
     type: 3}
   m_PrefabInstance: {fileID: 466974295}
   m_PrefabAsset: {fileID: 0}
@@ -218,6 +222,36 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &466974298 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8794831679462418456, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+    type: 3}
+  m_PrefabInstance: {fileID: 466974295}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 466974299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 155c6172120a428e9bdcb2611c04119c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &466974299 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 399576629531323057, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+    type: 3}
+  m_PrefabInstance: {fileID: 466974295}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &466974300 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1127993788810118042, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+    type: 3}
+  m_PrefabInstance: {fileID: 466974295}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &897065704
@@ -862,7 +896,7 @@ MonoBehaviour:
   ObjectInterest: 1
   Flags: 262145
   NestedObjects:
-  - {fileID: 466974301}
+  - {fileID: 466974297}
   NetworkedBehaviours:
   - {fileID: 1776461682}
 --- !u!114 &1776461682
@@ -1099,7 +1133,7 @@ MonoBehaviour:
   lootingTable: {fileID: 0}
   stageGameObject: {fileID: 1776461677}
   destructObject: {fileID: 466974299}
-  navMeshSurface: {fileID: 0}
+  navMeshSurface: {fileID: 466974300}
   prevStagePortal: {fileID: 1136499894}
   nextStagePortal: {fileID: 2091827528}
   monsterSpawnerList: []

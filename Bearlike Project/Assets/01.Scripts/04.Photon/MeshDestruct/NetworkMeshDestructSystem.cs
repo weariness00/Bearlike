@@ -51,7 +51,6 @@ namespace Photon.MeshDestruct
                 var sliceObject = sliceObjects[i];
                 var networkObj = await Runner.SpawnAsync(slicePrefab, sliceObject.transform.position, sliceObject.transform.rotation, null, (runner, o) =>
                 {
-                    o.transform.parent = sliceObject.transform.parent;
                     o.tag = "Destruction";
                 });
 
@@ -80,8 +79,20 @@ namespace Photon.MeshDestruct
             {
                 IsOtherClientDestruct.Set(i, true);
             }
-            SetIsDestructRPC(0, false);
+            
+            var clientNumber = UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber;
+            StartCoroutine(SendSetIsDestructRPCCoroutine(clientNumber));
             NetworkSliceRPC(sliceInfo);
+        }
+
+        IEnumerator SendSetIsDestructRPCCoroutine(int clientNumber)
+        {
+            NetworkBool value = false;
+            while (IsOtherClientDestruct.Get(clientNumber))
+            {
+                SetIsDestructRPC(clientNumber, value);
+                yield return null;
+            }
         }
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
@@ -140,7 +151,7 @@ namespace Photon.MeshDestruct
             
             // 해당 클라이언트의 붕괴가 끝났음을 호스트에게 알리기
             var clientNumber = UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber;
-            SetIsDestructRPC(clientNumber, false);
+            StartCoroutine(SendSetIsDestructRPCCoroutine(clientNumber));
         }
     }
 }
