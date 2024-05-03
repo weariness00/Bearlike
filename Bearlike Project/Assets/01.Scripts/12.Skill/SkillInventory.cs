@@ -4,7 +4,6 @@ namespace Skill
 {
     public class SkillInventory : InventoryBase<SkillBase, SkillUIHandle>
     {
-    
     }
 }
 

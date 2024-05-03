@@ -212,14 +212,13 @@ namespace GamePlay.Stage
         {
             var childEventSystem = stageGameObject.GetComponentInChildren<EventSystem>();
             var childCamera = stageGameObject.GetComponentInChildren<Camera>();
+            var childDirectLight = stageGameObject.GetComponentInChildren<Light>();
             if (childEventSystem != null)
-            {
                 Destroy(childEventSystem.gameObject);
-            }
             if (childCamera != null)
-            {
                 Destroy(childCamera.gameObject);
-            }
+            if (childDirectLight)
+                Destroy(childDirectLight.gameObject);
 
             DeadBodyObstacleObject.stageSurface = navMeshSurface;
             

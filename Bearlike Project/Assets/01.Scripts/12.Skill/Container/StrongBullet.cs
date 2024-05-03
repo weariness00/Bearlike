@@ -45,6 +45,13 @@ namespace Skill.Container
             
             status.damageMultiple = 1f + _damageMultiplePerLevel * level.Current;
         }
+
+        public override void ExplainUpdate()
+        {
+            base.ExplainUpdate();
+            if (explain.Contains("(Level)"))
+                explain = explain.Replace("(Level)", $"{level.Current}");
+        }
     }
 }
 

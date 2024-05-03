@@ -65,6 +65,8 @@ namespace Skill.Container
             _findTime = new WaitForSeconds(0.2f);
         }
 
+        #region Skill Base Function
+
         public override void Earn(GameObject earnTargetObject)
         {
             if (earnTargetObject.TryGetComponent(out PlayerController pc))
@@ -90,6 +92,24 @@ namespace Skill.Container
             }
         }
 
+        public override void LevelUp()
+        {
+            base.LevelUp();
+
+            ExplainUpdate();
+        }
+
+        #endregion
+
+        public override void ExplainUpdate()
+        {
+            base.ExplainUpdate();
+            if(explain.Contains("(현재 공격력)"))
+                explain = explain.Replace("(현재 공격력)", $"({status.CalDamage()})");
+            if(explain.Contains("(Level)"))
+                explain = explain.Replace("(Level)", $"{level.Current}");
+        }
+        
         IEnumerator AttackMonsterFromArea(GameObject runObject)
         {
             yield return _areaOpenAniTime;

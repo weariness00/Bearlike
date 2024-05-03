@@ -47,7 +47,8 @@ namespace Skill
         [Header("Skill 기본 정보")]
         public int id;
         public string skillName;
-        public string explain;
+        private string _originExplain; // 원본 설명
+        public string explain; // 텍스트로 보여줄 설명
         public SKillType type;
         public Texture2D icon;
         public float coolTime;
@@ -65,15 +66,15 @@ namespace Skill
         public virtual void Awake()
         {
             status = GetComponent<StatusBase>();
+            
+            SetJsonData(GetInfoData(id));
+            var statusData = GetStatusData(id);
+            status.SetJsonData(statusData);
+            if(statusData.HasInt("Level Max")) level.Max = statusData.GetInt("Level Max");
         }
 
         public virtual void Start()
         {
-            SetJsonData(GetInfoData(id));
-            var statusData = GetStatusData(id);
-            status.SetJsonData(statusData);
-            level.Max = statusData.GetInt("Level Max");
-
         }
 
         public override void Spawned()
@@ -101,8 +102,13 @@ namespace Skill
             level.Current += 1;
             var pc = ownerPlayer.GetComponent<PlayerController>();
             pc.skillInventory.AddItem(this);
+            explain = _originExplain;
         }
-        
+
+        public virtual void ExplainUpdate()
+        {
+            explain = _originExplain;
+        }
         #endregion
         
         #region Inventory Interface
@@ -128,7 +134,7 @@ namespace Skill
         public void SetJsonData(SkillJsonData json)
         {
             skillName = json.Name;
-            explain = json.Explain;
+            _originExplain = json.Explain;
             coolTime = json.CoolTime;
             type = json.Type;
         }
