@@ -12,6 +12,7 @@ using Photon;
 using Script.Data;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.VFX;
 
 namespace UI
 {
@@ -211,7 +212,6 @@ namespace UI
 
                 GameManager.Instance.SetStage(nextStageList[bicSelectIndex]);
             }
-            // VFX START RPC
         }
 
         #region Vraiable RPC Function
@@ -238,7 +238,7 @@ namespace UI
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void ReadyRPC(int index, NetworkBool value) =>NetworkReadyArray.Set(index, value);
-
+        
         #endregion
     }
 }

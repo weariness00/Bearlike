@@ -429,6 +429,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0554b3b4afaea5e49bf7caf67fb0debf, type: 2}
   - {fileID: 11400000, guid: 14b41a720c17a6d4988dec80528b9eeb, type: 2}
   - {fileID: 11400000, guid: e3922e8a7cc97b64286b73f31d4a0ebf, type: 2}
+  prevStage: {fileID: 0}
   currentStage: {fileID: 0}
   stageCount:
     _min: 0
@@ -2653,7 +2654,6 @@ Transform:
   - {fileID: 2027442810}
   - {fileID: 1532899791}
   - {fileID: 1962583821}
-  - {fileID: 1914436130}
   m_Father: {fileID: 962364571}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1529588714
@@ -2761,7 +2761,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 4.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1914436130}
   m_Father: {fileID: 1482980320}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1532899792
@@ -2785,6 +2786,7 @@ MonoBehaviour:
     - {fileID: 1999057086}
     - {fileID: 1108002951}
   otherPortal: {fileID: 0}
+  potalVFX: {fileID: 1914436131}
 --- !u!65 &1532899793
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3522,8 +3524,13 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1482980320}
+    m_TransformParent: {fileID: 1532899791}
     m_Modifications:
+    - target: {fileID: 1969781825171703293, guid: 89effd2ff84cc86449004fb70fad1896,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 500.00003
+      objectReference: {fileID: 0}
     - target: {fileID: 1969781825171703293, guid: 89effd2ff84cc86449004fb70fad1896,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3537,7 +3544,7 @@ PrefabInstance:
     - target: {fileID: 1969781825171703293, guid: 89effd2ff84cc86449004fb70fad1896,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 4.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1969781825171703293, guid: 89effd2ff84cc86449004fb70fad1896,
         type: 3}
@@ -3587,6 +3594,12 @@ PrefabInstance:
 --- !u!4 &1914436130 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1969781825171703293, guid: 89effd2ff84cc86449004fb70fad1896,
+    type: 3}
+  m_PrefabInstance: {fileID: 1914436129}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1914436131 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3394207438728205738, guid: 89effd2ff84cc86449004fb70fad1896,
     type: 3}
   m_PrefabInstance: {fileID: 1914436129}
   m_PrefabAsset: {fileID: 0}

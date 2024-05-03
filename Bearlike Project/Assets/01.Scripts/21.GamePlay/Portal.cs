@@ -9,6 +9,7 @@ using Script.GamePlay;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
+using UnityEngine.VFX;
 using Util;
 
 namespace GamePlay
@@ -26,12 +27,18 @@ namespace GamePlay
         [HideInInspector]public BoxCollider boxCollider;
         public SpawnPlace spawnPlace = new SpawnPlace();
         public Portal otherPortal; // 다른 포탈
+        public GameObject potalVFX;
 
         private bool _isConnect; // 포털과 연결된 상태인지
+
         public bool IsConnect
         {
             get => _isConnect;
-            set => _isConnect = IsInteract = value;
+            set
+            {
+                _isConnect = IsInteract = value;
+                potalVFX.SetActive(value);
+            }
         }
 
         private void Awake()
@@ -49,7 +56,7 @@ namespace GamePlay
             otherPortal = _otherP;
             _otherP.otherPortal = this;
         }
-
+        
         public void Teleport(GameObject targetObject)
         {
             if (IsConnect)
