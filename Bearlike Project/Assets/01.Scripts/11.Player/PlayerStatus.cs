@@ -49,34 +49,6 @@ namespace Player
         // ObjectState abstract class Function
         void Awake()
         {
-            hp.Max = 100;
-            hp.Min = 0;
-            hp.Current = 100;
-
-            damage.Max = 100;
-            damage.Min = 1;
-            damage.Current = 10;
-            
-            defence.Max = 100;
-            defence.Min = 1;
-            defence.Current = 1;
-
-            avoid.Max = 1f;
-            avoid.Min = 0.0f;
-            avoid.Current = 0.0f;
-            
-            // moveSpeed.Max = 100;
-            // moveSpeed.Min = 1;
-            // moveSpeed.Current = 1;
-
-            attackSpeed.Max = 10.0f;
-            attackSpeed.Min = 0.5f;
-            attackSpeed.Current = 1.0f;
-
-            force.Max = 1000;
-            force.Min = 0;
-            force.Current = 10;
-            
             condition = (int)CrowdControl.Normality;
             property = (int)CrowdControl.Normality;
             

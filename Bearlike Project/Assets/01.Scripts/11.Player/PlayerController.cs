@@ -199,7 +199,7 @@ namespace Player
             _networkAnimator.Animator.SetFloat(AniFrontMove, isMoveX ? 1 : 0);
             _networkAnimator.Animator.SetFloat(AniSideMove, isMoveY ? 1 : 0);
             
-            dir *= Runner.DeltaTime * status.moveSpeed;
+            dir *= Runner.DeltaTime * status.moveSpeed * 110f;
 
             if (data.Jump)
             {
