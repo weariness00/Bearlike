@@ -73,7 +73,8 @@ namespace GamePlay.DeadBodyObstacle
                     !(component is MeshFilter) &&
                     !(component is NetworkObject) &&
                     !(component is NetworkTransform) &&
-                    !(component is StatusBase))
+                    !(component is StatusBase) && 
+                    !(component is DeadBodyObstacleObject))
                 {
                     Destroy(component);
                 }
@@ -161,6 +162,7 @@ namespace GamePlay.DeadBodyObstacle
                 if (isContinue)
                     break;
             }
+            
             if(stageSurface)
                 stageSurface.BuildNavMesh();
         }

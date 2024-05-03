@@ -16,6 +16,7 @@ namespace Monster.Container
     {
         private BehaviorTreeRunner _behaviorTreeRunner;
         private NetworkObject[] _playerObjects;
+        private NavMeshAgent _navMeshAgent;
 
         public GunBase gun;
 
@@ -174,37 +175,49 @@ namespace Monster.Container
                 randomDir = Random.onUnitSphere;
                 randomDir.y = 0;
             }
+            
             if (AniMoveTimer.Expired(Runner) == false)
             {
                 // 타겟 한테 이동
                 var path = new NavMeshPath();
-                if (targetTransform != null && NavMesh.CalculatePath(transform.position, targetTransform.position, NavMesh.AllAreas, path))
+                if (targetTransform)
                 {
-                    float pathLength = 0.0f;
-                    for (int i = 1; i < path.corners.Length; i++)
-                        pathLength += Vector3.Distance(path.corners[i - 1], path.corners[i]);
-                    if (pathLength > status.attackRange.Current)
-                    {
-                        var dir = path.corners[1] - transform.position;
-                        var nextPos = transform.position + Time.deltaTime * dir;
-                        transform.LookAt(nextPos);
-                        rigidbody.AddForce(ForceMagnitude * status.moveSpeed * transform.forward);
-                    }
-                    else
-                    {
-                        networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 0f);
-                        _isInitAnimation = false;
-                        return INode.NodeState.Failure;
-                    }
+                    _navMeshAgent.SetDestination(targetTransform.position);
                 }
                 else
                 {
                     var nextPos = transform.position + Time.deltaTime * randomDir;
-                    transform.LookAt(nextPos);
-                    rigidbody.AddForce(ForceMagnitude * status.moveSpeed * transform.forward);
+                    _navMeshAgent.SetDestination(nextPos);
                 }
                 
-                return INode.NodeState.Running;
+                if (_navMeshAgent.pathStatus == NavMeshPathStatus.PathComplete)
+                    return INode.NodeState.Running;
+                // if (targetTransform != null && NavMesh.CalculatePath(transform.position, targetTransform.position, NavMesh.AllAreas, path))
+                // {
+                //     float pathLength = 0.0f;
+                //     for (int i = 1; i < path.corners.Length; i++)
+                //         pathLength += Vector3.Distance(path.corners[i - 1], path.corners[i]);
+                //     if (pathLength > status.attackRange.Current)
+                //     {
+                //         var dir = path.corners[1] - transform.position;
+                //         var nextPos = transform.position + Time.deltaTime * dir;
+                //         transform.LookAt(nextPos);
+                //         rigidbody.AddForce(ForceMagnitude * status.moveSpeed * transform.forward);
+                //     }
+                //     else
+                //     {
+                //         networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 0f);
+                //         _isInitAnimation = false;
+                //         return INode.NodeState.Failure;
+                //     }
+                // }
+                // else
+                // {
+                //     var nextPos = transform.position + Time.deltaTime * randomDir;
+                //     transform.LookAt(nextPos);
+                //     rigidbody.AddForce(ForceMagnitude * status.moveSpeed * transform.forward);
+                // }
+                // return INode.NodeState.Running;
             }
             
             networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 0f);
