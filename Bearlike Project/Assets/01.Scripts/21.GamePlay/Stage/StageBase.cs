@@ -231,6 +231,7 @@ namespace GamePlay.Stage
             {
                 var portal = GameManager.Instance.currentStage.nextStagePortal;
                 prevStagePortal.SetPortal(portal);
+                prevStagePortal.otherPortal.portalVFXList[(int)StageInfo.stageType + 1].gameObject.SetActive(true);
                 portal.IsConnect = true; // 현재 진행중인 스테이지의 포탙 개방
             }
             GameManager.Instance.currentStage = this;
@@ -266,6 +267,7 @@ namespace GamePlay.Stage
             StopMonsterSpawn();
 
             prevStagePortal.IsConnect = true;
+            prevStagePortal.portalVFXList[0].gameObject.SetActive(true);
             isStageClear = true;
 
             lootingTable.SpawnDropItem();

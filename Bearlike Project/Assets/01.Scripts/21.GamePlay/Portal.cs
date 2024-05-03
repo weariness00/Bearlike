@@ -1,14 +1,11 @@
 ﻿using System;
-using Data;
-using Fusion;
-using Fusion.Addons.SimpleKCC;
+using System.Collections.Generic;
+using JetBrains.Annotations;
 using Manager;
 using Photon;
 using Player;
 using Script.GamePlay;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using UnityEngine.VFX;
 using Util;
 
@@ -27,18 +24,14 @@ namespace GamePlay
         [HideInInspector]public BoxCollider boxCollider;
         public SpawnPlace spawnPlace = new SpawnPlace();
         public Portal otherPortal; // 다른 포탈
-        public GameObject potalVFX;
-
+        public List<VisualEffect> portalVFXList;
+        
         private bool _isConnect; // 포털과 연결된 상태인지
 
         public bool IsConnect
         {
             get => _isConnect;
-            set
-            {
-                _isConnect = IsInteract = value;
-                potalVFX.SetActive(value);
-            }
+            set => _isConnect = IsInteract = value;
         }
 
         private void Awake()
