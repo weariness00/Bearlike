@@ -81,6 +81,7 @@ GameObject:
   - component: {fileID: 8016756961604045440}
   - component: {fileID: 4385394217357682011}
   - component: {fileID: 6882891109429115379}
+  - component: {fileID: -3147515602916452630}
   m_Layer: 0
   m_Name: Toy Solider Gun
   m_TagString: Untagged
@@ -222,7 +223,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
@@ -376,6 +377,18 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &-3147515602916452630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6303898161483548060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 262ba9b123ae43a28112c64df02a63ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3783443060632113221
 PrefabInstance:
   m_ObjectHideFlags: 0
