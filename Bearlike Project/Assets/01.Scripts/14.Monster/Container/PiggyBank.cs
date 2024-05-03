@@ -256,10 +256,9 @@ namespace Monster.Container
         {
             return new SequenceNode
             (
-                new ActionNode(CheckJumpAttackAction), 
-                new ActionNode(StartJumpAttackAction),
-                new ActionNode(TermFuction),
-                new ActionNode(StopJumpAttack)
+                new ActionNode(CheckRestAction),
+                new ActionNode(StartRest),
+                new ActionNode(TermFuction)
             );
         }
 

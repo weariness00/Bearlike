@@ -211,6 +211,7 @@ namespace UI
 
                 GameManager.Instance.SetStage(nextStageList[bicSelectIndex]);
             }
+            // VFX START RPC
         }
 
         #region Vraiable RPC Function
