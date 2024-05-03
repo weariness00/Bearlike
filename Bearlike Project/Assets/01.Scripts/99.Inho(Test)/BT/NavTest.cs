@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using BehaviorTree.Base;
 using Data;
+using DG.Tweening;
 using GamePlay;
 using Status;
 using Unity.Burst;
@@ -194,7 +195,17 @@ public class NavTest : MonoBehaviour
 
             // StartCoroutine(WalkCoroutine(0.5f));
             // StartCoroutine(DieCoroutine(0.5f));
+
+            // transform.DOScaleY(0.8f, 0.5f).SetLoops(2, LoopType.Yoyo).SetEase(Ease.InCirc);// 점프할때ㅐ 
+            Transform tras = transform.GetChild(0);
+
+            tras.DOMoveY(-0.1f, 1.0f);
+            //     .OnComplete(() =>
+            // {
+            //     tras.position +=new Vector3(0.0f, -1.0f, 0.0f);
+            // });
         }
+        
 
         public void FixedUpdate()
         {
@@ -328,10 +339,9 @@ public class NavTest : MonoBehaviour
         {
             return new SequenceNode
             (
-                new ActionNode(CheckAttackAction), // Kick
-                new ActionNode(StartAttack),
+                new ActionNode(CheckRestAction),
+                new ActionNode(StartRest),
                 new ActionNode(TermFuction)
-                // stopAttack
             );
         }
 
