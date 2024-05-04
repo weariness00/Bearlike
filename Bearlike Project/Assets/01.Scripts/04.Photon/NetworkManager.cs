@@ -312,6 +312,8 @@ namespace Photon
             if (KeyManager.InputAction(KeyToAction.Ultimate))
                 playerInputData.Ultimate = trueValue;
 
+            if (KeyManager.InputActionDown(KeyToAction.StageSelect))
+                playerInputData.StageSelect = trueValue;
             if (KeyManager.InputActionDown(KeyToAction.ItemInventory))
                 playerInputData.ItemInventory = trueValue;
             if (KeyManager.InputActionDown(KeyToAction.SkillInventory))

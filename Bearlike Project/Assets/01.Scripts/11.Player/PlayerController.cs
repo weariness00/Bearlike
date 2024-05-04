@@ -7,6 +7,7 @@ using Manager;
 using Photon;
 using Skill;
 using Status;
+using UI;
 using UI.Skill;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -35,6 +36,7 @@ namespace Player
         [HideInInspector] public SimpleKCC simpleKcc;
         [HideInInspector] public RigBuilder rigBuilder;
         private Rig _headRig;
+        private StageSelectUI _stageSelectUI;
 
         public StatusValue<int> ammo = new StatusValue<int>();
 
@@ -66,6 +68,8 @@ namespace Player
             weaponSystem = gameObject.GetComponentInChildren<WeaponSystem>();
             _networkAnimator = GetComponent<NetworkMecanimAnimator>();
 
+            _stageSelectUI = FindObjectOfType<StageSelectUI>();
+            
             rigBuilder = GetComponentInChildren<RigBuilder>();
             _headRig = rigBuilder.layers.Find(rig => rig.name == "Head Rig").rig;
         }
@@ -151,14 +155,25 @@ namespace Player
                 MoveControl(data);
                 WeaponControl(data);
 
+                if (data.StageSelect)
+                {
+                    _stageSelectUI.gameObject.SetActive(!_stageSelectUI.gameObject.activeSelf);
+                    skillInventory.canvas.gameObject.SetActive(false);
+                    itemInventory.canvas.gameObject.SetActive(false);
+                }
+                
                 if (data.ItemInventory)
                 {
+                    _stageSelectUI.gameObject.SetActive(false);
+                    skillInventory.canvas.gameObject.SetActive(false);
                     itemInventory.canvas.gameObject.SetActive(!itemInventory.canvas.gameObject.activeSelf);
                 }
 
                 if (data.SkillInventory)
                 {
+                    _stageSelectUI.gameObject.SetActive(false);
                     skillInventory.canvas.gameObject.SetActive(!skillInventory.canvas.gameObject.activeSelf);
+                    itemInventory.canvas.gameObject.SetActive(false);
                 }
             }
         }

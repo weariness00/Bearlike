@@ -14,6 +14,7 @@ namespace Photon
 
         public NetworkBool Jump;
 
+        public NetworkBool StageSelect;
         public NetworkBool ItemInventory;
         public NetworkBool SkillInventory;
         public NetworkBool Interact;

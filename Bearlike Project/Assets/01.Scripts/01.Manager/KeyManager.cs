@@ -18,6 +18,7 @@ namespace Manager
         
         Jump,
         
+        StageSelect,
         ItemInventory,
         SkillInventory,
         Interact,
