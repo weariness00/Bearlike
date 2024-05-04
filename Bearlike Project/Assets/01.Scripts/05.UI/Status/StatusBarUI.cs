@@ -12,6 +12,7 @@ namespace UI.Status
 
         private Slider _hpBarSlider;
 
+        
         private Vector3 headPosition; // 진짜 머리 위 포지션은 아니고 Mesh로 계산했을떄의 머리 위를 말함
 
         private void Awake()
@@ -26,18 +27,25 @@ namespace UI.Status
                 mb.DieAction += () => Destroy(gameObject);
             }
 
-            var mesh = gameObject.GetComponentsInChildren<MeshFilter>();
-            var skinnedMesh = gameObject.GetComponentsInChildren<SkinnedMeshRenderer>();
-            if (mesh.Length != 0)
+            var meshFilters = gameObject.GetComponentsInChildren<MeshFilter>();
+            var skinnedMeshes = gameObject.GetComponentsInChildren<SkinnedMeshRenderer>();
+            float height = 0;
+            foreach (var meshFilter in meshFilters)
             {
-                var bound = mesh[0].sharedMesh.bounds;
-                headPosition = new Vector3(0, bound.max.y - bound.min.y, 0);
+                var bound = meshFilter.sharedMesh.bounds;
+                height = (bound.max.y - bound.min.y);
+                if (headPosition.y > height)
+                    height = headPosition.y;
             }
-            else if (skinnedMesh.Length != 0)
+            foreach (var skinnedMesh in skinnedMeshes)
             {
-                var bound = skinnedMesh[0].sharedMesh.bounds;
-                headPosition = new Vector3(0, bound.max.y - bound.min.y, 0);
+                var bound = skinnedMesh.bounds;
+                height = (bound.max.y - bound.min.y) + 0.2f;
+                if (headPosition.y > height)
+                    height = headPosition.y;
             }
+            headPosition = new Vector3(0, height, 0) * transform.localScale.y;
+
         }
 
         private void Start()

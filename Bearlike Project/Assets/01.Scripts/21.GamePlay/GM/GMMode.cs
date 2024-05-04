@@ -22,6 +22,8 @@ namespace GamePlay.GM
 
         public override void FixedUpdateNetwork()
         {
+            if(!HasInputAuthority)
+                return;
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftAlt) && Input.GetKeyDown(KeyCode.F12))
                 isOnGMMode = !isOnGMMode;
             

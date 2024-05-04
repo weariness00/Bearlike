@@ -265,6 +265,12 @@ namespace Photon
         {
             var playerInputData = new PlayerInputData();
             NetworkBool trueValue = true;
+
+            if (LoadingManager.IsLoading)
+            {
+                input.Set(playerInputData);
+                return;
+            }
             
             // 마우스 휠 클릭시 UI와 상호작용 할 수 있도록 플레이어 정지
             if (KeyManager.InputActionDown(KeyToAction.Esc) || KeyManager.InputActionDown(KeyToAction.LockCursor))

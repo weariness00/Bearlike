@@ -36,6 +36,9 @@ namespace Monster.Container
         public override void Start()
         {
             base.Start();
+
+            _navMeshAgent = GetComponent<NavMeshAgent>();
+            
             _behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
             gun.BeforeShootAction += BeforeShoot;
         }
@@ -172,52 +175,70 @@ namespace Monster.Container
                 _isInitAnimation = true;
                 AniMoveTimer = TickTimer.CreateFromSeconds(Runner, moveClip.length);
                 networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 1f);
-                randomDir = Random.onUnitSphere;
+                randomDir = Random.onUnitSphere * 2f;
                 randomDir.y = 0;
+                _navMeshAgent.speed = status.moveSpeed.Current;
             }
             
             if (AniMoveTimer.Expired(Runner) == false)
             {
-                // 타겟 한테 이동
-                var path = new NavMeshPath();
-                if (targetTransform)
-                {
-                    _navMeshAgent.SetDestination(targetTransform.position);
-                }
-                else
-                {
-                    var nextPos = transform.position + Time.deltaTime * randomDir;
-                    _navMeshAgent.SetDestination(nextPos);
-                }
-                
-                if (_navMeshAgent.pathStatus == NavMeshPathStatus.PathComplete)
-                    return INode.NodeState.Running;
-                // if (targetTransform != null && NavMesh.CalculatePath(transform.position, targetTransform.position, NavMesh.AllAreas, path))
+                // NavMeshPath path = new NavMeshPath();
+                // if (!_navMeshAgent.isOnNavMesh) {
+                //     Debug.LogError("에이전트가 NavMesh 위에 있지 않습니다.");
+                //     // NavMesh에 에이전트를 재배치하거나, 오류 처리를 수행
+                // }
+                // // 타겟 한테 이동
+                // if (targetTransform)
                 // {
-                //     float pathLength = 0.0f;
-                //     for (int i = 1; i < path.corners.Length; i++)
-                //         pathLength += Vector3.Distance(path.corners[i - 1], path.corners[i]);
-                //     if (pathLength > status.attackRange.Current)
+                //     if (NavMesh.CalculatePath(transform.position, targetTransform.position, NavMesh.AllAreas, path))
                 //     {
-                //         var dir = path.corners[1] - transform.position;
-                //         var nextPos = transform.position + Time.deltaTime * dir;
-                //         transform.LookAt(nextPos);
-                //         rigidbody.AddForce(ForceMagnitude * status.moveSpeed * transform.forward);
-                //     }
-                //     else
-                //     {
-                //         networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 0f);
-                //         _isInitAnimation = false;
-                //         return INode.NodeState.Failure;
+                //         if (path.status == NavMeshPathStatus.PathComplete)
+                //         {
+                //             _navMeshAgent.SetDestination(targetTransform.position);
+                //         }
                 //     }
                 // }
                 // else
                 // {
-                //     var nextPos = transform.position + Time.deltaTime * randomDir;
-                //     transform.LookAt(nextPos);
-                //     rigidbody.AddForce(ForceMagnitude * status.moveSpeed * transform.forward);
+                //     var nextPos = transform.position + randomDir;
+                //     if (NavMesh.CalculatePath(transform.position, nextPos, NavMesh.AllAreas, path))
+                //     {
+                //         if (path.status == NavMeshPathStatus.PathComplete)
+                //         {                    
+                //             _navMeshAgent.SetDestination(nextPos);
+                //         }
+                //     }
                 // }
-                // return INode.NodeState.Running;
+                //
+                // if (_navMeshAgent.pathStatus == NavMeshPathStatus.PathComplete)
+                //     return INode.NodeState.Running;
+                var path = new NavMeshPath();
+                if (targetTransform != null && NavMesh.CalculatePath(transform.position, targetTransform.position, NavMesh.AllAreas, path))
+                {
+                    float pathLength = 0.0f;
+                    for (int i = 1; i < path.corners.Length; i++)
+                        pathLength += Vector3.Distance(path.corners[i - 1], path.corners[i]);
+                    if (pathLength > status.attackRange.Current)
+                    {
+                        var dir = path.corners[1] - transform.position;
+                        var nextPos = transform.position + Time.deltaTime * dir;
+                        transform.LookAt(nextPos);
+                        rigidbody.AddForce(ForceMagnitude * status.moveSpeed * transform.forward);
+                    }
+                    else
+                    {
+                        networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 0f);
+                        _isInitAnimation = false;
+                        return INode.NodeState.Failure;
+                    }
+                }
+                else
+                {
+                    var nextPos = transform.position + Time.deltaTime * randomDir;
+                    transform.LookAt(nextPos);
+                    rigidbody.AddForce(ForceMagnitude * status.moveSpeed * transform.forward);
+                }
+                return INode.NodeState.Running;
             }
             
             networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 0f);
@@ -240,15 +261,11 @@ namespace Monster.Container
             // 공격 딜레이가 남아있으면 실패, 총을 쏠 수 있는 상태가 아니면 실패
             if (status.AttackLateTimer.Expired(Runner) == false)
             {
-                return INode.NodeState.Failure;
-            }
-
-            if (gun.FireLateTimer.Expired(Runner))
-            {
-                Vector3 dir = (transform.position - targetTransform.transform.position).normalized;
+                Vector3 dir = (targetTransform.transform.position - transform.position).normalized;
+                dir.y = 0;
                 Quaternion lookRotation = Quaternion.LookRotation(dir);
-                transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime);
-                return INode.NodeState.Running;
+                transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Runner.DeltaTime);
+                return INode.NodeState.Failure;
             }
             
             // 처음 진입 초기화
@@ -259,8 +276,9 @@ namespace Monster.Container
                 gun.SetMagazineRPC(StatusValueType.Current, 10);
                 _isInitAnimation = true;
                 AniLongAttackTimer = TickTimer.CreateFromSeconds(Runner, longAttackClip.length);
-                status.StartAttackTimerRPC();
                 networkAnimator.SetTrigger("tAttack");
+
+                gun.FireLateTimer = TickTimer.CreateFromSeconds(Runner, 0);
             }
             
             if (AniLongAttackTimer.Expired(Runner) == false)
@@ -269,6 +287,7 @@ namespace Monster.Container
             }
 
             _isInitAnimation = false;
+            status.StartAttackTimerRPC();
             return INode.NodeState.Success;
         }
 

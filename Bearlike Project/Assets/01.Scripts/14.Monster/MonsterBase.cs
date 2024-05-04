@@ -74,7 +74,7 @@ namespace Monster
         
         public virtual void Start()
         {
-            rigidbody.drag = 0.6f;
+            if(rigidbody) rigidbody.drag = 0.6f;
             
             lootingTable.CalLootingItem(GetLootingData(id).LootingItems);
             DieAction += () => _deadBody.OnDeadBodyRPC();

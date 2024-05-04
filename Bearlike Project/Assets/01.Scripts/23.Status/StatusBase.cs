@@ -74,7 +74,7 @@ namespace Status
         public virtual int CalDamage()
         {
             var d = AddAllDamage();
-            var dm = AddAllDamageMagnification();
+            var dm = AddAllDamageMagnification() + 1;
 
             return (int)Math.Round(dm * d);
         }
@@ -92,7 +92,7 @@ namespace Status
 
         private float AddAllDamageMagnification()
         {
-            var dm = damageMultiple;
+            var dm = damageMultiple - 1;
             foreach (var statusBase in _additionalStatusList)
             {
                 dm += statusBase.AddAllDamageMagnification();
@@ -118,7 +118,7 @@ namespace Status
             {
                 AddCondition(cc); // Monster의 속성을 Player상태에 적용
 
-                var damageRate = math.log10((applyDamage / defence.Current) * 10);
+                var damageRate = math.log10((applyDamage / defence.Current == 0 ? 1 : defence.Current) * 10);
 
                 if (ConditionWeakIsOn())
                 {
@@ -126,6 +126,8 @@ namespace Status
                 }
 
                 hp.Current -= (int)(damageRate * applyDamage);
+                DebugManager.Log($"{gameObject.name}에게 {damageRate * applyDamage}만큼 데미지\n" +
+                    $"남은 hp : {hp.Current}");
             }
         }
 
@@ -270,7 +272,6 @@ namespace Status
         public void ApplyDamageRPC(int damage, NetworkId id, CrowdControl enemyProperty = CrowdControl.Normality, RpcInfo info = default)
         {
             ApplyDamage(damage, id, enemyProperty);
-            ShowInfo();
         }
 
         #endregion

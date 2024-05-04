@@ -59,6 +59,7 @@ namespace Weapon.Gun
                                         Random.Range(-bulletRadian, bulletRadian), Random.Range(-bulletRadian, bulletRadian));
                                     
                                     var b = o.GetComponent<BulletBase>();
+                                    b.status.AddAdditionalStatus(status);
                                     b.OwnerId = OwnerId;
                                     b.hitEffect = hitEffect;
                                     b.bknock = bknock;

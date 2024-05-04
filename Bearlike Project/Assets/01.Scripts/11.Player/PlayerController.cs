@@ -132,6 +132,9 @@ namespace Player
 
         public override void FixedUpdateNetwork()
         {
+            if (transform.position.y <= -100)
+                UserData.SetTeleportPosition(Runner.LocalPlayer, Vector3.up);
+            
             var spawnPosition = UserData.Instance.UserDictionary[Runner.LocalPlayer].TeleportPosition;
             if (spawnPosition.Count != 0)
             {
@@ -227,7 +230,7 @@ namespace Player
             yRotate += yRotateMove;
             xRotate += xRotateMove;
 
-            xRotate = Mathf.Clamp(xRotate, -30, 30); // 위, 아래 제한 
+            xRotate = Mathf.Clamp(xRotate, -45, 45); // 위, 아래 제한 
             simpleKcc.SetLookRotation(new Vector3(-xRotate, yRotate, 0));
             mouseRotateObject.transform.rotation = Quaternion.Euler(-xRotate, transform.localRotation.eulerAngles.y, transform.localRotation.eulerAngles.z);
         }

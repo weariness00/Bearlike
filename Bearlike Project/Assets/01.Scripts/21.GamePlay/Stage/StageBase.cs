@@ -235,7 +235,7 @@ namespace GamePlay.Stage
                 portal.IsConnect = true; // 현재 진행중인 스테이지의 포탙 개방
             }
             GameManager.Instance.currentStage = this;
-            
+
             StageInitAction?.Invoke();
             
             DebugManager.Log($"스테이지 초기화 {stageData.info.title}");
@@ -265,9 +265,9 @@ namespace GamePlay.Stage
             
             GameManager.Instance.stageCount.Current++;
             StopMonsterSpawn();
-
+            
             prevStagePortal.IsConnect = true;
-            prevStagePortal.portalVFXList[0].gameObject.SetActive(true);
+            //prevStagePortal.portalVFXList[0].gameObject.SetActive(true);
             isStageClear = true;
 
             lootingTable.SpawnDropItem();

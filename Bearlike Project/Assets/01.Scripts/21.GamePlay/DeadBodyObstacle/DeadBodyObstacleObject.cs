@@ -20,7 +20,8 @@ namespace GamePlay.DeadBodyObstacle
         private Collider _collider;
         private Rigidbody[] _ragdollRigidBodies;
         private Collider[] _ragdollColliders;
-
+        private List<NavMeshObstacle> _navMeshObstacleList;
+        
         private bool _isOn; // DeadBody가 활성화 되었는지
 
         #region Unity Event Function
@@ -120,7 +121,7 @@ namespace GamePlay.DeadBodyObstacle
         /// </summary>
         private void MakeNavMeshObstacle()
         {
-            List<NavMeshObstacle> navMeshObstacles = new List<NavMeshObstacle>();
+            _navMeshObstacleList = new List<NavMeshObstacle>();
             foreach (var ragdollCollider in _ragdollColliders)
             {
                 var obstacle = ragdollCollider.gameObject.AddComponent<NavMeshObstacle>();
@@ -140,26 +141,28 @@ namespace GamePlay.DeadBodyObstacle
 
                 obstacle.carving = true;
                 obstacle.carveOnlyStationary = true;
+                
+                _navMeshObstacleList.Add(obstacle);
             }
         }
 
         private IEnumerator BakeNavMesh()
         {
-            bool isContinue;
+            bool isAllActive = false;
             while (true)
             {
                 yield return null;
-                isContinue = true;
-                foreach (var rb in _ragdollRigidBodies)
+                isAllActive = true;
+                foreach (var obstacle in _navMeshObstacleList)
                 {
-                    if (rb.IsSleeping() == false)
+                    if (obstacle.isActiveAndEnabled == false)
                     {
-                        isContinue = false;
+                        isAllActive = false;
                         break;
                     }
                 }
 
-                if (isContinue)
+                if (isAllActive)
                     break;
             }
             

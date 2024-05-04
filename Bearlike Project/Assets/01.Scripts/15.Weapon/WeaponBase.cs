@@ -33,8 +33,7 @@ namespace Weapon
 
         public virtual void Awake()
         {
-            EquipAction += SetLayer;
-            EquipAction += SetOwnerID;
+            EquipAction += SetEquip;
             status = GetComponent<StatusBase>();
         }
 
@@ -47,22 +46,17 @@ namespace Weapon
         {
             base.Spawned();
         }
-
-        void SetOwnerID(GameObject equipObject)
-        {
-            OwnerId = equipObject.GetComponent<NetworkObject>().Id;
-        }
         
-        void SetLayer(GameObject equipObject)
+        void SetEquip(GameObject equipObject)
         {
-            if (HasInputAuthority)
-            {
-                gameObject.layer = LayerMask.NameToLayer("Weapon"); 
-            }
-            else
-            {
-                gameObject.layer = 0;
-            }
+            // 주인 설정
+            OwnerId = equipObject.GetComponent<NetworkObject>().Id;
+            
+            // 주인의 스테이터스 추가
+            status.AddAdditionalStatus(equipObject.GetComponent<StatusBase>());
+            
+            // 레이어 설정
+            gameObject.layer = HasInputAuthority ? LayerMask.NameToLayer("Weapon") : 0;
         }
         
         #region Equipment Interface
