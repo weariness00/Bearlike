@@ -24,6 +24,7 @@ namespace GamePlay.Stage
 
         public static Action StageInitAction;
         public static Action StageClearAction;
+        public static Action StageOverAction;
         
         // Info Data 캐싱
         private static readonly Dictionary<int, StageJsonData> InfoDataCash = new Dictionary<int, StageJsonData>();
@@ -104,6 +105,7 @@ namespace GamePlay.Stage
         {
             StageInitAction = null;
             StageClearAction = null;
+            StageOverAction = null;
         }
         
         public override void Spawned()
@@ -282,7 +284,7 @@ namespace GamePlay.Stage
 
         public virtual void StageOver()
         {
-            if (isStageOver)
+            if (isStageOver || isStageClear)
             {
                 return;
             }
@@ -292,6 +294,9 @@ namespace GamePlay.Stage
             
             StopMonsterSpawn();
             isStageOver = true;
+            GameManager.Instance.isGameOver = true;
+            
+            StageOverAction?.Invoke();
         }
 
         #endregion

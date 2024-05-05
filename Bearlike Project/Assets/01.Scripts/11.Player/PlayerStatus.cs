@@ -27,11 +27,12 @@ namespace Player
         public float immortalDurationAfterSpawn = 2f;           // 무적 시간
 
         public StatusValue<float> jumpPower = new StatusValue<float>();
-        
+
+        [Networked] public TickTimer InjuryTimer { get; set; }
+        public int injuryTime = 30; // 부상 상태로 있을 수 있는 시간
         public bool isInjury; // 부상 상태인지
         public Action InjuryAction;
         public Action RecoveryFromInjuryAction;
-        public StatusValue<float> injuryTime = new StatusValue<float>() { Max = 30f }; // 부상 상태로 있을 수 있는 시간
         public StatusValue<float> recoveryFromInjuryTime = new StatusValue<float>(){Max = 12}; // 다른 플레이어를 부상에서 회복시키는데 걸리는 시간
 
         public Action ReviveAction; // 소생 상태에 빠졌을때 발동
@@ -62,7 +63,7 @@ namespace Player
             experience.Max = experienceAmountList[level.Current];
             experience.Min = 0;
             experience.Current = 0;
-
+            
             // mPlayerID 초기화 필요 ==> 입장 할때 순서대로 번호 부여 혹은 고유 아이디 존재하게 구현
             // mPlayerJob 초기화 필요 ==> 직업 선택한후에 초기화 해주게 구현
         }
@@ -137,8 +138,8 @@ namespace Player
             // 부상 상태 로직
             else if (isInjury)
             {
-                SetInjuryTimeRPC(injuryTime.Current - Runner.DeltaTime);
-                if (injuryTime.isMin)
+                // 부활 상태 전환
+                if (InjuryTimer.Expired(Runner))
                 {
                     isInjury = false;
                     isRevive = true;
@@ -149,7 +150,7 @@ namespace Player
             else if (IsDie)
             {
                 isInjury = true;
-                injuryTime.Current = injuryTime.Max; // 이건 부상 상태를 유지하는 시간
+                InjuryTimer = TickTimer.CreateFromTicks(Runner, injuryTime);// 이건 부상 상태를 유지하는 시간
                 
                 InjuryAction?.Invoke(); // 부상상태에 되면 발동한는 함수
             }
@@ -181,9 +182,6 @@ namespace Player
 
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void SetIsInjuryRPC(NetworkBool value) => isInjury = value;
-
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        public void SetInjuryTimeRPC(float time) => injuryTime.Current = time;
 
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void RecoveryFromInjuryActionRPC() => RecoveryFromInjuryAction?.Invoke();

@@ -27,6 +27,7 @@ namespace GamePlay
         #endregion
 
         public bool isGameClear; // 게임을 완전 클리어 했을때
+        public bool isGameOver;
         public Portal gameClearPortal;
         
         [SerializeField]private SpawnPlace _spawnPlace = new SpawnPlace();
@@ -37,6 +38,7 @@ namespace GamePlay
         public StageBase currentStage;
         public StatusValue<int> stageCount = new StatusValue<int>();// 현재 몇번째 스테이지 인지
 
+        public SceneReference gameResultScene;
         public SceneReference loadingScene;
         
         #region Unity Event Function
@@ -78,8 +80,8 @@ namespace GamePlay
 
         void Init()
         {
-            // defaultStage.MapInfo = _mapGenerate.FindEmptySpace(defaultStage.MapInfo);
             defaultStage.SetIsInitRPC(true);
+            StageBase.StageOverAction += () => { NetworkManager.LoadScene(gameResultScene, LoadSceneMode.Additive); };
         }
         
         async void UserInit()

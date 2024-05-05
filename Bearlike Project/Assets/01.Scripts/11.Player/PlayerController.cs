@@ -2,6 +2,8 @@ using System;
 using Data;
 using Fusion;
 using Fusion.Addons.SimpleKCC;
+using GamePlay;
+using GamePlay.Stage;
 using Item;
 using Manager;
 using Photon;
@@ -73,7 +75,7 @@ namespace Player
             rigBuilder = GetComponentInChildren<RigBuilder>();
             _headRig = rigBuilder.layers.Find(rig => rig.name == "Head Rig").rig;
         }
-
+        
         public override void Spawned()
         {
             _gunLayer = _networkAnimator.Animator.GetLayerIndex("Gun Layer");
@@ -96,7 +98,22 @@ namespace Player
                 if(weaponSystem.equipment is WeaponBase weapon)
                     weapon.gameObject.SetActive(true);
             };
-            status.ReviveAction += () => { _networkAnimator.SetTrigger(AniDie); };
+            status.ReviveAction += () =>
+            {
+                GameManager.Instance.AlivePlayerCount--;
+                _networkAnimator.SetTrigger(AniDie);
+            };
+            status.RecoveryFromReviveAction += () =>
+            {
+                GameManager.Instance.AlivePlayerCount++;
+                
+                _networkAnimator.SetTrigger(AniRevive);
+                _networkAnimator.Animator.SetLayerWeight(_gunLayer, 1);
+                _headRig.weight = 1;
+                
+                if(weaponSystem.equipment is WeaponBase weapon)
+                    weapon.gameObject.SetActive(true);
+            };
             
             Cursor.lockState = CursorLockMode.Locked;
             simpleKcc = gameObject.GetOrAddComponent<SimpleKCC>();
@@ -107,9 +124,10 @@ namespace Player
             _networkAnimator.Animator.SetLayerWeight(_gunLayer, 1);
             
             // 스킬 초기화
-            foreach (var skillBase in skillSystem.skillList)
+            foreach (var skill in skillSystem.skillList)
             {
-                skillBase.Earn(gameObject);
+                skill.ownerPlayer = this;
+                skill.Earn(gameObject);
             }
             
             // 권한에 따른 초기화
@@ -136,6 +154,9 @@ namespace Player
 
         public override void FixedUpdateNetwork()
         {
+            if(GameManager.Instance.isGameOver)
+                return;
+            
             if (transform.position.y <= -100)
                 UserData.SetTeleportPosition(Runner.LocalPlayer, Vector3.up);
             

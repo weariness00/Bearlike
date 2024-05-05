@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
 using Data;
+using Fusion;
 using GamePlay.Stage;
-using GamePlay.Stage.Container;
-using GamePlay.StageLevel.Container;
 using Photon;
 using Player;
-using Status;
 using UnityEngine;
 
 namespace GamePlay.GM
@@ -18,6 +16,12 @@ namespace GamePlay.GM
         private void Start()    
         {
             isOnGMMode = false;
+        }
+        
+        public override void Spawned()
+        {
+            Invoke(nameof(Init), 1);
+            Object.AssignInputAuthority(Runner.LocalPlayer);
         }
 
         public override void FixedUpdateNetwork()
@@ -33,12 +37,6 @@ namespace GamePlay.GM
             GMAction();
         }
 
-        public override void Spawned()
-        {
-            Invoke(nameof(Init), 1);
-            Object.AssignInputAuthority(Runner.LocalPlayer);
-        }
-
         void Init()
         {
             playerList = new List<PlayerController>();
@@ -50,7 +48,8 @@ namespace GamePlay.GM
                 playerList.Add(pc);
             }
         }
-        // F1 : 스테이지 클리어
+        // F1 : 스테이지 Clear
+        // F2 : 스테이지 Over
         
         // CTRL + 1~3 : 1~3 번 플레이어 100 데미지
         // ALT + 1~3 : 1~3번 플레이 부상에서 회복
@@ -61,14 +60,17 @@ namespace GamePlay.GM
                 if (Input.GetKeyDown(KeyCode.Alpha1))
                 {
                     playerList[0].status.ApplyDamageRPC(100, playerList[0].Object.Id);
+                    playerList[0].status.InjuryTimer = TickTimer.CreateFromSeconds(Runner, 0);
                 }
                 else if (playerList.Count < 2 && Input.GetKeyDown(KeyCode.Alpha2))
                 {
                     playerList[1].status.ApplyDamageRPC(100, playerList[1].Object.Id);
+                    playerList[1].status.InjuryTimer = TickTimer.CreateFromSeconds(Runner, 0);
                 }
                 else if (playerList.Count < 3 && Input.GetKeyDown(KeyCode.Alpha3))
                 {
                     playerList[2].status.ApplyDamageRPC(100, playerList[2].Object.Id);
+                    playerList[2].status.InjuryTimer = TickTimer.CreateFromSeconds(Runner, 0);
                 }
             }
 
@@ -89,16 +91,39 @@ namespace GamePlay.GM
             }
             
             if (Input.GetKeyDown(KeyCode.F1))
+                StageClearRPC();
+            else if (Input.GetKeyDown(KeyCode.F2))
+                StageOverRPC();
+        }
+
+        #region RPC Function
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void StageClearRPC()
+        {
+            var stages = FindObjectsOfType<StageBase>();
+            foreach (var stage in stages)
             {
-                var stages = FindObjectsOfType<StageBase>();
-                foreach (var stage in stages)
-                {
-                    if(stage.StageInfo.stageType == StageType.None)
-                        continue;
-                    stage.StageClear();
-                }
+                if(stage.StageInfo.stageType == StageType.None)
+                    continue;
+                stage.StageClear();
             }
         }
+        
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void StageOverRPC()
+        {
+            var stages = FindObjectsOfType<StageBase>();
+                
+            foreach (var stage in stages)
+            {
+                if(stage.StageInfo.stageType == StageType.None)
+                    continue;
+                stage.StageOver();
+            }
+        }
+        
+        #endregion
     }
 }
 

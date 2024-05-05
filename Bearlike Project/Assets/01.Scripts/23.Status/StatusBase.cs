@@ -125,6 +125,8 @@ namespace Status
                     damageRate *= 1.5f;
                 }
 
+                damageRate = 1;
+
                 hp.Current -= (int)(damageRate * applyDamage);
                 DebugManager.Log($"{gameObject.name}에게 {damageRate * applyDamage}만큼 데미지\n" +
                     $"남은 hp : {hp.Current}");

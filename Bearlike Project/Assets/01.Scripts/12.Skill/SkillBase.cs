@@ -100,8 +100,7 @@ namespace Skill
         public virtual void LevelUp()
         {
             level.Current += 1;
-            var pc = ownerPlayer.GetComponent<PlayerController>();
-            pc.skillInventory.AddItem(this);
+            ownerPlayer.skillInventory.AddItem(this);
             explain = _originExplain;
         }
 

@@ -414,6 +414,7 @@ MonoBehaviour:
   _PlayTimer: 0
   _AlivePlayerCount: 0
   isGameClear: 0
+  isGameOver: 0
   gameClearPortal: {fileID: 0}
   _spawnPlace:
     _spotList:
@@ -436,6 +437,9 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  gameResultScene:
+    sceneAsset: {fileID: 102900000, guid: b432b15f467c51e4da51bf8cdb5f9046, type: 3}
+    scenePath: Assets/00.Scenes/Game/Game Over.unity
   loadingScene:
     sceneAsset: {fileID: 102900000, guid: 458e08f0c6c6b754c8522ad427003f08, type: 3}
     scenePath: Assets/00.Scenes/Game/Game Start Loading.unity

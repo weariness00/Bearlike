@@ -1,4 +1,5 @@
-﻿using Photon;
+﻿using GamePlay;
+using Photon;
 using Skill;
 using Skill.Container;
 using UnityEngine;
@@ -19,6 +20,9 @@ namespace Player.Container
 
         public override void FixedUpdateNetwork()
         {
+            if(GameManager.Instance.isGameOver)
+                return;
+            
             base.FixedUpdateNetwork();
             
             if(status.isInjury || status.isRevive)
@@ -45,10 +49,6 @@ namespace Player.Container
                 tmpSkill.Object.AssignInputAuthority(Object.InputAuthority);
                 ultimateSkill.Object.AssignInputAuthority(Object.InputAuthority);
             }
-            
-            FlippingCoin.ownerPlayer = this;
-            tmpSkill.ownerPlayer = this;
-            ultimateSkill.ownerPlayer = this;
             
             FlippingCoin.LevelUp();
             tmpSkill.LevelUp();
