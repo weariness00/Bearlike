@@ -45,7 +45,7 @@ namespace Weapon.Gun
 
         [Header("총알")] 
         public BulletBase bullet;
-        public static StatusValue<int> ammo = new StatusValue<int>(){Max = 100, Current = int.MaxValue};
+        public StatusValue<int> ammo = new StatusValue<int>(){Max = 100, Current = int.MaxValue};
         public StatusValue<int> magazine = new StatusValue<int>() {Max = 10, Current = 10}; // max 최대 탄약, current 현재 장정된 탄약
 
         public float bulletFirePerMinute; // 분당 총알 발사량

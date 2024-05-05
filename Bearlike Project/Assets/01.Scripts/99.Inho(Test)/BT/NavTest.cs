@@ -173,7 +173,7 @@ public class NavTest : MonoBehaviour
 
         private void Awake()
         {
-            _btRunner = new BehaviorTreeRunner(TestSettingBT());
+            _btRunner = new BehaviorTreeRunner(SettingBT());
             _visualEffect = GetComponentInChildren<VisualEffect>();
             _animator = GetComponentInChildren<Animator>();
             if(TryGetComponent(out _navMeshAgent)== false) _navMeshAgent = GetComponent<NavMeshAgent>();

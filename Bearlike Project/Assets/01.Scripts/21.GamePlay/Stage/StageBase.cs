@@ -265,9 +265,10 @@ namespace GamePlay.Stage
             
             GameManager.Instance.stageCount.Current++;
             StopMonsterSpawn();
+            
 
             prevStagePortal.IsConnect = true;
-            prevStagePortal.portalVFXList[0].gameObject.SetActive(true);
+            // prevStagePortal.portalVFXList[0].gameObject.SetActive(true);
             isStageClear = true;
 
             lootingTable.SpawnDropItem();
