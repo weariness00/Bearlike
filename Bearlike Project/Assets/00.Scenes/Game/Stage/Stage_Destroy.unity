@@ -159,6 +159,68 @@ Transform:
   - {fileID: 1756041946}
   m_Father: {fileID: 7630067077364074783}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &485359499
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 485359500}
+  m_Layer: 0
+  m_Name: On Desk
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &485359500
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 485359499}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 24.088, y: 1.259, z: -8.132}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 735411046}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+--- !u!1 &497595153
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 497595154}
+  m_Layer: 0
+  m_Name: Under Bad
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &497595154
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 497595153}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -17.08, y: 0.54, z: -18.51}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2069077038}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &708792374
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -245,6 +307,80 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 043c334dcb694849a87b4c0d44248443, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &735411045
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 735411046}
+  - component: {fileID: 735411047}
+  m_Layer: 0
+  m_Name: Trump Solider Hart Spawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &735411046
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 735411045}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 485359500}
+  m_Father: {fileID: 605112250516977822}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &735411047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 735411045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cee097a6de9140a5a4efef8c767d3366, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
+  isStartSpawn: 0
+  isLoop: 1
+  isRandomObject: 0
+  isRandomPlace: 0
+  isRandomInterval: 0
+  parentTransform: {fileID: 4672605257650284765}
+  spawnCount:
+    _min: 0
+    _max: 10
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  spawnObjectList:
+  - RawGuidValue: cbc71c67c90aca041ba2bf7a30763181
+  spawnObjectOrders: 
+  spawnPlace:
+    _spotList:
+    - {fileID: 485359500}
+  spawnPlaceOrders: 
+  spawnIntervals:
+  - 0.5
+  - 1
+  _IsSpawn:
+    _value: 0
 --- !u!1 &888615259
 GameObject:
   m_ObjectHideFlags: 0
@@ -666,6 +802,79 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1780897014}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &2069077036
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2069077038}
+  - component: {fileID: 2069077037}
+  m_Layer: 0
+  m_Name: Trump Solider Spade Spawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2069077037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2069077036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cee097a6de9140a5a4efef8c767d3366, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
+  isStartSpawn: 0
+  isLoop: 1
+  isRandomObject: 0
+  isRandomPlace: 0
+  isRandomInterval: 0
+  parentTransform: {fileID: 4672605257650284765}
+  spawnCount:
+    _min: 0
+    _max: 10
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
+  spawnObjectList:
+  - RawGuidValue: 12087add6fcddf043946d4dd160caf32
+  spawnObjectOrders: 
+  spawnPlace:
+    _spotList:
+    - {fileID: 497595154}
+  spawnPlaceOrders: 
+  spawnIntervals:
+  - 1
+  _IsSpawn:
+    _value: 0
+--- !u!4 &2069077038
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2069077036}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 497595154}
+  m_Father: {fileID: 605112250516977822}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &83322924648267089
 GameObject:
   m_ObjectHideFlags: 0
@@ -785,6 +994,8 @@ Transform:
   m_Children:
   - {fileID: 3879976704760974913}
   - {fileID: 898971451316981210}
+  - {fileID: 735411046}
+  - {fileID: 2069077038}
   m_Father: {fileID: 2885051411784432137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &822807052771635365
@@ -810,7 +1021,7 @@ MonoBehaviour:
   parentTransform: {fileID: 4672605257650284765}
   spawnCount:
     _min: 0
-    _max: 5
+    _max: 7
     _current: 0
     isOverMax: 0
     isOverMin: 0
@@ -1015,6 +1226,8 @@ MonoBehaviour:
   - {fileID: 178985232841662690}
   - {fileID: 822807052771635365}
   - {fileID: 4122299311962813990}
+  - {fileID: 735411047}
+  - {fileID: 2069077037}
 --- !u!1 &2936806334289561663
 GameObject:
   m_ObjectHideFlags: 0
@@ -1664,6 +1877,8 @@ MonoBehaviour:
   monsterSpawnerList:
   - {fileID: 822807052771635365}
   - {fileID: 4122299311962813990}
+  - {fileID: 735411047}
+  - {fileID: 2069077037}
   aliveMonsterCount:
     _min: 0
     _max: 100
@@ -1722,7 +1937,7 @@ MonoBehaviour:
     _spotList:
     - {fileID: 1328881400512766195}
   otherPortal: {fileID: 0}
-  portalVFX: {fileID: 0}
+  portalVFXList: []
 --- !u!114 &6536228260127126051
 MonoBehaviour:
   m_ObjectHideFlags: 0

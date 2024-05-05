@@ -14,9 +14,10 @@ namespace Status
     public enum CrowdControl
     {
         Normality = 0b_0000_0000,           // 정상
-        Poisoned = 0b_0000_0001,            // 중독
+        Poisoned = 0b_0000_0001,            // 중독 => 낮은 도트 데미지, 방어력 감소
         Weak = 0b_0000_0010,                // 취약 => 최종 데미지 1.5배 증가
         Defence = 0b_0000_0100,             // 방어 => 데미지 감소 || 무효
+        Burn = 0b_0000_1000,                // 화상 => 높은 도트 데미지
     }
     
     /// <summary>
@@ -43,6 +44,8 @@ namespace Status
         public StatusValue<int> force = new StatusValue<int>();               // 힘
         public int condition;                                                 // 상태
         public int property;                                                  // 속성
+        public int burnDamage;
+        public int poisonDamage;
 
         public bool IsDie => hp.isMin;
         
@@ -133,6 +136,12 @@ namespace Status
             }
         }
 
+        // 상태이상 적용
+        public void ApplyCrowdControl()
+        {
+            
+        }
+
         public virtual void ShowInfo()
         {
             DebugManager.Log($"{gameObject.name} - 체력 : " +  hp.Current + $" 공격력 : " + damage.Current + $" 공격 속도 : " + attackSpeed.Current + $" 상태 : " + (CrowdControl)condition);    // condition이 2개 이상인 경우에는 어떻게 출력?
@@ -214,6 +223,9 @@ namespace Status
 
             property = json.GetInt("Property");
             condition = json.GetInt("Condition");
+
+            poisonDamage = json.GetInt("Poison Damage");
+            poisonDamage = json.GetInt("Burn Damage");
         }
 
         #endregion

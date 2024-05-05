@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using BehaviorTree.Base;
 using Data;
 using Fusion;
 using GamePlay.DeadBodyObstacle;
 using Item.Looting;
 using Manager;
 using Photon;
+using Player;
 using Status;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 namespace Monster
 {
@@ -46,6 +50,8 @@ namespace Monster
         [HideInInspector] public LootingTable lootingTable;
         private DeadBodyObstacleObject _deadBody;
         public Transform pivot; // Pivot이 메쉬 가운데가 아닌 다리에 위치할 떄가 있다. 그때 진짜 pivot으로 사용할 변수
+        
+        protected PlayerController[] players;
         
         [Header("Monster 정보")]
         public int id = 0;
@@ -86,6 +92,11 @@ namespace Monster
         private void OnDestroy()
         {
             Destroy(lootingTable);
+        }
+
+        public override void Spawned()
+        {
+            players = FindObjectsOfType<PlayerController>(); // 접속한 플레이어들 저장
         }
 
         public override void FixedUpdateNetwork()
@@ -144,6 +155,38 @@ namespace Monster
             return dis;
         }
         
+        #endregion
+
+        #region Default BT Function
+
+        protected INode.NodeState FindTarget()
+        {
+            DebugManager.ToDo("어그로 시스템이 없어 가장 가까운 적을 인식하도록 함" +
+                              "어그로 시스템을 만들어 인식된 적들중 어그로가 높은 적을 인식하도록 바꾸기");
+            
+            if (targetTransform == null)
+            {
+                // 직선 거리상 인식 범위 내에 있는 플레이어 탐색
+                var targetPlayers = players.Where(player => !player.status.isInjury && !player.status.isRevive && !player.status.IsDie && StraightDistanceFromTarget(player.transform.position) <= status.attackRange.Current + 10f).ToList();
+                if (targetPlayers.Count != 0)
+                {
+                    // 인식범위 내에 있는 아무 플레이어를 Target으로 지정
+                    targetTransform = targetPlayers[Random.Range(0, targetPlayers.Count)].transform;
+                }
+            }
+            else
+            {
+                // Target대상이 인식 범위내에 벗어나면 Target을 풀어주기
+                var dis = StraightDistanceFromTarget(targetTransform.position);
+                if (dis > status.attackRange.Current +20f)
+                {
+                    targetTransform = null;
+                }
+            }
+
+            return INode.NodeState.Success;
+        }
+
         #endregion
 
         #region Json Data Interface

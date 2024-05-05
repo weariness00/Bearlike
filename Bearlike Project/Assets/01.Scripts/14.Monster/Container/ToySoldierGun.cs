@@ -2,6 +2,7 @@
 using BehaviorTree.Base;
 using Fusion;
 using Manager;
+using Player;
 using Status;
 using UnityEngine;
 using UnityEngine.AI;
@@ -15,7 +16,6 @@ namespace Monster.Container
     public class ToySoldierGun : MonsterBase
     {
         private BehaviorTreeRunner _behaviorTreeRunner;
-        private NetworkObject[] _playerObjects;
         private NavMeshAgent _navMeshAgent;
 
         public GunBase gun;
@@ -46,7 +46,6 @@ namespace Monster.Container
         public override void Spawned()
         {
             base.Spawned();
-            _playerObjects = Runner.ActivePlayers.ToArray().Select(player => Runner.GetPlayerObject(player)).ToArray(); // 접속한 플레이어들 저장
         }
 
         public override void FixedUpdateNetwork()
@@ -111,34 +110,6 @@ namespace Monster.Container
                 )
             );
             return loop;
-        }
-
-        private INode.NodeState FindTarget()
-        {
-            DebugManager.ToDo("어그로 시스템이 없어 가장 가까운 적을 인식하도록 함" +
-                              "어그로 시스템을 만들어 인식된 적들중 어그로가 높은 적을 인식하도록 바꾸기");
-            
-            if (targetTransform == null)
-            {
-                // 직선 거리상 인식 범위 내에 있는 플레이어 탐색
-                var targetPlayers = _playerObjects.Where(player => StraightDistanceFromTarget(player.transform.position) <= status.attackRange.Current + 10f).ToList();
-                if (targetPlayers.Count != 0)
-                {
-                    // 인식범위 내에 있는 아무 플레이어를 Target으로 지정
-                    targetTransform = targetPlayers[Random.Range(0, targetPlayers.Count - 1)].transform;
-                }
-            }
-            else
-            {
-                // Target대상이 인식 범위내에 벗어나면 Target을 풀어주기
-                var dis = StraightDistanceFromTarget(targetTransform.position);
-                if (dis > status.attackRange.Current +20f)
-                {
-                    targetTransform = null;
-                }
-            }
-
-            return INode.NodeState.Success;
         }
 
         /// <summary>
