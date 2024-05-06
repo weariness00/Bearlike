@@ -17,7 +17,7 @@ namespace Status
         Normality = 0b_0000_0000,           // 정상
         Poisoned = 0b_0000_0001,            // 중독 => 낮은 도트 데미지, 방어력 감소
         Weak = 0b_0000_0010,                // 취약 => 최종 데미지 1.5배 증가
-        Defence = 0b_0000_0100,             // 방어 => 데미지 감소 || 무효
+        DamageIgnore = 0b_0000_0100,             // 방어 => 데미지 감소 || 무효
         Burn = 0b_0000_1000,                // 화상 => 높은 도트 데미지
     }
     
@@ -99,7 +99,7 @@ namespace Status
                 else
                 {
                     break;
-                }
+                }//
             }
 
             return resultCHM;
@@ -161,7 +161,7 @@ namespace Status
                 return;
             }
 
-            if (!ConditionDefenceIsOn())
+            if (!ConditionDamageIgnoreIsOn())
             {
                 AddCondition(cc); // Monster의 속성을 Player상태에 적용
 
@@ -205,7 +205,7 @@ namespace Status
         public bool ConditionNormalityIsOn() { return ConditionOn(CrowdControl.Normality); }
         public bool ConditionPoisonedIsOn() { return ConditionOn(CrowdControl.Poisoned); }
         public bool ConditionWeakIsOn() { return ConditionOn(CrowdControl.Weak); }
-        public bool ConditionDefenceIsOn() { return ConditionOn(CrowdControl.Defence); }
+        public bool ConditionDamageIgnoreIsOn() { return ConditionOn(CrowdControl.DamageIgnore); }
 
         public void AddCondition(CrowdControl cc)
         {

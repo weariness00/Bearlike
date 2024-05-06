@@ -477,7 +477,7 @@ namespace Monster.Container
             networkAnimator.Animator.SetTrigger(Defence);
             _navMeshAgent.SetDestination(transform.position);
             
-            status.AddCondition(CrowdControl.Defence);
+            status.AddCondition(CrowdControl.DamageIgnore);
             
             _durationTime = _gameManager.PlayTimer;
 
@@ -490,7 +490,7 @@ namespace Monster.Container
         /// <returns></returns>
         INode.NodeState StopDefence()
         {
-            status.DelCondition(CrowdControl.Defence);
+            status.DelCondition(CrowdControl.DamageIgnore);
             // StopVFX("Shield_vfx");
             StopVFXRPC("Shield_vfx");
             
