@@ -165,14 +165,12 @@ namespace Status
             {
                 AddCondition(cc); // Monster의 속성을 Player상태에 적용
 
-                var damageRate = math.log10((applyDamage / defence.Current == 0 ? 1 : defence.Current) * 10);
+                var damageRate = 1f;
 
                 if (ConditionWeakIsOn())
                 {
                     damageRate *= 1.5f;
                 }
-
-                damageRate = 1;
 
                 hp.Current -= (int)(damageRate * applyDamage);
                 DebugManager.Log($"{gameObject.name}에게 {damageRate * applyDamage}만큼 데미지\n" +
