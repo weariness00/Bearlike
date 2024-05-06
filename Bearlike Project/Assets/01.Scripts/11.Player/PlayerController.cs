@@ -81,7 +81,7 @@ namespace Player
         public override void Spawned()
         {
             _gunLayer = _networkAnimator.Animator.GetLayerIndex("Gun Layer");
-                
+            
             // Status 관련 초기화
             status.InjuryAction += () =>
             {
@@ -179,26 +179,7 @@ namespace Player
                 MoveControl(data);
                 WeaponControl(data);
 
-                if (data.StageSelect)
-                {
-                    _stageSelectUI.gameObject.SetActive(!_stageSelectUI.gameObject.activeSelf);
-                    skillInventory.canvas.gameObject.SetActive(false);
-                    itemInventory.canvas.gameObject.SetActive(false);
-                }
-                
-                if (data.ItemInventory)
-                {
-                    _stageSelectUI.gameObject.SetActive(false);
-                    skillInventory.canvas.gameObject.SetActive(false);
-                    itemInventory.canvas.gameObject.SetActive(!itemInventory.canvas.gameObject.activeSelf);
-                }
-
-                if (data.SkillInventory)
-                {
-                    _stageSelectUI.gameObject.SetActive(false);
-                    skillInventory.canvas.gameObject.SetActive(!skillInventory.canvas.gameObject.activeSelf);
-                    itemInventory.canvas.gameObject.SetActive(false);
-                }
+                SetUIRPC(data);
             }
         }
 
@@ -217,7 +198,6 @@ namespace Player
                 dir += transform.forward;
                 isMoveX = true;
             }
-
             if (data.MoveBack)
             {
                 dir += -transform.forward;
@@ -314,6 +294,31 @@ namespace Player
         public new void SetPositionRPC(Vector3 pos) => simpleKcc.SetPosition(pos);
         [Rpc(RpcSources.All,RpcTargets.StateAuthority)]
         public void SetLookRotationRPC(Vector2 look) => simpleKcc.SetLookRotation(look);
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
+        public void SetUIRPC(PlayerInputData data)
+        {
+            if (data.StageSelect)
+            {
+                _stageSelectUI.gameObject.SetActive(!_stageSelectUI.gameObject.activeSelf);
+                skillInventory.canvas.gameObject.SetActive(false);
+                itemInventory.canvas.gameObject.SetActive(false);
+            }
+                
+            if (data.ItemInventory)
+            {
+                _stageSelectUI.gameObject.SetActive(false);
+                skillInventory.canvas.gameObject.SetActive(false);
+                itemInventory.canvas.gameObject.SetActive(!itemInventory.canvas.gameObject.activeSelf);
+            }
+
+            if (data.SkillInventory)
+            {
+                _stageSelectUI.gameObject.SetActive(false);
+                skillInventory.canvas.gameObject.SetActive(!skillInventory.canvas.gameObject.activeSelf);
+                itemInventory.canvas.gameObject.SetActive(false);
+            }
+        }
         
         #endregion
     }

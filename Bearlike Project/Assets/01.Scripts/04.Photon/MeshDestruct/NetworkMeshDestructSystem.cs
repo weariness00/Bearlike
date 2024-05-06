@@ -14,9 +14,11 @@ namespace Photon.MeshDestruct
     {
         [Networked, Capacity(3)]private NetworkArray<NetworkBool> IsOtherClientDestruct { get;}
         public NetworkPrefabRef slicePrefab;
+        public NetworkPrefabRef copyPrefab; // Slice 되기전 Mesh를 Copy하는 프리펩
         public bool isDestruct;
 
         private GameObject _sliceTargetObject;
+        private GameObject _copyTargetObject;
         
         public GameObject FindDestructObject(int id)
         {
@@ -37,13 +39,26 @@ namespace Photon.MeshDestruct
                 isDestruct = false;
                 return;
             }
+
+            // Slice하려는 위치와 현재위치의 차이로 힘의 방향 얻기
+            Vector3 force = (slicePoint - targetObject.transform.position).normalized;
+            var copyObj = await Runner.SpawnAsync(copyPrefab, targetObject.transform.position, targetObject.transform.rotation, null, (runner, o) =>
+            {
+                o.gameObject.SetActive(false);
+                o.transform.parent = targetObject.transform.parent;
+                var meshFilter = o.GetComponent<MeshFilter>();
+                var meshRenderer = o.GetComponent<MeshRenderer>();
+                meshFilter.sharedMesh = targetObject.GetComponent<MeshFilter>().sharedMesh;
+                meshRenderer.sharedMaterials = targetObject.GetComponent<MeshRenderer>().sharedMaterials;
+            });
             
             NetworkSliceInfo sliceInfo = default;
-            sliceInfo.TargetId = targetObject.GetComponent<NetworkObject>().Id;
+            sliceInfo.TargetId = copyObj.Id;
             sliceInfo.SliceNormal = sliceNormal;
             sliceInfo.SlicePoint = slicePoint;
             
             _sliceTargetObject = targetObject;
+            _copyTargetObject = copyObj.gameObject;
             targetObject.SetActive(false);
             
             for (var i = 0; i < sliceObjects.Count; i++)
@@ -66,6 +81,7 @@ namespace Photon.MeshDestruct
                 networkMeshCollider.convex = true;
                 networkMeshCollider.enabled = true;
                 networkObjRigidBody.useGravity = true;
+                networkObjRigidBody.AddForce(220f * force);
 
                 if(i == 0)
                     sliceInfo.SliceID0 = networkObj.Id;
@@ -109,6 +125,7 @@ namespace Photon.MeshDestruct
             if (count <= 0)
             {
                 Destroy(_sliceTargetObject);
+                Destroy(_copyTargetObject);
                 isDestruct = false;
             }
         } 
@@ -120,7 +137,7 @@ namespace Photon.MeshDestruct
             
             var targetNetworkObject = Runner.FindObject(sliceInfo.TargetId);
             var targetObject = targetNetworkObject.gameObject;
-            var sliceObjects = MeshSlicing.Slice(targetObject, sliceInfo.SliceNormal, sliceInfo.SlicePoint);
+            var sliceObjects = MeshSlicing.Slice(targetObject, sliceInfo.SliceNormal, sliceInfo.SlicePoint, false);
             targetObject.SetActive(false);
             
             GameObject[] networkObjects = new GameObject[2];

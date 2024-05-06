@@ -233,7 +233,7 @@ namespace GamePlay.Stage
             {
                 var portal = GameManager.Instance.currentStage.nextStagePortal;
                 prevStagePortal.SetPortal(portal);
-                prevStagePortal.otherPortal.portalVFXList[(int)StageInfo.stageType + 1].gameObject.SetActive(true);
+                if(portal.portalVFXList.Count >= 5) portal.portalVFXList[(int)StageInfo.stageType + 1].gameObject.SetActive(true);
                 portal.IsConnect = true; // 현재 진행중인 스테이지의 포탙 개방
             }
             GameManager.Instance.currentStage = this;
@@ -264,16 +264,19 @@ namespace GamePlay.Stage
             SetIsUnloadRPC(UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber, true);
             if (isStageClear)
                 return;
-            
+
             GameManager.Instance.stageCount.Current++;
             StopMonsterSpawn();
+            
+            var monsters = FindObjectsOfType<MonsterBase>();
+            foreach (var monster in monsters)
+                monster.DieRPC();
             
             prevStagePortal.IsConnect = true;
             //prevStagePortal.portalVFXList[0].gameObject.SetActive(true);
             isStageClear = true;
 
             lootingTable.SpawnDropItem();
-            DebugManager.ToDo("임시적으로 모든 아이템을 드랍하게 함");
 
             if (destructObject != null) destructObject.tag = "Destruction";
 
@@ -348,6 +351,12 @@ namespace GamePlay.Stage
         [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
         public void StageUpdateRPC() => StageUpdate();
 
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void StageClearRPC() => StageClear();
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void StageOverRPC() => StageOver();
+        
         #endregion
     }
 }

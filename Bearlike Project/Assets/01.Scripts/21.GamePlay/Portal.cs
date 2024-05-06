@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using Manager;
 using Photon;
 using Player;
@@ -24,7 +23,7 @@ namespace GamePlay
         [HideInInspector]public BoxCollider boxCollider;
         public SpawnPlace spawnPlace = new SpawnPlace();
         public Portal otherPortal; // 다른 포탈
-        public List<VisualEffect> portalVFXList;
+        public List<VisualEffect> portalVFXList = new List<VisualEffect>();
         
         private bool _isConnect; // 포털과 연결된 상태인지
 
@@ -58,7 +57,6 @@ namespace GamePlay
                 {
                     return;
                 }
-
                 var spot = otherPortal.spawnPlace.GetRandomSpot(); // 이동할 위치
 
                 if (targetObject.CompareTag("Player"))
