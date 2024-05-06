@@ -70,7 +70,6 @@ namespace Player
 
         private void Start()
         {
-            InvokeRepeating(nameof(MainLoop), 0.0f, 1.0f);
         }
         
         public override void Spawned()

@@ -57,7 +57,7 @@ namespace Monster.Container
             {
                 
             }
-            else if (crowdControlType == CrowdControl.Defence)
+            else if (crowdControlType == CrowdControl.DamageIgnore)
             {
                 
             }

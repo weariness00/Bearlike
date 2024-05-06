@@ -2639,8 +2639,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -3803,6 +3803,15 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   damageMultiple: 1
+  criticalHitMultiple: 1
+  criticalHitChance:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
   defence:
     _min: 0
     _max: 0
@@ -3843,16 +3852,10 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
-  force:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
   condition: 0
   property: 0
+  burnDamage: 0
+  poisonDamage: 0
   level:
     _min: 0
     _max: 100
@@ -3879,15 +3882,8 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  injuryTime: 30
   isInjury: 0
-  injuryTime:
-    _min: 0
-    _max: 30
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
   recoveryFromInjuryTime:
     _min: 0
     _max: 12
@@ -6746,12 +6742,12 @@ PrefabInstance:
     - target: {fileID: 3990070231413743475, guid: 7a68dec2cbfce0e4ca5e52ca2616376d,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5118860573570653722, guid: 7a68dec2cbfce0e4ca5e52ca2616376d,
         type: 3}
       propertyPath: m_text
-      value: 10/10
+      value: '10 '
       objectReference: {fileID: 0}
     - target: {fileID: 5118860573570653722, guid: 7a68dec2cbfce0e4ca5e52ca2616376d,
         type: 3}
@@ -6766,12 +6762,12 @@ PrefabInstance:
     - target: {fileID: 6983556501469947977, guid: 7a68dec2cbfce0e4ca5e52ca2616376d,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 300
+      value: 446.1
       objectReference: {fileID: 0}
     - target: {fileID: 6983556501469947977, guid: 7a68dec2cbfce0e4ca5e52ca2616376d,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 190
+      value: 183.6
       objectReference: {fileID: 0}
     - target: {fileID: 7926795522561297113, guid: 7a68dec2cbfce0e4ca5e52ca2616376d,
         type: 3}
@@ -6791,7 +6787,7 @@ PrefabInstance:
     - target: {fileID: 8000985486332761550, guid: 7a68dec2cbfce0e4ca5e52ca2616376d,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
