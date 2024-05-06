@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Linq;
 using Status;
 using BehaviorTree.Base;
 using Data;
 using Fusion;
 using Manager;
+using Photon.MeshDestruct;
 using UnityEngine;
 using UnityEngine.AI;
 using Util;
@@ -13,6 +15,8 @@ namespace Monster.Container
 {
     public class Dice : MonsterBase
     {
+        public NetworkPrefabRef diePrefab;
+        
         private BehaviorTreeRunner _behaviorTreeRunner;
         private bool _isCollide = true; // 현재 충돌 중인지
         private float _moveDelay; // 몇초에 한번씩 움직일지 1번의 움직임이 1m움직임이라 가정( 자연스러운 움직임 구현을 위해 사용 )
@@ -23,6 +27,8 @@ namespace Monster.Container
             base.Start();
             _behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
             _moveDelay = 1f / status.moveSpeed;
+
+            DieAction += DeadSlice;
         }
 
         private void OnCollisionStay(Collision other)
@@ -63,8 +69,24 @@ namespace Monster.Container
             return sqeunce;
         }
 
-        #region Function
+        #region Member Function
 
+        // 사망시 슬라이스 되도록
+        async void DeadSlice()
+        {
+            var s = transform.localScale;
+            var p = transform.parent;
+            var dieObj = await Runner.SpawnAsync(diePrefab, transform.position, transform.rotation, null, (runner, o) =>
+            {
+                o.transform.localScale = s;
+                o.transform.parent = p;
+            });
+
+            NetworkMeshDestructSystem.Instance.NetworkSlice(dieObj.gameObject, Random.onUnitSphere, transform.position, false);
+            
+            Destroy(gameObject);
+        }
+        
         public Vector3 SetRotateDir(Vector3 destinationPosition)
         {
             var destinationDir = (transform.position - destinationPosition);

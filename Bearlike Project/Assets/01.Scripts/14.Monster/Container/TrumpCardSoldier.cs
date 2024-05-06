@@ -13,7 +13,6 @@ namespace Monster.Container
     {
         private BehaviorTreeRunner _behaviorTreeRunner;
         private NetworkObject[] _playerObjects;
-        private NavMeshAgent _navMeshAgent;
 
         public Transform weaponTransform;
         public CrowdControl crowdControlType;
@@ -32,10 +31,14 @@ namespace Monster.Container
         [Networked] private TickTimer AniAttackTimer { get; set; }
         
         private Vector3 _randomDir;
+        private static readonly int AniMove = Animator.StringToHash("fMove");
+        private static readonly int AniAttack = Animator.StringToHash("tAttack");
 
         public override void Start()
         {
             base.Start();
+
+
             
             DebugManager.ToDo("CC 타입 별로 기본 스텟에서 차별을 두기");
             // Spade => 취약
@@ -139,6 +142,8 @@ namespace Monster.Container
             {
                 _isInitAnimation = true;
                 
+                networkAnimator.Animator.SetFloat(AniMove, 0);
+                
                 AniIdleTimer = TickTimer.CreateFromSeconds(Runner, idleClip.length);
             }
 
@@ -157,28 +162,29 @@ namespace Monster.Container
             {
                 _isInitAnimation = true;
                 
+                networkAnimator.Animator.SetFloat(AniMove, 1);
+                
                 _randomDir = Random.onUnitSphere * 2f;
                 _randomDir.y = 0;
 
                 AniWalkTimer = TickTimer.CreateFromSeconds(Runner, walkClip.length);
             }
 
-            if (AniWalkTimer.Expired(Runner) == false)
+            if (AniWalkTimer.Expired(Runner) == false && navMeshAgent.isOnNavMesh)
             {
                 if (targetTransform)
                 {
-                    _navMeshAgent.SetDestination(targetTransform.position);
+                    navMeshAgent.SetDestination(targetTransform.position);
                 }
                 else
                 {
-                    _navMeshAgent.SetDestination(transform.position + _randomDir);
+                    navMeshAgent.SetDestination(transform.position + _randomDir);
                 }
-                
                 return INode.NodeState.Running;
             }
-
+            
             _isInitAnimation = false;
-
+            networkAnimator.Animator.SetFloat(AniMove, 0);
             return INode.NodeState.Success;
         }
 

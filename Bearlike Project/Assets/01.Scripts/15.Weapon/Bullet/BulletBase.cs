@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using Data;
-using Fusion;
+﻿using Fusion;
+using GamePlay;
 using Manager;
 using Photon;
 using Photon.MeshDestruct;
@@ -70,12 +69,15 @@ namespace Weapon.Bullet
 
         private void OnTriggerEnter(Collider other)
         {
-            StatusBase otherStatus;
-            if (other.TryGetComponent(out otherStatus) || other.transform.root.TryGetComponent(out otherStatus))
+            if (other.TryGetComponent(out ColliderStatus colliderStatus))
             {
+                StatusBase otherStatus = colliderStatus.originalStatus;
+                otherStatus.AddAdditionalStatus(colliderStatus.status);
+                
                 // player가 건이다.
                 otherStatus.ApplyDamageRPC(status.CalDamage(), OwnerId);
-
+                otherStatus.RemoveAdditionalStatus(colliderStatus.status);
+                
                 if (bknock)
                 {
                     // TODO : 수정 필요
@@ -86,10 +88,13 @@ namespace Weapon.Bullet
                 // hitEffectObject.transform.LookAt(gun.transform.position);
                 // Destroy(hitEffectObject, 5f);
             }
+            else if (other.TryGetComponent(out StatusBase otherStatus))
+            {
+                otherStatus.ApplyDamageRPC(status.CalDamage(), OwnerId);
+            }
             // 메쉬 붕괴 객체와 충돌 시
             else if (other.CompareTag("Destruction"))
             {
-                // NetworkMeshDestructSystem.Instance.NetworkDestruct(other.gameObject, PrimitiveType.Cube, transform.position, Vector3.one * 2, transform.forward);
                 NetworkMeshDestructSystem.Instance.NetworkSlice(other.gameObject, Random.onUnitSphere, transform.position);
             }
 

@@ -5,6 +5,7 @@ using Status;
 using Fusion;
 using Photon;
 using Unity.AI.Navigation;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -15,9 +16,8 @@ namespace GamePlay.DeadBodyObstacle
         public static NavMeshSurface stageSurface;
         
         private NetworkMecanimAnimator _networkAnimator;
-        private StatusBase _statusBase;
+        private StatusBase _status;
         private Rigidbody _rigidbody;
-        private Collider _collider;
         private Rigidbody[] _ragdollRigidBodies;
         private Collider[] _ragdollColliders;
         private List<NavMeshObstacle> _navMeshObstacleList;
@@ -29,18 +29,17 @@ namespace GamePlay.DeadBodyObstacle
         private void Awake()
         {
             _networkAnimator = GetComponent<NetworkMecanimAnimator>();
-            _statusBase = GetComponent<StatusBase>();
+            _status = GetComponent<StatusBase>();
             _rigidbody = GetComponent<Rigidbody>();
-            _collider = GetComponent<Collider>();
             _ragdollRigidBodies = GetComponentsInChildren<Rigidbody>().Where(c => c.gameObject != gameObject).ToArray();
-            _ragdollColliders = GetComponentsInChildren<Collider>().Where(c => c.gameObject != gameObject).ToArray();
+            _ragdollColliders = GetComponentsInChildren<Collider>();
 
             SetDeadBodyComponentActive(false);
         }
 
         public override void FixedUpdateNetwork()
         {
-            if (_isOn && _statusBase.IsDie)
+            if (_isOn && _status.IsDie)
             {
                 Destroy(gameObject);
             }
@@ -81,6 +80,12 @@ namespace GamePlay.DeadBodyObstacle
                 }
             }
 
+            var colliderStatuses = GetComponentsInChildren<ColliderStatus>();
+            foreach (var colliderStatus in colliderStatuses)
+            {
+                Destroy(colliderStatus);
+            }
+
             // 레그돌 활성화
             SetDeadBodyComponentActive(true);
             
@@ -88,7 +93,8 @@ namespace GamePlay.DeadBodyObstacle
             MakeNavMeshObstacle();
 
             // 시체의 체력 설정
-            _statusBase.SetHpRPC(StatusValueType.CurrentAndMax, hp);
+            _status.hp.Current = hp;
+            _status.SetHpRPC(StatusValueType.CurrentAndMax, hp);
             StartCoroutine(CheckHpCoroutine()); // 시체에 정상적으로 hp가 부여되면 Update가 되도록 하는 코루틴
             StartCoroutine(BakeNavMesh());
         }
@@ -101,16 +107,17 @@ namespace GamePlay.DeadBodyObstacle
         {
             foreach (var rb in _ragdollRigidBodies)
             {
-                rb.isKinematic = !value;
+                rb.useGravity = value;
+                rb.constraints = value ? RigidbodyConstraints.None : RigidbodyConstraints.FreezeAll;
+                if (value)
+                    rb.constraints = 0;
             }
-            if (_rigidbody) _rigidbody.isKinematic = false;
 
             foreach (var col in _ragdollColliders)
             {
-                col.enabled = value;
+                if(value)
+                    col.gameObject.layer = LayerMask.NameToLayer("Ignore Nav Mesh");
             }
-            if (_collider) _collider.enabled = true;
-            
 
             if(_networkAnimator != null) _networkAnimator.Animator.enabled = !value;
         }
@@ -175,7 +182,7 @@ namespace GamePlay.DeadBodyObstacle
             while (true)
             {
                 yield return null;
-                if (_statusBase.hp.isMin == false)
+                if (_status.hp.isMin == false)
                 {
                     _isOn = true;
                     break;

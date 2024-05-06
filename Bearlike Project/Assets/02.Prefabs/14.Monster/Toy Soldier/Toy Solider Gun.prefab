@@ -75,7 +75,6 @@ GameObject:
   - component: {fileID: 4854486632741455185}
   - component: {fileID: 1326746115929638593}
   - component: {fileID: 4502984420150019297}
-  - component: {fileID: 3925476930922392568}
   - component: {fileID: 2967954220686134632}
   - component: {fileID: 8016756961604045440}
   - component: {fileID: 4385394217357682011}
@@ -137,6 +136,15 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   damageMultiple: 1
+  criticalHitMultiple: 1
+  criticalHitChance:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
   defence:
     _min: 0
     _max: 0
@@ -177,16 +185,10 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
-  force:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
   condition: 0
   property: 0
+  burnDamage: 0
+  poisonDamage: 0
 --- !u!114 &4854486632741455185
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -258,29 +260,19 @@ MonoBehaviour:
   - {fileID: 2967954220686134632}
   - {fileID: 8016756961604045440}
   - {fileID: 4385394217357682011}
+  - {fileID: 3146400053095861577}
+  - {fileID: 8843202848999039648}
+  - {fileID: 1212572703291115159}
+  - {fileID: 1071392672811293536}
+  - {fileID: 2894555546048828662}
+  - {fileID: 4332686320542398297}
+  - {fileID: 8997495197419420502}
+  - {fileID: 4366992516410715967}
   - {fileID: 4862724856007239256}
   - {fileID: 1802220238903691281}
---- !u!65 &3925476930922392568
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6303898161483548060}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 1073752064
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.59193563, y: 1.864954, z: 0.32543942}
-  m_Center: {x: -0.034025386, y: 0.9194151, z: 0.020766929}
+  - {fileID: 5371476256657095769}
+  - {fileID: 6631224031451676710}
+  - {fileID: 1959208861230496284}
 --- !u!114 &2967954220686134632
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -610,6 +602,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 4240651591864151813}
+    - targetCorrespondingSourceObject: {fileID: -4732242431634960039, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5876949154837925802}
+    - targetCorrespondingSourceObject: {fileID: -4732242431634960039, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3146400053095861577}
     - targetCorrespondingSourceObject: {fileID: -8202176104871379080, guid: 1b41998b475852b4b87c7c182731e594,
         type: 3}
       insertIndex: -1
@@ -622,6 +622,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 8762640318365595830}
+    - targetCorrespondingSourceObject: {fileID: -8202176104871379080, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1760706797230731556}
+    - targetCorrespondingSourceObject: {fileID: -8202176104871379080, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8843202848999039648}
     - targetCorrespondingSourceObject: {fileID: -61116021307520665, guid: 1b41998b475852b4b87c7c182731e594,
         type: 3}
       insertIndex: -1
@@ -634,6 +642,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 9006144026416197019}
+    - targetCorrespondingSourceObject: {fileID: -61116021307520665, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5466029117203718795}
+    - targetCorrespondingSourceObject: {fileID: -61116021307520665, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1212572703291115159}
     - targetCorrespondingSourceObject: {fileID: -7611636337553870553, guid: 1b41998b475852b4b87c7c182731e594,
         type: 3}
       insertIndex: -1
@@ -646,6 +662,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 2027066672076653705}
+    - targetCorrespondingSourceObject: {fileID: -7611636337553870553, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8367646987563319727}
+    - targetCorrespondingSourceObject: {fileID: -7611636337553870553, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1071392672811293536}
     - targetCorrespondingSourceObject: {fileID: 2083862851890480833, guid: 1b41998b475852b4b87c7c182731e594,
         type: 3}
       insertIndex: -1
@@ -658,6 +682,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 7252445738830310606}
+    - targetCorrespondingSourceObject: {fileID: 2083862851890480833, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7618249216268195850}
+    - targetCorrespondingSourceObject: {fileID: 2083862851890480833, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2894555546048828662}
     - targetCorrespondingSourceObject: {fileID: 3750395976340124316, guid: 1b41998b475852b4b87c7c182731e594,
         type: 3}
       insertIndex: -1
@@ -670,6 +702,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 8759377027409918409}
+    - targetCorrespondingSourceObject: {fileID: 3750395976340124316, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4600510971750456236}
+    - targetCorrespondingSourceObject: {fileID: 3750395976340124316, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4332686320542398297}
     - targetCorrespondingSourceObject: {fileID: 8184165821489321240, guid: 1b41998b475852b4b87c7c182731e594,
         type: 3}
       insertIndex: -1
@@ -682,6 +722,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1927441090444041943}
+    - targetCorrespondingSourceObject: {fileID: 8184165821489321240, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3319307637704159629}
+    - targetCorrespondingSourceObject: {fileID: 8184165821489321240, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8997495197419420502}
     - targetCorrespondingSourceObject: {fileID: -8998092384562060627, guid: 1b41998b475852b4b87c7c182731e594,
         type: 3}
       insertIndex: -1
@@ -694,6 +742,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 6235906020307527012}
+    - targetCorrespondingSourceObject: {fileID: -8998092384562060627, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4098222851063224116}
+    - targetCorrespondingSourceObject: {fileID: -8998092384562060627, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4366992516410715967}
     - targetCorrespondingSourceObject: {fileID: 338363060723379294, guid: 1b41998b475852b4b87c7c182731e594,
         type: 3}
       insertIndex: -1
@@ -714,6 +770,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 7960056266796575932}
+    - targetCorrespondingSourceObject: {fileID: 8181723086095296102, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7700115937378885354}
+    - targetCorrespondingSourceObject: {fileID: 8181723086095296102, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5371476256657095769}
     - targetCorrespondingSourceObject: {fileID: -7015231402420645588, guid: 1b41998b475852b4b87c7c182731e594,
         type: 3}
       insertIndex: -1
@@ -726,6 +790,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 3982087280283565018}
+    - targetCorrespondingSourceObject: {fileID: -7015231402420645588, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3363181788159435858}
+    - targetCorrespondingSourceObject: {fileID: -7015231402420645588, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6631224031451676710}
     - targetCorrespondingSourceObject: {fileID: 179638168378742926, guid: 1b41998b475852b4b87c7c182731e594,
         type: 3}
       insertIndex: -1
@@ -738,6 +810,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 577709335660115852}
+    - targetCorrespondingSourceObject: {fileID: 179638168378742926, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9146711168816781793}
+    - targetCorrespondingSourceObject: {fileID: 179638168378742926, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1959208861230496284}
   m_SourcePrefab: {fileID: 100100000, guid: 1b41998b475852b4b87c7c182731e594, type: 3}
 --- !u!1 &39802519167853273 stripped
 GameObject:
@@ -839,6 +919,102 @@ CharacterJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &4600510971750456236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 39802519167853273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e603ee20d1f4a339352f26601171dff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  originalStatus: {fileID: 3173287629988651953}
+  status: {fileID: 0}
+--- !u!114 &4332686320542398297
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 39802519167853273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damage:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damageMultiple: 1
+  criticalHitMultiple: 1
+  criticalHitChance:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  defence:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  avoid:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 1
+    isMin: 1
+    isMax: 0
+  moveSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackRange:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  condition: 0
+  property: 0
+  burnDamage: 0
+  poisonDamage: 0
 --- !u!1 &779914382828814620 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -4732242431634960039, guid: 1b41998b475852b4b87c7c182731e594,
@@ -893,6 +1069,102 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &5876949154837925802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 779914382828814620}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e603ee20d1f4a339352f26601171dff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  originalStatus: {fileID: 3173287629988651953}
+  status: {fileID: 0}
+--- !u!114 &3146400053095861577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 779914382828814620}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damage:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damageMultiple: 1
+  criticalHitMultiple: 1
+  criticalHitChance:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  defence:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  avoid:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 1
+    isMin: 1
+    isMax: 0
+  moveSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackRange:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  condition: 0
+  property: 0
+  burnDamage: 0
+  poisonDamage: 0
 --- !u!1 &2512855207185064290 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -7611636337553870553, guid: 1b41998b475852b4b87c7c182731e594,
@@ -995,6 +1267,102 @@ CharacterJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &8367646987563319727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2512855207185064290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e603ee20d1f4a339352f26601171dff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  originalStatus: {fileID: 3173287629988651953}
+  status: {fileID: 0}
+--- !u!114 &1071392672811293536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2512855207185064290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damage:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damageMultiple: 1
+  criticalHitMultiple: 1
+  criticalHitChance:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  defence:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  avoid:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 1
+    isMin: 1
+    isMax: 0
+  moveSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackRange:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  condition: 0
+  property: 0
+  burnDamage: 0
+  poisonDamage: 0
 --- !u!1 &2912178944670455428 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2083862851890480833, guid: 1b41998b475852b4b87c7c182731e594,
@@ -1097,6 +1465,102 @@ CharacterJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &7618249216268195850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2912178944670455428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e603ee20d1f4a339352f26601171dff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  originalStatus: {fileID: 3173287629988651953}
+  status: {fileID: 0}
+--- !u!114 &2894555546048828662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2912178944670455428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damage:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damageMultiple: 1
+  criticalHitMultiple: 1
+  criticalHitChance:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  defence:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  avoid:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 1
+    isMin: 1
+    isMax: 0
+  moveSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackRange:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  condition: 0
+  property: 0
+  burnDamage: 0
+  poisonDamage: 0
 --- !u!1 &3037002153700458857 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -7015231402420645588, guid: 1b41998b475852b4b87c7c182731e594,
@@ -1199,6 +1663,102 @@ CharacterJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &3363181788159435858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3037002153700458857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e603ee20d1f4a339352f26601171dff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  originalStatus: {fileID: 3173287629988651953}
+  status: {fileID: 0}
+--- !u!114 &6631224031451676710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3037002153700458857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damage:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damageMultiple: 1
+  criticalHitMultiple: 1
+  criticalHitChance:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  defence:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  avoid:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 1
+    isMin: 1
+    isMax: 0
+  moveSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackRange:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  condition: 0
+  property: 0
+  burnDamage: 0
+  poisonDamage: 0
 --- !u!1 &3473231897472220187 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 338363060723379294, guid: 1b41998b475852b4b87c7c182731e594,
@@ -1234,6 +1794,15 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   damageMultiple: 1
+  criticalHitMultiple: 1
+  criticalHitChance:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
   defence:
     _min: 0
     _max: 0
@@ -1274,16 +1843,10 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
-  force:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
   condition: 0
   property: 0
+  burnDamage: 0
+  poisonDamage: 0
 --- !u!114 &1802220238903691281
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1431,6 +1994,102 @@ CharacterJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &9146711168816781793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3962972634780911819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e603ee20d1f4a339352f26601171dff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  originalStatus: {fileID: 3173287629988651953}
+  status: {fileID: 0}
+--- !u!114 &1959208861230496284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3962972634780911819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damage:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damageMultiple: 1
+  criticalHitMultiple: 1
+  criticalHitChance:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  defence:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  avoid:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 1
+    isMin: 1
+    isMax: 0
+  moveSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackRange:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  condition: 0
+  property: 0
+  burnDamage: 0
+  poisonDamage: 0
 --- !u!1 &4008528906819941096 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -8998092384562060627, guid: 1b41998b475852b4b87c7c182731e594,
@@ -1533,6 +2192,102 @@ CharacterJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &4098222851063224116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4008528906819941096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e603ee20d1f4a339352f26601171dff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  originalStatus: {fileID: 3173287629988651953}
+  status: {fileID: 0}
+--- !u!114 &4366992516410715967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4008528906819941096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damage:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damageMultiple: 1
+  criticalHitMultiple: 1
+  criticalHitChance:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  defence:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  avoid:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 1
+    isMin: 1
+    isMax: 0
+  moveSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackRange:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  condition: 0
+  property: 0
+  burnDamage: 0
+  poisonDamage: 0
 --- !u!1 &4053262457704672532 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 1b41998b475852b4b87c7c182731e594,
@@ -1662,6 +2417,102 @@ CharacterJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &1760706797230731556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4228168808534470461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e603ee20d1f4a339352f26601171dff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  originalStatus: {fileID: 3173287629988651953}
+  status: {fileID: 0}
+--- !u!114 &8843202848999039648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4228168808534470461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damage:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damageMultiple: 1
+  criticalHitMultiple: 1
+  criticalHitChance:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  defence:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  avoid:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 1
+    isMin: 1
+    isMax: 0
+  moveSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackRange:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  condition: 0
+  property: 0
+  burnDamage: 0
+  poisonDamage: 0
 --- !u!1 &4974837835727533603 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8181723086095296102, guid: 1b41998b475852b4b87c7c182731e594,
@@ -1761,9 +2612,105 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.1064406
-  m_Height: 0.21
+  m_Height: 0.40395758
   m_Direction: 1
-  m_Center: {x: 0, y: 0.1064406, z: 0}
+  m_Center: {x: 3.0243922e-11, y: 0.20197862, z: -0.0000000023914009}
+--- !u!114 &7700115937378885354
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4974837835727533603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e603ee20d1f4a339352f26601171dff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  originalStatus: {fileID: 3173287629988651953}
+  status: {fileID: 0}
+--- !u!114 &5371476256657095769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4974837835727533603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damage:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damageMultiple: 1
+  criticalHitMultiple: 2
+  criticalHitChance:
+    _min: 0
+    _max: 1
+    _current: 1
+    isOverMax: 1
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  defence:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  avoid:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 1
+    isMin: 1
+    isMax: 0
+  moveSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackRange:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  condition: 0
+  property: 0
+  burnDamage: 0
+  poisonDamage: 0
 --- !u!1 &4977183581884859741 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8184165821489321240, guid: 1b41998b475852b4b87c7c182731e594,
@@ -1866,6 +2813,102 @@ CharacterJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &3319307637704159629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4977183581884859741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e603ee20d1f4a339352f26601171dff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  originalStatus: {fileID: 3173287629988651953}
+  status: {fileID: 0}
+--- !u!114 &8997495197419420502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4977183581884859741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damage:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damageMultiple: 1
+  criticalHitMultiple: 1
+  criticalHitChance:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  defence:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  avoid:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 1
+    isMin: 1
+    isMax: 0
+  moveSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackRange:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  condition: 0
+  property: 0
+  burnDamage: 0
+  poisonDamage: 0
 --- !u!1 &5451504159709042978 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -61116021307520665, guid: 1b41998b475852b4b87c7c182731e594,
@@ -1968,3 +3011,99 @@ CharacterJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &5466029117203718795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5451504159709042978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e603ee20d1f4a339352f26601171dff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  originalStatus: {fileID: 3173287629988651953}
+  status: {fileID: 0}
+--- !u!114 &1212572703291115159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5451504159709042978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damage:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damageMultiple: 1
+  criticalHitMultiple: 1
+  criticalHitChance:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  defence:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  avoid:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 1
+    isMin: 1
+    isMax: 0
+  moveSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackRange:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  condition: 0
+  property: 0
+  burnDamage: 0
+  poisonDamage: 0

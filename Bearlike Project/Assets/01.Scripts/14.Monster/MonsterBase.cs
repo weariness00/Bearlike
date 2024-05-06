@@ -50,6 +50,7 @@ namespace Monster
         [HideInInspector] public LootingTable lootingTable;
         private DeadBodyObstacleObject _deadBody;
         public Transform pivot; // Pivot이 메쉬 가운데가 아닌 다리에 위치할 떄가 있다. 그때 진짜 pivot으로 사용할 변수
+        protected NavMeshAgent navMeshAgent;
         
         protected PlayerController[] players;
         
@@ -75,6 +76,16 @@ namespace Monster
             status = gameObject.GetOrAddComponent<MonsterStatus>();
             lootingTable = gameObject.GetOrAddComponent<LootingTable>();
 
+            // 하위 콜라이더들 재설정
+            var colliders = GetComponentsInChildren<Collider>();
+            var collideExcludeMask= 1 << LayerMask.NameToLayer("Item") | 1 << LayerMask.NameToLayer("Weapon"); 
+            foreach (var col in colliders)
+            {
+                col.excludeLayers = collideExcludeMask;
+                col.gameObject.layer = LayerMask.NameToLayer("Monster");
+                col.gameObject.tag = "Monster";
+            }
+            
             gameObject.layer = LayerMask.NameToLayer("Monster");
         }
         
@@ -82,6 +93,15 @@ namespace Monster
         {
             if(rigidbody) rigidbody.drag = 0.6f;
             
+            navMeshAgent = GetComponent<NavMeshAgent>();
+            if (navMeshAgent)
+            {
+                navMeshAgent.enabled = false;
+                if (NavMesh.SamplePosition(transform.position, out var hit, 10.0f, NavMesh.AllAreas))
+                    transform.position = hit.position; // NavMesh 위치로 이동
+                navMeshAgent.enabled = true;
+            }
+
             lootingTable.CalLootingItem(GetLootingData(id).LootingItems);
             DieAction += () => _deadBody.OnDeadBodyRPC();
             DieAction += lootingTable.SpawnDropItem;
@@ -218,7 +238,6 @@ namespace Monster
         public void DieRPC()
         {
             DieAction?.Invoke();
-            Destroy(this);
             DebugManager.Log($"몬스터[{name}]이 사망했습니다.");
         }
         

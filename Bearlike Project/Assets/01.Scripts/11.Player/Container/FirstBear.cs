@@ -20,7 +20,7 @@ namespace Player.Container
 
         public override void FixedUpdateNetwork()
         {
-            if(GameManager.Instance.isGameOver)
+            if(!GameManager.Instance.isControl)
                 return;
             
             base.FixedUpdateNetwork();

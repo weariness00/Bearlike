@@ -20,11 +20,11 @@ namespace UI.Status
             _status = GetComponent<StatusBase>();
             
             if(_status == null)
-                Destroy(gameObject);
+                DestroyImmediate(this);
 
             if (TryGetComponent(out MonsterBase mb))
             {
-                mb.DieAction += () => Destroy(gameObject);
+                mb.DieAction += () => Destroy(this);
             }
 
             var meshFilters = gameObject.GetComponentsInChildren<MeshFilter>();

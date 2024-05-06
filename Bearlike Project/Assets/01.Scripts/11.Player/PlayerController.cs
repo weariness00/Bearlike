@@ -154,7 +154,7 @@ namespace Player
 
         public override void FixedUpdateNetwork()
         {
-            if(GameManager.Instance.isGameOver)
+            if(!GameManager.Instance.isControl)
                 return;
             
             if (transform.position.y <= -100)

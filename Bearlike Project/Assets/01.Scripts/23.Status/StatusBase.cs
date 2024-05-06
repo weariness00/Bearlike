@@ -4,6 +4,7 @@ using Data;
 using Fusion;
 using Manager;
 using Unity.Mathematics;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace Status
@@ -32,8 +33,10 @@ namespace Status
         private HashSet<StatusBase> _additionalStatusList = new HashSet<StatusBase>();
         
         public StatusValue<int> hp = new StatusValue<int>(){Max = 99999};                  // 체력        
-        public StatusValue<int> damage = new StatusValue<int>(){Max = 99999};              // 공격력
+        public StatusValue<int> damage = new StatusValue<int>(){Max = 99999};  // 공격력
         public float damageMultiple = 1; // 공격력 배율
+        public float criticalHitMultiple = 1; // 치명타 배율
+        public StatusValue<float> criticalHitChance = new StatusValue<float>(){Max = 1, isOverMax = true}; // 치명타 확률 0~1 값 1 이상이 될수도 있다.
         public StatusValue<int> defence = new StatusValue<int>(){Max = 99999};             // 방어력
         public StatusValue<float> avoid = new StatusValue<float>(){Min = 0, Max = 1, isOverMax = true, isOverMin = true};           // 회피율 0 ~ 1 사이값
         public StatusValue<float> moveSpeed = new StatusValue<float>(){Max = 99999f};           // 이동 속도
@@ -41,7 +44,6 @@ namespace Status
         [Networked] public TickTimer AttackLateTimer { get; set; }
         public StatusValue<float> attackRange = new StatusValue<float>(){Max = 99999f};
         
-        public StatusValue<int> force = new StatusValue<int>();               // 힘
         public int condition;                                                 // 상태
         public int property;                                                  // 속성
         public int burnDamage;
@@ -69,19 +71,40 @@ namespace Status
         public virtual void MainLoop(){}
 
         public void ClearAdditionalStatus() => _additionalStatusList.Clear();
-        public void AddAdditionalStatus(StatusBase otherStatus)
+        public void AddAdditionalStatus(StatusBase otherStatus) => _additionalStatusList.Add(otherStatus);
+        public void RemoveAdditionalStatus(StatusBase otherStatus) => _additionalStatusList.Remove(otherStatus);
+
+        public virtual int CalDamage(int additionalDamage = 0, float additionalDamageMultiple = 0f, float additionalCriticalHitMultiple = 0f)
         {
-            _additionalStatusList.Add(otherStatus);
+            var d = AddAllDamage() + additionalDamage;
+            var dm = AddAllDamageMagnification() + 1 + additionalDamageMultiple;
+            var chm = CalCriticalHit() + additionalCriticalHitMultiple;
+
+            return (int)Math.Round(chm * dm * d);
+        }
+
+        public float CalCriticalHit()
+        {
+            float chm = AddAllCriticalHitMultiple();
+            float chc = AddAllCriticalHitChance();
+
+            float resultCHM = 1;
+            while (true)
+            {
+                if (Random.Range(0f, 1f) < chc)
+                {
+                    resultCHM += chm;
+                    chc -= 1f;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return resultCHM;
         }
         
-        public virtual int CalDamage()
-        {
-            var d = AddAllDamage();
-            var dm = AddAllDamageMagnification() + 1;
-
-            return (int)Math.Round(dm * d);
-        }
-
         private int AddAllDamage()
         {
             var d = damage.Current;
@@ -95,13 +118,34 @@ namespace Status
 
         private float AddAllDamageMagnification()
         {
-            var dm = damageMultiple - 1;
+            float dm = damageMultiple - 1;
             foreach (var statusBase in _additionalStatusList)
             {
                 dm += statusBase.AddAllDamageMagnification();
             }
 
             return dm;
+        }
+
+        private float AddAllCriticalHitMultiple()
+        {
+            float chm = criticalHitMultiple - 1;
+            foreach (var statusBase in _additionalStatusList)
+            {
+                chm += statusBase.AddAllCriticalHitMultiple();
+            }
+
+            return chm;
+        }
+        
+        private float AddAllCriticalHitChance()
+        {
+            float chc = criticalHitChance;
+            foreach (var statusBase in _additionalStatusList)
+            {
+                chc += statusBase.AddAllCriticalHitChance();
+            }
+            return chc;
         }
 
         public virtual void ApplyDamage(int applyDamage, NetworkId ownerId, CrowdControl cc)
@@ -204,7 +248,9 @@ namespace Status
             damage.Min = json.GetInt("Damage Min");
             damage.Current = json.GetInt("Damage Current");
 
-            if(json.HasFloat("Damage Magnification")) damageMultiple = json.GetFloat("Damage Magnification");
+            if(json.HasFloat("Damage Multiple")) damageMultiple = json.GetFloat("Damage Multiple");
+            if(json.HasFloat("CriticalHit Multiple")) damageMultiple = json.GetFloat("CriticalHit Multiple");
+            criticalHitChance.Current = json.GetFloat("CriticalHit Chance");
             
             defence.Max = json.GetInt("Defence Max");
             defence.Min = json.GetInt("Defence Min");

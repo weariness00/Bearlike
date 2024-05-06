@@ -25,7 +25,7 @@ namespace Photon.MeshDestruct
             return target.gameObject;
         }
 
-        public async void NetworkSlice(GameObject targetObject, Vector3 sliceNormal, Vector3 slicePoint)
+        public async void NetworkSlice(GameObject targetObject, Vector3 sliceNormal, Vector3 slicePoint, bool isChangTag = true)
         {
             if(!HasStateAuthority || !targetObject || isDestruct) return;
             isDestruct = true;
@@ -51,7 +51,7 @@ namespace Photon.MeshDestruct
                 var sliceObject = sliceObjects[i];
                 var networkObj = await Runner.SpawnAsync(slicePrefab, sliceObject.transform.position, sliceObject.transform.rotation, null, (runner, o) =>
                 {
-                    o.tag = "Destruction";
+                    if(isChangTag) o.tag = "Destruction";
                 });
 
                 var sliceMeshFilter = sliceObject.GetComponent<MeshFilter>();

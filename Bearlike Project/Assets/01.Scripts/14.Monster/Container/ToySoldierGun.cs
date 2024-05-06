@@ -1,8 +1,5 @@
-﻿using System.Linq;
-using BehaviorTree.Base;
+﻿using BehaviorTree.Base;
 using Fusion;
-using Manager;
-using Player;
 using Status;
 using UnityEngine;
 using UnityEngine.AI;
@@ -16,7 +13,6 @@ namespace Monster.Container
     public class ToySoldierGun : MonsterBase
     {
         private BehaviorTreeRunner _behaviorTreeRunner;
-        private NavMeshAgent _navMeshAgent;
 
         public GunBase gun;
 
@@ -37,7 +33,11 @@ namespace Monster.Container
         {
             base.Start();
 
-            _navMeshAgent = GetComponent<NavMeshAgent>();
+            navMeshAgent = GetComponent<NavMeshAgent>();
+            navMeshAgent.enabled = false;
+            if (NavMesh.SamplePosition(transform.position, out var hit, 10.0f, NavMesh.AllAreas))
+                transform.position = hit.position; // NavMesh 위치로 이동
+            navMeshAgent.enabled = true;
             
             _behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
             gun.BeforeShootAction += BeforeShoot;
@@ -124,7 +124,8 @@ namespace Monster.Container
                 AniIdleTimer = TickTimer.CreateFromSeconds(Runner, idleClip.length);
                 networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 0f);
             }
-            if(AniIdleTimer.IsRunning)
+
+            if (AniIdleTimer.Expired(Runner) == false)
             {
                 return INode.NodeState.Running;
             }
@@ -148,67 +149,48 @@ namespace Monster.Container
                 networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 1f);
                 randomDir = Random.onUnitSphere * 2f;
                 randomDir.y = 0;
-                _navMeshAgent.speed = status.moveSpeed.Current;
+                navMeshAgent.speed = status.moveSpeed.Current;
             }
             
-            if (AniMoveTimer.Expired(Runner) == false)
+            if (AniMoveTimer.Expired(Runner) == false && navMeshAgent.isOnNavMesh)
             {
-                // NavMeshPath path = new NavMeshPath();
-                // if (!_navMeshAgent.isOnNavMesh) {
-                //     Debug.LogError("에이전트가 NavMesh 위에 있지 않습니다.");
-                //     // NavMesh에 에이전트를 재배치하거나, 오류 처리를 수행
-                // }
-                // // 타겟 한테 이동
-                // if (targetTransform)
+                // 타겟 한테 이동
+                if (targetTransform)
+                {
+                    navMeshAgent.SetDestination(targetTransform.position);
+                }
+                else
+                {
+                    var nextPos = transform.position + randomDir;
+                    navMeshAgent.SetDestination(nextPos);
+                }
+                
+                // var path = new NavMeshPath();
+                // if (targetTransform != null && NavMesh.CalculatePath(transform.position, targetTransform.position, NavMesh.AllAreas, path))
                 // {
-                //     if (NavMesh.CalculatePath(transform.position, targetTransform.position, NavMesh.AllAreas, path))
+                //     float pathLength = 0.0f;
+                //     for (int i = 1; i < path.corners.Length; i++)
+                //         pathLength += Vector3.Distance(path.corners[i - 1], path.corners[i]);
+                //     if (pathLength > status.attackRange.Current)
                 //     {
-                //         if (path.status == NavMeshPathStatus.PathComplete)
-                //         {
-                //             _navMeshAgent.SetDestination(targetTransform.position);
-                //         }
+                //         var dir = path.corners[1] - transform.position;
+                //         var nextPos = transform.position + Time.deltaTime * dir;
+                //         transform.LookAt(nextPos);
+                //         rigidbody.AddForce(ForceMagnitude * status.moveSpeed * transform.forward);
+                //     }
+                //     else
+                //     {
+                //         networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 0f);
+                //         _isInitAnimation = false;
+                //         return INode.NodeState.Failure;
                 //     }
                 // }
                 // else
                 // {
-                //     var nextPos = transform.position + randomDir;
-                //     if (NavMesh.CalculatePath(transform.position, nextPos, NavMesh.AllAreas, path))
-                //     {
-                //         if (path.status == NavMeshPathStatus.PathComplete)
-                //         {                    
-                //             _navMeshAgent.SetDestination(nextPos);
-                //         }
-                //     }
+                //     var nextPos = transform.position + Time.deltaTime * randomDir;
+                //     transform.LookAt(nextPos);
+                //     rigidbody.AddForce(ForceMagnitude * status.moveSpeed * transform.forward);
                 // }
-                //
-                // if (_navMeshAgent.pathStatus == NavMeshPathStatus.PathComplete)
-                //     return INode.NodeState.Running;
-                var path = new NavMeshPath();
-                if (targetTransform != null && NavMesh.CalculatePath(transform.position, targetTransform.position, NavMesh.AllAreas, path))
-                {
-                    float pathLength = 0.0f;
-                    for (int i = 1; i < path.corners.Length; i++)
-                        pathLength += Vector3.Distance(path.corners[i - 1], path.corners[i]);
-                    if (pathLength > status.attackRange.Current)
-                    {
-                        var dir = path.corners[1] - transform.position;
-                        var nextPos = transform.position + Time.deltaTime * dir;
-                        transform.LookAt(nextPos);
-                        rigidbody.AddForce(ForceMagnitude * status.moveSpeed * transform.forward);
-                    }
-                    else
-                    {
-                        networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 0f);
-                        _isInitAnimation = false;
-                        return INode.NodeState.Failure;
-                    }
-                }
-                else
-                {
-                    var nextPos = transform.position + Time.deltaTime * randomDir;
-                    transform.LookAt(nextPos);
-                    rigidbody.AddForce(ForceMagnitude * status.moveSpeed * transform.forward);
-                }
                 return INode.NodeState.Running;
             }
             

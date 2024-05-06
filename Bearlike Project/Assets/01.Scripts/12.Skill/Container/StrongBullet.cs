@@ -43,7 +43,7 @@ namespace Skill.Container
         {
             base.LevelUp();
             
-            status.damageMultiple = 1f + _damageMultiplePerLevel * level.Current;
+            status.criticalHitMultiple = 1f + _damageMultiplePerLevel * level.Current;
         }
 
         public override void ExplainUpdate()

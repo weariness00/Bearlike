@@ -26,6 +26,7 @@ namespace GamePlay
         
         #endregion
 
+        public bool isControl = true; // 게임중에 플레이어나 다른 무언가들의 컨트롤을 가능하게 할지
         public bool isGameClear; // 게임을 완전 클리어 했을때
         public bool isGameOver;
         public Portal gameClearPortal;

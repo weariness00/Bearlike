@@ -76,17 +76,26 @@ namespace GamePlay.GM
 
             if (Input.GetKey(KeyCode.LeftAlt))
             {
-                if (Input.GetKeyDown(KeyCode.Alpha1) && playerList[0].status.isInjury)
+                if (Input.GetKeyDown(KeyCode.Alpha1))
                 {
-                    playerList[0].status.RecoveryFromInjuryActionRPC();
+                    if(playerList[0].status.isInjury)
+                        playerList[0].status.RecoveryFromInjuryActionRPC();
+                    else if(playerList[0].status.isRevive)
+                        playerList[0].status.RecoveryFromReviveActionRPC();
                 }
-                else if (playerList.Count < 2 && Input.GetKeyDown(KeyCode.Alpha2) && playerList[1].status.isInjury)
+                else if (playerList.Count < 2 && Input.GetKeyDown(KeyCode.Alpha2))
                 {
-                    playerList[1].status.RecoveryFromInjuryActionRPC();
+                    if(playerList[1].status.isInjury)
+                        playerList[1].status.RecoveryFromInjuryActionRPC();
+                    else if(playerList[1].status.isRevive)
+                        playerList[1].status.RecoveryFromReviveActionRPC();
                 }
-                else if (playerList.Count < 3 && Input.GetKeyDown(KeyCode.Alpha3) && playerList[2].status.isInjury)
+                else if (playerList.Count < 3 && Input.GetKeyDown(KeyCode.Alpha3))
                 {
-                    playerList[2].status.RecoveryFromInjuryActionRPC();
+                    if(playerList[2].status.isInjury)
+                        playerList[2].status.RecoveryFromInjuryActionRPC();
+                    else if(playerList[2].status.isRevive)
+                        playerList[2].status.RecoveryFromReviveActionRPC();
                 }
             }
             

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using GamePlay;
 using Photon;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -11,8 +12,6 @@ namespace Loading
     {
         public Slider loadingBar;
         private RectTransform _barHandle;
-
-        public bool isLoadingEnd = false;
         
         private void Awake()
         {
@@ -34,6 +33,8 @@ namespace Loading
 
         IEnumerator LoadingCoroutine()
         {
+            GameManager.Instance.isControl = false;
+            
             yield return new WaitForSeconds(1);
 
             var refValue = LoadingManager.Instance.refValue;
@@ -51,7 +52,7 @@ namespace Loading
             loadingBar.value = 1;
             yield return new WaitForSeconds(0.5f);
 
-            isLoadingEnd = true;
+            GameManager.Instance.isControl = true;
             NetworkManager.UnloadScene(gameObject.scene.path);
         }
     }

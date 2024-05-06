@@ -295,6 +295,7 @@ namespace GamePlay.Stage
             StopMonsterSpawn();
             isStageOver = true;
             GameManager.Instance.isGameOver = true;
+            GameManager.Instance.isControl = false;
             
             StageOverAction?.Invoke();
         }
