@@ -83,7 +83,7 @@ namespace Monster.Container
             if (targetTransform == null)
                 return false;
             
-            var dis = NavMeshDistanceFromTarget(targetTransform.position);
+            var dis = NavMeshDistanceFromTarget(targetTransform.position);  
             return dis < checkDis;   
         }
         
@@ -91,16 +91,18 @@ namespace Monster.Container
 
         #region Animation Event Function
 
-        private void AniAttackRayEvent()
+        public void AniAttackRayEvent()
         {
-            LayerMask mask = targetMask | LayerMask.NameToLayer("Default");
-            DebugManager.DrawRay(transform.position, transform.forward, Color.red, 2f);
-            if (Physics.Raycast(transform.position, transform.forward, out var hit, 1f, mask))
+            if(!HasStateAuthority)
+                return;
+            
+            LayerMask mask = targetMask | 1 << LayerMask.NameToLayer("Default");
+            DebugManager.DrawRay(weaponTransform.position, weaponTransform.up * status.attackRange.Current, Color.magenta, 2f);
+            if (Runner.LagCompensation.Raycast(weaponTransform.position, weaponTransform.up,status.attackRange.Current, Runner.LocalPlayer, out var lagHit, mask))
             {
                 StatusBase targetStatus;
-
                 if(prickVFX) prickVFX.Play();
-                if (hit.collider.gameObject.TryGetComponent(out targetStatus) || hit.collider.transform.root.TryGetComponent(out targetStatus))
+                if (lagHit.GameObject.TryGetComponent(out targetStatus) || lagHit.GameObject.transform.root.TryGetComponent(out targetStatus))
                 {
                     targetStatus.ApplyDamageRPC(status.CalDamage(), Object.Id, crowdControlType);
                 }
@@ -200,7 +202,7 @@ namespace Monster.Container
                 
                 networkAnimator.SetTrigger(AniAttack);
 
-                AniAttackTimer = TickTimer.CreateFromSeconds(Runner, attackClip.length);
+                AniAttackTimer = TickTimer.CreateFromSeconds(Runner, attackClip.length + 2f);
             }
 
             if (AniAttackTimer.Expired(Runner) == false)

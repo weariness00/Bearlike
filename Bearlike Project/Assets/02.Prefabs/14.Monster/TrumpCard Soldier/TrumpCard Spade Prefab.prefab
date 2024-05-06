@@ -183,6 +183,7 @@ MonoBehaviour:
   - {fileID: 4412706517432162088}
   - {fileID: 2161992948294026994}
   - {fileID: -5612916446503345394}
+  - {fileID: 6208794084039945978}
   - {fileID: 3624181271072293204}
   - {fileID: 4288737679634441930}
   - {fileID: 3066928555491217860}
@@ -423,6 +424,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 5971770167882503846}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 88ae1074751685e4cbe70aaf11d1c462,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6208794084039945978}
     - targetCorrespondingSourceObject: {fileID: -8857739509801200590, guid: 88ae1074751685e4cbe70aaf11d1c462,
         type: 3}
       insertIndex: -1
@@ -811,6 +816,22 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6208794084039945978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946092411280173887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e1df807d2c645c48a4cf6d9ad7dba06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
+  monster: {fileID: 3247183115326026178}
 --- !u!1 &1356274240306262983 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1383220694547342761, guid: 88ae1074751685e4cbe70aaf11d1c462,

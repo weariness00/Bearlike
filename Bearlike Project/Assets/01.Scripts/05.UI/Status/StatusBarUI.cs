@@ -67,8 +67,6 @@ namespace UI.Status
         {
             if (_hpBarSlider.gameObject.activeSelf)
             {
-                DebugManager.ToDo("거리에 따라 Bar 크기를 작게 해야된다.");
-       
                 _hpBarSlider.value = (float)_status.hp.Current / _status.hp.Max;
                 _hpBarSlider.transform.position = c.WorldToScreenPoint(gameObject.transform.position + headPosition);
             }
