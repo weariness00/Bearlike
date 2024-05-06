@@ -14,6 +14,7 @@ namespace GamePlay.GM
         public List<PlayerController> playerList = new List<PlayerController>();
 
         public GMMonsterSpawnerCanvas gmMonsterSpawnerCanvas;
+        public GMItemSpawnerCanvas gmItemSpawnerCanvas;
 
         private void Start()    
         {
@@ -53,6 +54,7 @@ namespace GamePlay.GM
         // F1 : 스테이지 Clear
         // F2 : 스테이지 Over
         // F3 : 몬스터 생성 Canvas
+        // F4 : 아이템 생성 Canvas
         
         // CTRL + 1~3 : 1~3 번 플레이어 100 데미지
         // ALT + 1~3 : 1~3번 플레이 부상에서 회복
@@ -108,6 +110,8 @@ namespace GamePlay.GM
                 StageOverRPC();
             else if( Input.GetKeyDown(KeyCode.F3))
                 gmMonsterSpawnerCanvas.gameObject.SetActive(!gmMonsterSpawnerCanvas.gameObject.activeSelf);
+            else if(Input.GetKeyDown(KeyCode.F4))
+                gmItemSpawnerCanvas.gameObject.SetActive(!gmItemSpawnerCanvas.gameObject.activeSelf);
         }
 
         #region RPC Function
