@@ -17,7 +17,7 @@ namespace UI.Status
         private void Awake()
         {
             _status = GetComponent<StatusBase>();
-            
+            //
             if(_status == null)
                 Destroy(gameObject);
 

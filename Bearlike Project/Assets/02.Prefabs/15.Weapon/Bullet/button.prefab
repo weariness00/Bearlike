@@ -73,6 +73,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: df3a8025e48f9fb439696fe9dcc052bb,
+        type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: df3a8025e48f9fb439696fe9dcc052bb,
         type: 3}
       propertyPath: m_Name
@@ -214,6 +219,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9157c914e81496ca531aa847af40355, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
   _OwnerId:
     Raw: 0
   status: {fileID: 0}
@@ -221,8 +229,6 @@ MonoBehaviour:
   destination: {x: -17.54316, y: 99.12152, z: -1.22813}
   hitEffect: {fileID: 0}
   bknock: 0
-  id: 0
-  explain: 
 --- !u!114 &8693081974366723898
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -277,14 +283,6 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   attackSpeed:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  attackLateTime:
     _min: 0
     _max: 0
     _current: 0
