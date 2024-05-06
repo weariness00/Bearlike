@@ -86,6 +86,10 @@ namespace Monster.Container
             var dis = NavMeshDistanceFromTarget(targetTransform.position);
             return dis < checkDis;   
         }
+        
+        #endregion
+
+        #region Animation Event Function
 
         private void AniAttackRayEvent()
         {
@@ -193,6 +197,8 @@ namespace Monster.Container
             if (!_isInitAnimation)
             {
                 _isInitAnimation = true;
+                
+                networkAnimator.SetTrigger(AniAttack);
 
                 AniAttackTimer = TickTimer.CreateFromSeconds(Runner, attackClip.length);
             }

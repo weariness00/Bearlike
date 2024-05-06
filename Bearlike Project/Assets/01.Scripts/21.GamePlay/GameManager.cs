@@ -39,6 +39,7 @@ namespace GamePlay
         public StageBase currentStage;
         public StatusValue<int> stageCount = new StatusValue<int>();// 현재 몇번째 스테이지 인지
 
+        public SceneReference gmModeScene;
         public SceneReference gameResultScene;
         public SceneReference loadingScene;
         
@@ -52,6 +53,11 @@ namespace GamePlay
 
         public override void Spawned()
         {
+            if (NetworkManager.Instance.isTest)
+            {
+                NetworkManager.LoadScene(gmModeScene, LoadSceneMode.Additive);
+            }
+            
             if (Runner.IsServer == false)
             {
                 return;

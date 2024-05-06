@@ -413,6 +413,7 @@ MonoBehaviour:
     _value: 0
   _PlayTimer: 0
   _AlivePlayerCount: 0
+  isControl: 1
   isGameClear: 0
   isGameOver: 0
   gameClearPortal: {fileID: 0}
@@ -437,9 +438,12 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  gmModeScene:
+    sceneAsset: {fileID: 102900000, guid: 5b95cfc0949287e47aada999f20668e3, type: 3}
+    scenePath: Assets/00.Scenes/Game/Game Admin.unity
   gameResultScene:
     sceneAsset: {fileID: 102900000, guid: b432b15f467c51e4da51bf8cdb5f9046, type: 3}
-    scenePath: Assets/00.Scenes/Game/Game Over.unity
+    scenePath: Assets/00.Scenes/Game/Game Result.unity
   loadingScene:
     sceneAsset: {fileID: 102900000, guid: 458e08f0c6c6b754c8522ad427003f08, type: 3}
     scenePath: Assets/00.Scenes/Game/Game Start Loading.unity
@@ -3676,74 +3680,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2027442809}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &2098523134
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2098523137}
-  - component: {fileID: 2098523136}
-  - component: {fileID: 2098523135}
-  m_Layer: 0
-  m_Name: GM Mode
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2098523135
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2098523134}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SortKey: 1141099845
-  ObjectInterest: 1
-  Flags: 262145
-  NestedObjects: []
-  NetworkedBehaviours:
-  - {fileID: 2098523136}
---- !u!114 &2098523136
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2098523134}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa3f1abbc8d0477e87cd51af70726f53, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _IsAsyncClient: []
-  _IsSpawnSuccess:
-    _value: 0
-  isOnGMMode: 0
-  playerList: []
---- !u!4 &2098523137
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2098523134}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 956.4607, y: 537.08905, z: 4.0824933}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2107939352
 GameObject:
   m_ObjectHideFlags: 0
@@ -4022,7 +3958,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 1793537451}
   - {fileID: 579916212}
-  - {fileID: 2098523137}
   - {fileID: 148781568}
   - {fileID: 1557299802}
   - {fileID: 1763687603}

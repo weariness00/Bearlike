@@ -103,8 +103,11 @@ namespace Monster
             }
 
             lootingTable.CalLootingItem(GetLootingData(id).LootingItems);
-            DieAction += () => _deadBody.OnDeadBodyRPC();
-            DieAction += lootingTable.SpawnDropItem;
+            DieAction += () =>
+            {
+                if (_deadBody) _deadBody.OnDeadBodyRPC();
+                lootingTable.SpawnDropItem();
+            };
             
             status.SetJsonData(GetStatusData(id));
         }
