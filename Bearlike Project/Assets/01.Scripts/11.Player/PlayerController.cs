@@ -14,6 +14,7 @@ using UI.Skill;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using UnityEngine.Serialization;
 using Weapon;
 using Weapon.Gun;
 
@@ -30,7 +31,8 @@ namespace Player
         public PlayerCameraController cameraController;
         public SkillSystem skillSystem;
         public WeaponSystem weaponSystem;
-        public Canvas GunUI;
+        public Canvas gunUI;
+        public Canvas hpUI;
         public ItemInventory itemInventory;
         public SkillInventory skillInventory;
         public SkillSelectUI skillSelectUI;
@@ -142,7 +144,8 @@ namespace Player
                 status.ReviveAction += () => cameraController.ChangeCameraMode(CameraMode.Free);
                 status.RecoveryFromReviveAction += () => cameraController.ChangeCameraMode(CameraMode.FirstPerson);
 
-                GunUI.gameObject.SetActive(true);
+                gunUI.gameObject.SetActive(true);
+                hpUI.gameObject.SetActive(true);
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
             }
             else
