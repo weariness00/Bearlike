@@ -278,6 +278,10 @@ namespace Photon
                 Cursor.lockState = Cursor.lockState == CursorLockMode.None ? CursorLockMode.Locked : CursorLockMode.None;
                 isCursor = !isCursor;
             }
+            if (KeyManager.InputAction(KeyToAction.Esc))
+            {
+                playerInputData.Escape = true;
+            }
             if (isCursor)
             {
                 playerInputData.Cursor = trueValue;

@@ -36,9 +36,10 @@ namespace Player
         public ItemInventory itemInventory;
         public SkillInventory skillInventory;
         public SkillSelectUI skillSelectUI;
-        private NetworkMecanimAnimator _networkAnimator;
+        public Animator animator;
         [HideInInspector] public SimpleKCC simpleKcc;
         [HideInInspector] public RigBuilder rigBuilder;
+        private HitboxRoot _hitboxRoot;
         private Rig _headRig;
         private StageSelectUI _stageSelectUI;
 
@@ -52,7 +53,7 @@ namespace Player
 
         private int _gunLayer;
 
-        private static readonly int AniShoot = Animator.StringToHash("tShoot");
+        private static readonly int AniShoot = Animator.StringToHash("isShoot");
         private static readonly int AniFrontMove = Animator.StringToHash("fFrontMove");
         private static readonly int AniSideMove = Animator.StringToHash("fSideMove");
         private static readonly int AniJump = Animator.StringToHash("tJump");
@@ -63,6 +64,7 @@ namespace Player
         
         #endregion
 
+        #region Unity Event Function
         private void Awake()
         {
             // 임시로 장비 착용
@@ -70,52 +72,21 @@ namespace Player
             status = gameObject.GetComponent<PlayerStatus>();
             cameraController = GetComponent<PlayerCameraController>();
             weaponSystem = gameObject.GetComponentInChildren<WeaponSystem>();
-            _networkAnimator = GetComponent<NetworkMecanimAnimator>();
+            animator = GetComponentInChildren<Animator>();
+            // _networkAnimator = GetComponent<NetworkMecanimAnimator>();
 
             _stageSelectUI = FindObjectOfType<StageSelectUI>();
-            
+
+            _hitboxRoot = GetComponent<HitboxRoot>();
             rigBuilder = GetComponentInChildren<RigBuilder>();
             _headRig = rigBuilder.layers.Find(rig => rig.name == "Head Rig").rig;
         }
         
         public override void Spawned()
         {
-            _gunLayer = _networkAnimator.Animator.GetLayerIndex("Gun Layer");
-                
-            // Status 관련 초기화
-            status.InjuryAction += () =>
-            {
-                _networkAnimator.SetTrigger(AniInjury); 
-                _networkAnimator.Animator.SetLayerWeight(_gunLayer, 0);
-                _headRig.weight = 0;
-                if(weaponSystem.equipment is WeaponBase weapon)
-                    weapon.gameObject.SetActive(false);
-            };
-            status.RecoveryFromInjuryAction += () =>
-            {
-                _networkAnimator.SetTrigger(AniRevive);
-                _networkAnimator.Animator.SetLayerWeight(_gunLayer, 1);
-                _headRig.weight = 1;
-                
-                if(weaponSystem.equipment is WeaponBase weapon)
-                    weapon.gameObject.SetActive(true);
-            };
-            status.ReviveAction += () =>
-            {
-                GameManager.Instance.AlivePlayerCount--;
-                _networkAnimator.SetTrigger(AniDie);
-            };
-            status.RecoveryFromReviveAction += () =>
-            {
-                GameManager.Instance.AlivePlayerCount++;
-                
-                _networkAnimator.SetTrigger(AniRevive);
-                _networkAnimator.Animator.SetLayerWeight(_gunLayer, 1);
-                _headRig.weight = 1;
-                
-                if(weaponSystem.equipment is WeaponBase weapon)
-                    weapon.gameObject.SetActive(true);
-            };
+            _gunLayer = animator.GetLayerIndex("Gun Layer");
+
+            StatusInit();
             
             Cursor.lockState = CursorLockMode.Locked;
             simpleKcc = gameObject.GetOrAddComponent<SimpleKCC>();
@@ -123,7 +94,7 @@ namespace Player
             
             // 무기 초기화
             weaponSystem.equipment?.EquipAction?.Invoke(gameObject);
-            _networkAnimator.Animator.SetLayerWeight(_gunLayer, 1);
+            animator.SetLayerWeight(_gunLayer, 1);
             
             // 스킬 초기화
             foreach (var skill in skillSystem.skillList)
@@ -179,29 +150,107 @@ namespace Player
                 MoveControl(data);
                 WeaponControl(data);
 
-                if (data.StageSelect)
-                {
-                    _stageSelectUI.gameObject.SetActive(!_stageSelectUI.gameObject.activeSelf);
-                    skillInventory.canvas.gameObject.SetActive(false);
-                    itemInventory.canvas.gameObject.SetActive(false);
-                }
-                
-                if (data.ItemInventory)
-                {
-                    _stageSelectUI.gameObject.SetActive(false);
-                    skillInventory.canvas.gameObject.SetActive(false);
-                    itemInventory.canvas.gameObject.SetActive(!itemInventory.canvas.gameObject.activeSelf);
-                }
-
-                if (data.SkillInventory)
-                {
-                    _stageSelectUI.gameObject.SetActive(false);
-                    skillInventory.canvas.gameObject.SetActive(!skillInventory.canvas.gameObject.activeSelf);
-                    itemInventory.canvas.gameObject.SetActive(false);
-                }
+                if (HasInputAuthority)
+                    UISetting(data);
+                else if(HasStateAuthority)
+                    UISettingRPC(data);
             }
         }
+        #endregion
+        
+        #region Member Function
 
+        private void StatusInit()
+        {
+            // Status 관련 초기화
+            status.InjuryAction += () =>
+            {
+                animator.SetTrigger(AniInjury); 
+                animator.SetLayerWeight(_gunLayer, 0);
+                _headRig.weight = 0;
+                simpleKcc.Collider.transform.localPosition = new Vector3(0.05f, 0.33f, -0.44f);
+                simpleKcc.Collider.transform.Rotate(90,0,0);
+                foreach (var hitbox in _hitboxRoot.Hitboxes)
+                {
+                    hitbox.transform.localPosition = new Vector3(0.05f, 0.33f, -0.44f);
+                    hitbox.transform.Rotate(90,0,0);
+                }
+                
+                if(weaponSystem.equipment is WeaponBase weapon)
+                    weapon.gameObject.SetActive(false);
+            };
+            status.RecoveryFromInjuryAction += () =>
+            {
+                animator.SetTrigger(AniRevive);
+                animator.SetLayerWeight(_gunLayer, 1);
+                _headRig.weight = 1;
+                simpleKcc.Collider.transform.localPosition = Vector3.zero;
+                simpleKcc.Collider.transform.localRotation = Quaternion.identity;
+                foreach (var hitbox in _hitboxRoot.Hitboxes)
+                {
+                    hitbox.transform.localPosition = Vector3.zero;
+                    hitbox.transform.localRotation = Quaternion.identity;
+                }
+                
+                if(weaponSystem.equipment is WeaponBase weapon)
+                    weapon.gameObject.SetActive(true);
+            };
+            status.ReviveAction += () =>
+            {
+                GameManager.Instance.AlivePlayerCount--;
+                animator.SetTrigger(AniDie);
+            };
+            status.RecoveryFromReviveAction += () =>
+            {
+                GameManager.Instance.AlivePlayerCount++;
+                
+                animator.SetTrigger(AniRevive);
+                animator.SetLayerWeight(_gunLayer, 1);
+                _headRig.weight = 1;
+                simpleKcc.Collider.transform.localPosition = Vector3.zero;
+                simpleKcc.Collider.transform.localRotation = Quaternion.identity;
+                foreach (var hitbox in _hitboxRoot.Hitboxes)
+                {
+                    hitbox.transform.localPosition = Vector3.zero;
+                    hitbox.transform.localRotation = Quaternion.identity;
+                }
+                
+                if(weaponSystem.equipment is WeaponBase weapon)
+                    weapon.gameObject.SetActive(true);
+            };
+        }
+
+        private void UISetting(PlayerInputData data)
+        {
+            if (data.Escape)
+            {
+                _stageSelectUI.gameObject.SetActive(false);
+                skillInventory.canvas.gameObject.SetActive(false);
+                itemInventory.canvas.gameObject.SetActive(false);
+            }
+            
+            if (data.StageSelect)
+            {
+                _stageSelectUI.gameObject.SetActive(!_stageSelectUI.gameObject.activeSelf);
+                skillInventory.canvas.gameObject.SetActive(false);
+                itemInventory.canvas.gameObject.SetActive(false);
+            }
+                
+            if (data.ItemInventory)
+            {
+                _stageSelectUI.gameObject.SetActive(false);
+                skillInventory.canvas.gameObject.SetActive(false);
+                itemInventory.canvas.gameObject.SetActive(!itemInventory.canvas.gameObject.activeSelf);
+            }
+
+            if (data.SkillInventory)
+            {
+                _stageSelectUI.gameObject.SetActive(false);
+                skillInventory.canvas.gameObject.SetActive(!skillInventory.canvas.gameObject.activeSelf);
+                itemInventory.canvas.gameObject.SetActive(false);
+            }
+        }
+        
         private void MoveControl(PlayerInputData data = default)
         {
             if (HasStateAuthority == false)
@@ -217,7 +266,6 @@ namespace Player
                 dir += transform.forward;
                 isMoveX = true;
             }
-
             if (data.MoveBack)
             {
                 dir += -transform.forward;
@@ -236,9 +284,9 @@ namespace Player
                 isMoveY = true;
             }
 
-            _networkAnimator.Animator.SetFloat(AniInjuryMove, isMoveX || isMoveY ? 1 : 0);
-            _networkAnimator.Animator.SetFloat(AniFrontMove, isMoveX ? 1 : 0);
-            _networkAnimator.Animator.SetFloat(AniSideMove, isMoveY ? 1 : 0);
+            animator.SetFloat(AniInjuryMove, isMoveX || isMoveY ? 1 : 0);
+            animator.SetFloat(AniFrontMove, isMoveX ? 1 : 0);
+            animator.SetFloat(AniSideMove, isMoveY ? 1 : 0);
             
             dir *= Runner.DeltaTime * status.moveSpeed * 110f;
 
@@ -249,7 +297,7 @@ namespace Player
                 if (Runner.LagCompensation.Raycast(transform.position + new Vector3(0,0.03f,0), -transform.up, 0.1f, Runner.LocalPlayer, out var hit,Int32.MaxValue , hitOptions))
                 {
                     jumpImpulse = Vector3.up * status.jumpPower;
-                    _networkAnimator.SetTrigger(AniJump);
+                    animator.SetTrigger(AniJump);
                 }
             }
 
@@ -285,9 +333,9 @@ namespace Player
                 weaponSystem.ChangeEquipment(0, gameObject);
                 
                 // 장비에 맞는 애니메이터 Layer Weight 주기
-                _networkAnimator.Animator.SetLayerWeight(_gunLayer, 0);
+                animator.SetLayerWeight(_gunLayer, 0);
                 if (weaponSystem.equipment.IsGun)
-                    _networkAnimator.Animator.SetLayerWeight(_gunLayer, 1);
+                    animator.SetLayerWeight(_gunLayer, 1);
                 
                 // 변경된 장비에 스킬이 적용되도록 스킬 초기화
                 foreach (var skillBase in skillSystem.skillList)
@@ -298,8 +346,12 @@ namespace Player
 
             if (data.Attack && weaponSystem.equipment.IsGun)
             {
-                _networkAnimator.SetTrigger(AniShoot);
+                animator.SetBool(AniShoot, true);
                 weaponSystem.equipment.AttackAction?.Invoke();
+            }
+            else if (animator.GetBool(AniShoot) == true)
+            {
+                animator.SetBool(AniShoot, false);
             }
 
             if (data.ReLoad && weaponSystem.equipment.IsGun)
@@ -308,13 +360,18 @@ namespace Player
             }
         }
         
+        #endregion
+        
         #region RPC Function
 
         [Rpc(RpcSources.All,RpcTargets.StateAuthority)]
         public new void SetPositionRPC(Vector3 pos) => simpleKcc.SetPosition(pos);
         [Rpc(RpcSources.All,RpcTargets.StateAuthority)]
         public void SetLookRotationRPC(Vector2 look) => simpleKcc.SetLookRotation(look);
-        
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
+        private void UISettingRPC(PlayerInputData data) => UISetting(data);
+
         #endregion
     }
 }

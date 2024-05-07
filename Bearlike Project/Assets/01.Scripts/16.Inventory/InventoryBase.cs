@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Fusion;
+using Item;
 using Manager;
+using Photon;
 using UnityEngine;
+using Object = System.Object;
 
 namespace UI.Inventory
 {
@@ -11,7 +15,7 @@ namespace UI.Inventory
     /// <typeparam name="Item"> HashSet을 통해 관리 됨으로 Item으로 사용될 클래스에 GetHashCode와 Equals비교 함수 만들어줘야함 </typeparam>
     /// <typeparam name="UIHandle"></typeparam>
     [RequireComponent(typeof(Canvas))]
-    public class InventoryBase<Item, UIHandle> : MonoBehaviour , IInventoryEditor
+    public class InventoryBase<Item, UIHandle> : NetworkBehaviourEx , IInventoryEditor
         where Item : Component, IInventoryItemAdd
         where UIHandle : Component
     {
@@ -89,7 +93,7 @@ namespace UI.Inventory
 
             }
         }
-
+        
         #region Editor Function
         public void SetItem(Dictionary<Component, Component> items)
         {

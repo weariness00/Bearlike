@@ -2747,7 +2747,6 @@ GameObject:
   m_Component:
   - component: {fileID: 366726486812420614}
   - component: {fileID: 7053950048339461551}
-  - component: {fileID: 9041469382991848481}
   m_Layer: 0
   m_Name: GM Mode
   m_TagString: Untagged
@@ -2767,31 +2766,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa3f1abbc8d0477e87cd51af70726f53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _IsAsyncClient: []
-  _IsSpawnSuccess:
-    _value: 0
   isOnGMMode: 0
-  playerList: []
+  players: []
   gmMonsterSpawnerCanvas: {fileID: 1362990917}
   gmItemSpawnerCanvas: {fileID: 1495324708}
---- !u!114 &9041469382991848481
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4124173949262561849}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SortKey: 3863398082
-  ObjectInterest: 1
-  Flags: 262145
-  NestedObjects: []
-  NetworkedBehaviours:
-  - {fileID: 7053950048339461551}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

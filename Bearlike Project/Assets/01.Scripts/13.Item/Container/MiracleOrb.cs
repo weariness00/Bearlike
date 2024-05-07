@@ -44,12 +44,14 @@ namespace Item.Container
         public void InteractInit()
         {
             IsInteract = true;
-            InteractEnterAction += GetItem;
+            InteractKeyDownAction += GetItem;
         }
 
         public bool IsInteract { get; set; }
         public Action<GameObject> InteractEnterAction { get; set; }
         public Action<GameObject> InteractExitAction { get; set; }
+        public Action<GameObject> InteractKeyDownAction { get; set; }
+        public Action<GameObject> InteractKeyUpAction { get; set; }
         
         #endregion
 

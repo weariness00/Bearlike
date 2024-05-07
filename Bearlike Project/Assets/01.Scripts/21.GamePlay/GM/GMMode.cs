@@ -1,17 +1,13 @@
-﻿using System.Collections.Generic;
-using Data;
-using Fusion;
-using GamePlay.Stage;
-using Photon;
+﻿using Data;
 using Player;
 using UnityEngine;
 
 namespace GamePlay.GM
 {
-    public class GMMode : NetworkBehaviourEx
+    public class GMMode : MonoBehaviour
     {
         public bool isOnGMMode = false;
-        public List<PlayerController> playerList = new List<PlayerController>();
+        public PlayerController[] players;
 
         public GMMonsterSpawnerCanvas gmMonsterSpawnerCanvas;
         public GMItemSpawnerCanvas gmItemSpawnerCanvas;
@@ -19,18 +15,11 @@ namespace GamePlay.GM
         private void Start()    
         {
             isOnGMMode = false;
+            Invoke(nameof(Init), 1);
         }
         
-        public override void Spawned()
+        private void Update()
         {
-            Invoke(nameof(Init), 1);
-            Object.AssignInputAuthority(Runner.LocalPlayer);
-        }
-
-        public override void FixedUpdateNetwork()
-        {
-            if(!HasInputAuthority)
-                return;
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftAlt) && Input.GetKeyDown(KeyCode.F12))
                 isOnGMMode = !isOnGMMode;
             
@@ -42,13 +31,17 @@ namespace GamePlay.GM
 
         void Init()
         {
-            playerList = new List<PlayerController>();
-            foreach (var (playerRef, data) in UserData.Instance.UserDictionary)
+            players = FindObjectsOfType<PlayerController>();
+            for (var i = 0; i < players.Length; i++)
             {
-                var obj = Runner.FindObject(data.NetworkId);
-                var pc = obj.GetComponent<PlayerController>();
-                
-                playerList.Add(pc);
+                var player = players[i];
+                foreach (var (key, data) in UserData.Instance.UserDictionary)
+                {
+                    if (player.Object.Id == data.NetworkId)
+                    {
+                        (players[i], players[data.ClientNumber]) = (players[data.ClientNumber], players[i]);
+                    }
+                }
             }
         }
         // F1 : 스테이지 Clear
@@ -64,18 +57,18 @@ namespace GamePlay.GM
             {
                 if (Input.GetKeyDown(KeyCode.Alpha1))
                 {
-                    playerList[0].status.ApplyDamageRPC(100, playerList[0].Object.Id);
-                    playerList[0].status.InjuryTimer = TickTimer.CreateFromSeconds(Runner, 0);
+                    players[0].status.ApplyDamageRPC(100, players[0].Object.Id);
+                    if(players[0].status.isInjury) players[0].status.GoReviveRPC();
                 }
-                else if (playerList.Count < 2 && Input.GetKeyDown(KeyCode.Alpha2))
+                else if (players.Length >= 2 && Input.GetKeyDown(KeyCode.Alpha2))
                 {
-                    playerList[1].status.ApplyDamageRPC(100, playerList[1].Object.Id);
-                    playerList[1].status.InjuryTimer = TickTimer.CreateFromSeconds(Runner, 0);
+                    players[1].status.ApplyDamageRPC(100, players[1].Object.Id);
+                    if(players[1].status.isInjury) players[0].status.GoReviveRPC();
                 }
-                else if (playerList.Count < 3 && Input.GetKeyDown(KeyCode.Alpha3))
+                else if (players.Length >= 3 && Input.GetKeyDown(KeyCode.Alpha3))
                 {
-                    playerList[2].status.ApplyDamageRPC(100, playerList[2].Object.Id);
-                    playerList[2].status.InjuryTimer = TickTimer.CreateFromSeconds(Runner, 0);
+                    players[2].status.ApplyDamageRPC(100, players[2].Object.Id);
+                    if(players[2].status.isInjury) players[0].status.GoReviveRPC();
                 }
             }
 
@@ -83,65 +76,36 @@ namespace GamePlay.GM
             {
                 if (Input.GetKeyDown(KeyCode.Alpha1))
                 {
-                    if(playerList[0].status.isInjury)
-                        playerList[0].status.RecoveryFromInjuryActionRPC();
-                    else if(playerList[0].status.isRevive)
-                        playerList[0].status.RecoveryFromReviveActionRPC();
+                    if(players[0].status.isInjury)
+                        players[0].status.RecoveryFromInjuryActionRPC();
+                    else if(players[0].status.isRevive)
+                        players[0].status.RecoveryFromReviveActionRPC();
                 }
-                else if (playerList.Count < 2 && Input.GetKeyDown(KeyCode.Alpha2))
+                else if (players.Length >= 2 && Input.GetKeyDown(KeyCode.Alpha2))
                 {
-                    if(playerList[1].status.isInjury)
-                        playerList[1].status.RecoveryFromInjuryActionRPC();
-                    else if(playerList[1].status.isRevive)
-                        playerList[1].status.RecoveryFromReviveActionRPC();
+                    if(players[1].status.isInjury)
+                        players[1].status.RecoveryFromInjuryActionRPC();
+                    else if(players[1].status.isRevive)
+                        players[1].status.RecoveryFromReviveActionRPC();
                 }
-                else if (playerList.Count < 3 && Input.GetKeyDown(KeyCode.Alpha3))
+                else if (players.Length >= 3 && Input.GetKeyDown(KeyCode.Alpha3))
                 {
-                    if(playerList[2].status.isInjury)
-                        playerList[2].status.RecoveryFromInjuryActionRPC();
-                    else if(playerList[2].status.isRevive)
-                        playerList[2].status.RecoveryFromReviveActionRPC();
+                    if(players[2].status.isInjury)
+                        players[2].status.RecoveryFromInjuryActionRPC();
+                    else if(players[2].status.isRevive)
+                        players[2].status.RecoveryFromReviveActionRPC();
                 }
             }
             
             if (Input.GetKeyDown(KeyCode.F1))
-                StageClearRPC();
+                GameManager.Instance.currentStage.StageClearRPC();
             else if (Input.GetKeyDown(KeyCode.F2))
-                StageOverRPC();
+                GameManager.Instance.currentStage.StageOverRPC();
             else if( Input.GetKeyDown(KeyCode.F3))
                 gmMonsterSpawnerCanvas.gameObject.SetActive(!gmMonsterSpawnerCanvas.gameObject.activeSelf);
             else if(Input.GetKeyDown(KeyCode.F4))
                 gmItemSpawnerCanvas.gameObject.SetActive(!gmItemSpawnerCanvas.gameObject.activeSelf);
         }
-
-        #region RPC Function
-
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void StageClearRPC()
-        {
-            var stages = FindObjectsOfType<StageBase>();
-            foreach (var stage in stages)
-            {
-                if(stage.StageInfo.stageType == StageType.None)
-                    continue;
-                stage.StageClear();
-            }
-        }
-        
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void StageOverRPC()
-        {
-            var stages = FindObjectsOfType<StageBase>();
-                
-            foreach (var stage in stages)
-            {
-                if(stage.StageInfo.stageType == StageType.None)
-                    continue;
-                stage.StageOver();
-            }
-        }
-        
-        #endregion
     }
 }
 

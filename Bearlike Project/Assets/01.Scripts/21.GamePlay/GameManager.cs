@@ -73,7 +73,7 @@ namespace GamePlay
             {
                 DebugManager.ToDo("게임을 완전 클리어하면 로비로 돌아가는 포탈 생성해주기");
                 gameClearPortal.gameObject.SetActive(true);
-                gameClearPortal.InteractEnterAction = async (obj) =>
+                gameClearPortal.InteractKeyDownAction = async (obj) =>
                 {
                     await NetworkManager.LoadScene(SceneType.Lobby);
                 };

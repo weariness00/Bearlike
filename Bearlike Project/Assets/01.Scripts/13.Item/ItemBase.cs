@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Data;
+using Fusion;
 using Player;
 using Status;
 using UI.Inventory;
@@ -124,6 +125,7 @@ namespace Item
             if (targetObject.TryGetComponent(out pc) || targetObject.transform.root.TryGetComponent(out pc))
             {
                 pc.itemInventory.AddItem(this);
+                pc.itemInventory.AddItemRPC(new NetworkItemInfo(){Id = info.id, amount = info.amount.Current});
             }
         }
 
@@ -176,6 +178,12 @@ namespace Item
         }
 
         #endregion
+    }
+
+    public struct NetworkItemInfo : INetworkStruct
+    {
+        public int Id;
+        public int amount;
     }
 }
 
