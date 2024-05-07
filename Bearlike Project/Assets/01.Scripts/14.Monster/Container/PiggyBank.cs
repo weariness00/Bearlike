@@ -55,10 +55,12 @@ namespace Monster.Container
         [Header("공격 범위")]
         [SerializeField] private float attackRange = 10; // 발차기 감지 범위
         [SerializeField] private float rushRange = 100; // 돌진 감지 범위
-        [SerializeField] private float jumpRange = 50;
+        [SerializeField] private float jumpRange = 50; // 점프 감지 범위
         [SerializeField] private float coinAtaackMinRange = 30; // 코인 공격 최소 감지 범위
         [SerializeField] private float coinAtaackMaxRange = 100; // 코인 공격 최대 감지 범위
 
+        [SerializeField] private float jumpAttackDamageRange = 30;
+        
         [Header("상하 속도")] 
         [SerializeField] private float upSpeed = 1.0f;
         [SerializeField] private float downSpeed = 3.0f;
@@ -68,7 +70,6 @@ namespace Monster.Container
         [SerializeField] private float rushDistance = 5.0f;
         [SerializeField]private float jumpHeight = 10.0f;
 
-        [Networked] private float Height { get; set; }
         private float _delayTime = 5.0f;
 
         private static readonly int Walk = Animator.StringToHash("tWalk");
@@ -113,8 +114,6 @@ namespace Monster.Container
         public override void Spawned()
         {
             base.Spawned();
-
-            Height = 0;
             _navMeshAgent.enabled = true;   
             
             List<GameObject> playerObjects = new List<GameObject>();
@@ -584,11 +583,11 @@ namespace Monster.Container
             // TODO : 피격 처리 해주는 코드 필요
             Vector3 targetDirection = _players[_targetPlayerIndex].transform.position - transform.position;
 
-            if (Runner.LagCompensation.Raycast(transform.position, transform.up, status.attackRange.Current, Runner.LocalPlayer, out var lagHit))
+            if (Runner.LagCompensation.Raycast(transform.position, transform.up, status.attackRange.Current, Runner.LocalPlayer, out var Hit))
             {
                 StatusBase targetStatus;
                 // 공격 VFX
-                if (lagHit.GameObject.TryGetComponent(out targetStatus) || lagHit.GameObject.transform.root.TryGetComponent(out targetStatus))
+                if (Hit.GameObject.TryGetComponent(out targetStatus) || Hit.GameObject.transform.root.TryGetComponent(out targetStatus))
                 {
                     targetStatus.ApplyDamageRPC(status.CalDamage(), Object.Id);
                 }
@@ -669,6 +668,15 @@ namespace Monster.Container
             return INode.NodeState.Success;
         }
 
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.TryGetComponent(out StatusBase otherStatus))
+            {
+                // TODO : 충돌 데미지 DB에서 밸런스 맞추자
+                otherStatus.ApplyDamageRPC(status.CalDamage(), gameObject.GetComponent<NetworkObject>().Id);
+            }
+        }
+
         #endregion
 
         #region JumpAttack
@@ -683,7 +691,6 @@ namespace Monster.Container
             {
                 return INode.NodeState.Running;
             }
-
             return INode.NodeState.Success;
         }
 
@@ -738,9 +745,8 @@ namespace Monster.Container
             networkAnimator.Animator.SetTrigger(Attack);
             networkAnimator.Animator.SetFloat(AttackBlend, JUMP_TYPE);
             
-            DebugManager.ToDo("돼지 BT : status에서 속도를 받아오도록 수정");
-            StartCoroutine(JumpCoroutine(upSpeed, downSpeed, type));
-            JumpUpRPC();
+            StartCoroutine(JumpCoroutine(type));
+            JumpUpRPC(type);
             
             _durationTime = _gameManager.PlayTimer;
             return INode.NodeState.Success;
@@ -761,77 +767,68 @@ namespace Monster.Container
             networkAnimator.Animator.SetTrigger(Attack);
             networkAnimator.Animator.SetFloat(AttackBlend, JUMP_TYPE);
             
-            DebugManager.ToDo("돼지 BT : status에서 속도를 받아오도록 수정");
-            StartCoroutine(JumpCoroutine(upSpeed, downSpeed, type));
-            JumpUpRPC();
+            StartCoroutine(JumpCoroutine(type));
+            JumpUpRPC(type);
             
             _durationTime = _gameManager.PlayTimer;
             return INode.NodeState.Success;
         }
 
-        IEnumerator JumpCoroutine(float risingSpeed, float downSpeed, int type)
+        IEnumerator JumpCoroutine(int type)
         {
-            while (true)
+            yield return new WaitForSeconds(3.0f);
             {
-                // var transform1 = transform;
-                // Height += risingSpeed * Runner.DeltaTime * (jumpHeight + 1 - Height);
-                // // transform.position = new Vector3(transform1.position.x, transform1.position.y + _height, transform1.position.z);
-                // SetPositionRPC(0, risingSpeed);
-                
-                yield return new WaitForSeconds(3.0f);
-
-                // if (Height >= jumpHeight)
+                _durationTime = _gameManager.PlayTimer;
+                if (type == 2)
                 {
-                    _durationTime = _gameManager.PlayTimer;
-                    if (type == 2)
+                    networkAnimator.Animator.SetTrigger("tAttack");
+                    networkAnimator.Animator.SetFloat("AttackBlend", 2);
+                        
+                    // TODO : Coin VFX
+                    PlayVFXRPC("CoinMeteor_vfx");
+                        
+                    while (IsAnimationRunning("Attack"))
                     {
-                        networkAnimator.Animator.SetTrigger("tAttack");
-                        networkAnimator.Animator.SetFloat("AttackBlend", 2);
-                        
-                        // TODO : Coin VFX
-                        PlayVFXRPC("CoinMeteor_vfx");
-                        
-                        while (IsAnimationRunning("Attack"))
-                        {
-                            yield return new WaitForSeconds(0.0f);
-                        }
-                        
-                        // TODO : Coin object active true
+                        yield return new WaitForSeconds(0.0f);
                     }
-
-                    StartCoroutine(JumpDownCoroutine(downSpeed, type));
-                    JumpDownRPC();
-                    yield break;
+                        
+                    // TODO : Coin object active true
                 }
+
+                StartCoroutine(JumpDownCoroutine(type));
+                JumpDownRPC(type);
+                yield break;
             }
         }
 
-        IEnumerator JumpDownCoroutine(float downSpeed, float type)
+        IEnumerator JumpDownCoroutine(float type)
             {
-                while (true)
-                {
-                    // Height -= downSpeed * Runner.DeltaTime * (jumpHeight + 1 - Height);
-                    // // transform.position = new Vector3(transform1.position.x, transform1.position.y + _height, transform1.position.z);
-                    // SetPositionRPC(1, downSpeed);
-                    yield return new WaitForSeconds(1.0f);
+                yield return new WaitForSeconds(1.0f);
 
-                    // if (Height < 0.0f)
+                {
+                    if (type == 3 || type == 1)
                     {
-                        if (type == 3 || type == 1)
-                        {
-                            PlayVFXRPC("GroundCrack_vfx");
+                        PlayVFXRPC("GroundCrack_vfx");
                             
-                            // 데미지 입히기
-                            // TODO : 데미지 비율 상수로 조절하자
-                            DebugManager.ToDo("데미지를 받을때 id받아오는 형식을 변수에 담아서 받아오자");
-                            if (type == 3)
-                                // status.hp.Current -= (int)(status.hp.Current / 100.0f);
-                                status.ApplyDamageRPC((int)(status.hp.Current / 100.0f), gameObject.GetComponent<NetworkObject>().Id);
+                        // 데미지 입히기
+                        // TODO : 데미지 비율 상수로 조절하자
+                        DebugManager.ToDo("데미지를 받을때 id받아오는 형식을 변수에 담아서 받아오자");
+                        if (type == 3)
+                            // status.hp.Current -= (int)(status.hp.Current / 100.0f);
+                            status.ApplyDamageRPC((int)(status.hp.Current / 100.0f), gameObject.GetComponent<NetworkObject>().Id);
+                            
+                        // TODO : player 거리 구하고 점프 공격의 범위 안에 있으면 applyDamage입히기
+                        for (int index = 0; index < _playerCount; ++index)
+                        {
+                            if (FastDistance(transform.position, _players[index].transform.position) < jumpAttackDamageRange)
+                            {
+                                //TODO : 데미지를 조정하자
+                                _players[index].GetComponent<StatusBase>().ApplyDamageRPC(status.CalDamage(), gameObject.GetComponent<NetworkObject>().Id);
+                            }
                         }
-                        DebugManager.Log($"type : {type}, HP : {status.hp.Current} / {status.hp.Max}");
-                        _durationTime = _gameManager.PlayTimer;
-                        yield break;
                     }
+                    _durationTime = _gameManager.PlayTimer;
+                    yield break;
                 }
             }
 
@@ -1052,15 +1049,41 @@ namespace Monster.Container
         #region JumpRPC
         
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public void JumpUpRPC()
+        public void JumpUpRPC(int type)
         {
-            transform.GetChild(0).DOMoveY(110f, 3.0f).SetEase(Ease.OutCirc);
+            DebugManager.ToDo("돼지 BT : status에서 속도를 받아오도록 수정");
+            // TODO : transform.position.y + height로 수정
+            transform.GetChild(0).DOMoveY(100f + jumpHeight, 3.0f).SetEase(Ease.OutCirc);
+
+            if (type == 2)
+            {
+                GameObject targetObject = transform.Find("CoinAttack_vfx").gameObject;
+
+                if (targetObject != null)
+                {
+                    _visualEffect = targetObject.GetComponent<VisualEffect>();
+                    _visualEffect.SetFloat("PigHeight", -jumpHeight);
+                }
+            }
         }
         
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public void JumpDownRPC()
+        public void JumpDownRPC(int type)
         {
+            DebugManager.ToDo("돼지 BT : status에서 속도를 받아오도록 수정");
+            // TODO : transform.position.y - height로 수정
             transform.GetChild(0).DOMoveY(100f, 1.0f).SetEase(Ease.InCirc);
+            
+            if (type == 2)
+            {
+                GameObject targetObject = transform.Find("CoinAttack_vfx").gameObject;
+
+                if (targetObject != null)
+                {
+                    _visualEffect = targetObject.GetComponent<VisualEffect>();
+                    _visualEffect.SetFloat("PigHeight", 0);
+                }
+            }
         }
 
         #endregion
