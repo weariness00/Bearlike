@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections;
 using Fusion;
 using Item;
 using Manager;
 using Photon;
-using Status;
 using UI;
-using Unity.VisualScripting;
 using UnityEngine;
 using Util;
 
@@ -124,7 +121,6 @@ namespace Player
         public Action<GameObject> InteractEnterAction { get; set; }
         public Action<GameObject> InteractExitAction { get; set; }
         public Action<GameObject> InteractKeyDownAction { get; set; }
-        public Action<GameObject> InteractKeyPressAction { get; set; }
         public Action<GameObject> InteractKeyUpAction { get; set; }
 
         void InteractEnter(GameObject targetObject)
