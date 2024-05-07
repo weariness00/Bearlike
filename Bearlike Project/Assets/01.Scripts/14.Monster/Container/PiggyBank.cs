@@ -43,7 +43,7 @@ namespace Monster.Container
 
         private const float RotationDuration = 1.0f;
 
-        private Quaternion _targetRotation; // 목표 회전값
+        private Vector3 _targetRotation; // 목표 회전값
         private float _timePassed = 0f; // 회전 보간에 사용될 시간 변수
 
         private float _rotationlastTime;
@@ -55,10 +55,12 @@ namespace Monster.Container
         [Header("공격 범위")]
         [SerializeField] private float attackRange = 10; // 발차기 감지 범위
         [SerializeField] private float rushRange = 100; // 돌진 감지 범위
-        [SerializeField] private float jumpRange = 50;
+        [SerializeField] private float jumpRange = 50; // 점프 감지 범위
         [SerializeField] private float coinAtaackMinRange = 30; // 코인 공격 최소 감지 범위
         [SerializeField] private float coinAtaackMaxRange = 100; // 코인 공격 최대 감지 범위
 
+        [SerializeField] private float jumpAttackDamageRange = 30;
+        
         [Header("상하 속도")] 
         [SerializeField] private float upSpeed = 1.0f;
         [SerializeField] private float downSpeed = 3.0f;
@@ -68,7 +70,6 @@ namespace Monster.Container
         [SerializeField] private float rushDistance = 5.0f;
         [SerializeField]private float jumpHeight = 10.0f;
 
-        [Networked] private float Height { get; set; }
         private float _delayTime = 5.0f;
 
         private static readonly int Walk = Animator.StringToHash("tWalk");
@@ -96,7 +97,7 @@ namespace Monster.Container
             _navMeshAgent = GetComponent<NavMeshAgent>();
 
             _navMeshAgent.enabled = false;
-        }
+        }//
 
         private void Start()
         {
@@ -113,8 +114,6 @@ namespace Monster.Container
         public override void Spawned()
         {
             base.Spawned();
-
-            Height = 0;
             _navMeshAgent.enabled = true;   
             
             List<GameObject> playerObjects = new List<GameObject>();
@@ -183,7 +182,7 @@ namespace Monster.Container
                         new SequenceNode
                         (   // JumpAttack OR Jump CoinAttack
                             new ActionNode(CheckJumpAttackAction),
-                            // new ActionNode(CheckJumpAttackDistance),
+                            new ActionNode(CheckJumpAttackDistance),
                             new ActionNode(StartJumpAction),
                             new ActionNode(TermFuction),
                             new ActionNode(StopJumpAttack)
@@ -200,7 +199,7 @@ namespace Monster.Container
                         new ActionNode(StartAttack),
                         new ActionNode(TermFuction)
                     ),
-                //     new ActionNode(SuccessFunction)
+                // new ActionNode(SuccessFunction)
                 // ),
                 new SelectorNode
                 (
@@ -285,54 +284,6 @@ namespace Monster.Container
             return false;
         }
 
-        #region VFX Function
-
-        void PlayVFX(string vfxName)
-        {
-            GameObject targetObject = transform.Find(vfxName).gameObject;
-
-            if (targetObject != null)
-            {
-                _visualEffect = targetObject.GetComponent<VisualEffect>();
-
-                if (_visualEffect != null)
-                {
-                    // if (vfxName == "GroundCrack_vfx" || vfxName == "Fart_vfx")
-                    // {
-                        // targetObject.gameObject.SetActive(true);
-                        _visualEffect.SendEvent("OnPlay");
-                    // }
-                    // else
-                    // {
-                    //     targetObject.gameObject.SetActive(true);
-                    //     _visualEffect.Play();
-                    // }
-                }
-            }
-            else
-            {
-                DebugManager.Log($"{vfxName}은 존재하지 않는 VFX이름입니다.");
-            }
-        }
-
-        void StopVFX(string vfxName)
-        {
-            GameObject targetObject = transform.Find(vfxName).gameObject;
-
-            if (targetObject != null)
-            {
-                _visualEffect = targetObject.GetComponent<VisualEffect>();
-                if (_visualEffect != null)
-                {
-                    _visualEffect.SendEvent("OffPlay");
-                    // _visualEffect.Stop();
-                    // targetObject.gameObject.SetActive(false);
-                }
-            }
-        }
-
-        #endregion
-
         #region AdditionalNode
 
         /// <summary>
@@ -342,14 +293,7 @@ namespace Monster.Container
         INode.NodeState TermFuction()
         {
             if (_gameManager.PlayTimer - _durationTime > _delayTime)
-            {
-                // TODO : 일단 _visualEffect에 참조 되기에 문제는 없을것 같은데 문제가 있을시에 함수를 써서 멈추자
-                // _visualEffect.Stop();
-                // StopVFX();
-                // networkAnimator.Animator.Play("piggy_walk");
-
                 return INode.NodeState.Success;
-            }
 
             return INode.NodeState.Running;
         }
@@ -449,7 +393,7 @@ namespace Monster.Container
         /// <returns></returns>
         INode.NodeState CheckMoreHp()
         {
-            if (status.hp.Current / status.hp.Max > 0.5f)
+            if (status.hp.Current / (float)status.hp.Max > 0.5f)
             {
                 return INode.NodeState.Success;
             }
@@ -471,8 +415,6 @@ namespace Monster.Container
                 return INode.NodeState.Running;
             }
             
-            // _visualEffect.Play();
-            // PlayVFX("Shield_vfx");
             PlayVFXRPC("Shield_vfx");
             networkAnimator.Animator.SetTrigger(Defence);
             _navMeshAgent.SetDestination(transform.position);
@@ -491,7 +433,6 @@ namespace Monster.Container
         INode.NodeState StopDefence()
         {
             status.DelCondition(CrowdControl.DamageIgnore);
-            // StopVFX("Shield_vfx");
             StopVFXRPC("Shield_vfx");
             
             return INode.NodeState.Success;
@@ -523,14 +464,13 @@ namespace Monster.Container
             centroid.x /= _playerCount;
             centroid.y /= _playerCount;
 
-            var position1 = transform.position;
-            var direction = position1 - centroid;
+            var direction = transform.position - centroid;
             
             networkAnimator.Animator.SetFloat(AttackBlend, RUSH_TYPE);
             networkAnimator.Animator.SetTrigger(Attack);
             
             _navMeshAgent.speed = direction.magnitude * runDistance / 3.0f;   // animation의 길이가 3초
-            _navMeshAgent.SetDestination(position1 + direction * runDistance);
+            _navMeshAgent.SetDestination(transform.position + direction * runDistance);
 
             _durationTime = _gameManager.PlayTimer;
 
@@ -593,8 +533,9 @@ namespace Monster.Container
 
             if (checkResult)
             {
-                Vector3 targetDirection = _players[_targetPlayerIndex].transform.position - transform.position;
-                _targetRotation = Quaternion.LookRotation(targetDirection);
+                // Vector3 targetDirection = _players[_targetPlayerIndex].transform.position - transform.position;
+                // _targetRotation = Quaternion.LookRotation(targetDirection);
+                _targetRotation = _players[_targetPlayerIndex].transform.position - transform.position;
 
                 _rotationlastTime = _gameManager.PlayTimer;
 
@@ -610,19 +551,21 @@ namespace Monster.Container
         /// <returns></returns>
         INode.NodeState StartRotate()
         {
-            _timePassed += _gameManager.PlayTimer - _rotationlastTime;
+            // _timePassed += _gameManager.PlayTimer - _rotationlastTime;
+            //
+            // transform.rotation = Quaternion.Slerp(transform.rotation, _targetRotation, _timePassed / RotationDuration);
+            //
+            // if (_timePassed >= RotationDuration)
+            // {
+            //     _timePassed = 0.0f;
+            //     return INode.NodeState.Success;
+            // }
+            //
+            // _rotationlastTime = _gameManager.PlayTimer;
+            //
+            // return INode.NodeState.Running;
 
-            transform.rotation = Quaternion.Slerp(transform.rotation, _targetRotation, _timePassed / RotationDuration);
-
-            if (_timePassed >= RotationDuration)
-            {
-                _timePassed = 0.0f;
-                return INode.NodeState.Success;
-            }
-
-            _rotationlastTime = _gameManager.PlayTimer;
-
-            return INode.NodeState.Running;
+            return INode.NodeState.Success;
         }
 
         /// <summary>
@@ -630,7 +573,9 @@ namespace Monster.Container
         /// </summary>
         /// <returns></returns>
         INode.NodeState StartAttack()
-        {
+        {           
+            RotateRPC();
+
             networkAnimator.Animator.SetFloat(AttackBlend, ATTACK_TYPE);
             networkAnimator.Animator.SetTrigger(Attack);
             _navMeshAgent.speed = 0.0f;
@@ -638,9 +583,14 @@ namespace Monster.Container
             // TODO : 피격 처리 해주는 코드 필요
             Vector3 targetDirection = _players[_targetPlayerIndex].transform.position - transform.position;
 
-            if (targetDirection.magnitude <= attackRange)
+            if (Runner.LagCompensation.Raycast(transform.position, transform.up, status.attackRange.Current, Runner.LocalPlayer, out var Hit))
             {
-                
+                StatusBase targetStatus;
+                // 공격 VFX
+                if (Hit.GameObject.TryGetComponent(out targetStatus) || Hit.GameObject.transform.root.TryGetComponent(out targetStatus))
+                {
+                    targetStatus.ApplyDamageRPC(status.CalDamage(), Object.Id);
+                }
             }
             
             _durationTime = _gameManager.PlayTimer;
@@ -718,6 +668,15 @@ namespace Monster.Container
             return INode.NodeState.Success;
         }
 
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.TryGetComponent(out StatusBase otherStatus))
+            {
+                // TODO : 충돌 데미지 DB에서 밸런스 맞추자
+                otherStatus.ApplyDamageRPC(status.CalDamage(), gameObject.GetComponent<NetworkObject>().Id);
+            }
+        }
+
         #endregion
 
         #region JumpAttack
@@ -732,7 +691,6 @@ namespace Monster.Container
             {
                 return INode.NodeState.Running;
             }
-
             return INode.NodeState.Success;
         }
 
@@ -787,9 +745,8 @@ namespace Monster.Container
             networkAnimator.Animator.SetTrigger(Attack);
             networkAnimator.Animator.SetFloat(AttackBlend, JUMP_TYPE);
             
-            DebugManager.ToDo("돼지 BT : status에서 속도를 받아오도록 수정");
-            StartCoroutine(JumpCoroutine(upSpeed, downSpeed, type));
-            JumpUpRPC();
+            StartCoroutine(JumpCoroutine(type));
+            JumpUpRPC(type);
             
             _durationTime = _gameManager.PlayTimer;
             return INode.NodeState.Success;
@@ -810,77 +767,68 @@ namespace Monster.Container
             networkAnimator.Animator.SetTrigger(Attack);
             networkAnimator.Animator.SetFloat(AttackBlend, JUMP_TYPE);
             
-            DebugManager.ToDo("돼지 BT : status에서 속도를 받아오도록 수정");
-            StartCoroutine(JumpCoroutine(upSpeed, downSpeed, type));
-            JumpUpRPC();
+            StartCoroutine(JumpCoroutine(type));
+            JumpUpRPC(type);
             
             _durationTime = _gameManager.PlayTimer;
             return INode.NodeState.Success;
         }
 
-        IEnumerator JumpCoroutine(float risingSpeed, float downSpeed, int type)
+        IEnumerator JumpCoroutine(int type)
         {
-            while (true)
+            yield return new WaitForSeconds(3.0f);
             {
-                // var transform1 = transform;
-                // Height += risingSpeed * Runner.DeltaTime * (jumpHeight + 1 - Height);
-                // // transform.position = new Vector3(transform1.position.x, transform1.position.y + _height, transform1.position.z);
-                // SetPositionRPC(0, risingSpeed);
-                
-                yield return new WaitForSeconds(3.0f);
-
-                // if (Height >= jumpHeight)
+                _durationTime = _gameManager.PlayTimer;
+                if (type == 2)
                 {
-                    _durationTime = _gameManager.PlayTimer;
-                    if (type == 2)
+                    networkAnimator.Animator.SetTrigger("tAttack");
+                    networkAnimator.Animator.SetFloat("AttackBlend", 2);
+                        
+                    // TODO : Coin VFX
+                    PlayVFXRPC("CoinMeteor_vfx");
+                        
+                    while (IsAnimationRunning("Attack"))
                     {
-                        networkAnimator.Animator.SetTrigger("tAttack");
-                        networkAnimator.Animator.SetFloat("AttackBlend", 2);
-                        
-                        // TODO : Coin VFX
-                        PlayVFXRPC("CoinMeteor_vfx");
-                        
-                        while (IsAnimationRunning("Attack"))
-                        {
-                            yield return new WaitForSeconds(0.0f);
-                        }
-                        
-                        // TODO : Coin object active true
+                        yield return new WaitForSeconds(0.0f);
                     }
-
-                    StartCoroutine(JumpDownCoroutine(downSpeed, type));
-                    JumpDownRPC();
-                    yield break;
+                        
+                    // TODO : Coin object active true
                 }
+
+                StartCoroutine(JumpDownCoroutine(type));
+                JumpDownRPC(type);
+                yield break;
             }
         }
 
-        IEnumerator JumpDownCoroutine(float downSpeed, float type)
+        IEnumerator JumpDownCoroutine(float type)
             {
-                while (true)
-                {
-                    // Height -= downSpeed * Runner.DeltaTime * (jumpHeight + 1 - Height);
-                    // // transform.position = new Vector3(transform1.position.x, transform1.position.y + _height, transform1.position.z);
-                    // SetPositionRPC(1, downSpeed);
-                    yield return new WaitForSeconds(1.0f);
+                yield return new WaitForSeconds(1.0f);
 
-                    // if (Height < 0.0f)
+                {
+                    if (type == 3 || type == 1)
                     {
-                        if (type == 3 || type == 1)
-                        {
-                            PlayVFXRPC("GroundCrack_vfx");
+                        PlayVFXRPC("GroundCrack_vfx");
                             
-                            // 데미지 입히기
-                            // TODO : 데미지 비율 상수로 조절하자
-                            DebugManager.ToDo("데미지를 받을때 id받아오는 형식을 변수에 담아서 받아오자");
-                            if (type == 3)
-                                // status.hp.Current -= (int)(status.hp.Current / 100.0f);
-                                status.ApplyDamageRPC((int)(status.hp.Current / 100.0f), gameObject.GetComponent<NetworkObject>().Id);
+                        // 데미지 입히기
+                        // TODO : 데미지 비율 상수로 조절하자
+                        DebugManager.ToDo("데미지를 받을때 id받아오는 형식을 변수에 담아서 받아오자");
+                        if (type == 3)
+                            // status.hp.Current -= (int)(status.hp.Current / 100.0f);
+                            status.ApplyDamageRPC((int)(status.hp.Current / 100.0f), gameObject.GetComponent<NetworkObject>().Id);
+                            
+                        // TODO : player 거리 구하고 점프 공격의 범위 안에 있으면 applyDamage입히기
+                        for (int index = 0; index < _playerCount; ++index)
+                        {
+                            if (FastDistance(transform.position, _players[index].transform.position) < jumpAttackDamageRange)
+                            {
+                                //TODO : 데미지를 조정하자
+                                _players[index].GetComponent<StatusBase>().ApplyDamageRPC(status.CalDamage(), gameObject.GetComponent<NetworkObject>().Id);
+                            }
                         }
-                        DebugManager.Log($"type : {type}, HP : {status.hp.Current} / {status.hp.Max}");
-                        _durationTime = _gameManager.PlayTimer;
-                        yield break;
                     }
+                    _durationTime = _gameManager.PlayTimer;
+                    yield break;
                 }
             }
 
@@ -1093,27 +1041,49 @@ namespace Monster.Container
         #region RPC Function
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public void SetPositionRPC(int type, float speed)
+        public void RotateRPC()
         {
-            // if (type == 0)  Height += speed * Runner.DeltaTime * (jumpHeight + 1 - Height);
-            // else Height -= speed * Runner.DeltaTime * (jumpHeight + 1 - Height);
-            
-            transform.position =
-                new Vector3(transform.position.x, transform.position.y + Height, transform.position.z);
+            transform.DORotate(_targetRotation, RotationDuration).SetEase(Ease.Linear);
         }
 
         #region JumpRPC
         
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public void JumpUpRPC()
+        public void JumpUpRPC(int type)
         {
-            transform.GetChild(0).DOMoveY(110f, 3.0f).SetEase(Ease.OutCirc);
+            DebugManager.ToDo("돼지 BT : status에서 속도를 받아오도록 수정");
+            // TODO : transform.position.y + height로 수정
+            transform.GetChild(0).DOMoveY(100f + jumpHeight, 3.0f).SetEase(Ease.OutCirc);
+
+            if (type == 2)
+            {
+                GameObject targetObject = transform.Find("CoinAttack_vfx").gameObject;
+
+                if (targetObject != null)
+                {
+                    _visualEffect = targetObject.GetComponent<VisualEffect>();
+                    _visualEffect.SetFloat("PigHeight", -jumpHeight);
+                }
+            }
         }
         
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public void JumpDownRPC()
+        public void JumpDownRPC(int type)
         {
+            DebugManager.ToDo("돼지 BT : status에서 속도를 받아오도록 수정");
+            // TODO : transform.position.y - height로 수정
             transform.GetChild(0).DOMoveY(100f, 1.0f).SetEase(Ease.InCirc);
+            
+            if (type == 2)
+            {
+                GameObject targetObject = transform.Find("CoinAttack_vfx").gameObject;
+
+                if (targetObject != null)
+                {
+                    _visualEffect = targetObject.GetComponent<VisualEffect>();
+                    _visualEffect.SetFloat("PigHeight", 0);
+                }
+            }
         }
 
         #endregion
@@ -1179,7 +1149,6 @@ namespace Monster.Container
                 if (_visualEffect != null)
                 {
                     _visualEffect.SendEvent("OffPlay");
-                    // targetObject.gameObject.SetActive(false);
                 }
             }
         }
