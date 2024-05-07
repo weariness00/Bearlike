@@ -1648,6 +1648,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad6a8b99839a1994ca37eb9ec8741379, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
   canvas: {fileID: 1968385850877734637}
   explainHandel: {fileID: 0}
   blockUIPrefab: {fileID: 1750807312310932643}
@@ -1661,6 +1664,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5815346519373132986}
+  - component: {fileID: 8540670239261050294}
   m_Layer: 0
   m_Name: Hitbox
   m_TagString: Untagged
@@ -1687,6 +1691,26 @@ Transform:
   - {fileID: 6500371946413607490}
   m_Father: {fileID: 8875764649507591473}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8540670239261050294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2284992206261127531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1014831617, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Type: 1
+  SphereRadius: 0
+  CapsuleRadius: 0
+  BoxExtents: {x: 0.4, y: 0.75, z: 0.25}
+  CapsuleHeight: 0
+  Offset: {x: 0, y: 0.75, z: 0}
+  Root: {fileID: -4627320855333868288}
+  GizmosColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!1 &2477892900081850874
 GameObject:
   m_ObjectHideFlags: 0
@@ -2324,6 +2348,7 @@ GameObject:
   - component: {fileID: 8132733441997062368}
   - component: {fileID: 3973819686791589291}
   - component: {fileID: 7133254213076976862}
+  - component: {fileID: 7929440998604399428}
   m_Layer: 0
   m_Name: Third_Bear_Prefab
   m_TagString: Untagged
@@ -2386,6 +2411,24 @@ MonoBehaviour:
   - m_Rig: {fileID: 3565162867108409977}
     m_Active: 1
   m_Effectors: []
+--- !u!114 &7929440998604399428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2867931729894368408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 506319458, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Animator: {fileID: 3973819686791589291}
+  TotalWords: 5
+  ApplyTiming: 2
+  SyncSettings: 79
+  StateHashes: 000000006bd5a32d398fdc0428a981077af3fe2e31c91b79b38657fc25f3d42d665de72e1ae6174d48bc68648527350ba6858ea2181c141cf9f954dc
+  TriggerHashes: 0000000026c7b5ecc0795d19cf3e30d8
 --- !u!1 &2968179019931877774
 GameObject:
   m_ObjectHideFlags: 0
@@ -2402,7 +2445,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4975890365786202626
 Transform:
   m_ObjectHideFlags: 0
@@ -2455,7 +2498,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6846144678066393840
 Transform:
   m_ObjectHideFlags: 0
@@ -3549,7 +3592,6 @@ GameObject:
   - component: {fileID: 8389592379722413424}
   - component: {fileID: 3630061050747534706}
   - component: {fileID: 7507528767881361376}
-  - component: {fileID: 7044020874265611949}
   - component: {fileID: -4627320855333868288}
   - component: {fileID: -8376342315293501503}
   - component: {fileID: 3591252219797454216}
@@ -3609,6 +3651,7 @@ MonoBehaviour:
   itemInventory: {fileID: 8992574548056908079}
   skillInventory: {fileID: 1207115465948429785}
   skillSelectUI: {fileID: 776465977080344823}
+  animator: {fileID: 0}
   simpleKcc: {fileID: 0}
   rigBuilder: {fileID: 0}
   ammo:
@@ -3662,12 +3705,12 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 8799556682433769034}
   - {fileID: 8389592379722413424}
-  - {fileID: 7044020874265611949}
   - {fileID: -4627320855333868288}
   - {fileID: -8376342315293501503}
   - {fileID: 3591252219797454216}
   - {fileID: 4100932630653908726}
   - {fileID: 5462640940224501418}
+  - {fileID: 7929440998604399428}
   - {fileID: 2592102510869716401}
   - {fileID: 2205082202529722068}
   - {fileID: 56647657628479281}
@@ -3677,6 +3720,8 @@ MonoBehaviour:
   - {fileID: 9218170556045526821}
   - {fileID: 3046559224266524848}
   - {fileID: 8977006672173418926}
+  - {fileID: 8992574548056908079}
+  - {fileID: 1207115465948429785}
 --- !u!54 &7507528767881361376
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3704,24 +3749,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &7044020874265611949
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4910098564648988719}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 506319458, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Animator: {fileID: 3973819686791589291}
-  TotalWords: 5
-  ApplyTiming: 2
-  SyncSettings: 79
-  StateHashes: 000000006bd5a32d398fdc0428a981077af3fe2e31c91b79b38657fc25f3d42d665de72e1ae6174d48bc68648527350ba6858ea2181c141cf9f954dc
-  TriggerHashes: 0000000026c7b5ecc0795d19cf3e30d8
 --- !u!114 &-4627320855333868288
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3735,16 +3762,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Config: 3
-  BroadRadius: 1.47
-  Offset: {x: 0, y: 0, z: 0}
+  BroadRadius: 0.75
+  Offset: {x: 0, y: 0.75, z: 0}
   GizmosColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   Hitboxes:
-  - {fileID: 6627097051347971604}
-  - {fileID: 4487142287614652052}
-  - {fileID: 4285475733844208846}
-  - {fileID: 4078301493440701559}
-  - {fileID: 257172402745974576}
-  - {fileID: 1195279209751686206}
+  - {fileID: 8540670239261050294}
 --- !u!114 &-8376342315293501503
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3909,7 +3931,7 @@ MonoBehaviour:
   _IsAsyncClient: []
   _IsSpawnSuccess:
     _value: 0
-  interactLength: 1
+  interactLength: 2.5
 --- !u!1 &5293648659765142871
 GameObject:
   m_ObjectHideFlags: 0
@@ -4242,7 +4264,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6178661315139879244
 Transform:
   m_ObjectHideFlags: 0
@@ -5231,12 +5253,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -5436,7 +5458,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6500371946413607490
 Transform:
   m_ObjectHideFlags: 0
@@ -6187,6 +6209,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2997e9c947849708d6315ce3485b157, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
   canvas: {fileID: 6635909410815358757}
   explainHandel: {fileID: 5374635444810686488}
   blockUIPrefab: {fileID: 7703311247012247969}

@@ -193,6 +193,10 @@ namespace Player
 
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void HpControlRPC() => HpControl();
+
+        // GM Mode 용 함수
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void GoReviveRPC() => InjuryTimer = TickTimer.CreateFromTicks(Runner, 0);
         
         #endregion
     }

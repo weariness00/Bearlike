@@ -4,6 +4,7 @@ using Manager;
 using Photon;
 using Player;
 using Script.GamePlay;
+using UI;
 using UnityEngine;
 using UnityEngine.VFX;
 using Util;
@@ -77,12 +78,22 @@ namespace GamePlay
 
         public void InteractInit()
         {
-            InteractEnterAction += Teleport;
+            InteractEnterAction += SetInteractUI;
+            InteractKeyDownAction += Teleport;
         }
 
         public bool IsInteract { get; set; }
         public Action<GameObject> InteractEnterAction { get; set; }
+        public Action<GameObject> InteractKeyDownAction { get; set; }
+        public Action<GameObject> InteractKeyPressAction { get; set; }
+        public Action<GameObject> InteractKeyUpAction { get; set; }
         public Action<GameObject> InteractExitAction { get; set; }
+
+        void SetInteractUI(GameObject targetObject)
+        {
+            InteractUI.SetKeyActive(true);
+            InteractUI.KeyCodeText.text = "F";
+        }
     }
 }
 

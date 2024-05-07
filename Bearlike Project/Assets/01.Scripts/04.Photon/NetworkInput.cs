@@ -6,6 +6,8 @@ namespace Photon
     public struct PlayerInputData : INetworkInput
     {
         public Vector2 MouseAxis;
+
+        public NetworkBool Escape;
         
         public NetworkBool MoveLeft;
         public NetworkBool MoveRight;

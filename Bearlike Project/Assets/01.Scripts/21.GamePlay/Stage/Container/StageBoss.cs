@@ -55,7 +55,7 @@ namespace GamePlay.Stage.Container
             
             if (destructObject != null) destructObject.tag = "Destruction";
             
-            nextStagePortal.InteractEnterAction = (obj) => NetworkManager.Runner.Shutdown();
+            nextStagePortal.InteractKeyDownAction = (obj) => NetworkManager.Runner.Shutdown();
             
             DebugManager.Log("스테이지 클리어\n" +
                              $"스테이지 모드 :{stageData.info.stageType}");
