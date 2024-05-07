@@ -60,7 +60,7 @@ namespace Player
         private static readonly int AniInjury = Animator.StringToHash("tInJury");
         private static readonly int AniRevive = Animator.StringToHash("tRevive");
         private static readonly int AniInjuryMove = Animator.StringToHash("Faint");
-        private static readonly int AniDie = Animator.StringToHash("isDead");
+        private static readonly int AniDie = Animator.StringToHash("tDead");
         
         #endregion
 
