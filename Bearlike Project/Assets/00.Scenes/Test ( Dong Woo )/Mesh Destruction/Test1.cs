@@ -11,6 +11,8 @@ namespace Test
     public class TestSliceComputeShader : MonoBehaviour
     {
         public int testNumber = 0;
+        public Vector3 sliceP;
+        public Vector3 sliceN;
         
         public ComputeShader sliceShader;
         
@@ -53,13 +55,25 @@ namespace Test
         }
         
         #region Unity Enven Function
-
-        private void Awake()
+        private void Update()
         {
-            if(testNumber== 0)
-                Slice(gameObject,Vector3.right, transform.position);
-            else if (testNumber == 1)
-                MeshSlicing.Slice(gameObject, Vector3.right, Vector3.zero);
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                // SlicesMetadata m = new SlicesMetadata(new Plane(sliceN, sliceP), GetComponent<MeshFilter>().mesh, true, false, true, false);
+                // GameObject a = new GameObject("a", typeof(MeshFilter), typeof(MeshRenderer));
+                // GameObject b = new GameObject("b", typeof(MeshFilter), typeof(MeshRenderer));
+                //
+                // var met = GetComponent<MeshRenderer>().sharedMaterials;
+                // a.GetComponent<MeshFilter>().sharedMesh = m.PositiveSideMesh;
+                // a.GetComponent<MeshRenderer>().sharedMaterials = met;
+                // b.GetComponent<MeshFilter>().sharedMesh = m.NegativeSideMesh;
+                // b.GetComponent<MeshRenderer>().sharedMaterials = met;
+                //
+                // Destroy(gameObject);
+                // CMeshSlicer.Slicer(gameObject, sliceN, sliceP, gameObject.GetComponent<MeshRenderer>().sharedMaterial);
+            }
+            else if (Input.GetKeyDown(KeyCode.S))
+                MeshSlicing.Slice(gameObject, sliceN, sliceP);
         }
 
         #endregion

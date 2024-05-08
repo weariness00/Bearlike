@@ -95,7 +95,8 @@ namespace Weapon.Bullet
             // 메쉬 붕괴 객체와 충돌 시
             else if (other.CompareTag("Destruction"))
             {
-                NetworkMeshDestructSystem.Instance.NetworkSlice(other.gameObject, Random.onUnitSphere, transform.position);
+                var networkObj = other.GetComponent<NetworkObject>();
+                NetworkMeshSliceSystem.Instance.SliceRPC(networkObj.Id, Random.onUnitSphere, transform.position, 100f);
             }
 
             if (penetrateCount-- == 0)

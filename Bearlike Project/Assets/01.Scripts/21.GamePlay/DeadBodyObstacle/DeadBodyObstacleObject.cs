@@ -15,6 +15,8 @@ namespace GamePlay.DeadBodyObstacle
     public class DeadBodyObstacleObject : NetworkBehaviourEx
     {
         public static NavMeshSurface stageSurface;
+
+        public bool isOnStart = true;
         
         private NetworkMecanimAnimator _networkAnimator;
         private StatusBase _status;
@@ -30,12 +32,18 @@ namespace GamePlay.DeadBodyObstacle
         private void Awake()
         {
             _networkAnimator = GetComponent<NetworkMecanimAnimator>();
-            _status = GetComponent<StatusBase>();
+            if(gameObject.TryGetComponent(out _status) == false) _status = GetComponent<StatusBase>();
             _rigidbody = GetComponent<Rigidbody>();
             _ragdollRigidBodies = GetComponentsInChildren<Rigidbody>().Where(c => c.gameObject != gameObject).ToArray();
             _ragdollColliders = GetComponentsInChildren<Collider>();
 
             SetDeadBodyComponentActive(false);
+        }
+
+        public override void Spawned()
+        {
+            base.Spawned();
+            if(isOnStart) OnDeadBodyRPC();
         }
 
         public override void FixedUpdateNetwork()
@@ -120,7 +128,7 @@ namespace GamePlay.DeadBodyObstacle
                     col.gameObject.layer = LayerMask.NameToLayer("Ignore Nav Mesh");
             }
 
-            if(_networkAnimator != null) _networkAnimator.Animator.enabled = !value;
+            if(_networkAnimator) _networkAnimator.Animator.enabled = !value;
         }
 
         /// <summary>

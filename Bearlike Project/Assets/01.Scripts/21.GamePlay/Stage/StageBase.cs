@@ -9,6 +9,7 @@ using Item.Looting;
 using Manager;
 using Monster;
 using Photon;
+using Photon.MeshDestruct;
 using Script.Photon;
 using Status;
 using Unity.AI.Navigation;
@@ -77,6 +78,8 @@ namespace GamePlay.Stage
 
         public void Awake()
         {
+            if(destructObject) destructObject.AddComponent<NetworkMeshSliceObject>();
+            
             lootingTable = GetComponent<LootingTable>();
             stageGameObject.SetActive(false);
         }

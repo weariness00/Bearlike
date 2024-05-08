@@ -1404,7 +1404,7 @@ GameObject:
   - component: {fileID: 698045670}
   - component: {fileID: 698045669}
   m_Layer: 0
-  m_Name: Network Mesh Destruct System
+  m_Name: Network Mesh Slice System
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1443,11 +1443,8 @@ MonoBehaviour:
   _IsAsyncClient: []
   _IsSpawnSuccess:
     _value: 0
-  slicePrefab:
-    RawGuidValue: b7d1c7845912aa54e91402af53fb78d6
-  copyPrefab:
-    RawGuidValue: 4392740a614f97a41ac3616c52213eb6
-  isDestruct: 0
+  sliceSocketObject:
+    RawGuidValue: 4c87777ef6cbe5742a1a492c1fc22854
 --- !u!4 &698045671
 Transform:
   m_ObjectHideFlags: 0

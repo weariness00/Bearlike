@@ -100,7 +100,7 @@ namespace Util
             
             // slice normal을 targetObject.Transform.Rotate 만큼 회전
             sliceNormal = targetObject.transform.rotation * sliceNormal;
-            
+
             int dotCount = mesh.vertices.Length;
             int triangleCount = mesh.triangles.Length;
             int polygonCount = triangleCount / 3;
@@ -206,13 +206,20 @@ namespace Util
             sliceDataBuffer1.SetData(slicePolygonData1);
     
             DotData[] center = new []{new DotData(){Vertex = Vector3.zero, Normal = Vector3.zero, UV = new Vector2(0.5f,0.5f)}};
-            for (var i = 0; i < sortDots.Length - 1; i++)
-                center[0].Vertex += sortDots[i].Vertex;
-            center[0].Vertex /= sortDots.Length - 1;
+            float maxDis = 0f;
+            for (var i = 1; i < sortDots.Length - 1; i++)
+            {
+                var dis = Vector3.Distance(sortDots[i].Vertex, sortDots[0].Vertex);
+                if (maxDis < dis)
+                {
+                    maxDis = dis;
+                    center[0].Vertex = sortDots[i].Vertex;
+                }
+            }
+            center[0].Vertex = Vector3.Lerp(center[0].Vertex, sortDots[0].Vertex, 0.5f);
             center[0].Index = sortDots.Length + dotCount - 1;
             
             float faceDir = Vector3.Dot(sliceNormal, Vector3.Cross(sortDots[0].Vertex - center[0].Vertex, sortDots[1].Vertex - sortDots[0].Vertex));
-            
             newDotCenterBuffer.SetData(center);
             
             Vector3 forward = Vector3.zero;
@@ -274,20 +281,19 @@ namespace Util
             {
                 for (int j = i + 1; j < compareCount; j++)
                 {
-                    if (newDots[i * 2 + 1].Vertex == newDots[j * 2].Vertex)
+                    if (CompareVector3(newDots[i * 2 + 1].Vertex, newDots[j * 2].Vertex))
                     {
                         result.Add(newDots[j * 2 + 1]);
                         SwapTwoIndexSet(ref newDots, i * 2 + 2, i * 2 + 3, j * 2, j * 2 + 1);
                     }
-                    else if (newDots[i * 2 + 1].Vertex == newDots[j * 2 + 1].Vertex)
+                    else if (CompareVector3(newDots[i * 2 + 1].Vertex, newDots[j * 2 + 1].Vertex))
                     {
                         result.Add(newDots[j * 2]);
                         SwapTwoIndexSet(ref newDots, i * 2 + 2, i * 2 + 3, j * 2 + 1, j * 2);
                     }
                 }
             }
-            if (result.First().Vertex != result.Last().Vertex)
-                result.Add(result.First());
+            if (result[0].Vertex == result[^1].Vertex) result.RemoveAt(result.Count - 1);
             return result.ToArray();
         }
 
@@ -300,7 +306,7 @@ namespace Util
             target[idx10] = temp0;
             target[idx11] = temp1;
         }
-
+        
         private static Mesh MakeMeshFromPolygonData(PolygonData[] slicePolygonData)
         {
             HashSet<DotData> dotData = new HashSet<DotData>(new DotDataEqualityComparer());
@@ -377,8 +383,14 @@ namespace Util
             return sliceGameObject;
         }
 
-        #region Compare Class
+        #region Compare
 
+        public static bool CompareVector3(Vector3 a, Vector3 b)
+        {
+            const float epsilon = 0.01f;
+            return Vector3.Distance(a, b) < epsilon;
+        }
+        
         public class DotDataEqualityComparer : IEqualityComparer<DotData>
         {
             private const float epsilon = 1e-5f;

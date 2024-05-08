@@ -4,6 +4,7 @@ using Status;
 using BehaviorTree.Base;
 using Data;
 using Fusion;
+using GamePlay.DeadBodyObstacle;
 using Manager;
 using Photon.MeshDestruct;
 using UnityEngine;
@@ -82,7 +83,7 @@ namespace Monster.Container
                 o.transform.parent = p;
             });
 
-            NetworkMeshDestructSystem.Instance.NetworkSlice(dieObj.gameObject, Random.onUnitSphere, transform.position, false);
+            NetworkMeshSliceSystem.Instance.SliceRPC(dieObj.Id, Random.onUnitSphere, transform.position, 1f, false, SerializeComponentString(typeof(DeadBodyObstacleObject)));
             
             Destroy(gameObject);
         }
