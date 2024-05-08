@@ -39,9 +39,11 @@ async function MakeGunInfoData(app)
         var version = await TableVesrionData("Gun");
         res.json(version);
     });
-
-    var json = await GunInfoQuery();
-    app.get('/Gun', async (req, res) =>{ res.json(json); });
+    
+    app.get('/Gun', async (req, res) =>{ 
+        var json = await GunInfoQuery();
+        res.json(json); 
+    });
 }
 
 async function MakeGunStatusData(app)
@@ -51,8 +53,8 @@ async function MakeGunStatusData(app)
         res.json(version);
     });
 
-    var json = await GunStatusQuery();
     app.get('/Gun/Status', async (req, res) => {
+        var json = await GunStatusQuery();
         try {
             res.json(json);
         } catch (error) {
@@ -60,16 +62,13 @@ async function MakeGunStatusData(app)
         }
     });
 
-    json.forEach(data => {
-        var id = data.ID;
-        app.get(`/Gun/Status/${id}`, async (req,res) => {
-            try {
-                res.json(data);
-            } catch (error) {
-                res.status(500).send('Gun Query error' + id);
-            }
-        })
-    });
+    app.get(`/Gun/Status/id/:id`, async (req,res) => {
+        var id = req.params.id;
+        var json = await GunStatusQuery();
+        var data = json.find(g => g.ID == id)
+
+        res.json(data);
+    })
 }
 //#endregion
 

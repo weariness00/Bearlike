@@ -28,16 +28,17 @@ async function MakeInfoData(app)
         res.json(version);
     });
 
-    var json = await query('SELECT * FROM bearlike.stage');
     app.get('/Stage', async (req, res) =>{
+        var json = await query('SELECT * FROM bearlike.stage');
         res.json(json);
     });
 
-    json.forEach(data => {
-        var id = data.ID;
-        app.get(`/Stage/${id}`, (req, res) =>{
-            res.json(data);
-        });
+    app.get(`/Stage/ID/:id`, async (req, res) =>{
+        var id = req.params.id;
+        var json = await query('SELECT * FROM bearlike.stage');
+        var data = json.find(s => s.ID == id);
+
+        res.json(data);
     });
 }
 
@@ -48,24 +49,17 @@ async function MakeLootingTable(app)
         res.json(version);
     });
 
-    var json = await LootingTableQuery();
     app.get('/Stage/LootingTable', async (req, res) => {
-        try {
-            res.json(json);
-        } catch (error) {
-            res.status(500).send('Item Query error');
-        }
+        var json = await LootingTableQuery();
+        res.json(json);
     })  
-    json.forEach(data => {
-        var id = data.ID;
-        app.get(`/Stage/LootingTable/${id}`, async (req,res) => {
-            try {
-                res.json(data);
-            } catch (error) {
-                res.status(500).send('Item Query error' + id);
-            }
-        })
-    });
+            
+    app.get(`/Stage/LootingTable/id/:id`, async (req,res) => {
+        var id = req.params.id;
+        var json = await LootingTableQuery();
+        var data = json.find(table => table.ID == id);
+        res.json(data);
+    })
 }
 
 export async function MakeData(app)

@@ -27,8 +27,8 @@ Transform:
   m_GameObject: {fileID: 422771803937272372}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.0021121502, y: 1.215, z: -0.03679371}
-  m_LocalScale: {x: 5, y: 5, z: 5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5468087703302501732}
@@ -109,8 +109,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2605176404862920097}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.0021121502, y: 0.8736939, z: -0.03679371}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -140,23 +140,35 @@ VisualEffect:
       - m_Value: 0
         m_Name: Particle Rate
         m_Overridden: 1
-      - m_Value: 0
+      - m_Value: 0.5
         m_Name: Flare Rate
         m_Overridden: 1
-      - m_Value: 0.5
+      - m_Value: 0
         m_Name: Glow Ground Rate
         m_Overridden: 1
-      - m_Value: 0.4
+      - m_Value: 0
         m_Name: Hight
         m_Overridden: 1
       - m_Value: 0.5
         m_Name: Circle Mesh Size
         m_Overridden: 0
+      - m_Value: 1
+        m_Name: Particle Up Speed
+        m_Overridden: 1
+      - m_Value: 0
+        m_Name: Aura Rate
+        m_Overridden: 0
+      - m_Value: 0
+        m_Name: Glow Rate
+        m_Overridden: 1
+      - m_Value: 0
+        m_Name: Glow Size
+        m_Overridden: 1
     m_Vector2f:
       m_Array: []
     m_Vector3f:
       m_Array:
-      - m_Value: {x: 0.5, y: 0.5, z: 0}
+      - m_Value: {x: 0.15, y: 0.15, z: 3}
         m_Name: Flare Size
         m_Overridden: 1
     m_Vector4f:
@@ -247,7 +259,7 @@ Transform:
   m_GameObject: {fileID: 4217108063103695405}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.0021121502, y: 0.026306152, z: 0.03679371}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -301,8 +313,8 @@ MonoBehaviour:
     explain: "\uB4DC\uB78D\uC6A9 \uC791\uC740 \uB3C8"
     amount:
       _min: 0
-      _max: 0
-      _current: 0
+      _max: 999999
+      _current: 100
       isOverMax: 0
       isOverMin: 0
       isMin: 0
@@ -328,7 +340,7 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 5
-  m_Center: {x: 0, y: 1.4, z: 0}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!135 &4484262998971357890
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -348,5 +360,5 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 1.2, z: 0}
+  m_Radius: 0.2
+  m_Center: {x: 0, y: 0, z: 0}

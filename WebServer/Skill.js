@@ -36,13 +36,16 @@ async function MakeInfoData(app)
         res.json(version);
     })
 
-    var json = await InfoQuery();
-    app.get('/Skill', async (req, res) => { res.json(json); })
-    json.forEach(data => {
-        var id = data.ID;
-        app.get(`/Skill/${id}`, async (req, res) => {
-            res.json(data);
-        });
+    app.get('/Skill', async (req, res) => { 
+        var json = await InfoQuery();
+        res.json(json); 
+    })
+    app.get(`/Skill/id/:id`, async (req, res) => {
+        var id = req.params.id;
+        var json = await InfoQuery();
+        var data = json.find(s => s.ID == id);
+        
+        res.json(data);
     });
 }
 
@@ -53,24 +56,17 @@ async function MakeStatusData(app)
         res.json(version);
     })
 
-    var json = await StatusQuery();
     app.get('/Skill/Status', async (req, res) => {
-        try {
-            res.json(json);
-        } catch (error) {
-            res.status(500).send('Skill Query error');
-        }
+        var json = await StatusQuery();
+        res.json(json);
     })
-    json.forEach(data => {
-        var id = data.ID;
-        app.get(`/Skill/Status/${id}`, async (req,res) => {
-            try {
-                res.json(data);
-            } catch (error) {
-                res.status(500).send('Skill Query error' + name);
-            }
-        })
-    });
+    
+    app.get(`/Skill/Status/id/:id`, async (req,res) => {
+        var id = req.params.id;
+        var json = await StatusQuery();
+        var data = json.find(s => s.ID == id);
+        res.json(data);
+    })
 }
 
 export async function MakeData(app)

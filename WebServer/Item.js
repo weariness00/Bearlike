@@ -34,24 +34,19 @@ async function MakeInfoData(app)
         res.json(version);
     })
 
-    var json = await InfoQuery();
     app.get('/Item/', async (req, res) => {
-        try {
-            res.json(json);
-        } catch (error) {
-            res.status(500).send('Item Query error');
-        }
+        var json = await InfoQuery();
+        res.json(json);
     })
-    json.forEach(data => {
-        var id = data.ID;
-        app.get(`/Item/${id}`, async (req,res) => {
-            try {
-                res.json(data);
-            } catch (error) {
-                res.status(500).send('Item Query error' + id);
-            }
-        })
-    });
+
+    app.get(`/Item/id/:id`, async (req,res) => {
+        var id = req.params.id;
+        var json = await InfoQuery();
+        var data = json.find(i => i.ID == id);
+
+        res.json(data);
+    })
+
 }
 // 아이템 정보
 async function MakeStatusData(app)
@@ -61,24 +56,17 @@ async function MakeStatusData(app)
         res.json(version);
     })
 
-    var json = await StatusQuery();
     app.get('/Item/Status/', async (req, res) => {
-        try {
-            res.json(json);
-        } catch (error) {
-            res.status(500).send('Item Query error');
-        }
+        var json = await StatusQuery();
+        res.json(json);
     })
-    json.forEach(data => {
-        var id = data.ID;
-        app.get(`/Item/Status/${id}`, async (req,res) => {
-            try {
-                res.json(data);
-            } catch (error) {
-                res.status(500).send('Item Query error' + id);
-            }
-        })
-    });
+    
+    app.get(`/Item/Status/id/:id`, async (req,res) => {
+        var id = req.params.id;
+        var json = await StatusQuery();
+        var data = json.find(i => i.ID == id);
+        res.json(data);
+    })
 }
 
 export async function MakeData(app)

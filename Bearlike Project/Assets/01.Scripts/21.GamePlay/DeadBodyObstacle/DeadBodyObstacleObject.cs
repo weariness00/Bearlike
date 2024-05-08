@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Status;
 using Fusion;
+using Manager;
 using Photon;
 using Unity.AI.Navigation;
 using Unity.VisualScripting;
@@ -173,8 +174,9 @@ namespace GamePlay.DeadBodyObstacle
                     break;
             }
             
-            if(stageSurface)
-                stageSurface.BuildNavMesh();
+            DebugManager.ToDo("Nav Mesh 리빌딩 하기");
+            // if(stageSurface)
+            //     stageSurface.BuildNavMesh();
         }
 
         private IEnumerator CheckHpCoroutine()

@@ -51,7 +51,6 @@ namespace GamePlay.GM
         {
              var obj = Instantiate(_targetItem, _player.transform.position + _player.transform.forward, Quaternion.identity);
              var item = obj.GetComponent<ItemBase>();
-             item.Amount.Current = 1;
         }
 
         private void OnChangeToggle(ItemBase item)

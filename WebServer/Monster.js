@@ -23,7 +23,7 @@ async function MonsterStatusQuery(){
             SELECT JSON_OBJECTAGG(status.\`Status Name\`, status.Value)
             FROM bearlike.monster_status status
             WHERE status.\`Monster ID\` = monster.ID AND status.\`Value Type\` = 'Float'
-        ),
+        ),  
         JSON_OBJECT()
     ) AS 'Status Float'
 FROM bearlike.monster monster;`);
@@ -57,8 +57,10 @@ async function MakeInfoData(app)
         res.json(version);
     });
 
-    var json = await InfoQuery();
-    app.get('/Monster', async (req, res) =>{ res.json(json); });
+    app.get('/Monster', async (req, res) =>{ 
+        var json = await InfoQuery();
+        res.json(json); 
+    });
 }
 
 async function MakeStatusData(app)
@@ -68,24 +70,16 @@ async function MakeStatusData(app)
         res.json(version);
     });
 
-    var json = await MonsterStatusQuery();
     app.get('/Monster/Status', async (req, res) => {
-        try {
-            res.json(json);
-        } catch (error) {
-            res.status(500).send('Item Query error');
-        }
+        var json = await MonsterStatusQuery();
+        res.json(json);
     });
-    json.forEach(data => {
-        var id = data.ID;
-        app.get(`/Monster/Status/${id}`, async (req,res) => {
-            try {
-                res.json(data);
-            } catch (error) {
-                res.status(500).send('Item Query error' + id);
-            }
-        })
-    });
+    app.get(`/Monster/Status/id/:id`, async (req,res) => {
+        var id = req.params.id;
+        var json = await MonsterStatusQuery();
+        var data = json.find(m => m.Id == id);
+        res.json(data);
+    })
 }
 
 async function MakeLootingTable(app)
@@ -95,24 +89,16 @@ async function MakeLootingTable(app)
         res.json(version);
     });
 
-    var json = await LootingTableQuery();
     app.get('/Monster/LootingTable', async (req, res) => {
-        try {
-            res.json(json);
-        } catch (error) {
-            res.status(500).send('Item Query error');
-        }
+        var json = await LootingTableQuery();
+        res.json(json);
     });
-    json.forEach(data => {
-        var id = data.MonsterID;
-        app.get(`/Monster/LootingTable/${id}`, async (req,res) => {
-            try {
-                res.json(data);
-            } catch (error) {
-                res.status(500).send('Item Query error' + id);
-            }
-        })
-    });
+    app.get(`/Monster/LootingTable/id/:id`, async (req,res) => {
+        var id = req.params.id;
+        var json = await LootingTableQuery();
+        var data = json.find(m => m.ID == id);
+        res.json(data);
+    })
 }
 
 export async function MakeData(app)
