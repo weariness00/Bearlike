@@ -41,12 +41,11 @@ namespace Monster.Container
 
         #region 회전
 
-        private const float RotationDuration = 1.0f;
+        private const float RotationDuration = 0.5f;
 
+        private Vector3 _lookDirection;
         private Vector3 _targetRotation; // 목표 회전값
         private float _timePassed = 0f; // 회전 보간에 사용될 시간 변수
-
-        private float _rotationlastTime;
 
         #endregion
 
@@ -55,11 +54,11 @@ namespace Monster.Container
         [Header("공격 범위")]
         [SerializeField] private float attackRange = 10; // 발차기 감지 범위
         [SerializeField] private float rushRange = 100; // 돌진 감지 범위
-        [SerializeField] private float jumpRange = 50; // 점프 감지 범위
+        [SerializeField] private float jumpRange = 30; // 점프 감지 범위
         [SerializeField] private float coinAtaackMinRange = 30; // 코인 공격 최소 감지 범위
         [SerializeField] private float coinAtaackMaxRange = 100; // 코인 공격 최대 감지 범위
 
-        [SerializeField] private float jumpAttackDamageRange = 30;
+        [SerializeField] private float jumpAttackDamageRange = 17;
         
         [Header("상하 속도")] 
         [SerializeField] private float upSpeed = 1.0f;
@@ -130,6 +129,16 @@ namespace Monster.Container
                 _btRunner.Operator();
         }
 
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.TryGetComponent(out StatusBase otherStatus))
+            {
+                // TODO : 충돌 데미지 DB에서 밸런스 맞추자
+                if(other.gameObject.layer != LayerMask.NameToLayer("Bullet"))
+                    otherStatus.ApplyDamageRPC(status.CalDamage(), gameObject.GetComponent<NetworkObject>().Id);
+            }
+        }
+        
         #region BT
         
         IEnumerator DieCoroutine(float waitTime)
@@ -195,7 +204,6 @@ namespace Monster.Container
                     (   // Kick
                         new ActionNode(CheckAttackAction),
                         new ActionNode(CheckAttackDistance),
-                        new ActionNode(StartRotate),
                         new ActionNode(StartAttack),
                         new ActionNode(TermFuction)
                     ),
@@ -255,14 +263,16 @@ namespace Monster.Container
         {
             return new SequenceNode
             (
-                new ActionNode(CheckRestAction),
-                new ActionNode(StartRest),
-                new ActionNode(TermFuction)
+                new ActionNode(CheckJumpAttackAction),
+                new ActionNode(CheckJumpAttackDistance),
+                new ActionNode(StartJumpAction),
+                new ActionNode(TermFuction),
+                new ActionNode(StopJumpAttack)
             );
         }
 
         #endregion
-
+        
         /// <summary>
         /// 파라미터로 넘어오는 애니메이션이 동작 중인지 확인하는 함수
         /// </summary>
@@ -533,39 +543,16 @@ namespace Monster.Container
 
             if (checkResult)
             {
-                // Vector3 targetDirection = _players[_targetPlayerIndex].transform.position - transform.position;
-                // _targetRotation = Quaternion.LookRotation(targetDirection);
-                _targetRotation = _players[_targetPlayerIndex].transform.position - transform.position;
-
-                _rotationlastTime = _gameManager.PlayTimer;
-
+                _targetRotation = (_players[_targetPlayerIndex].transform.position - transform.position).normalized;
+                var targetAngle = Quaternion.FromToRotation(Vector3.forward, _targetRotation).eulerAngles.y;
+                var mytAngle = Quaternion.FromToRotation(Vector3.forward, transform.rotation.eulerAngles).eulerAngles.y;
+                
+                _lookDirection = new Vector3(0, transform.rotation.eulerAngles.y + (targetAngle - mytAngle), 0);
+                
                 return INode.NodeState.Success;
             }
 
             return INode.NodeState.Failure;
-        }
-
-        /// <summary>
-        /// 목표로 하는 플레이어를 바라보도록 회전하는 노드
-        /// </summary>
-        /// <returns></returns>
-        INode.NodeState StartRotate()
-        {
-            // _timePassed += _gameManager.PlayTimer - _rotationlastTime;
-            //
-            // transform.rotation = Quaternion.Slerp(transform.rotation, _targetRotation, _timePassed / RotationDuration);
-            //
-            // if (_timePassed >= RotationDuration)
-            // {
-            //     _timePassed = 0.0f;
-            //     return INode.NodeState.Success;
-            // }
-            //
-            // _rotationlastTime = _gameManager.PlayTimer;
-            //
-            // return INode.NodeState.Running;
-
-            return INode.NodeState.Success;
         }
 
         /// <summary>
@@ -575,7 +562,7 @@ namespace Monster.Container
         INode.NodeState StartAttack()
         {           
             RotateRPC();
-
+            
             networkAnimator.Animator.SetFloat(AttackBlend, ATTACK_TYPE);
             networkAnimator.Animator.SetTrigger(Attack);
             _navMeshAgent.speed = 0.0f;
@@ -583,15 +570,18 @@ namespace Monster.Container
             // TODO : 피격 처리 해주는 코드 필요
             Vector3 targetDirection = _players[_targetPlayerIndex].transform.position - transform.position;
 
-            if (Runner.LagCompensation.Raycast(transform.position, transform.up, status.attackRange.Current, Runner.LocalPlayer, out var Hit))
+            if (Runner.LagCompensation.Raycast(transform.position, transform.GetChild(0).forward, status.attackRange.Current, Runner.LocalPlayer, out var Hit))
             {
                 StatusBase targetStatus;
+                DebugManager.Log($"{Hit.GameObject.name} was raycast");
                 // 공격 VFX
                 if (Hit.GameObject.TryGetComponent(out targetStatus) || Hit.GameObject.transform.root.TryGetComponent(out targetStatus))
                 {
+                    DebugManager.Log($"{targetStatus.gameObject.name} was hit");
                     targetStatus.ApplyDamageRPC(status.CalDamage(), Object.Id);
                 }
             }
+            DebugManager.Log($"AttackRange : {status.attackRange.Current}");
             
             _durationTime = _gameManager.PlayTimer;
 
@@ -668,15 +658,6 @@ namespace Monster.Container
             return INode.NodeState.Success;
         }
 
-        private void OnTriggerEnter(Collider other)
-        {
-            if (other.TryGetComponent(out StatusBase otherStatus))
-            {
-                // TODO : 충돌 데미지 DB에서 밸런스 맞추자
-                otherStatus.ApplyDamageRPC(status.CalDamage(), gameObject.GetComponent<NetworkObject>().Id);
-            }
-        }
-
         #endregion
 
         #region JumpAttack
@@ -706,7 +687,7 @@ namespace Monster.Container
             for (int index = 0; index < _playerCount; ++index)
             {
                 var distance = FastDistance(transform.position, _players[index].transform.position);
-                if (distance < attackRange)
+                if (distance < jumpRange)
                 {
                     checkResult |= true;
 
@@ -718,12 +699,10 @@ namespace Monster.Container
                 }
             }
             
-            if (FastDistance(_players[_targetPlayerIndex].transform.position, transform.position) < jumpRange)
+            if (false == checkResult)
             {
                 return INode.NodeState.Failure;
             }
-
-            _rotationlastTime = _gameManager.PlayTimer;
 
             return INode.NodeState.Success;
         }
@@ -738,10 +717,10 @@ namespace Monster.Container
         {
             // 가장 먼 플레이어를 지정
             _navMeshAgent.speed = FastDistance(_players[_targetPlayerIndex].transform.position, transform.position) / 3.0f;
-            _navMeshAgent.SetDestination(_players[_targetPlayerIndex].transform.position);
+            // _navMeshAgent.SetDestination(_players[_targetPlayerIndex].transform.position);
 
-            int type = Random.Range(1, 3); // 1 or 2
-            
+            // int type = Random.Range(1, 3); // 1 or 2
+            int type = 3;
             networkAnimator.Animator.SetTrigger(Attack);
             networkAnimator.Animator.SetFloat(AttackBlend, JUMP_TYPE);
             
@@ -818,12 +797,15 @@ namespace Monster.Container
                             status.ApplyDamageRPC((int)(status.hp.Current / 100.0f), gameObject.GetComponent<NetworkObject>().Id);
                             
                         // TODO : player 거리 구하고 점프 공격의 범위 안에 있으면 applyDamage입히기
+                        // TODO : 천천히 오는 vfx와 부딪히는 판정으로 하고싶다
+                        // TODO : 바로 적용 시키면 부자연스러움
                         for (int index = 0; index < _playerCount; ++index)
                         {
                             if (FastDistance(transform.position, _players[index].transform.position) < jumpAttackDamageRange)
                             {
                                 //TODO : 데미지를 조정하자
-                                _players[index].GetComponent<StatusBase>().ApplyDamageRPC(status.CalDamage(), gameObject.GetComponent<NetworkObject>().Id);
+                                // _players[index].GetComponent<StatusBase>().ApplyDamageRPC(status.CalDamage(), gameObject.GetComponent<NetworkObject>().Id);
+                                _players[index].GetComponent<StatusBase>().ApplyDamageRPC(1, gameObject.GetComponent<NetworkObject>().Id);
                             }
                         }
                     }
@@ -1043,7 +1025,7 @@ namespace Monster.Container
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void RotateRPC()
         {
-            transform.DORotate(_targetRotation, RotationDuration).SetEase(Ease.Linear);
+            transform.GetChild(0).DORotate(_lookDirection, RotationDuration).SetEase(Ease.Linear);
         }
 
         #region JumpRPC
@@ -1053,7 +1035,7 @@ namespace Monster.Container
         {
             DebugManager.ToDo("돼지 BT : status에서 속도를 받아오도록 수정");
             // TODO : transform.position.y + height로 수정
-            transform.GetChild(0).DOMoveY(100f + jumpHeight, 3.0f).SetEase(Ease.OutCirc);
+            transform.GetChild(0).DOMoveY(transform.position.y + jumpHeight, 3.0f).SetEase(Ease.OutCirc);
 
             if (type == 2)
             {
@@ -1072,7 +1054,7 @@ namespace Monster.Container
         {
             DebugManager.ToDo("돼지 BT : status에서 속도를 받아오도록 수정");
             // TODO : transform.position.y - height로 수정
-            transform.GetChild(0).DOMoveY(100f, 1.0f).SetEase(Ease.InCirc);
+            transform.GetChild(0).DOMoveY(transform.position.y - jumpHeight, 1.0f).SetEase(Ease.InCirc);
             
             if (type == 2)
             {
@@ -1108,14 +1090,14 @@ namespace Monster.Container
             if(type == 0)
                 networkAnimator.Animator.SetTrigger(Rest);
             else
-                transform.GetChild(0).DOMoveY(100f - 0.1f, 1.0f).SetEase(Ease.InOutQuad);
+                transform.GetChild(0).DOMoveY(transform.position.y - 0.1f, 1.0f).SetEase(Ease.InOutQuad);
         }
         
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void RestUpRPC()
         {
             networkAnimator.Animator.SetTrigger(EndRest);
-            transform.GetChild(0).DOMoveY(100f, 1.0f).SetEase(Ease.InOutQuad);
+            transform.GetChild(0).DOMoveY(transform.position.y + 0.1f, 1.0f).SetEase(Ease.InOutQuad);
         }
 
         #endregion
@@ -1142,7 +1124,8 @@ namespace Monster.Container
         public void StopVFXRPC(string vfxName)
         {
             GameObject targetObject = transform.Find(vfxName).gameObject;
-
+            DebugManager.Log($"{FastDistance(_players[0].transform.position , transform.position)}");
+            
             if (targetObject != null)
             {
                 _visualEffect = targetObject.GetComponent<VisualEffect>();
