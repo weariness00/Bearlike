@@ -17,9 +17,6 @@ namespace Item
         [Rpc(RpcSources.All,RpcTargets.All)]
         public void AddItemRPC(NetworkItemInfo itemInfo)
         {
-            if(HasInputAuthority)
-                return;
-            
             var item = ItemObjectList.GetFromId(itemInfo.Id);
             var obj = Instantiate(item.gameObject);
             var objItem = obj.GetComponent<ItemBase>();
