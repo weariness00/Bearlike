@@ -30,7 +30,7 @@ namespace UI.Inventory
             if (!_skill && item is SkillBase skill)
             {
                 _skill = skill;
-                icon.texture = _skill.icon;
+                icon.texture = _skill.icon.texture;
             }
 
             levelText.text = _skill.level.Current.ToString();

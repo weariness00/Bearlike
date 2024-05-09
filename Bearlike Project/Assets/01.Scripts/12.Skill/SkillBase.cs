@@ -50,7 +50,7 @@ namespace Skill
         private string _originExplain; // 원본 설명
         public string explain; // 텍스트로 보여줄 설명
         public SKillType type;
-        public Texture2D icon;
+        public Sprite icon;
         public float coolTime;
 
         public bool isInvoke; // 현재 스킬이 발동 중인지
@@ -58,6 +58,8 @@ namespace Skill
         public StatusBase status;
         public StatusValue<int> level = new StatusValue<int>() { Max = 1 };
         [Networked] public TickTimer CoolTimeTimer { get; set; }
+        // 쿨타임이 끝나서 사용할 수 있는 상태인지
+        public bool IsUse => CoolTimeTimer.Expired(Runner);
 
         #endregion
 

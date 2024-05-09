@@ -1,7 +1,7 @@
+using System;
 using Status;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace UI.Status
@@ -14,7 +14,12 @@ namespace UI.Status
 
         private int _currentHp;
         private float _ratio;
-        
+
+        private void Awake()
+        {
+            gameObject.SetActive(false);
+        }
+
         void Start()
         {
             _currentHp = statusBase.hp.Current;

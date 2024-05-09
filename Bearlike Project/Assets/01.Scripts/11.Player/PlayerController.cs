@@ -36,6 +36,7 @@ namespace Player
         public ItemInventory itemInventory;
         public SkillInventory skillInventory;
         public SkillSelectUI skillSelectUI;
+        public SkillCanvas skillCanvas;
         public Animator animator;
         [HideInInspector] public SimpleKCC simpleKcc;
         [HideInInspector] public RigBuilder rigBuilder;

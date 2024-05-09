@@ -2,6 +2,7 @@
 using Photon;
 using Skill;
 using Skill.Container;
+using UI.Skill;
 using UnityEngine;
 
 namespace Player.Container
@@ -48,6 +49,14 @@ namespace Player.Container
                 FlippingCoin.Object.AssignInputAuthority(Object.InputAuthority);
                 tmpSkill.Object.AssignInputAuthority(Object.InputAuthority);
                 ultimateSkill.Object.AssignInputAuthority(Object.InputAuthority);
+                
+                skillCanvas.gameObject.SetActive(true);
+                
+                skillCanvas.SetFirstSkill(FlippingCoin);
+                skillCanvas.SetSecondSkill(tmpSkill);
+                skillCanvas.SetUltimateSkill(ultimateSkill);
+
+                skillCanvas.Initialize();
             }
             
             FlippingCoin.LevelUp();
