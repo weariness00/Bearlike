@@ -703,7 +703,7 @@ Transform:
   m_GameObject: {fileID: 1467546578422021564}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.27}
+  m_LocalPosition: {x: 0, y: 0, z: 0.287}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1302,8 +1302,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1832689465174122220}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.0033628263, y: 0.00989787, z: -0.7118323, w: 0.70227164}
+  m_LocalPosition: {x: 0.062, y: -0.006, z: 0.099}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1315,7 +1315,7 @@ Transform:
   - {fileID: 3460047770435453321}
   - {fileID: 7872331250901930099}
   m_Father: {fileID: 3894390410395096859}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 1.078, y: 0.522, z: -90.77}
 --- !u!114 &8869441587842957355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6395,6 +6395,9 @@ MonoBehaviour:
   targetTransform: {fileID: 8585547609053965692}
   isPosition: 1
   isRotate: 1
+  isRotateX: 1
+  isRotateY: 1
+  isRotateZ: 1
   isScale: 0
 --- !u!1 &7797262244898891050
 GameObject:
@@ -7583,6 +7586,9 @@ MonoBehaviour:
   targetTransform: {fileID: 0}
   isPosition: 1
   isRotate: 0
+  isRotateX: 1
+  isRotateY: 1
+  isRotateZ: 1
   isScale: 0
 --- !u!1 &8901504163148195745
 GameObject:
@@ -8838,6 +8844,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -5833661098405571102, guid: 0466371a07b79c24a8d0e403016174e5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: -2932737294204214082, guid: 0466371a07b79c24a8d0e403016174e5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
     - target: {fileID: -1742893362208886120, guid: 0466371a07b79c24a8d0e403016174e5,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -8847,6 +8863,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: MegaShotgun_Animation
+      objectReference: {fileID: 0}
+    - target: {fileID: 2071963930070466410, guid: 0466371a07b79c24a8d0e403016174e5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

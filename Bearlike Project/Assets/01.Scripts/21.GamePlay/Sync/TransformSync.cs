@@ -8,6 +8,7 @@ namespace GamePlay.Sync
 
         public bool isPosition = true;
         public bool isRotate = true;
+        public bool isRotateX = true, isRotateY = true, isRotateZ = true;
         public bool isScale = false;
 
         private void Update()
@@ -29,7 +30,13 @@ namespace GamePlay.Sync
 
             if (isRotate)
             {
-                transform.rotation = targetTransform.rotation;
+                var rotate = transform.rotation;
+                var targetRotate = targetTransform.rotation;
+                if (isRotateX) rotate.x = targetRotate.x;
+                if (isRotateY) rotate.y = targetRotate.y;
+                if (isRotateZ) rotate.z = targetRotate.z;
+
+                transform.rotation = rotate;
             }
 
             if (isScale)
