@@ -3575,7 +3575,6 @@ GameObject:
   - component: {fileID: 7356552146264690312}
   - component: {fileID: 7351443737682472504}
   - component: {fileID: 7012270031289949724}
-  - component: {fileID: 1653245620892506730}
   m_Layer: 12
   m_Name: Second Player
   m_TagString: Player
@@ -3623,6 +3622,7 @@ MonoBehaviour:
   _IsAsyncClient: []
   _IsSpawnSuccess:
     _value: 0
+  playerType: 1
   status: {fileID: 7351443737682472504}
   cameraController: {fileID: 8450024292257735134}
   skillSystem: {fileID: 3161483302560883087}
@@ -3915,20 +3915,6 @@ MonoBehaviour:
   _IsSpawnSuccess:
     _value: 0
   interactLength: 2.5
---- !u!114 &1653245620892506730
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4568908262870590213}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1541381998, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Guid:
-    RawGuidValue: 09e6f7f05e1dad548a1cf26be7540626
 --- !u!1 &4651175568861435478
 GameObject:
   m_ObjectHideFlags: 0

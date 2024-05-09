@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using ExitGames.Client.Photon.StructWrapping;
 using Fusion;
 using Manager;
 using Photon;
+using Player;
 using UnityEngine;
 
 namespace Data
@@ -13,6 +17,7 @@ namespace Data
         public NetworkString<_32> Name { get; set; }
         public PlayerRef PlayerRef;
         public NetworkPrefabRef PrefabRef;
+        public PlayerCharacterType PlayerCharacterType;
         public NetworkId NetworkId;
         public int ClientNumber;
         [Networked, Capacity(1)] public NetworkLinkedList<Vector3> TeleportPosition { get; }
@@ -26,8 +31,28 @@ namespace Data
         public Action<PlayerRef> UserJoinAction;
         public Action<PlayerRef> UserLeftAction;
 
+        public static int ClientNumber => HasClientData(Instance.Runner.LocalPlayer) ? Instance.UserDictionary.Get(Instance.Runner.LocalPlayer).ClientNumber : -1;
+        
         #region Static Function
 
+        public static bool HasClientData(PlayerRef playerRef)
+        {
+            if (Instance.UserDictionary.Count == 0)
+                return false;
+            var data = Instance.UserDictionary.Get(playerRef);
+            return data.PlayerRef != PlayerRef.None;
+        }
+        public static int GetClientNumber(PlayerRef playerRef) => Instance.UserDictionary.Get(playerRef).ClientNumber;
+
+        public static UserDataStruct[] GetAllUserData()
+        {
+            UserDataStruct[] datas = new UserDataStruct[Instance.UserDictionary.Count];
+            int i = 0;
+            foreach (var (key, value) in Instance.UserDictionary)
+                datas[i++] = value;
+            return datas;
+        }
+        
         public static void SetTeleportPosition(PlayerRef key, Vector3? value)
         {
             var data = Instance.UserDictionary[key];
@@ -70,7 +95,9 @@ namespace Data
             {
                 var matchManager = FindObjectOfType<NetworkMatchManager>();
 
-                userData.PrefabRef = matchManager.PlayerPrefabRefs[0]; // 임시 : 나중에는 유저가 선택하면 바꿀 수 있거나 아니면 이전 정보를 가져와 그 캐릭터로 잡아줌
+                DebugManager.ToDo("임시 : 나중에는 유저가 선택하면 바꿀 수 있거나 아니면 이전 정보를 가져와 그 캐릭터로 잡아줌");
+                userData.PrefabRef = matchManager.PlayerPrefabRefs[0];
+                userData.ClientNumber = Runner.ActivePlayers.ToArray().Length - 1;
 
                 UserDictionary.Add(playerRef, userData);
                 UserJoinAction?.Invoke(playerRef);
@@ -82,19 +109,20 @@ namespace Data
             }
         }
 
-        public void ChangePlayerRef(PlayerRef playerRef, NetworkPrefabRef prefabRef)
+        public void ChangePlayerRef(PlayerRef playerRef, NetworkPrefabRef prefabRef, PlayerCharacterType playerType)
         {
             if (UserDictionary.TryGet(playerRef, out UserDataStruct data))
             {
                 DebugManager.Log($"{playerRef}의 캐릭터를 변경");
                 data.PrefabRef = prefabRef;
+                data.PlayerCharacterType = playerType;
+                
+                UserDictionary.Set(playerRef, data);
             }
             else
             {
                 DebugManager.Log($"{playerRef}가 존재하지 않아 캐릭터를 변경할 수 없습니다.");
             }
-
-            UserDictionary.Set(playerRef, data);
         }
 
         public async Task<bool> SpawnPlayers()
@@ -118,5 +146,12 @@ namespace Data
 
             return true;
         }
+
+        #region Rpc Function
+
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void ChangePlayerRefRPC(PlayerRef playerRef, NetworkPrefabRef prefabRef, PlayerCharacterType playerType) => ChangePlayerRef(playerRef, prefabRef, playerType);
+
+        #endregion
     }
 }

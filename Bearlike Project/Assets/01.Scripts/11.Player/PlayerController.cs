@@ -24,6 +24,7 @@ namespace Player
     public class PlayerController : NetworkBehaviourEx
     {
         public PlayerRef PlayerRef => Object.InputAuthority;
+        public PlayerCharacterType playerType;
         
         // public Status status;
         [Header("컴포넌트")] 
