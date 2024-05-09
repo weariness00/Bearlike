@@ -70,7 +70,9 @@ namespace Weapon.Gun
                         }
                     }
 
-                    SetMagazineRPC(StatusValueType.Current, --magazine.Current);
+                    --magazine.Current;
+                    if(HasStateAuthority)
+                        SetMagazineRPC(StatusValueType.Current, --magazine.Current);
                     SoundManager.Play(shootSound);
                 }
                 else

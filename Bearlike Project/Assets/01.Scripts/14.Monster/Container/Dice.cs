@@ -75,14 +75,9 @@ namespace Monster.Container
         // 사망시 슬라이스 되도록
         async void DeadSlice()
         {
-            var s = transform.localScale;
-            var p = transform.parent;
-            var dieObj = await Runner.SpawnAsync(diePrefab, transform.position, transform.rotation, null, (runner, o) =>
-            {
-                o.transform.localScale = s;
-                o.transform.parent = p;
-            });
-
+            if(!HasStateAuthority) return;
+            
+            var dieObj = await Runner.SpawnAsync(diePrefab, transform.position, transform.rotation);
             NetworkMeshSliceSystem.Instance.SliceRPC(dieObj.Id, Random.onUnitSphere, transform.position, 1f, false, SerializeComponentString(typeof(DeadBodyObstacleObject)));
             
             Destroy(gameObject);

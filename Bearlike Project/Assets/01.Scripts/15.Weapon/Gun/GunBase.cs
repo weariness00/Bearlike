@@ -147,7 +147,10 @@ namespace Weapon.Gun
                             });
                     }
 
-                    SetMagazineRPC(StatusValueType.Current, --magazine.Current);
+                    --magazine.Current;
+                    if(HasStateAuthority)
+                        SetMagazineRPC(StatusValueType.Current, --magazine.Current);
+                    
                     SoundManager.Play(shootSound);
                     
                     AfterShootAction?.Invoke();
@@ -199,7 +202,8 @@ namespace Weapon.Gun
 
                 ammo.Current -= needChargingAmmoCount;
                 magazine.Current += needChargingAmmoCount;
-                SetMagazineRPC(StatusValueType.Current, magazine.Current);
+                if(HasStateAuthority)
+                    SetMagazineRPC(StatusValueType.Current, magazine.Current);
             }
         }
 

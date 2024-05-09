@@ -56,41 +56,40 @@ namespace Player
             {
                 IInteract interact;
                 if (hit.GameObject.TryGetComponent(out interact) || hit.GameObject.transform.root.gameObject.TryGetComponent(out interact))
-                // if(hit.transform.TryGetComponent(out interact) || hit.transform.root.TryGetComponent(out interact))
                 {
-                    // 처음 진입 상태인지
-                    if (_isEnterInteract == false)
+                    if (interact is { IsInteract: true })
                     {
-                        _isInteractKeyPress = false;
-                        _isEnterInteract = true;
-                        interact.InteractEnterAction?.Invoke(gameObject);
-                        _currentInteract = interact;
-                    }
-                }
-                if (interact is { IsInteract: true })
-                {
-                    // 이미 상호작용중에 다른 상호작용 객체로 바뀌었는지
-                    if (interact != _currentInteract)
-                    {
-                        InteractUI.Instance.SetActiveAll(false);
-                        _isInteractKeyPress = false;
-                        _currentInteract.InteractExitAction?.Invoke(gameObject);
-                        interact.InteractEnterAction?.Invoke(gameObject);
+                        // 처음 진입 상태인지
+                        if (_isEnterInteract == false)
+                        {
+                            _isInteractKeyPress = false;
+                            _isEnterInteract = true;
+                            interact.InteractEnterAction?.Invoke(gameObject);
+                            _currentInteract = interact;
+                        }
+                        // 이미 상호작용중에 다른 상호작용 객체로 바뀌었는지
+                        if (interact != _currentInteract)
+                        {
+                            InteractUI.Instance.SetActiveAll(false);
+                            _isInteractKeyPress = false;
+                            _currentInteract.InteractExitAction?.Invoke(gameObject);
+                            interact.InteractEnterAction?.Invoke(gameObject);
                         
-                        _currentInteract = interact;
-                    }
+                            _currentInteract = interact;
+                        }
                     
-                    // 상호작용 키를 눌렀는지
-                    if (data.Interact)
-                    {
-                        _isInteractKeyPress = true;
-                        interact.InteractKeyDownAction?.Invoke(gameObject);
-                    }
-                    // 상호작용 키를 누르고 떗는지
-                    else if(_isInteractKeyPress)
-                    {
-                        _isInteractKeyPress = false;
-                        interact.InteractKeyUpAction?.Invoke(gameObject);
+                        // 상호작용 키를 눌렀는지
+                        if (data.Interact)
+                        {
+                            _isInteractKeyPress = true;
+                            interact.InteractKeyDownAction?.Invoke(gameObject);
+                        }
+                        // 상호작용 키를 누르고 떗는지
+                        else if(_isInteractKeyPress)
+                        {
+                            _isInteractKeyPress = false;
+                            interact.InteractKeyUpAction?.Invoke(gameObject);
+                        }
                     }
                 }
             }

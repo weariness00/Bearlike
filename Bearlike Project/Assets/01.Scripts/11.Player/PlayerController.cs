@@ -131,7 +131,7 @@ namespace Player
             if(!GameManager.Instance.isControl)
                 return;
             
-            if (transform.position.y <= -100)
+            if (transform.position.y <= -1)
                 UserData.SetTeleportPosition(Runner.LocalPlayer, Vector3.up);
             
             var spawnPosition = UserData.Instance.UserDictionary[Runner.LocalPlayer].TeleportPosition;
