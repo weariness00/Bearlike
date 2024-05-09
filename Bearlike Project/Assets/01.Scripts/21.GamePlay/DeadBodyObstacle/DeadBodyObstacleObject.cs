@@ -24,8 +24,6 @@ namespace GamePlay.DeadBodyObstacle
         private Rigidbody[] _ragdollRigidBodies;
         private Collider[] _ragdollColliders;
         private List<NavMeshObstacle> _navMeshObstacleList;
-        
-        private bool _isOn; // DeadBody가 활성화 되었는지
 
         #region Unity Event Function
 
@@ -48,10 +46,7 @@ namespace GamePlay.DeadBodyObstacle
 
         public override void FixedUpdateNetwork()
         {
-            if (_isOn && _status.IsDie)
-            {
-                Destroy(gameObject);
-            }
+
         }
 
         #endregion
@@ -98,14 +93,15 @@ namespace GamePlay.DeadBodyObstacle
             // 레그돌 활성화
             SetDeadBodyComponentActive(true);
             
-            // Nav Mesh Obstacle 생성
-            MakeNavMeshObstacle();
-
-            // 시체의 체력 설정
             _status.hp.Current = hp;
-            _status.SetHpRPC(StatusValueType.CurrentAndMax, hp);
-            StartCoroutine(CheckHpCoroutine()); // 시체에 정상적으로 hp가 부여되면 Update가 되도록 하는 코루틴
-            StartCoroutine(BakeNavMesh());
+
+            if (HasStateAuthority)
+            {
+                // Nav Mesh Obstacle 생성
+                MakeNavMeshObstacle();
+                StartCoroutine(CheckHP());
+                StartCoroutine(BakeNavMesh());
+            }
         }
 
         /// <summary>
@@ -162,6 +158,20 @@ namespace GamePlay.DeadBodyObstacle
             }
         }
 
+        private IEnumerator CheckHP()
+        {
+            while (true)
+            {
+                if (_status.IsDie)
+                {
+                    Destroy(gameObject);
+                    break;
+                }
+
+                yield return null;
+            }
+        }
+
         private IEnumerator BakeNavMesh()
         {
             bool isAllActive = false;
@@ -185,19 +195,6 @@ namespace GamePlay.DeadBodyObstacle
             DebugManager.ToDo("Nav Mesh 리빌딩 하기");
             // if(stageSurface)
             //     stageSurface.BuildNavMesh();
-        }
-
-        private IEnumerator CheckHpCoroutine()
-        {
-            while (true)
-            {
-                yield return null;
-                if (_status.hp.isMin == false)
-                {
-                    _isOn = true;
-                    break;
-                }
-            }
         }
 
         #endregion

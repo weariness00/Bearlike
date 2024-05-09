@@ -196,6 +196,10 @@ namespace Monster
                     // 인식범위 내에 있는 아무 플레이어를 Target으로 지정
                     targetTransform = targetPlayers[Random.Range(0, targetPlayers.Count)].transform;
                 }
+                else
+                {
+                    targetTransform = null;
+                }
             }
             else
             {

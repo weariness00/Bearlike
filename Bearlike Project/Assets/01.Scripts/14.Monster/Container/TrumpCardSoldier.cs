@@ -37,8 +37,6 @@ namespace Monster.Container
         public override void Start()
         {
             base.Start();
-
-
             
             DebugManager.ToDo("CC 타입 별로 기본 스텟에서 차별을 두기");
             // Spade => 취약
