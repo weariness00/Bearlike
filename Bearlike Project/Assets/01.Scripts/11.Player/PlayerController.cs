@@ -75,7 +75,6 @@ namespace Player
             cameraController = GetComponent<PlayerCameraController>();
             weaponSystem = gameObject.GetComponentInChildren<WeaponSystem>();
             animator = GetComponentInChildren<Animator>();
-            // _networkAnimator = GetComponent<NetworkMecanimAnimator>();
 
             _stageSelectUI = FindObjectOfType<StageSelectUI>();
 

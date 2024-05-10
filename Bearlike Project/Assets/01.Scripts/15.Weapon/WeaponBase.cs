@@ -56,7 +56,14 @@ namespace Weapon
             status.AddAdditionalStatus(equipObject.GetComponent<StatusBase>());
             
             // 레이어 설정
-            gameObject.layer = HasInputAuthority ? LayerMask.NameToLayer("Weapon") : 0;
+            if (HasInputAuthority)
+            {
+                var renderers = gameObject.GetComponentsInChildren<Renderer>();
+                foreach (var r in renderers)
+                {
+                    r.gameObject.layer = LayerMask.NameToLayer("Weapon");
+                }
+            }
         }
         
         #region Equipment Interface
