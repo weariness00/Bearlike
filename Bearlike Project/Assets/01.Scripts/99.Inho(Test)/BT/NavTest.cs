@@ -125,6 +125,12 @@ public class NavTest : MonoBehaviour
 
         //[field:SerializeField] // 프로퍼티도 인스펙터에서 보여줌
 
+        [Header("공격 범위")]
+        [SerializeField] private float duration = 3; // 발차기 감지 범위
+        [SerializeField] private float strength = 1;
+        [SerializeField] private int vibrato = 5;
+        [SerializeField] private float randomness = 0;
+        
         #endregion
 
         #region 속성
@@ -173,7 +179,7 @@ public class NavTest : MonoBehaviour
 
         private void Awake()
         {
-            _btRunner = new BehaviorTreeRunner(SettingBT());
+            // _btRunner = new BehaviorTreeRunner(SettingBT());
             _visualEffect = GetComponentInChildren<VisualEffect>();
             _animator = GetComponentInChildren<Animator>();
             if(TryGetComponent(out _navMeshAgent)== false) _navMeshAgent = GetComponent<NavMeshAgent>();
@@ -199,11 +205,7 @@ public class NavTest : MonoBehaviour
             // transform.DOScaleY(0.8f, 0.5f).SetLoops(2, LoopType.Yoyo).SetEase(Ease.InCirc);// 점프할때ㅐ 
             Transform tras = transform.GetChild(0);
 
-            tras.DOMoveY(-0.1f, 1.0f);
-            //     .OnComplete(() =>
-            // {
-            //     tras.position +=new Vector3(0.0f, -1.0f, 0.0f);
-            // });
+            tras.DOShakeRotation(duration,new Vector3(0, strength, 0), vibrato, randomness);
         }
         
 

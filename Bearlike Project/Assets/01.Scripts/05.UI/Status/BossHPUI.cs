@@ -18,19 +18,17 @@ namespace UI.Status
         void Start()
         {
             _currentHp = statusBase.hp.Current;
-            _ratio = ((float)(_currentHp) / (float)(statusBase.hp.Max));
+            _ratio = Mathf.Floor((float)(_currentHp) / (float)(statusBase.hp.Max) * 100) / 100;
             hpText.text = _ratio * 100 + " %";
             hpImage.fillAmount = _ratio;
         }
         
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.A))
-                statusBase.hp.Current -= 10;
             if (statusBase.hp.Current != _currentHp)
             {
                 _currentHp = statusBase.hp.Current;
-                _ratio = ((float)(_currentHp) / (float)(statusBase.hp.Max));
+                _ratio = Mathf.Floor((float)(_currentHp) / (float)(statusBase.hp.Max) * 100) / 100;
                 hpText.text = _ratio * 100 + " %";
                 hpImage.fillAmount = _ratio;
             }
