@@ -4126,7 +4126,6 @@ MonoBehaviour:
   - {fileID: -8376342315293501503}
   - {fileID: 3591252219797454216}
   - {fileID: 4100932630653908726}
-  - {fileID: 5462640940224501418}
   - {fileID: 7929440998604399428}
   - {fileID: 2592102510869716401}
   - {fileID: 2205082202529722068}
@@ -6833,7 +6832,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6198660998370685422}
-  - component: {fileID: 5462640940224501418}
   - component: {fileID: 7751958121810232000}
   m_Layer: 12
   m_Name: Camera Owner
@@ -6858,22 +6856,6 @@ Transform:
   - {fileID: 2941348180688335052}
   m_Father: {fileID: 8875764649507591473}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5462640940224501418
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8897159019937030371}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SyncScale: 0
-  SyncParent: 0
-  _autoAOIOverride: 1
-  DisableSharedModeInterpolation: 0
 --- !u!114 &7751958121810232000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7749,6 +7731,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90.77
       objectReference: {fileID: 0}
+    - target: {fileID: 4303053860246033292, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: _playerCameraController
+      value: 
+      objectReference: {fileID: 8389592379722413424}
     - target: {fileID: 4519131808793985050, guid: fb0375b9d4667184885fa46e6c1de475,
         type: 3}
       propertyPath: m_IsActive

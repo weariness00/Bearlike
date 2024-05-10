@@ -644,7 +644,7 @@ namespace Monster.Container
 
             return INode.NodeState.Failure;
         }
-
+//
         /// <summary>
         /// 공격 행동을 실행하는 노드
         /// </summary>
@@ -902,7 +902,6 @@ namespace Monster.Container
                                 _players[index].GetComponent<StatusBase>().ApplyDamageRPC(1, gameObject.GetComponent<NetworkObject>().Id);
                             }
                         }
-                        // TODO : 마케라 흔들림 RPC
                         CameraShakeRPC();
                     }
                     _durationTime = _gameManager.PlayTimer;
@@ -1224,7 +1223,7 @@ namespace Monster.Container
         public void CameraShakeRPC()
         {
             for (int index = 0; index < _playerCount; ++index)
-                _players[index].transform.Find("Camera Owner").GetChild(0).DOShakeRotation(3,new Vector3(0, 1, 0), 5, 0);;
+                _players[index].GetComponent<PlayerCameraController>().ShakeCamera(3,new Vector3(0, 1, 0), 5);
         }
 
         #endregion

@@ -1,4 +1,6 @@
-﻿using Fusion;
+﻿using System.Collections;
+using DG.Tweening;
+using Fusion;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.Serialization;
@@ -86,6 +88,48 @@ namespace Player
         {
             var cameraData = targetCamera.GetComponent<UniversalAdditionalCameraData>();
             cameraData.cameraStack.Add(weaponCamera);
+        }
+
+        public void ShakeCamera(float duration, Vector3 strength, int vibrato, float randomness = 0.0f)
+        {
+            targetCamera.transform.DOShakePosition(duration, strength, vibrato, randomness);
+            targetCamera.transform.DOShakeRotation(duration, strength, vibrato, randomness);
+        }
+
+        public void ReboundCamera()
+        {
+            StartCoroutine(ReboundCameraBackCoroutine());
+        }
+
+        private IEnumerator ReboundCameraBackCoroutine()
+        {
+            var movement = 0.0f;
+            while (true)
+            {
+                movement += 0.5f;
+                targetCamera.fieldOfView += 0.5f;
+                yield return new WaitForSeconds(0.01f);
+                if (movement >= 4.0f)
+                {
+                    StartCoroutine(ReboundCameraFrontCoroutine());
+                    yield break;
+                }
+            }
+        }
+        
+        private IEnumerator ReboundCameraFrontCoroutine()
+        {
+            var movement = 0.0f;
+            while (true)
+            {
+                movement += 0.5f;
+                targetCamera.fieldOfView -= 0.5f;
+                yield return new WaitForSeconds(0.01f);
+                if (movement >= 4.0f)
+                {
+                    yield break;
+                }
+            }
         }
     }
 }
