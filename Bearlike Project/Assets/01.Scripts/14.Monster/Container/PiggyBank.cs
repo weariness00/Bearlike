@@ -133,11 +133,11 @@ namespace Monster.Container
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out StatusBase otherStatus))
+            if (other.transform.root.TryGetComponent(out StatusBase otherStatus))
             {
                 // TODO : 충돌 데미지 DB에서 밸런스 맞추자
                 if(other.gameObject.layer != LayerMask.NameToLayer("Bullet"))
-                    otherStatus.ApplyDamageRPC(status.CalDamage(), gameObject.GetComponent<NetworkObject>().Id);
+                    otherStatus.ApplyDamageRPC(1, gameObject.GetComponent<NetworkObject>().Id);
             }
         }
         
