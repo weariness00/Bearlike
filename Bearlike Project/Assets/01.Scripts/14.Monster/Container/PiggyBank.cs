@@ -16,6 +16,7 @@ using UnityEngine.AI;
 using UnityEngine.VFX;
 using Random = UnityEngine.Random;
 using DG.Tweening;
+using UnityEngine.Serialization;
 
 namespace Monster.Container
 {
@@ -55,11 +56,12 @@ namespace Monster.Container
         [SerializeField] private float attackRange = 10; // 발차기 감지 범위
         [SerializeField] private float rushRange = 100; // 돌진 감지 범위
         [SerializeField] private float jumpRange = 30; // 점프 감지 범위
-        [SerializeField] private float coinAtaackMinRange = 30; // 코인 공격 최소 감지 범위
-        [SerializeField] private float coinAtaackMaxRange = 100; // 코인 공격 최대 감지 범위
+        [SerializeField] private float coinAtaackMinRange = 13; // 코인 공격 최소 감지 범위
+        [SerializeField] private float coinAtaackMaxRange = 30; // 코인 공격 최대 감지 범위
 
         [SerializeField] private float jumpAttackDamageRange = 17;
-        
+        [SerializeField] private float fartDamageRange = 10;
+        //
         [Header("상하 속도")] 
         [SerializeField] private float upSpeed = 1.0f;
         [SerializeField] private float downSpeed = 3.0f;
@@ -131,11 +133,11 @@ namespace Monster.Container
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out StatusBase otherStatus))
+            if (other.transform.root.TryGetComponent(out StatusBase otherStatus))
             {
                 // TODO : 충돌 데미지 DB에서 밸런스 맞추자
                 if(other.gameObject.layer != LayerMask.NameToLayer("Bullet"))
-                    otherStatus.ApplyDamageRPC(status.CalDamage(), gameObject.GetComponent<NetworkObject>().Id);
+                    otherStatus.ApplyDamageRPC(1, gameObject.GetComponent<NetworkObject>().Id);
             }
         }
         
@@ -263,11 +265,99 @@ namespace Monster.Container
         {
             return new SequenceNode
             (
+                // new SequenceNode
+                // (
+                //     new ActionNode(CheckWalkAction),
+                //     new ActionNode(WalkAround),
+                //     new ActionNode(TermFuction),
+                //     new ActionNode(WalkStop)
+                // ),
+                // new SelectorNode
+                // (
+                //     true,
+                //     new SequenceNode
+                //     ( // Deffence
+                //         new ActionNode(CheckMoreHp),
+                //         new ActionNode(StartDefence),
+                //         new ActionNode(TermFuction),
+                //         new ActionNode(StopDefence)
+                //     ),
+                //     new SequenceNode
+                //     ( 
+                //         new SequenceNode
+                //         (   // Run
+                //             new ActionNode(StartRun),
+                //             new ActionNode(TermFuction),
+                //             new ActionNode(StopRun)
+                //         ),
+                new SequenceNode
+                (   // JumpAttack OR Jump CoinAttack
                 new ActionNode(CheckJumpAttackAction),
-                new ActionNode(CheckJumpAttackDistance),
+                // new ActionNode(CheckJumpAttackDistance),
                 new ActionNode(StartJumpAction),
                 new ActionNode(TermFuction),
                 new ActionNode(StopJumpAttack)
+                ),
+                //     )
+                // ),
+                // new SelectorNode(
+                //     false,
+                //     new SequenceNode
+                //     (   // Kick
+                //         new ActionNode(CheckAttackAction),
+                //         // new ActionNode(CheckAttackDistance),
+                //         new ActionNode(StartAttack),
+                //         new ActionNode(TermFuction)
+                //     ),
+                //     new ActionNode(SuccessFunction)
+                // ),
+                // new SelectorNode
+                // (
+                //     true,
+                //     new SelectorNode(
+                //         true,
+                //         new SequenceNode
+                //         (   // Rush
+                //             new ActionNode(CheckRushAction), 
+                //             // new ActionNode(CheckRushDistance),
+                //             new ActionNode(StartRush),
+                //             new ActionNode(TermFuction)
+                //         ),
+                //         new SelectorNode(
+                //             false,
+                new SequenceNode
+                (    // JumpAttack OR Fake JumpAttack
+                    new ActionNode(CheckJumpAttackAction), 
+                    new ActionNode(StartJumpAttackAction),
+                    new ActionNode(TermFuction),
+                    new ActionNode(StopJumpAttack)
+                ),
+                //             new ActionNode(SuccessFunction)
+                //         )
+                //     ),
+                new SequenceNode
+                (   // fart
+                    new ActionNode(CheckFartAction), 
+                    new ActionNode(StartFart),
+                    new ActionNode(TermFuction),
+                    new ActionNode(StopFart)
+                ),
+                // ),
+                new SequenceNode
+                (   // Ground CoinAttack
+                    new ActionNode(CheckCoinAttackAction),
+                    // new ActionNode(CheckCoinAttackDistance),
+                    new ActionNode(StartCoinAttack),
+                    new ActionNode(TermFuction),
+                    new ActionNode(StopCoinAttack)
+                )
+                // new SequenceNode
+                // (   // Rest
+                //     new ActionNode(CheckRestAction),
+                //     // new ActionNode(CheckRestHp),
+                //     new ActionNode(StartRest),
+                //     new ActionNode(TermFuction)
+                // )
             );
         }
 
@@ -717,10 +807,14 @@ namespace Monster.Container
         {
             // 가장 먼 플레이어를 지정
             _navMeshAgent.speed = FastDistance(_players[_targetPlayerIndex].transform.position, transform.position) / 3.0f;
-            // _navMeshAgent.SetDestination(_players[_targetPlayerIndex].transform.position);
+            _navMeshAgent.SetDestination(_players[_targetPlayerIndex].transform.position);
 
-            // int type = Random.Range(1, 3); // 1 or 2
-            int type = 3;
+            int type = Random.Range(1, 3); // 1 or 2
+            
+            if(type == 1)
+                if (((float)(status.hp.Current) / status.hp.Max) <= 0.3f)
+                    type = 2;
+            
             networkAnimator.Animator.SetTrigger(Attack);
             networkAnimator.Animator.SetFloat(AttackBlend, JUMP_TYPE);
             
@@ -755,7 +849,10 @@ namespace Monster.Container
 
         IEnumerator JumpCoroutine(int type)
         {
-            yield return new WaitForSeconds(3.0f);
+            yield return new WaitForSeconds(1.0f);
+            if(type == 1 || type == 3)
+                PlayVFXRPC("PigGroundAttackRange");
+            yield return new WaitForSeconds(2.0f);
             {
                 _durationTime = _gameManager.PlayTimer;
                 if (type == 2)
@@ -765,13 +862,13 @@ namespace Monster.Container
                         
                     // TODO : Coin VFX
                     PlayVFXRPC("CoinMeteor_vfx");
+                    PlayVFXRPC("PigMeteorRange");
+                    StartCoroutine(MeteorApplyDamageCoroutine());
                         
                     while (IsAnimationRunning("Attack"))
                     {
                         yield return new WaitForSeconds(0.0f);
                     }
-                        
-                    // TODO : Coin object active true
                 }
 
                 StartCoroutine(JumpDownCoroutine(type));
@@ -783,20 +880,17 @@ namespace Monster.Container
         IEnumerator JumpDownCoroutine(float type)
             {
                 yield return new WaitForSeconds(1.0f);
-
                 {
                     if (type == 3 || type == 1)
                     {
                         PlayVFXRPC("GroundCrack_vfx");
                             
-                        // 데미지 입히기
                         // TODO : 데미지 비율 상수로 조절하자
                         DebugManager.ToDo("데미지를 받을때 id받아오는 형식을 변수에 담아서 받아오자");
                         if (type == 3)
                             // status.hp.Current -= (int)(status.hp.Current / 100.0f);
-                            status.ApplyDamageRPC((int)(status.hp.Current / 100.0f), gameObject.GetComponent<NetworkObject>().Id);
-                            
-                        // TODO : player 거리 구하고 점프 공격의 범위 안에 있으면 applyDamage입히기
+                            status.ApplyDamageRPC((int)(status.hp.Current / 10.0f), gameObject.GetComponent<NetworkObject>().Id);
+                        
                         // TODO : 천천히 오는 vfx와 부딪히는 판정으로 하고싶다
                         // TODO : 바로 적용 시키면 부자연스러움
                         for (int index = 0; index < _playerCount; ++index)
@@ -808,6 +902,8 @@ namespace Monster.Container
                                 _players[index].GetComponent<StatusBase>().ApplyDamageRPC(1, gameObject.GetComponent<NetworkObject>().Id);
                             }
                         }
+                        // TODO : 마케라 흔들림 RPC
+                        CameraShakeRPC();
                     }
                     _durationTime = _gameManager.PlayTimer;
                     yield break;
@@ -856,18 +952,44 @@ namespace Monster.Container
             networkAnimator.Animator.SetFloat(AttackBlend, FART_TYPE);
             networkAnimator.Animator.SetTrigger(Attack);
             _navMeshAgent.SetDestination(transform.position);
-            
-            // 분진 VFX
-            // PlayVFX("Fart_vfx");
 
             PlayVFXRPC("Fart_vfx");
+            PlayVFXRPC("PigFartRange");
+            StartCoroutine(FartApplyDamageCoroutine());
+            //
             _durationTime = _gameManager.PlayTimer;
             return INode.NodeState.Success;
         }
-
+        IEnumerator FartApplyDamageCoroutine()
+        {
+            StatusBase[] _playerStatusBases;
+            List<StatusBase> statusBases = new List<StatusBase>();
+            foreach (var player in _players)
+            {
+                statusBases.Add(player.GetComponent<StatusBase>());
+            }
+            _playerStatusBases = statusBases.ToArray();
+            
+            yield return new WaitForSeconds(2.0f);
+            for (int i = 0; i < 10; ++i)
+            {
+                yield return new WaitForSeconds(0.6f);
+                for (int index = 0; index < _playerCount; ++index)
+                {
+                    var distance = FastDistance(transform.position, _players[index].transform.position);
+                    
+                    if (distance <= fartDamageRange)
+                    {
+                        //TODO : 데미지를 조정하자
+                        _playerStatusBases[index].ApplyDamageRPC(1, gameObject.GetComponent<NetworkObject>().Id);
+                    }
+                    DebugManager.Log($"player to meteor distance : {distance}");
+                }
+            }
+        }
+        
         INode.NodeState StopFart()
         {
-            // StopVFX("Fart_vfx");
             StopVFXRPC("Fart_vfx");
             
             return INode.NodeState.Success;
@@ -916,7 +1038,6 @@ namespace Monster.Container
             StartCoroutine(RestCoroutine());
             StartCoroutine(StartPressCoroutine());
             
-            // PlayVFX("Rest_vfx");
             PlayVFXRPC("Rest_vfx");
             _durationTime = _gameManager.PlayTimer;
             
@@ -979,7 +1100,6 @@ namespace Monster.Container
             
             for (int index = 0; index < _playerCount; ++index)
             {
-                // 동전 유무 판단도 넣을까?
                 var distance = FastDistance(transform.position, _players[index].transform.position);
                 if (coinAtaackMinRange <= distance && distance <= coinAtaackMaxRange)
                 {
@@ -1004,10 +1124,42 @@ namespace Monster.Container
             networkAnimator.Animator.SetTrigger(Attack);
             networkAnimator.Animator.SetFloat(AttackBlend, COIN_TYPE);
             
-            // PlayVFX("CoinMeteor_vfx");
             PlayVFXRPC("CoinMeteor_vfx");
+            PlayVFXRPC("PigMeteorRange");
+            
+            DebugManager.Log($"{FastDistance(transform.position, _players[0].transform.position)}");
+            
+            StartCoroutine(MeteorApplyDamageCoroutine());
+            
             _durationTime = _gameManager.PlayTimer;
             return INode.NodeState.Success;
+        }
+
+        IEnumerator MeteorApplyDamageCoroutine()
+        {
+            StatusBase[] _playerStatusBases;
+            List<StatusBase> statusBases = new List<StatusBase>();
+            foreach (var player in _players)
+            {
+                statusBases.Add(player.GetComponent<StatusBase>());
+            }
+            _playerStatusBases = statusBases.ToArray();
+            
+            for (int i = 0; i < 6; ++i)
+            {
+                yield return new WaitForSeconds(1.0f);
+                for (int index = 0; index < _playerCount; ++index)
+                {
+                    var distance = FastDistance(new float3(transform.position.x, 0, transform.position.z), new float3(_players[index].transform.position.x, 0, _players[index].transform.position.z));
+                    
+                    if (coinAtaackMinRange <= distance && distance <= coinAtaackMaxRange)
+                    {
+                        //TODO : 데미지를 조정하자
+                        _playerStatusBases[index].ApplyDamageRPC(1, gameObject.GetComponent<NetworkObject>().Id);
+                    }
+                    // DebugManager.Log($"player to meteor distance : {distance}");
+                }
+            }
         }
 
         INode.NodeState StopCoinAttack()
@@ -1036,10 +1188,10 @@ namespace Monster.Container
             DebugManager.ToDo("돼지 BT : status에서 속도를 받아오도록 수정");
             // TODO : transform.position.y + height로 수정
             transform.GetChild(0).DOMoveY(transform.position.y + jumpHeight, 3.0f).SetEase(Ease.OutCirc);
-
+//
             if (type == 2)
             {
-                GameObject targetObject = transform.Find("CoinAttack_vfx").gameObject;
+                GameObject targetObject = transform.Find("CoinMeteor_vfx").gameObject;
 
                 if (targetObject != null)
                 {
@@ -1053,12 +1205,12 @@ namespace Monster.Container
         public void JumpDownRPC(int type)
         {
             DebugManager.ToDo("돼지 BT : status에서 속도를 받아오도록 수정");
-            // TODO : transform.position.y - height로 수정
-            transform.GetChild(0).DOMoveY(transform.position.y - jumpHeight, 1.0f).SetEase(Ease.InCirc);
+            transform.GetChild(0).DOMoveY(transform.position.y, 1.0f).SetEase(Ease.InCirc);
             
+            DebugManager.Log($"Y Position : {transform.position.y - jumpHeight}");
             if (type == 2)
             {
-                GameObject targetObject = transform.Find("CoinAttack_vfx").gameObject;
+                GameObject targetObject = transform.Find("CoinMeteor_vfx").gameObject;
 
                 if (targetObject != null)
                 {
@@ -1068,6 +1220,13 @@ namespace Monster.Container
             }
         }
 
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void CameraShakeRPC()
+        {
+            for (int index = 0; index < _playerCount; ++index)
+                _players[index].transform.Find("Camera Owner").GetChild(0).DOShakeRotation(3,new Vector3(0, 1, 0), 5, 0);;
+        }
+
         #endregion
         
         #region RestRPC
@@ -1075,7 +1234,7 @@ namespace Monster.Container
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void PressDownActionRPC()
         {
-            transform.DOScaleY(0.9f, 1.0f).SetEase(Ease.InOutQuad);
+            transform.DOScaleY(0.7f, 1.0f).SetEase(Ease.InOutQuad);
         }
         
         [Rpc(RpcSources.All, RpcTargets.All)]
@@ -1105,7 +1264,12 @@ namespace Monster.Container
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void PlayVFXRPC(string vfxName)
         {
-            GameObject targetObject = transform.Find(vfxName).gameObject;
+            GameObject targetObject;
+            
+            if (vfxName == "PigFartRange" || vfxName == "PigGroundAttackRange" || vfxName == "PigMeteorRange")
+                targetObject = transform.Find("Range_vfx").Find(vfxName).gameObject;
+            else
+                targetObject = transform.Find(vfxName).gameObject;
 
             if (targetObject != null)
             {
