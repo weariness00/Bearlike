@@ -19,7 +19,7 @@ namespace Weapon.Gun.Continer
         private static readonly int AniFireSpeed = Animator.StringToHash("fFireSpeed");
         private static readonly int AniReload = Animator.StringToHash("tReload");
         private static readonly int AniReloadSpeed = Animator.StringToHash("fReloadSpeed");
-
+//
         private void Awake()
         {
             animator = GetComponent<Animator>();

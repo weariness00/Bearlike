@@ -6,7 +6,12 @@ namespace GamePlay.Sync
     {
         public Transform targetTransform; // 동기화 할 대상
 
+        public Vector3 positionOffset;
+        public float positionMultiple = 1f;
+
         public bool isPosition = true;
+        public bool isPositionLocal = false;
+        public bool isPositionX = true, isPositionY = true, isPositionZ = true;
         public bool isRotate = true;
         public bool isRotateX = true, isRotateY = true, isRotateZ = true;
         public bool isScale = false;
@@ -25,7 +30,16 @@ namespace GamePlay.Sync
             
             if (isPosition)
             {
-                transform.position = targetTransform.position;
+                Vector3 realPosition = Vector3.zero;
+                Vector3 targetPosition = Vector3.zero;
+                if (isPositionLocal) targetPosition = targetTransform.localPosition;
+                else targetPosition = targetTransform.position;
+
+                if (isPositionX) realPosition.x = targetPosition.x;
+                if (isPositionY) realPosition.y = targetPosition.y;
+                if (isPositionZ) realPosition.z = targetPosition.z;
+                
+                transform.position = (realPosition * positionMultiple) + positionOffset;
             }
 
             if (isRotate)
