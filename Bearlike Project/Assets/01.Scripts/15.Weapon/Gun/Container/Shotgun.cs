@@ -4,7 +4,7 @@ using Status;
 using UnityEngine;
 using Weapon.Bullet;
 
-namespace Weapon.Gun
+namespace Weapon.Gun.Continer
 {
     public class Shotgun : GunBase
     {

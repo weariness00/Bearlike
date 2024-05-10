@@ -8,6 +8,7 @@ namespace GamePlay.Sync.Editor
     {
         #region Property
 
+        private SerializedProperty TargetTransform;
         private SerializedProperty IsPosition;
         private SerializedProperty IsRotate;
         private SerializedProperty IsRotateX;
@@ -19,6 +20,7 @@ namespace GamePlay.Sync.Editor
 
         private void OnEnable()
         {
+            TargetTransform = serializedObject.FindProperty("targetTransform");
             IsPosition = serializedObject.FindProperty("isPosition");
             IsRotate = serializedObject.FindProperty("isRotate");
             IsRotateX = serializedObject.FindProperty("isRotateX");
@@ -31,6 +33,7 @@ namespace GamePlay.Sync.Editor
         {
             serializedObject.Update();
             
+            EditorGUILayout.PropertyField(TargetTransform);
             EditorGUILayout.PropertyField(IsPosition);
             EditorGUILayout.PropertyField(IsRotate);
             if (IsRotate.boolValue)

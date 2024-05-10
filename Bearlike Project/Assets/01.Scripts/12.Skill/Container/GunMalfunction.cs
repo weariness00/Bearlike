@@ -17,7 +17,7 @@ namespace Skill.Container
             {
                 if (pc.weaponSystem.equipment is GunBase gun)
                 {
-                    gun.AfterShootAction += () =>
+                    gun.AfterFireAction += () =>
                     {
                         gun.SetMagazineRPC(StatusValueType.Current, ++gun.magazine.Current);
                         gun.FireBulletRPC();

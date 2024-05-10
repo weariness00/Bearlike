@@ -64,7 +64,8 @@ namespace Weapon.Gun
         /// 총을 쏘고 난 뒤에 동작하게 할 Action
         /// 정상적으로 총이 발사 되었을때만 동작함
         /// </summary>
-        public Action AfterShootAction;
+        public Action AfterFireAction;
+        public Action AfterReloadAction;
 
         #region Unity Event Function
 
@@ -84,7 +85,7 @@ namespace Weapon.Gun
             EquipAction += SetCamera;
             ReleaseEquipAction += (obj) =>
             {
-                AfterShootAction = null;  
+                AfterFireAction = null;  
                 BeforeShootAction = null;
                 status.ClearAdditionalStatus();
             };
@@ -108,7 +109,16 @@ namespace Weapon.Gun
         }
 
         #endregion
+        
+        #region Member Funtion
 
+        public virtual void BulletInit()
+        {
+            magazine.Current = int.MaxValue;
+
+            fireLateSecond = 60 / bulletFirePerMinute;
+        }
+        
         private void SetCamera(GameObject equipObject)
         {
             if (equipObject.TryGetComponent(out PlayerCameraController pcc))
@@ -156,7 +166,7 @@ namespace Weapon.Gun
                     
                     SoundManager.Play(shootSound);
                     
-                    AfterShootAction?.Invoke();
+                    AfterFireAction?.Invoke();
                 }
                 else
                 {
@@ -164,27 +174,7 @@ namespace Weapon.Gun
                 }
             }
         }
-
-        // 카메라가 바라보는 방향으로 직선 레이를 쏜다.    
-        public Vector3 CheckRay()
-        {
-            Vector3 detination = Vector3.zero;
-            Ray ray = _camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-            
-            DebugManager.DrawRay(ray.origin, ray.direction * int.MaxValue, Color.red, 1.0f);
-            
-            return ray.direction;
-        }
-
-        #region Bullet Funtion
-
-        public virtual void BulletInit()
-        {
-            magazine.Current = int.MaxValue;
-
-            fireLateSecond = 60 / bulletFirePerMinute;
-        }
-
+        
         public virtual void ReLoadBullet(int bulletAmount = int.MaxValue)
         {
             if (ReloadLateTimer.Expired(Runner) && ammo.isMin == false)
@@ -205,9 +195,22 @@ namespace Weapon.Gun
                 magazine.Current += needChargingAmmoCount;
                 if(HasStateAuthority)
                     SetMagazineRPC(StatusValueType.Current, magazine.Current);
+                
+                AfterReloadAction?.Invoke();
             }
         }
 
+        // 카메라가 바라보는 방향으로 직선 레이를 쏜다.    
+        public Vector3 CheckRay()
+        {
+            Vector3 detination = Vector3.zero;
+            Ray ray = _camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+            
+            DebugManager.DrawRay(ray.origin, ray.direction * int.MaxValue, Color.red, 1.0f);
+            
+            return ray.direction;
+        }
+        
         #endregion
 
         #region Json Interface

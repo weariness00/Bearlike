@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Weapon.Gun
+namespace Weapon.Gun.Continer
 {
     public class MegaShotGunAnimator : MonoBehaviour
     {
@@ -20,7 +20,7 @@ namespace Weapon.Gun
         private static readonly int AniFireSpeed = Animator.StringToHash("fFireSpeed");
         private static readonly int AniReloadStart = Animator.StringToHash("tReloadStart");
         private static readonly int AniReloadEnd = Animator.StringToHash("tReloadEnd");
-        private static readonly int AniReloadSpeed = Animator.StringToHash("fReload Speed");
+        private static readonly int AniReloadSpeed = Animator.StringToHash("fReloadSpeed");
         
         private void Awake()
         {

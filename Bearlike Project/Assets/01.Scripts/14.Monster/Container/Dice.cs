@@ -7,6 +7,7 @@ using Fusion;
 using GamePlay.DeadBodyObstacle;
 using Manager;
 using Photon.MeshDestruct;
+using Player;
 using UnityEngine;
 using UnityEngine.AI;
 using Util;
@@ -16,21 +17,17 @@ namespace Monster.Container
 {
     public class Dice : MonsterBase
     {
+        public DiceAnimator animatorInfo;
         public NetworkPrefabRef diePrefab;
         
         private BehaviorTreeRunner _behaviorTreeRunner;
         private bool _isCollide = true; // 현재 충돌 중인지
         private float _moveDelay; // 몇초에 한번씩 움직일지 1번의 움직임이 1m움직임이라 가정( 자연스러운 움직임 구현을 위해 사용 )
         [Networked] private TickTimer MoveDelayTimer { get; set; }
-        
-        public override void Start()
-        {
-            base.Start();
-            _behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
-            _moveDelay = 1f / status.moveSpeed;
+        [Networked] private TickTimer AttackTimer { get; set; }
+        private bool _isInitAnimation = false;
 
-            DieAction += DeadSlice;
-        }
+        #region Unity Evenet Function
 
         private void OnCollisionStay(Collision other)
         {
@@ -45,6 +42,12 @@ namespace Monster.Container
         public override void Spawned()
         {
             MoveDelayTimer = TickTimer.CreateFromSeconds(Runner, 0);
+            AttackTimer = TickTimer.CreateFromSeconds(Runner, 0);
+            
+            _behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
+            _moveDelay = 1f / status.moveSpeed;
+
+            DieAction += DeadSlice;
         }
 
         public override void FixedUpdateNetwork()
@@ -52,26 +55,29 @@ namespace Monster.Container
             base.FixedUpdateNetwork();
              _behaviorTreeRunner.Operator();
         }
-
-        private INode InitBT()
-        {
-            var move = new ActionNode(Move);
-            var attack = new ActionNode(Attack);
-            var jumpAttack = new ActionNode(JumpAttack);
-            var selectAttack = new SelectorNode(true, attack, jumpAttack);
-            
-            var sqeunce = new SequenceNode(
-                new ActionNode(FindTarget),
-                new SelectorNode(
-                    false,
-                    new Detector(() => CheckTargetDis(1f), selectAttack),
-                    move
-                ));
-            return sqeunce;
-        }
+        
+        #endregion
 
         #region Member Function
 
+        public void SpearAttack()
+        {
+            LayerMask mask = targetMask | 1 << LayerMask.NameToLayer("Default");
+            Vector3[] attackDirs = new[] { transform.forward, -transform.forward, transform.right, -transform.right, transform.up, -transform.up };
+            foreach (var attackDir in attackDirs)
+            {
+                DebugManager.DrawRay(transform.position, attackDir* status.attackRange, Color.red, 3f);
+                if (Runner.LagCompensation.Raycast(transform.position, attackDir, status.attackRange, Object.InputAuthority, out var hit, mask))
+                {
+                    PlayerStatus playerStatus;
+                    if (hit.GameObject.TryGetComponent(out playerStatus) || hit.GameObject.transform.root.TryGetComponent(out playerStatus))
+                    {
+                        playerStatus.ApplyDamageRPC(status.CalDamage(), Object.Id,CrowdControl.Normality);
+                    }
+                }
+            }
+        }
+        
         // 사망시 슬라이스 되도록
         async void DeadSlice()
         {
@@ -134,6 +140,23 @@ namespace Monster.Container
 
         #region BT Function
 
+        private INode InitBT()
+        {
+            var move = new ActionNode(Move);
+            var attack = new ActionNode(Attack);
+            var jumpAttack = new ActionNode(JumpAttack);
+            var selectAttack = new SelectorNode(true, attack, jumpAttack);
+            
+            var sqeunce = new SequenceNode(
+                new ActionNode(FindTarget),
+                new SelectorNode(
+                    false,
+                    new Detector(() => CheckTargetDis(1f), selectAttack),
+                    move
+                ));
+            return sqeunce;
+        }
+        
         private INode.NodeState FindTarget()
         {
             if (targetTransform == null)
@@ -224,18 +247,15 @@ namespace Monster.Container
 
         private INode.NodeState Attack()
         {
-            var layerMaks = LayerMask.GetMask("Player");
-            var hitOptions = HitOptions.IncludePhysX | HitOptions.IgnoreInputAuthority;
-            Vector3[] attackDirs = new[] { transform.forward, -transform.forward, transform.right, -transform.right, transform.up, -transform.up };
-            foreach (var attackDir in attackDirs)
+            if (_isInitAnimation)
             {
-                DebugManager.DrawRay(transform.position, attackDir* status.attackRange, Color.red, 3f);
-                if (Runner.LagCompensation.Raycast(transform.position, attackDir, status.attackRange, Object.InputAuthority, out var hit, layerMaks, hitOptions))
-                {
-                    if (hit.Hitbox == null) return INode.NodeState.Failure;
-                    var hitStatus = hit.GameObject.GetComponent<StatusBase>();
-                    hitStatus.ApplyDamageRPC(status.CalDamage(), Object.Id,CrowdControl.Normality);
-                }
+                AttackTimer = TickTimer.CreateFromSeconds(Runner, animatorInfo.AttackTime);
+                _isInitAnimation = false;
+            }
+
+            if (AttackTimer.Expired(Runner) == false)
+            {
+                return INode.NodeState.Running;
             }
 
             return INode.NodeState.Success;

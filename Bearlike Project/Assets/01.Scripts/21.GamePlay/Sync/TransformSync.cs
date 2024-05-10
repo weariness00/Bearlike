@@ -18,7 +18,7 @@ namespace GamePlay.Sync
 
         public void TransformSyncUpdate()
         {
-            if (targetTransform == null)
+            if (!targetTransform)
             {
                 return;
             }

@@ -5,14 +5,19 @@ namespace Test
 {
     public class Revolver_Animator : MonoBehaviour
     {
-        public GameObject HideBulletObject;
-        private static readonly int AniShoot = Animator.StringToHash("isShoot");
+        public GameObject hideBulletObject;
+        private static readonly int AniFire = Animator.StringToHash("isFire");
         private static readonly int AniReload = Animator.StringToHash("isReload");
         
         void BulletHide()
         {
-            HideBulletObject.SetActive(false);
+            hideBulletObject.SetActive(false);
             //34~46 frame
+        }
+
+        void BulletVisible()
+        {
+            hideBulletObject.SetActive(true);
         }
     }
 }
