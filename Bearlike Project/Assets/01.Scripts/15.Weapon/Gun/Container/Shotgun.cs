@@ -1,5 +1,7 @@
 ﻿using System.Collections;
+using DG.Tweening;
 using Fusion;
+using Player;
 using Status;
 using UnityEngine;
 using Weapon.Bullet;
@@ -14,6 +16,7 @@ namespace Weapon.Gun.Continer
         [SerializeField] private float reloadSpeed = 0.5f; // 재장전 속도
 
         [SerializeField] private float bulletRadian; // 산탄 정도(원의 반지름)
+        [SerializeField] private PlayerCameraController _playerCameraController;
         public bool bknock;
 
         private Coroutine _reloadCoroutine;
@@ -35,15 +38,15 @@ namespace Weapon.Gun.Continer
             ammo.Max = 36;
             ammo.Current = ammo.Max;
         }
-
+        
         public override void FireBullet(bool isDst = true)
         {
-            // 다른 클라가 했으면 자기 말고 다른 클라의 코드를 실행해야지
             if (FireLateTimer.Expired(Runner))
             {
                 FireLateTimer = TickTimer.CreateFromSeconds(Runner, fireLateSecond);
                 if (magazine.Current != 0)
                 {
+                    _playerCameraController.ReboundCamera();
                     animatorInfo.SetFireSpeed(BulletFirePerSecond);
                     animatorInfo.PlayFireBullet();
                     var dst = CheckRay();
