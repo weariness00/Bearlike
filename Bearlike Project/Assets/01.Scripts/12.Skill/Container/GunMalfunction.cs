@@ -20,7 +20,7 @@ namespace Skill.Container
                     gun.AfterShootAction += () =>
                     {
                         gun.SetMagazineRPC(StatusValueType.Current, ++gun.magazine.Current);
-                        gun.ShootRPC();
+                        gun.FireBulletRPC();
                     };
                 }
             }

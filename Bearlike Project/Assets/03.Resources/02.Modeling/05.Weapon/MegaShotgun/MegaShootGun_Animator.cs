@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Test
 {
-    public class MegaShotGun : MonoBehaviour
+    public class MegaShotGun_Animator : MonoBehaviour
     {
         public GameObject hideBulletObject;
         private static readonly int AniShoot = Animator.StringToHash("tShoot");

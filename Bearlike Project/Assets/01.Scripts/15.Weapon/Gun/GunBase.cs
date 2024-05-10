@@ -49,6 +49,7 @@ namespace Weapon.Gun
         public StatusValue<int> magazine = new StatusValue<int>() {Max = 10, Current = 10}; // max 최대 탄약, current 현재 장정된 탄약
 
         public float bulletFirePerMinute; // 분당 총알 발사량
+        public float BulletFirePerSecond => bulletFirePerMinute / 60f;
         [Networked] public TickTimer FireLateTimer { get; set; }
         [Networked] public TickTimer ReloadLateTimer { get; set; }
         public float fireLateSecond;
@@ -100,7 +101,8 @@ namespace Weapon.Gun
         public override void Spawned()
         {
             base.Spawned();
-            AttackAction += ShootRPC;
+            
+            AttackAction += FireBulletRPC;
             FireLateTimer = TickTimer.CreateFromSeconds(Runner, 0);
             ReloadLateTimer = TickTimer.CreateFromSeconds(Runner, 0);
         }
@@ -115,7 +117,7 @@ namespace Weapon.Gun
             }
         }
 
-        public virtual void Shoot(bool isDst = true)
+        public virtual void FireBullet(bool isDst = true)
         {
             if (FireLateTimer.Expired(Runner))
             {
@@ -135,6 +137,7 @@ namespace Weapon.Gun
                             {
                                 o.gameObject.SetActive(true);
                                 var b = o.GetComponent<BulletBase>();
+                                b.status.AddAdditionalStatus(status);
 
                                 b.OwnerId = OwnerId;
                                 b.hitEffect = hitEffect;
@@ -149,7 +152,7 @@ namespace Weapon.Gun
 
                     --magazine.Current;
                     if(HasStateAuthority)
-                        SetMagazineRPC(StatusValueType.Current, --magazine.Current);
+                        SetMagazineRPC(StatusValueType.Current, magazine.Current);
                     
                     SoundManager.Play(shootSound);
                     
@@ -180,8 +183,6 @@ namespace Weapon.Gun
             magazine.Current = int.MaxValue;
 
             fireLateSecond = 60 / bulletFirePerMinute;
-            
-            bullet.status.AddAdditionalStatus(status);
         }
 
         public virtual void ReLoadBullet(int bulletAmount = int.MaxValue)
@@ -240,7 +241,7 @@ namespace Weapon.Gun
         }
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public void ShootRPC() => Shoot();
+        public void FireBulletRPC() => FireBullet();
 
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void ReloadBulletRPC() => ReLoadBullet();

@@ -3,6 +3,7 @@ using GamePlay;
 using Manager;
 using Photon;
 using Photon.MeshDestruct;
+using Player;
 using Status;
 using Unity.Burst;
 using Unity.Mathematics;
@@ -87,6 +88,10 @@ namespace Weapon.Bullet
                 // var hitEffectObject = Instantiate(hitEffect.gameObject, transform.position, Quaternion.identity);
                 // hitEffectObject.transform.LookAt(gun.transform.position);
                 // Destroy(hitEffectObject, 5f);
+            }
+            else if (other.transform.root.gameObject.TryGetComponent(out PlayerStatus playerStatus))
+            {
+                playerStatus.ApplyDamageRPC(status.CalDamage(), OwnerId);
             }
             else if (other.TryGetComponent(out StatusBase otherStatus))
             {

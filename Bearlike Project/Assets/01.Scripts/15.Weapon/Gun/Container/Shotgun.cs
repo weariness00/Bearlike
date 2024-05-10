@@ -8,6 +8,9 @@ namespace Weapon.Gun
 {
     public class Shotgun : GunBase
     {
+        [Header("Shotgun Information")]
+        public MegaShotGunAnimator animatorInfo;
+        
         [SerializeField] private float reloadSpeed = 0.5f; // 재장전 속도
 
         [SerializeField] private float bulletRadian; // 산탄 정도(원의 반지름)
@@ -33,7 +36,7 @@ namespace Weapon.Gun
             ammo.Current = ammo.Max;
         }
 
-        public override void Shoot(bool isDst = true)
+        public override void FireBullet(bool isDst = true)
         {
             // 다른 클라가 했으면 자기 말고 다른 클라의 코드를 실행해야지
             if (FireLateTimer.Expired(Runner))
@@ -41,6 +44,8 @@ namespace Weapon.Gun
                 FireLateTimer = TickTimer.CreateFromSeconds(Runner, fireLateSecond);
                 if (magazine.Current != 0)
                 {
+                    animatorInfo.SetFireSpeed(BulletFirePerSecond);
+                    animatorInfo.PlayFireBullet();
                     var dst = CheckRay();
 
                     if (shootEffect != null) shootEffect.Play();
@@ -72,7 +77,7 @@ namespace Weapon.Gun
 
                     --magazine.Current;
                     if(HasStateAuthority)
-                        SetMagazineRPC(StatusValueType.Current, --magazine.Current);
+                        SetMagazineRPC(StatusValueType.Current, magazine.Current);
                     SoundManager.Play(shootSound);
                 }
                 else
@@ -90,25 +95,35 @@ namespace Weapon.Gun
         {
             if (ReloadLateTimer.Expired(Runner) && ammo.isMin == false)
             {
-                ReloadLateTimer = TickTimer.CreateFromSeconds(Runner, reloadLateSecond);
                 var needChargingAmmoCount = magazine.Max - magazine.Current;
                 if (ammo.Current < needChargingAmmoCount)
                 {
                     needChargingAmmoCount = ammo.Current;
                 }
+                else if (needChargingAmmoCount == 0) // 이미 총알이 가득 찼을 경우
+                {
+                    return;
+                }
+                ReloadLateTimer = TickTimer.CreateFromSeconds(Runner, reloadLateSecond);
 
                 if (_reloadCoroutine != null) StopCoroutine(_reloadCoroutine);
-                _reloadCoroutine = StartCoroutine(ReloadCoroutine(reloadSpeed, needChargingAmmoCount));
+                _reloadCoroutine = StartCoroutine(ReloadCoroutine(needChargingAmmoCount));
             }
         }
 
-        IEnumerator ReloadCoroutine(float waitTime, int repeatCount)
+        IEnumerator ReloadCoroutine(int repeatCount)
         {
+            animatorInfo.PlayReloadStart();
+            yield return new WaitForSeconds(animatorInfo.ReloadStartTime);
+            animatorInfo.SetReloadSpeed(reloadSpeed);
+            var runningWait = new WaitForSeconds(reloadSpeed);
             for (int i = 0; i < repeatCount; ++i)
             {
-                yield return new WaitForSeconds(waitTime);
+                yield return runningWait;
                 base.ReLoadBullet(1);
             }
+            yield return runningWait;
+            animatorInfo.PlayReloadEnd();
         }
 
         #endregion

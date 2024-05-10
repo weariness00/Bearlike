@@ -43,10 +43,17 @@ namespace UI.Skill
             }
         }
 
-        public void StartCoolTime(SkillBlock block)
+        public void StartCoolTime(SkillBase skill)
         {
-            if(block.skill.IsUse)
-                StartCoroutine(StartCoolTimeCoroutine(block));
+            if (skill.IsUse)
+            {
+                if(firstSkill.skill == skill)
+                    StartCoroutine(StartCoolTimeCoroutine(firstSkill));
+                else if(secondSkill.skill == skill)
+                    StartCoroutine(StartCoolTimeCoroutine(secondSkill));
+                else if(ultimateSkill.skill == skill)
+                    StartCoroutine(StartCoolTimeCoroutine(ultimateSkill));
+            }
         }
 
         private IEnumerator StartCoolTimeCoroutine(SkillBlock block)

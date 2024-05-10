@@ -178,7 +178,8 @@ namespace Monster.Container
             {
                 if (targetTransform)
                 {
-                    navMeshAgent.SetDestination(targetTransform.position);
+                    var dir = (targetTransform.position - transform.position).normalized;
+                    navMeshAgent.SetDestination(targetTransform.position - dir * (status.attackRange.Current - 0.5f));
                 }
                 else
                 {

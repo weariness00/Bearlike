@@ -20,7 +20,7 @@ namespace UI.Skill
 
         public void SettingBlock(SkillBase skill)
         {
-            icon.texture = skill.icon.texture;
+            if(skill.icon) icon.texture = skill.icon.texture;
             titleText.text = skill.skillName;
             explainText.text = skill.explain;
 

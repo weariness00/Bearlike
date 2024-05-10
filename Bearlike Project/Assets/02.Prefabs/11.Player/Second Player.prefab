@@ -2755,6 +2755,9 @@ MonoBehaviour:
   targetTransform: {fileID: 4634116989701939321}
   isPosition: 1
   isRotate: 1
+  isRotateX: 1
+  isRotateY: 1
+  isRotateZ: 1
   isScale: 0
 --- !u!1 &3622621471376733282
 GameObject:
@@ -6083,6 +6086,9 @@ MonoBehaviour:
   targetTransform: {fileID: 0}
   isPosition: 1
   isRotate: 0
+  isRotateX: 1
+  isRotateY: 1
+  isRotateZ: 1
   isScale: 0
 --- !u!1 &7293245757864976232
 GameObject:
@@ -7463,6 +7469,11 @@ PrefabInstance:
       propertyPath: bulletCount
       value: 
       objectReference: {fileID: 6395635895110647836}
+    - target: {fileID: 3905390713509551945, guid: 7a68dec2cbfce0e4ca5e52ca2616376d,
+        type: 3}
+      propertyPath: weaponSystem
+      value: 
+      objectReference: {fileID: 7199144234305095476}
     - target: {fileID: 3990070231413743475, guid: 7a68dec2cbfce0e4ca5e52ca2616376d,
         type: 3}
       propertyPath: m_IsActive

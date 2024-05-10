@@ -224,8 +224,7 @@ namespace Monster.Container
             // 처음 진입 초기화
             if (_isInitAnimation == false)
             {
-                rigidbody.velocity = Vector3.zero;
-                gun.Shoot(false);
+                gun.FireBullet(false);
                 gun.SetMagazineRPC(StatusValueType.Current, 10);
                 _isInitAnimation = true;
                 AniLongAttackTimer = TickTimer.CreateFromSeconds(Runner, longAttackClip.length);

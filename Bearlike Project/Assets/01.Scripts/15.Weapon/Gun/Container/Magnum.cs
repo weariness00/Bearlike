@@ -25,9 +25,9 @@ namespace Weapon.Gun
             ammo.Max = ammo.Current = 40;
         } 
         
-        public override void Shoot(bool isDst = true)
+        public override void FireBullet(bool isDst = true)
         {
-            base.Shoot();
+            base.FireBullet();
             
             if(_reloadCorutine != null)
                 StopCoroutine(_reloadCorutine);
