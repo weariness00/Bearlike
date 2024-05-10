@@ -252,7 +252,6 @@ GameObject:
   - component: {fileID: 8340689972716681672}
   - component: {fileID: 4879660233733431077}
   - component: {fileID: 8889562360255633796}
-  - component: {fileID: 2326863279621857288}
   m_Layer: 0
   m_Name: Revolver
   m_TagString: Untagged
@@ -422,20 +421,6 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 8340689972716681672}
   - {fileID: 4879660233733431077}
---- !u!114 &2326863279621857288
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 920462104727415898}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1541381998, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Guid:
-    RawGuidValue: 8565b1a2c04ebf64084dbbc4a0d1aed5
 --- !u!1 &2207564883125672405
 GameObject:
   m_ObjectHideFlags: 0
@@ -741,12 +726,12 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 261410ee6e6445f429ceafebe2a3d64d,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.0353
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 261410ee6e6445f429ceafebe2a3d64d,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.0594
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 261410ee6e6445f429ceafebe2a3d64d,
         type: 3}
