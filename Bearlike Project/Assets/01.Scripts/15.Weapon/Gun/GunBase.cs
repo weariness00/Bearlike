@@ -136,9 +136,6 @@ namespace Weapon.Gun
 
         public virtual void FireBullet(bool isDst = true)
         {
-            // if (FireLateTimer.Expired(Runner))
-            // {
-            // FireLateTimer = TickTimer.CreateFromSeconds(Runner, fireLateSecond);
             if (magazine.Current != 0)
             {
                 var dst = fireTransform.forward * 2f;
@@ -152,7 +149,6 @@ namespace Weapon.Gun
                     Runner.SpawnAsync(bullet.gameObject, fireTransform.position, fireTransform.rotation, null,
                         (runner, o) =>
                         {
-                            o.gameObject.SetActive(true);
                             var b = o.GetComponent<BulletBase>();
                             b.status.AddAdditionalStatus(status);
 
@@ -168,8 +164,6 @@ namespace Weapon.Gun
                 }
 
                 --magazine.Current;
-                // if (HasStateAuthority)
-                //     SetMagazineRPC(StatusValueType.Current, magazine.Current);
 
                 SoundManager.Play(shootSound);
 
@@ -180,7 +174,6 @@ namespace Weapon.Gun
             {
                 SoundManager.Play(emptyAmmoSound);
             }
-            // }
         }
 
         /// <summary>

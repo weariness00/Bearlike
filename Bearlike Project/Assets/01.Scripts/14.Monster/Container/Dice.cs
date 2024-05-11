@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Status;
 using BehaviorTree.Base;
@@ -67,12 +68,16 @@ namespace Monster.Container
             foreach (var attackDir in attackDirs)
             {
                 DebugManager.DrawRay(transform.position, attackDir* status.attackRange, Color.red, 3f);
-                if (Runner.LagCompensation.Raycast(transform.position, attackDir, status.attackRange, Object.InputAuthority, out var hit, mask))
+                List<LagCompensatedHit> hits = new List<LagCompensatedHit>();
+                if (Runner.LagCompensation.RaycastAll(transform.position, attackDir, status.attackRange, Object.InputAuthority, hits, mask) != 0)
                 {
-                    PlayerStatus playerStatus;
-                    if (hit.GameObject.TryGetComponent(out playerStatus) || hit.GameObject.transform.root.TryGetComponent(out playerStatus))
+                    StatusBase targetStatus;
+                    foreach (var hit in hits)
                     {
-                        playerStatus.ApplyDamageRPC(status.CalDamage(), Object.Id,CrowdControl.Normality);
+                        if (hit.GameObject.TryGetComponent(out targetStatus) || hit.GameObject.transform.root.TryGetComponent(out targetStatus))
+                        {
+                            targetStatus.ApplyDamageRPC(status.CalDamage(), Object.Id,CrowdControl.Normality);
+                        }
                     }
                 }
             }
@@ -120,21 +125,6 @@ namespace Monster.Container
             
             return coordinate.right.normalized;
         }
-        
-        /// <summary>
-        /// 타겟과의 거리를 판단하여 인자로 넣은 값과 비교해 거리가 인자보다 낮으면 true
-        /// </summary>
-        /// <param name="checkDis">이 거리보다 낮으면 True, 높으면 False</param>
-        /// <returns></returns>
-        private bool CheckTargetDis(float checkDis)
-        {
-            if (targetTransform == null)
-            {
-                return false;
-            }
-            var dis = NavMeshDistanceFromTarget(targetTransform.position);
-            return dis < checkDis;
-        }
 
         #endregion
 
@@ -142,77 +132,39 @@ namespace Monster.Container
 
         private INode InitBT()
         {
+            var findTarget = new ActionNode(FindTarget);
             var move = new ActionNode(Move);
             var attack = new ActionNode(Attack);
             var jumpAttack = new ActionNode(JumpAttack);
-            var selectAttack = new SelectorNode(true, attack, jumpAttack);
+            var selectAttack = new SelectorNode(
+                true, 
+                new Detector(() => CheckNavMeshDis(status.attackRange.Current), attack)
+                );
+            DebugManager.ToDo("Jump Attack 추가하기");
             
             var sqeunce = new SequenceNode(
-                new ActionNode(FindTarget),
+                findTarget,
                 new SelectorNode(
                     false,
-                    new Detector(() => CheckTargetDis(1f), selectAttack),
+                    selectAttack,
                     move
                 ));
             return sqeunce;
         }
-        
-        private INode.NodeState FindTarget()
-        {
-            if (targetTransform == null)
-            {
-                foreach (var (playerRef, data) in UserData.Instance.UserDictionary)
-                {
-                    var playerObject = Runner.FindObject(data.NetworkId);
-                    var path = new NavMeshPath();
-                    if (playerObject != null &&
-                        NavMesh.CalculatePath(transform.position, playerObject.transform.position, NavMesh.AllAreas, path))
-                    {
-                        // 해당 Player까지의 거리 계산
-                        var dis = 0f;
-                        for (int i = 0; i < path.corners.Length - 1; i++)
-                        {
-                            dis += Vector3.Distance(path.corners[i], path.corners[i + 1]);
-                        }
-                        
-                        // 범위 내라면 해당 플레이어를 타겟으로 설정
-                        if (dis < 15f)
-                        {
-                            targetTransform = playerObject.transform;
-                            break;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                // 타겟까지와의 거리를 판단하여 멀어지면 타겟 해제
-                var path = new NavMeshPath();
-                if (NavMesh.CalculatePath(transform.position, targetTransform.position, NavMesh.AllAreas, path))
-                {
-                    var dis = 0f;
-                    for (int i = 0; i < path.corners.Length - 1; i++)
-                    {
-                        dis += Vector3.Distance(path.corners[i], path.corners[i + 1]);
-                    }
-                        
-                    // 범위 내라면 해당 플레이어를 타겟으로 설정
-                    if (dis > 20f)
-                    {
-                        targetTransform = null;
-                    }
-                }
-            }
-
-            return INode.NodeState.Success; 
-        }
 
         private INode.NodeState Move()
         {
+            if (CheckNavMeshDis(status.attackRange.Current - 0.1f))
+            {
+                return INode.NodeState.Running;
+            }
+            
             if (_isCollide && MoveDelayTimer.Expired(Runner))
             {
                 Vector3 dir = Vector3.zero;
-                if (targetTransform == null)
+                MoveDelayTimer = TickTimer.CreateFromSeconds(Runner, _moveDelay);
+
+                if (targetPlayer == null)
                 {
                     // 타겟이 없으면 자유로운 방향으로 이동하게 하기
                     var randomCircle = Random.insideUnitCircle;
@@ -223,7 +175,7 @@ namespace Monster.Container
                     var path = new NavMeshPath();
                     NavMeshQueryFilter filter = new NavMeshQueryFilter();
                     filter.areaMask = 1 << NavMesh.GetAreaFromName("Walkable");
-                    if (NavMesh.CalculatePath(transform.position, targetTransform.position, NavMesh.AllAreas, path))
+                    if (NavMesh.CalculatePath(transform.position, targetPlayer.transform.position, NavMesh.AllAreas, path))
                     {
                         if (path.corners.Length > 1)
                         {
@@ -232,14 +184,13 @@ namespace Monster.Container
                     }
                     else
                     {
-                        dir = SetRotateDir(targetTransform.position);
+                        dir = SetRotateDir(targetPlayer.transform.position);
                     }
                 }
 
                 dir = 300f * rigidbody.mass * status.moveSpeed * dir;
                 rigidbody.AddTorque(dir);
 
-                MoveDelayTimer = TickTimer.CreateFromSeconds(Runner, _moveDelay);
                 return INode.NodeState.Success; 
             }
             return INode.NodeState.Running;
@@ -250,6 +201,7 @@ namespace Monster.Container
             if (_isInitAnimation)
             {
                 AttackTimer = TickTimer.CreateFromSeconds(Runner, animatorInfo.AttackTime);
+                animatorInfo.PlayAttack();
                 _isInitAnimation = false;
             }
 
@@ -258,6 +210,7 @@ namespace Monster.Container
                 return INode.NodeState.Running;
             }
 
+            _isInitAnimation = true;
             return INode.NodeState.Success;
         }
 

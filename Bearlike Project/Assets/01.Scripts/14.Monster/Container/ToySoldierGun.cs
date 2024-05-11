@@ -58,15 +58,6 @@ namespace Monster.Container
 
         #region Member Function
 
-        private bool CheckDis(float checkDis)
-        {
-            if (targetTransform == null)
-                return false;
-            
-            var dis = StraightDistanceFromTarget(targetTransform.position);
-            return dis < checkDis;
-        }
-
         private void BeforeShoot(BulletBase bullet)
         {
             bullet.status.damage.Current = status.damage.Current + gun.status.damage.Current;
@@ -83,10 +74,11 @@ namespace Monster.Container
 
         private INode InitBT()
         {
+            var findTarget = new ActionNode(FindTarget);
             var idle = new ActionNode(Idle);
             var move = new ActionNode(Move);
-            var closeAttack = new Detector(() => CheckDis(1f),new ActionNode(CloseAttack)) ; // 근접 공격
-            var longAttack = new Detector(() => CheckDis(status.attackRange.Current),new ActionNode(LongAttack));
+            var closeAttack = new Detector(() => CheckStraightDis(1f),new ActionNode(CloseAttack)) ; // 근접 공격
+            var longAttack = new Detector(() => CheckStraightDis(status.attackRange.Current),new ActionNode(LongAttack));
 
             // TargetTransform == null 경우
             var offTarget = new SelectorNode(
@@ -102,11 +94,11 @@ namespace Monster.Container
             );
             
             var loop = new SequenceNode(
-                new ActionNode(FindTarget),
+                findTarget,
                 new SelectorNode(
                     false,
-                    new Detector(() => targetTransform == null, offTarget),
-                    new Detector(() => targetTransform != null, onTarget)
+                    new Detector(() => targetPlayer == null, offTarget),
+                    new Detector(() => targetPlayer != null, onTarget)
                 )
             );
             return loop;
@@ -142,9 +134,18 @@ namespace Monster.Container
         private Vector3 randomDir;
         private INode.NodeState Move()
         {
+            if (CheckStraightDis(status.attackRange.Current - 1.0f))
+            {
+                networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 0f);
+                _isInitAnimation = false;
+                navMeshAgent.isStopped = true;
+                return INode.NodeState.Success;
+            }
+            
             if (_isInitAnimation == false)
             {
                 _isInitAnimation = true;
+                navMeshAgent.isStopped = false;
                 AniMoveTimer = TickTimer.CreateFromSeconds(Runner, moveClip.length);
                 networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 1f);
                 randomDir = Random.onUnitSphere * 2f;
@@ -155,47 +156,23 @@ namespace Monster.Container
             if (AniMoveTimer.Expired(Runner) == false && navMeshAgent.isOnNavMesh)
             {
                 // 타겟 한테 이동
-                if (targetTransform)
+                if (targetPlayer)
                 {
-                    navMeshAgent.SetDestination(targetTransform.position);
+                    navMeshAgent.stoppingDistance = status.attackRange.Current - 1.0f;
+                    navMeshAgent.SetDestination(targetPlayer.transform.position);
                 }
                 else
                 {
                     var nextPos = transform.position + randomDir;
+                    navMeshAgent.stoppingDistance = 0;
                     navMeshAgent.SetDestination(nextPos);
                 }
-                
-                // var path = new NavMeshPath();
-                // if (targetTransform != null && NavMesh.CalculatePath(transform.position, targetTransform.position, NavMesh.AllAreas, path))
-                // {
-                //     float pathLength = 0.0f;
-                //     for (int i = 1; i < path.corners.Length; i++)
-                //         pathLength += Vector3.Distance(path.corners[i - 1], path.corners[i]);
-                //     if (pathLength > status.attackRange.Current)
-                //     {
-                //         var dir = path.corners[1] - transform.position;
-                //         var nextPos = transform.position + Time.deltaTime * dir;
-                //         transform.LookAt(nextPos);
-                //         rigidbody.AddForce(ForceMagnitude * status.moveSpeed * transform.forward);
-                //     }
-                //     else
-                //     {
-                //         networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 0f);
-                //         _isInitAnimation = false;
-                //         return INode.NodeState.Failure;
-                //     }
-                // }
-                // else
-                // {
-                //     var nextPos = transform.position + Time.deltaTime * randomDir;
-                //     transform.LookAt(nextPos);
-                //     rigidbody.AddForce(ForceMagnitude * status.moveSpeed * transform.forward);
-                // }
                 return INode.NodeState.Running;
             }
             
             networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 0f);
             _isInitAnimation = false;
+            navMeshAgent.isStopped = true;
             return INode.NodeState.Success;
         }
 
@@ -214,7 +191,7 @@ namespace Monster.Container
             // 공격 딜레이가 남아있으면 실패, 총을 쏠 수 있는 상태가 아니면 실패
             if (status.AttackLateTimer.Expired(Runner) == false)
             {
-                Vector3 dir = (targetTransform.transform.position - transform.position).normalized;
+                Vector3 dir = (targetPlayer.transform.position - transform.position).normalized;
                 dir.y = 0;
                 Quaternion lookRotation = Quaternion.LookRotation(dir);
                 transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Runner.DeltaTime);

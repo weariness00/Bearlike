@@ -61,8 +61,6 @@ namespace Weapon.Bullet
         public override void FixedUpdateNetwork()
         {
             transform.position += direction * Runner.DeltaTime * status.moveSpeed;
-            // transform.position += transform.forward * Runner.DeltaTime * speed;
-            transform.Rotate(new Vector3(0, 10, 0), Space.Self);
 
             // if (FastDistance(transform.position, _oldPosition) >= maxMoveDistance) Destroy(gameObject);
             if (FastDistance(transform.position, _oldPosition) >= status.attackRange.Current) Destroy(gameObject);

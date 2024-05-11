@@ -1,4 +1,5 @@
-﻿using BehaviorTree.Base;
+﻿using System.Collections.Generic;
+using BehaviorTree.Base;
 using Fusion;
 using Manager;
 using Status;
@@ -73,20 +74,7 @@ namespace Monster.Container
 
             _behaviorTreeRunner.Operator();
         }
-
-        #region Member Function
-
-        private bool CheckDis(float checkDis)
-        {
-            if (targetTransform == null)
-                return false;
-            
-            var dis = NavMeshDistanceFromTarget(targetTransform.position);  
-            return dis < checkDis;   
-        }
         
-        #endregion
-
         #region Animation Event Function
 
         public void AniAttackRayEvent()
@@ -96,13 +84,17 @@ namespace Monster.Container
             
             LayerMask mask = targetMask | 1 << LayerMask.NameToLayer("Default");
             DebugManager.DrawRay(weaponTransform.position, weaponTransform.up * status.attackRange.Current, Color.magenta, 2f);
-            if (Runner.LagCompensation.Raycast(weaponTransform.position, weaponTransform.up,status.attackRange.Current, Runner.LocalPlayer, out var lagHit, mask))
+            List<LagCompensatedHit> hits = new List<LagCompensatedHit>();
+            if (Runner.LagCompensation.RaycastAll(weaponTransform.position, weaponTransform.up,status.attackRange.Current, Runner.LocalPlayer, hits, mask) != 0)
             {
                 StatusBase targetStatus;
                 if(prickVFX) prickVFX.Play();
-                if (lagHit.GameObject.TryGetComponent(out targetStatus) || lagHit.GameObject.transform.root.TryGetComponent(out targetStatus))
+                foreach (var hit in hits)
                 {
-                    targetStatus.ApplyDamageRPC(status.CalDamage(), Object.Id, crowdControlType);
+                    if (hit.GameObject.TryGetComponent(out targetStatus) || hit.GameObject.transform.root.TryGetComponent(out targetStatus))
+                    {
+                        targetStatus.ApplyDamageRPC(status.CalDamage(), Object.Id, crowdControlType);
+                    }
                 }
             }
         }
@@ -115,8 +107,8 @@ namespace Monster.Container
         {
             var findTarget = new ActionNode(FindTarget);
             var idle = new ActionNode(Idle);
-            var move = new ActionNode(Move);
-            var attack = new Detector(() => CheckDis(status.attackRange.Current), new ActionNode(Attack));
+            var move = new ActionNode(Move); 
+            var attack = new Detector(() => CheckNavMeshDis(status.attackRange.Current), new ActionNode(Attack));
 
             var offTarget = new SelectorNode(
                 true,
@@ -132,9 +124,10 @@ namespace Monster.Container
             
             var loop = new SequenceNode(
                 findTarget,
-                new SelectorNode(false,
-                    new Detector(() => targetTransform, onTarget),
-                    new Detector(() => !targetTransform, offTarget)
+                new SelectorNode(
+                    false,
+                    new Detector(() => targetPlayer, onTarget),
+                    new Detector(() => !targetPlayer, offTarget)
                     )
                 );
             return loop;
@@ -162,6 +155,14 @@ namespace Monster.Container
 
         private INode.NodeState Move()
         {
+            if (CheckNavMeshDis(status.attackRange.Current - 0.2f))
+            {
+                networkAnimator.Animator.SetFloat(AniMove, 0);
+                _isInitAnimation = false;
+                navMeshAgent.isStopped = true;
+                return INode.NodeState.Success;
+            }
+            
             if (!_isInitAnimation)
             {
                 _isInitAnimation = true;
@@ -171,25 +172,28 @@ namespace Monster.Container
                 _randomDir = Random.onUnitSphere * 2f;
                 _randomDir.y = 0;
 
+                navMeshAgent.isStopped = false;
                 AniWalkTimer = TickTimer.CreateFromSeconds(Runner, walkClip.length);
             }
 
             if (AniWalkTimer.Expired(Runner) == false && navMeshAgent.isOnNavMesh)
             {
-                if (targetTransform)
+                if (targetPlayer)
                 {
-                    var dir = (targetTransform.position - transform.position).normalized;
-                    navMeshAgent.SetDestination(targetTransform.position - dir * (status.attackRange.Current - 0.5f));
+                    navMeshAgent.stoppingDistance = status.attackRange.Current - 0.2f;
+                    navMeshAgent.SetDestination(targetPlayer.transform.position);
                 }
                 else
                 {
+                    navMeshAgent.stoppingDistance = 0;
                     navMeshAgent.SetDestination(transform.position + _randomDir);
                 }
                 return INode.NodeState.Running;
             }
-            
-            _isInitAnimation = false;
+
             networkAnimator.Animator.SetFloat(AniMove, 0);
+            _isInitAnimation = false;
+            navMeshAgent.isStopped = true;
             return INode.NodeState.Success;
         }
 
@@ -201,7 +205,7 @@ namespace Monster.Container
                 
                 networkAnimator.SetTrigger(AniAttack);
 
-                AniAttackTimer = TickTimer.CreateFromSeconds(Runner, attackClip.length + 2f);
+                AniAttackTimer = TickTimer.CreateFromSeconds(Runner, attackClip.length + 1f);
             }
 
             if (AniAttackTimer.Expired(Runner) == false)

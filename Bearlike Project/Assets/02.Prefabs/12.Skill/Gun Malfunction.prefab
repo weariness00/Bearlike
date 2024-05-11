@@ -63,6 +63,15 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   damageMultiple: 1
+  criticalHitMultiple: 1
+  criticalHitChance:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
   defence:
     _min: 0
     _max: 99999
@@ -103,16 +112,10 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
-  force:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
   condition: 0
   property: 0
+  burnDamage: 0
+  poisonDamage: 0
 --- !u!114 &4075162357074122885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -128,13 +131,12 @@ MonoBehaviour:
   _IsAsyncClient: []
   _IsSpawnSuccess:
     _value: 0
-  _OwnerId:
-    Raw: 0
+  ownerPlayer: {fileID: 0}
   id: 102
   skillName: 
   explain: 
   type: 0
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: cfefc14292b32814bab9d4632f1193da, type: 3}
   coolTime: 0
   isInvoke: 0
   status: {fileID: 0}

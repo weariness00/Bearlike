@@ -13,6 +13,7 @@ using Status;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace Monster
@@ -59,7 +60,7 @@ namespace Monster
         public string explain;
         public string type;
         
-        public Transform targetTransform;
+        public PlayerController targetPlayer; // 나중에 어그로 시스템 생기면 바꾸기
         public LayerMask targetMask;
         
         public Action DieAction;
@@ -178,6 +179,30 @@ namespace Monster
             return dis;
         }
         
+        public bool CheckStraightDis(float checkDis)
+        {
+            if (targetPlayer == null)
+                return false;
+            
+            var dis = StraightDistanceFromTarget(targetPlayer.transform.position);
+            return dis < checkDis;
+        }
+        
+        /// <summary>
+        /// 타겟과의 거리를 판단하여 인자로 넣은 값과 비교해 거리가 인자보다 낮으면 true
+        /// </summary>
+        /// <param name="checkDis">이 거리보다 낮으면 True, 높으면 False</param>
+        /// <returns></returns>
+        public bool CheckNavMeshDis(float checkDis)
+        {
+            if (targetPlayer == null)
+            {
+                return false;
+            }
+            var dis = NavMeshDistanceFromTarget(targetPlayer.transform.position);
+            return dis < checkDis;
+        }
+        
         #endregion
 
         #region Default BT Function
@@ -187,31 +212,76 @@ namespace Monster
             DebugManager.ToDo("어그로 시스템이 없어 가장 가까운 적을 인식하도록 함" +
                               "어그로 시스템을 만들어 인식된 적들중 어그로가 높은 적을 인식하도록 바꾸기");
             
-            if (targetTransform == null)
+            // target이 쓰러진 상태면 Targeting 풀기
+            if (targetPlayer.status.isInjury ||
+                targetPlayer.status.isRevive ||
+                targetPlayer.status.IsDie)
+            {
+                targetPlayer = null;
+            }
+            
+            if (targetPlayer == null)
             {
                 // 직선 거리상 인식 범위 내에 있는 플레이어 탐색
-                var targetPlayers = players.Where(player => !player.status.isInjury && !player.status.isRevive && !player.status.IsDie && StraightDistanceFromTarget(player.transform.position) <= status.attackRange.Current + 10f).ToList();
-                if (targetPlayers.Count != 0)
-                {
-                    // 인식범위 내에 있는 아무 플레이어를 Target으로 지정
-                    targetTransform = targetPlayers[Random.Range(0, targetPlayers.Count)].transform;
-                }
-                else
-                {
-                    targetTransform = null;
-                }
+                var targetPlayers = players.Where(player => 
+                    !player.status.isInjury &&
+                    !player.status.isRevive &&
+                    !player.status.IsDie &&
+                    StraightDistanceFromTarget(player.transform.position) <= status.attackRange.Current + 10f
+                    ).ToList();
+
+                // 인식범위 내에 있는 아무 플레이어를 Target으로 지정
+                targetPlayer = targetPlayers.Count != 0 ? targetPlayers[Random.Range(0, targetPlayers.Count)] : null;
             }
             else
             {
                 // Target대상이 인식 범위내에 벗어나면 Target을 풀어주기
-                var dis = StraightDistanceFromTarget(targetTransform.position);
-                if (dis > status.attackRange.Current +20f)
+                var dis = StraightDistanceFromTarget(targetPlayer.transform.position);
+                if (dis > status.attackRange.Current + 12f)
                 {
-                    targetTransform = null;
+                    targetPlayer = null;
                 }
             }
 
             return INode.NodeState.Success;
+        }
+        
+        /// <summary>
+        /// NavMesh 상의 거리를 판단해 Target을 찾아준다.
+        /// </summary>
+        /// <returns></returns>
+        public INode.NodeState FindTargetFromNavMesh()
+        {
+            // target이 쓰러진 상태면 Targeting 풀기
+            if (targetPlayer.status.isInjury ||
+                targetPlayer.status.isRevive ||
+                targetPlayer.status.IsDie)
+            {
+                targetPlayer = null;
+            }
+            
+            if (targetPlayer == null)
+            {
+                var targetPlayers = players.Where(player => 
+                    !player.status.isInjury &&
+                    !player.status.isRevive &&
+                    !player.status.IsDie &&
+                    NavMeshDistanceFromTarget(player.transform.position) <= status.attackRange.Current + 10f
+                ).ToList();
+                
+                targetPlayer = targetPlayers.Count != 0 ? targetPlayers[Random.Range(0, targetPlayers.Count)] : null;
+            }
+            else
+            {
+                // Target대상이 인식 범위내에 벗어나면 Target을 풀어주기
+                var dis = NavMeshDistanceFromTarget(targetPlayer.transform.position);
+                if (dis > status.attackRange.Current + 12f)
+                {
+                    targetPlayer = null;
+                }
+            }
+
+            return INode.NodeState.Success; 
         }
 
         #endregion

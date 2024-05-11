@@ -15,7 +15,9 @@ namespace Script.Manager.Editor
         private SerializedProperty IsLogWaring;
         private SerializedProperty IsLogError;
         private SerializedProperty IsToDo;
+        
         private SerializedProperty IsDrawRay;
+        private SerializedProperty IsDrawBoxRay;
         
         #endregion
 
@@ -26,7 +28,9 @@ namespace Script.Manager.Editor
             IsLogWaring = serializedObject.FindProperty("logWaring");
             IsLogError = serializedObject.FindProperty("logError");
             IsToDo = serializedObject.FindProperty("isToDo");
+            
             IsDrawRay = serializedObject.FindProperty("drawRay");
+            IsDrawBoxRay = serializedObject.FindProperty("drawBoxRay");
         }
 
         public override void OnInspectorGUI()
@@ -39,8 +43,13 @@ namespace Script.Manager.Editor
                 EditorGUILayout.PropertyField(IsLog);
                 EditorGUILayout.PropertyField(IsLogWaring); 
                 EditorGUILayout.PropertyField(IsLogError);
+                EditorGUILayout.Space();
+                
                 EditorGUILayout.PropertyField(IsToDo);
+                EditorGUILayout.Space();
+
                 EditorGUILayout.PropertyField(IsDrawRay);
+                EditorGUILayout.PropertyField(IsDrawBoxRay);
             }
 
             serializedObject.ApplyModifiedProperties(); // 이게 없으면 Property Update가 안됨   

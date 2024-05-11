@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Weapon.Gun.Container
 {
@@ -24,6 +26,13 @@ namespace Weapon.Gun.Container
         private static readonly int AniReloadSpeed = Animator.StringToHash("fReloadSpeed"); //장전이 2개인데 fbx 넣으면 좀 더 괜찮을까 싶어서 해봄 1개 지워도 됨
         private static readonly int AniReloadType = Animator.StringToHash("fReloadType"); //장전이 2개인데 fbx 넣으면 좀 더 괜찮을까 싶어서 해봄 1개 지워도 됨
         //다른 총도 변경 가능, 애니메이션 좀 더 강조되게 수정 가능
+
+        private void Awake()
+        {
+            animator = GetComponent<Animator>();
+        }
+        
+        #region Animator Parameter Function
 
         public void PlayReload()
         {
@@ -49,6 +58,7 @@ namespace Weapon.Gun.Container
             animator.SetFloat(AniFireSpeed, realSpeed);
         }
 
+        #endregion
         
         #region Events Function
 
