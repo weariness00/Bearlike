@@ -173,7 +173,6 @@ void CSMeshSlice(uint3 id : SV_DispatchThreadID)
 // Cap 만들때 필요한 정보
 float3 uvForward;
 float3 uvLeft;
-float faceDirect;
 StructuredBuffer<DotData> newDotCenter;
 
 [numthreads(32,1,1)]
@@ -189,8 +188,9 @@ void CSMakeCap(uint3 id : SV_DispatchThreadID)
     InterlockedAdd(sliceCount1[0], 1, sliceIndex1);
     
     // Vertex & Triangle
-    const int faceIndex0 = faceDirect < 0 ? idx + 1 : idx;
-    const int faceIndex1 = faceDirect < 0 ? idx : idx + 1;
+    const float face = dot(sliceNormal, cross(newDotData[idx].Vertex - newDotCenter[0].Vertex, newDotData[idx + 1].Vertex - newDotData[idx].Vertex));
+    const int faceIndex0 = face < 0 ? idx + 1 : idx;
+    const int faceIndex1 = face < 0 ? idx : idx + 1;
     sliceData0[sliceIndex0].Dot0 = newDotCenter[0];
     sliceData0[sliceIndex0].Dot1 = newDotData[faceIndex0];
     sliceData0[sliceIndex0].Dot2 = newDotData[faceIndex1];

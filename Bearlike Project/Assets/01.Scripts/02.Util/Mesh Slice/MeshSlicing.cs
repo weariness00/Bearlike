@@ -38,7 +38,6 @@ namespace Util
             public static readonly int NewDotCount = Shader.PropertyToID("newDotCount");
             
             // Cap Data
-            public static readonly int FaceDirect = Shader.PropertyToID("faceDirect");
             public static readonly int UVForward = Shader.PropertyToID("uvForward");
             public static readonly int UVLeft = Shader.PropertyToID("uvLeft");
             public static readonly int NewDotCenter = Shader.PropertyToID("newDotCenter");
@@ -219,7 +218,6 @@ namespace Util
             center[0].Vertex = Vector3.Lerp(center[0].Vertex, sortDots[0].Vertex, 0.5f);
             center[0].Index = sortDots.Length + dotCount - 1;
             
-            float faceDir = Vector3.Dot(sliceNormal, Vector3.Cross(sortDots[0].Vertex - center[0].Vertex, sortDots[1].Vertex - sortDots[0].Vertex));
             newDotCenterBuffer.SetData(center);
             
             Vector3 forward = Vector3.zero;
@@ -229,7 +227,6 @@ namespace Util
             Vector3 left = Vector3.Cross(forward, sliceNormal);
 
             int makeCapKernelID = sliceShader.FindKernel(CSParam.MakeCapKernel);
-            sliceShader.SetFloat(CSParam.FaceDirect, faceDir);
             sliceShader.SetVector(CSParam.UVForward, forward);
             sliceShader.SetVector(CSParam.UVLeft, left);
             sliceShader.SetBuffer(makeCapKernelID, CSParam.NewDotCenter, newDotCenterBuffer);
@@ -275,25 +272,39 @@ namespace Util
                 newDots[0],
                 newDots[1]
             };
+            var newDotList = newDots.ToList();
+            newDotList.RemoveAt(0);
+            newDotList.RemoveAt(0);
 
             int compareCount = length / 2;
-            for (int i = 0; i < compareCount -1; i++)
+            for (int i = 0; i < compareCount; i++)
             {
-                for (int j = i + 1; j < compareCount; j++)
+                var lastDot = result.Last();
+                for (var j = 0; j < newDotList.Count / 2; j++)
                 {
-                    if (CompareVector3(newDots[i * 2 + 1].Vertex, newDots[j * 2].Vertex))
+                    var dot0 = newDotList[j * 2];
+                    var dot1 = newDotList[j * 2 + 1];
+                    if (CompareVector3(lastDot.Vertex, dot0.Vertex) &&
+                        CompareVector3(lastDot.Vertex, dot1.Vertex) == false)
                     {
-                        result.Add(newDots[j * 2 + 1]);
-                        SwapTwoIndexSet(ref newDots, i * 2 + 2, i * 2 + 3, j * 2, j * 2 + 1);
+                        result.Add(dot1);
+                        newDotList.RemoveAt(j * 2);
+                        newDotList.RemoveAt(j * 2);
+                        break;
                     }
-                    else if (CompareVector3(newDots[i * 2 + 1].Vertex, newDots[j * 2 + 1].Vertex))
+                    if (CompareVector3(lastDot.Vertex, dot1.Vertex) &&
+                        CompareVector3(lastDot.Vertex, dot0.Vertex) == false)
                     {
-                        result.Add(newDots[j * 2]);
-                        SwapTwoIndexSet(ref newDots, i * 2 + 2, i * 2 + 3, j * 2 + 1, j * 2);
+                        result.Add(dot0);
+                        newDotList.RemoveAt(j * 2);
+                        newDotList.RemoveAt(j * 2);
+                        break;
                     }
                 }
             }
-            if (result[0].Vertex == result[^1].Vertex) result.RemoveAt(result.Count - 1);
+            
+            if (result.First().Vertex != result.Last().Vertex)
+                result.Add(result.First());
             return result.ToArray();
         }
 
