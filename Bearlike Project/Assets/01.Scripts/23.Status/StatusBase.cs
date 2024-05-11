@@ -165,8 +165,10 @@ namespace Status
             {
                 AddCondition(cc); // Monster의 속성을 Player상태에 적용
 
-                var damageRate = 1f;
-
+                var damageRate = math.clamp(math.log10((applyDamage / (float)(defence * 2)) * 10), 0.0f, 1.0f);
+                
+                damageRate = 1f;
+                
                 if (ConditionWeakIsOn())
                 {
                     damageRate *= 1.5f;
