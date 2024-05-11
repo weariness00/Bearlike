@@ -121,6 +121,7 @@ namespace Player
             base.ApplyDamage(applyDamage, ownerId, cc);
 
             HpControlRPC();
+            
         }
 
         /// <summary>

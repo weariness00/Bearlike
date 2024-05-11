@@ -236,7 +236,7 @@ namespace GamePlay.Stage
             {
                 var portal = GameManager.Instance.currentStage.nextStagePortal;
                 prevStagePortal.SetPortal(portal);
-                if(portal.portalVFXList.Count >= 5) portal.portalVFXList[(int)StageInfo.stageType + 1].gameObject.SetActive(true);
+                if(portal.portalVFXList.Count >= 5) portal.portalVFXList[(int)stageData.info.id + 1].gameObject.SetActive(true);
                 portal.IsConnect = true; // 현재 진행중인 스테이지의 포탙 개방
             }
             GameManager.Instance.currentStage = this;

@@ -148,7 +148,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1141117751
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 92160
@@ -175,7 +175,7 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1141117751
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 92160
@@ -253,6 +253,15 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   damageMultiple: 1
+  criticalHitMultiple: 1
+  criticalHitChance:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
   defence:
     _min: 0
     _max: 0
@@ -293,13 +302,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
-  force:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
   condition: 0
   property: 0
+  burnDamage: 0
+  poisonDamage: 0

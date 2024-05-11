@@ -14,7 +14,6 @@ namespace Skill.Container
     {
         #region time
 
-        // private GameManager _gm;
         private float _currentPlayTime;
         private float _previousPlayTime;
         private float _deltaPlayTime;
@@ -41,31 +40,6 @@ namespace Skill.Container
         private const float DurationTime = 10.0f;
 
         #endregion
-        
-        public override void Awake()
-        {
-            base.Awake();
-            
-            var tempCoolTime = new StatusValue<float>();
-            tempCoolTime.Max = CoolTime;
-            tempCoolTime.Min = tempCoolTime.Current = 0.0f;
-
-            coolTime = tempCoolTime;
-
-            var tempDuration = new StatusValue<float>();
-            tempDuration.Max = DurationTime;
-            tempDuration.Min = tempDuration.Current = 0.0f;
-
-            duration = tempDuration;
-            
-            // _gm = GameObject.Find("GameManager").GetComponent<GameManager>();
-
-            // playerStatus = GameObject.Find("Local Player").GetComponent<PlayerStatus>();
-            // playerStatus = status;
-            
-            _bOn = false;
-            _difference = 0;
-        }
 
         public override void Start()
         {

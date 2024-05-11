@@ -86,7 +86,7 @@ namespace Monster.Container
         private const int FART_TYPE = 1;
         private const int COIN_TYPE = 2;
         private const int JUMP_TYPE = 3;
-        private const int RUSH_TYPE = 4;
+        private const int RUSH_TYPE = 4;//
 
         #endregion
 
@@ -290,25 +290,25 @@ namespace Monster.Container
                 //             new ActionNode(TermFuction),
                 //             new ActionNode(StopRun)
                 //         ),
-                new SequenceNode
-                (   // JumpAttack OR Jump CoinAttack
-                new ActionNode(CheckJumpAttackAction),
-                // new ActionNode(CheckJumpAttackDistance),
-                new ActionNode(StartJumpAction),
-                new ActionNode(TermFuction),
-                new ActionNode(StopJumpAttack)
-                ),
+                // new SequenceNode
+                // (   // JumpAttack OR Jump CoinAttack
+                // new ActionNode(CheckJumpAttackAction),
+                // // new ActionNode(CheckJumpAttackDistance),
+                // new ActionNode(StartJumpAction),
+                // new ActionNode(TermFuction),
+                // new ActionNode(StopJumpAttack)
+                // ),
                 //     )
                 // ),
                 // new SelectorNode(
                 //     false,
-                //     new SequenceNode
-                //     (   // Kick
-                //         new ActionNode(CheckAttackAction),
-                //         // new ActionNode(CheckAttackDistance),
-                //         new ActionNode(StartAttack),
-                //         new ActionNode(TermFuction)
-                //     ),
+                new SequenceNode
+                (   // Kick
+                    new ActionNode(CheckAttackAction),
+                    // new ActionNode(CheckAttackDistance),
+                    new ActionNode(StartAttack),
+                    new ActionNode(TermFuction)
+                )
                 //     new ActionNode(SuccessFunction)
                 // ),
                 // new SelectorNode
@@ -325,32 +325,32 @@ namespace Monster.Container
                 //         ),
                 //         new SelectorNode(
                 //             false,
-                new SequenceNode
-                (    // JumpAttack OR Fake JumpAttack
-                    new ActionNode(CheckJumpAttackAction), 
-                    new ActionNode(StartJumpAttackAction),
-                    new ActionNode(TermFuction),
-                    new ActionNode(StopJumpAttack)
-                ),
+                // new SequenceNode
+                // (    // JumpAttack OR Fake JumpAttack
+                //     new ActionNode(CheckJumpAttackAction), 
+                //     new ActionNode(StartJumpAttackAction),
+                //     new ActionNode(TermFuction),
+                //     new ActionNode(StopJumpAttack)
+                // ),
                 //             new ActionNode(SuccessFunction)
                 //         )
                 //     ),
-                new SequenceNode
-                (   // fart
-                    new ActionNode(CheckFartAction), 
-                    new ActionNode(StartFart),
-                    new ActionNode(TermFuction),
-                    new ActionNode(StopFart)
-                ),
+                // new SequenceNode
+                // (   // fart
+                //     new ActionNode(CheckFartAction), 
+                //     new ActionNode(StartFart),
+                //     new ActionNode(TermFuction),
+                //     new ActionNode(StopFart)
                 // ),
-                new SequenceNode
-                (   // Ground CoinAttack
-                    new ActionNode(CheckCoinAttackAction),
-                    // new ActionNode(CheckCoinAttackDistance),
-                    new ActionNode(StartCoinAttack),
-                    new ActionNode(TermFuction),
-                    new ActionNode(StopCoinAttack)
-                )
+                // ),
+                // new SequenceNode
+                // (   // Ground CoinAttack
+                //     new ActionNode(CheckCoinAttackAction),
+                //     // new ActionNode(CheckCoinAttackDistance),
+                //     new ActionNode(StartCoinAttack),
+                //     new ActionNode(TermFuction),
+                //     new ActionNode(StopCoinAttack)
+                // )
                 // new SequenceNode
                 // (   // Rest
                 //     new ActionNode(CheckRestAction),
@@ -659,10 +659,9 @@ namespace Monster.Container
             
             // TODO : 피격 처리 해주는 코드 필요
             Vector3 targetDirection = _players[_targetPlayerIndex].transform.position - transform.position;
-
             if (Runner.LagCompensation.Raycast(transform.position, transform.GetChild(0).forward, status.attackRange.Current, Runner.LocalPlayer, out var Hit))
             {
-                StatusBase targetStatus;
+                PlayerStatus targetStatus;
                 DebugManager.Log($"{Hit.GameObject.name} was raycast");
                 // 공격 VFX
                 if (Hit.GameObject.TryGetComponent(out targetStatus) || Hit.GameObject.transform.root.TryGetComponent(out targetStatus))

@@ -160,7 +160,7 @@ namespace Player
         #endregion
         
         #region Member Function
-
+        
         private void StatusInit()
         {
             // Status 관련 초기화
