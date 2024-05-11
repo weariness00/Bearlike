@@ -188,78 +188,38 @@ void CSMakeCap(uint3 id : SV_DispatchThreadID)
     InterlockedAdd(sliceCount0[0], 1, sliceIndex0);
     InterlockedAdd(sliceCount1[0], 1, sliceIndex1);
     
-    if (faceDirect < 0)
-    {
-        // 0번째 슬라이스
-        sliceData0[sliceIndex0].Dot0 = newDotCenter[0];
-        sliceData0[sliceIndex0].Dot1 = newDotData[idx + 1];
-        sliceData0[sliceIndex0].Dot2 = newDotData[idx];
+    // Vertex & Triangle
+    const int faceIndex0 = faceDirect < 0 ? idx + 1 : idx;
+    const int faceIndex1 = faceDirect < 0 ? idx : idx + 1;
+    sliceData0[sliceIndex0].Dot0 = newDotCenter[0];
+    sliceData0[sliceIndex0].Dot1 = newDotData[faceIndex0];
+    sliceData0[sliceIndex0].Dot2 = newDotData[faceIndex1];
 
-        sliceData0[sliceIndex0].Dot0.Normal = sliceNormal;
-        sliceData0[sliceIndex0].Dot1.Normal = sliceNormal;
-        sliceData0[sliceIndex0].Dot2.Normal = sliceNormal;
+    sliceData1[sliceIndex1].Dot0 = newDotCenter[0];
+    sliceData1[sliceIndex1].Dot1 = newDotData[faceIndex1];
+    sliceData1[sliceIndex1].Dot2 = newDotData[faceIndex0];
 
-        const float3 dir01 = newDotData[idx + 1].Vertex - newDotCenter[0].Vertex;
-        sliceData0[sliceIndex0].Dot1.UV.x = 0.5f + dot(dir01, uvLeft);
-        sliceData0[sliceIndex0].Dot1.UV.y = 0.5f + dot(dir01, uvForward);
+    // Normal
+    sliceData0[sliceIndex0].Dot0.Normal = sliceNormal;
+    sliceData0[sliceIndex0].Dot1.Normal = sliceNormal;
+    sliceData0[sliceIndex0].Dot2.Normal = sliceNormal;
 
-        const float3 dir00 = newDotData[idx].Vertex - newDotCenter[0].Vertex;
-        sliceData0[sliceIndex0].Dot2.UV.x = 0.5f + dot(dir00, uvLeft);
-        sliceData0[sliceIndex0].Dot2.UV.y = 0.5f + dot(dir00, uvForward);
+    sliceData1[sliceIndex1].Dot0.Normal = -sliceNormal;
+    sliceData1[sliceIndex1].Dot1.Normal = -sliceNormal;
+    sliceData1[sliceIndex1].Dot2.Normal = -sliceNormal;
 
-        // 1번째 슬라이스
-        sliceData1[sliceIndex1].Dot0 = newDotCenter[0];
-        sliceData1[sliceIndex1].Dot1 = newDotData[idx];
-        sliceData1[sliceIndex1].Dot2 = newDotData[idx + 1];
+    // UV
+    const float3 dir0 = newDotData[idx].Vertex - newDotCenter[0].Vertex;
+    const float3 dir1 = newDotData[idx + 1].Vertex - newDotCenter[0].Vertex;
+    sliceData0[sliceIndex0].Dot1.UV.x = 0.5f + dot(dir0, uvLeft);
+    sliceData0[sliceIndex0].Dot1.UV.y = 0.5f + dot(dir0, uvForward);
+    sliceData0[sliceIndex0].Dot2.UV.x = 0.5f + dot(dir1, uvLeft);
+    sliceData0[sliceIndex0].Dot2.UV.y = 0.5f + dot(dir1, uvForward);
 
-        sliceData1[sliceIndex1].Dot0.Normal = -sliceNormal;
-        sliceData1[sliceIndex1].Dot1.Normal = -sliceNormal;
-        sliceData1[sliceIndex1].Dot2.Normal = -sliceNormal;
-
-        const float3 dir10 = newDotData[idx + 1].Vertex - newDotCenter[0].Vertex;
-        sliceData1[sliceIndex1].Dot1.UV.x = 0.5f + dot(dir10, uvLeft);
-        sliceData1[sliceIndex1].Dot1.UV.y = 0.5f + dot(dir10, uvForward);
-
-        const float3 dir11 = newDotData[idx].Vertex - newDotCenter[0].Vertex;
-        sliceData1[sliceIndex1].Dot2.UV.x = 0.5f + dot(dir11, uvLeft);
-        sliceData1[sliceIndex1].Dot2.UV.y = 0.5f + dot(dir11, uvForward);
-    }
-    else
-    {
-        // 0번째 슬라이스
-        sliceData0[sliceIndex0].Dot0 = newDotCenter[0];
-        sliceData0[sliceIndex0].Dot1 = newDotData[idx];
-        sliceData0[sliceIndex0].Dot2 = newDotData[idx + 1];
-
-        sliceData0[sliceIndex0].Dot0.Normal = sliceNormal;
-        sliceData0[sliceIndex0].Dot1.Normal = sliceNormal;
-        sliceData0[sliceIndex0].Dot2.Normal = sliceNormal;
-
-        const float3 dir01 = newDotData[idx].Vertex - newDotCenter[0].Vertex;
-        sliceData0[sliceIndex0].Dot1.UV.x = 0.5f + dot(dir01, uvLeft);
-        sliceData0[sliceIndex0].Dot1.UV.y = 0.5f + dot(dir01, uvForward);
-
-        const float3 dir00 = newDotData[idx + 1].Vertex - newDotCenter[0].Vertex;
-        sliceData0[sliceIndex0].Dot2.UV.x = 0.5f + dot(dir00, uvLeft);
-        sliceData0[sliceIndex0].Dot2.UV.y = 0.5f + dot(dir00, uvForward);
-
-        // 1번째 슬라이스
-        sliceData1[sliceIndex1].Dot0 = newDotCenter[0];
-        sliceData1[sliceIndex1].Dot1 = newDotData[idx + 1];
-        sliceData1[sliceIndex1].Dot2 = newDotData[idx];
-
-        sliceData1[sliceIndex1].Dot0.Normal = -sliceNormal;
-        sliceData1[sliceIndex1].Dot1.Normal = -sliceNormal;
-        sliceData1[sliceIndex1].Dot2.Normal = -sliceNormal;
-
-        const float3 dir10 = newDotData[idx + 1].Vertex - newDotCenter[0].Vertex;
-        sliceData1[sliceIndex1].Dot1.UV.x = 0.5f + dot(dir10, uvLeft);
-        sliceData1[sliceIndex1].Dot1.UV.y = 0.5f + dot(dir10, uvForward);
-
-        const float3 dir11 = newDotData[idx].Vertex - newDotCenter[0].Vertex;
-        sliceData1[sliceIndex1].Dot2.UV.x = 0.5f + dot(dir11, uvLeft);
-        sliceData1[sliceIndex1].Dot2.UV.y = 0.5f + dot(dir11, uvForward);
-    }
+    sliceData1[sliceIndex1].Dot1.UV.x = 0.5f + dot(dir0, uvLeft);
+    sliceData1[sliceIndex1].Dot1.UV.y = 0.5f + dot(dir0, uvForward);
+    sliceData1[sliceIndex1].Dot2.UV.x = 0.5f + dot(dir1, uvLeft);
+    sliceData1[sliceIndex1].Dot2.UV.y = 0.5f + dot(dir1, uvForward);
 }
 
 // Slice된 Polygon은 triangle의 index가 기존 Mesh의 순서대로 되있어 이를 다시 정리해주어야함.

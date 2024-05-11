@@ -316,6 +316,13 @@ namespace Photon
             if (KeyManager.InputAction(KeyToAction.Ultimate))
                 playerInputData.Ultimate = trueValue;
 
+            if (KeyManager.InputActionDown(KeyToAction.ChangeWeapon0))
+                playerInputData.ChangeWeapon0 = trueValue;
+            else if (KeyManager.InputActionDown(KeyToAction.ChangeWeapon1))
+                playerInputData.ChangeWeapon1 = trueValue;
+            else if (KeyManager.InputActionDown(KeyToAction.ChangeWeapon2))
+                playerInputData.ChangeWeapon2 = trueValue;
+
             if (KeyManager.InputActionDown(KeyToAction.StageSelect))
                 playerInputData.StageSelect = trueValue;
             if (KeyManager.InputActionDown(KeyToAction.ItemInventory))

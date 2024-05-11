@@ -328,10 +328,9 @@ namespace Player
             if(status.isInjury)
                 return;
             
-            if (data.ChangeWeapon0)
+            void ChangeWeapon(int index)
             {
-                // 장비 변경
-                weaponSystem.ChangeEquipment(0, gameObject);
+                weaponSystem.ChangeEquipment(index, gameObject);
                 
                 // 장비에 맞는 애니메이터 Layer Weight 주기
                 animator.SetLayerWeight(_gunLayer, 0);
@@ -344,11 +343,24 @@ namespace Player
                     skillBase.Earn(gameObject);
                 }
             }
+            
+            if (data.ChangeWeapon0)
+            {
+                ChangeWeapon(0);
+            }
+            else if (data.ChangeWeapon1)
+            {
+                ChangeWeapon(1);
+            }
+            else if (data.ChangeWeapon2)
+            {
+                ChangeWeapon(2);
+            }
 
             if (data.Attack && weaponSystem.equipment.IsGun)
             {
                 animator.SetBool(AniShoot, true);
-                weaponSystem.equipment.AttackAction?.Invoke();
+                if(HasStateAuthority) weaponSystem.equipment.AttackAction?.Invoke();
             }
             else if (animator.GetBool(AniShoot) == true)
             {
@@ -357,7 +369,8 @@ namespace Player
 
             if (data.ReLoad && weaponSystem.equipment.IsGun)
             {
-                ((GunBase)weaponSystem.equipment).ReloadBulletRPC();
+                var gun = ((GunBase)weaponSystem.equipment);
+                gun.ReloadBullet();
             }
         }
         

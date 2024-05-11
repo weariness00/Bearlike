@@ -34,6 +34,7 @@ namespace Weapon
         public virtual void Awake()
         {
             EquipAction += SetEquip;
+            ReleaseEquipAction += (equipObject) => { gameObject.SetActive(false); };
             status = GetComponent<StatusBase>();
         }
 
@@ -49,6 +50,7 @@ namespace Weapon
         
         void SetEquip(GameObject equipObject)
         {
+            gameObject.SetActive(true);
             // 주인 설정
             OwnerId = equipObject.GetComponent<NetworkObject>().Id;
             

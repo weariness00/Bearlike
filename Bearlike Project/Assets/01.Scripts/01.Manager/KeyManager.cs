@@ -26,6 +26,10 @@ namespace Manager
         Attack,
         Reload,
         
+        ChangeWeapon0,
+        ChangeWeapon1,
+        ChangeWeapon2,
+        
         FirstSkill,
         SecondSkill,
         Ultimate,

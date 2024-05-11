@@ -103,7 +103,14 @@ namespace Weapon.Gun
         {
             base.Spawned();
             
-            AttackAction += FireBulletRPC;
+            AttackAction += () =>
+            {
+                if (FireLateTimer.Expired(Runner))
+                {
+                    FireLateTimer = TickTimer.CreateFromSeconds(Runner, fireLateSecond);
+                    FireBulletRPC();
+                }
+            };
             FireLateTimer = TickTimer.CreateFromSeconds(Runner, 0);
             ReloadLateTimer = TickTimer.CreateFromSeconds(Runner, 0);
         }
@@ -129,74 +136,90 @@ namespace Weapon.Gun
 
         public virtual void FireBullet(bool isDst = true)
         {
-            if (FireLateTimer.Expired(Runner))
+            // if (FireLateTimer.Expired(Runner))
+            // {
+            // FireLateTimer = TickTimer.CreateFromSeconds(Runner, fireLateSecond);
+            if (magazine.Current != 0)
             {
-                FireLateTimer = TickTimer.CreateFromSeconds(Runner, fireLateSecond);
-                if (magazine.Current != 0)
+                var dst = fireTransform.forward * 2f;
+                if (isDst)
+                    dst = CheckRay();
+
+                if (shootEffect != null) shootEffect.Play();
+
+                if (HasStateAuthority)
                 {
-                    var dst = fireTransform.forward * 2f;
-                    if(isDst)
-                        dst = CheckRay();
-                    
-                    if(shootEffect != null) shootEffect.Play();
+                    Runner.SpawnAsync(bullet.gameObject, fireTransform.position, fireTransform.rotation, null,
+                        (runner, o) =>
+                        {
+                            o.gameObject.SetActive(true);
+                            var b = o.GetComponent<BulletBase>();
+                            b.status.AddAdditionalStatus(status);
 
-                    if (HasStateAuthority)
-                    {
-                        Runner.SpawnAsync(bullet.gameObject, fireTransform.position, fireTransform.rotation, null,
-                            (runner, o) =>
-                            {
-                                o.gameObject.SetActive(true);
-                                var b = o.GetComponent<BulletBase>();
-                                b.status.AddAdditionalStatus(status);
+                            b.OwnerId = OwnerId;
+                            b.hitEffect = hitEffect;
+                            b.bknock = false;
+                            b.status.attackRange.Max = status.attackRange.Max;
+                            b.status.attackRange.Current = status.attackRange.Current;
+                            b.destination = fireTransform.position + (dst * status.attackRange);
 
-                                b.OwnerId = OwnerId;
-                                b.hitEffect = hitEffect;
-                                b.bknock = false;
-                                b.status.attackRange.Max = status.attackRange.Max;
-                                b.status.attackRange.Current = status.attackRange.Current;
-                                b.destination = fireTransform.position + (dst * status.attackRange);
-                                
-                                BeforeShootAction?.Invoke(b);
-                            });
-                    }
-
-                    --magazine.Current;
-                    if(HasStateAuthority)
-                        SetMagazineRPC(StatusValueType.Current, magazine.Current);
-                    
-                    SoundManager.Play(shootSound);
-                    
-                    AfterFireAction?.Invoke();
+                            BeforeShootAction?.Invoke(b);
+                        });
                 }
-                else
-                {
-                    SoundManager.Play(emptyAmmoSound);
-                }
+
+                --magazine.Current;
+                // if (HasStateAuthority)
+                //     SetMagazineRPC(StatusValueType.Current, magazine.Current);
+
+                SoundManager.Play(shootSound);
+
+                AfterFireAction?.Invoke();
+                DebugManager.Log($"{name}에서 총알을 발사");
             }
-        }
-        
-        public virtual void ReLoadBullet(int bulletAmount = int.MaxValue)
-        {
-            if (ReloadLateTimer.Expired(Runner) && ammo.isMin == false)
+            else
             {
-                ReloadLateTimer = TickTimer.CreateFromSeconds(Runner, reloadLateSecond);
-                
-                SoundManager.Play(reloadSound);
-                var needChargingAmmoCount = magazine.Max - magazine.Current;
-                
-                if (ammo.Current < needChargingAmmoCount)
-                    needChargingAmmoCount = ammo.Current;
-                if (needChargingAmmoCount > bulletAmount)
-                    needChargingAmmoCount = bulletAmount;
-                
-                DebugManager.Log($"탄약 충전 : {magazine.Current} + {needChargingAmmoCount}");
+                SoundManager.Play(emptyAmmoSound);
+            }
+            // }
+        }
 
-                ammo.Current -= needChargingAmmoCount;
-                magazine.Current += needChargingAmmoCount;
-                if(HasStateAuthority)
-                    SetMagazineRPC(StatusValueType.Current, magazine.Current);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bulletAmount">장전 수 제한</param>
+        /// <returns></returns>
+        public int NeedReloadBulletCount(int bulletAmount = int.MaxValue)
+        {
+            var needChargingAmmoCount = magazine.Max - magazine.Current;
+            if (ammo.Current < needChargingAmmoCount)
+                needChargingAmmoCount = ammo.Current;
+            if (needChargingAmmoCount > bulletAmount)
+                needChargingAmmoCount = bulletAmount;
+
+            return needChargingAmmoCount;
+        }
+
+        protected virtual void ReLoadBullet(int needChargingAmmoCount)
+        {
+            SoundManager.Play(reloadSound);
+
+            ammo.Current -= needChargingAmmoCount;
+            magazine.Current += needChargingAmmoCount;
                 
-                AfterReloadAction?.Invoke();
+            AfterReloadAction?.Invoke();
+            DebugManager.Log($"탄약 충전 : {magazine.Current} + {needChargingAmmoCount}");
+        }
+
+        public void ReloadBullet()
+        {
+            if (ReloadLateTimer.Expired(Runner) && ammo.isMin == false && HasStateAuthority)
+            { 
+                int needBulletCount = NeedReloadBulletCount();
+                if (needBulletCount != 0)
+                {
+                    ReloadLateTimer = TickTimer.CreateFromSeconds(Runner, reloadLateSecond);
+                    ReloadBulletRPC(needBulletCount);
+                }
             }
         }
 
@@ -247,7 +270,7 @@ namespace Weapon.Gun
         public void FireBulletRPC() => FireBullet();
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public void ReloadBulletRPC() => ReLoadBullet();
+        public void ReloadBulletRPC(int needChargingAmmoCount) => ReLoadBullet(needChargingAmmoCount);
 
         #endregion
     }

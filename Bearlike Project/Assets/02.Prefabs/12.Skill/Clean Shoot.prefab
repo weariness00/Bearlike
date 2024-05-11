@@ -336,32 +336,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecfaab3f1034a9d46ac37306b52395b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
+  ownerPlayer: {fileID: 0}
   id: 10
   skillName: Clean Shoot
   explain: 
   type: 0
-  icon: {fileID: 2800000, guid: 623e239f69e98084b9e76330f088da91, type: 3}
-  coolTime:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
+  icon: {fileID: 21300000, guid: 623e239f69e98084b9e76330f088da91, type: 3}
+  coolTime: 0
   isInvoke: 0
   status: {fileID: 0}
   level:
     _min: 0
     _max: 1
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  duration:
-    _min: 0
-    _max: 0
     _current: 0
     isOverMax: 0
     isOverMin: 0
@@ -405,7 +394,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  additionalStatusList: []
   hp:
     _min: 0
     _max: 99999
@@ -422,7 +410,16 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
-  damageMagnification: 1
+  damageMultiple: 1
+  criticalHitMultiple: 1
+  criticalHitChance:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
   defence:
     _min: 0
     _max: 99999
@@ -455,14 +452,6 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
-  attackLateTime:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
   attackRange:
     _min: 0
     _max: 99999
@@ -471,16 +460,10 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
-  force:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
   condition: 0
   property: 0
+  burnDamage: 0
+  poisonDamage: 0
 --- !u!1001 &9110570556081249256
 PrefabInstance:
   m_ObjectHideFlags: 0

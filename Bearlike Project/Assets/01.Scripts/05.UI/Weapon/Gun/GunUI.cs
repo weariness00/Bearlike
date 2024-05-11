@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -17,6 +18,11 @@ namespace UI.Weapon.Gun
         public Image amount;
 
         private int _magazineCount;
+
+        private void Awake()
+        {
+            gameObject.SetActive(false);
+        }
 
         private void Start()
         {

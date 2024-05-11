@@ -25,6 +25,8 @@ namespace Photon
         public NetworkBool ReLoad;
 
         public NetworkBool ChangeWeapon0;
+        public NetworkBool ChangeWeapon1;
+        public NetworkBool ChangeWeapon2;
 
         public NetworkBool Cursor;
 

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 972581711291099202}
   - component: {fileID: 7856296637238042012}
   - component: {fileID: 8310383764273831033}
+  - component: {fileID: -5320853382675779889}
   m_Layer: 12
   m_Name: SniperContinousMode
   m_TagString: Untagged
@@ -53,7 +54,7 @@ MonoBehaviour:
   skillName: 
   explain: 
   type: 0
-  icon: {fileID: 2800000, guid: d6b6b564a5bc9cc4b8410c05b6a960ff, type: 3}
+  icon: {fileID: 21300000, guid: d6b6b564a5bc9cc4b8410c05b6a960ff, type: 3}
   coolTime: 0
   isInvoke: 0
   status: {fileID: 0}
@@ -155,3 +156,22 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+--- !u!114 &-5320853382675779889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3483298176811181930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 1445064578
+  ObjectInterest: 1
+  Flags: 1
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 7856296637238042012}
+  - {fileID: 8310383764273831033}

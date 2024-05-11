@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5600621591736803518}
   - component: {fileID: 6016579880466552673}
   - component: {fileID: 408735745228232319}
+  - component: {fileID: 4046691762488615660}
   m_Layer: 12
   m_Name: KnockbackShot
   m_TagString: Untagged
@@ -48,8 +49,7 @@ MonoBehaviour:
   _IsAsyncClient: []
   _IsSpawnSuccess:
     _value: 0
-  _OwnerId:
-    Raw: 0
+  ownerPlayer: {fileID: 0}
   id: 32
   skillName: 
   explain: 
@@ -105,6 +105,15 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   damageMultiple: 1
+  criticalHitMultiple: 1
+  criticalHitChance:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
   defence:
     _min: 0
     _max: 99999
@@ -145,13 +154,26 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
-  force:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
   condition: 0
   property: 0
+  burnDamage: 0
+  poisonDamage: 0
+--- !u!114 &4046691762488615660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2274422846459070080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 1474637129
+  ObjectInterest: 1
+  Flags: 1
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 6016579880466552673}
+  - {fileID: 408735745228232319}

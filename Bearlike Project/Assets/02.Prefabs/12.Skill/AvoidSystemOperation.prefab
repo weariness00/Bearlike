@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 998571648622284062}
   - component: {fileID: 734012965739966661}
   - component: {fileID: 7087066790294729455}
+  - component: {fileID: -7539734144509090585}
   m_Layer: 12
   m_Name: AvoidSystemOperation
   m_TagString: Untagged
@@ -48,8 +49,7 @@ MonoBehaviour:
   _IsAsyncClient: []
   _IsSpawnSuccess:
     _value: 0
-  _OwnerId:
-    Raw: 0
+  ownerPlayer: {fileID: 0}
   id: 21
   skillName: 
   explain: 
@@ -97,6 +97,15 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   damageMultiple: 1
+  criticalHitMultiple: 1
+  criticalHitChance:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
   defence:
     _min: 0
     _max: 99999
@@ -137,13 +146,26 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
-  force:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
   condition: 0
   property: 0
+  burnDamage: 0
+  poisonDamage: 0
+--- !u!114 &-7539734144509090585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 243888990454671735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 3032872554
+  ObjectInterest: 1
+  Flags: 1
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 734012965739966661}
+  - {fileID: 7087066790294729455}
