@@ -136,6 +136,7 @@ namespace Skill
         {
             skillName = json.Name;
             _originExplain = json.Explain;
+            explain = _originExplain;
             coolTime = json.CoolTime;
             type = json.Type;
         }
@@ -169,7 +170,6 @@ namespace Skill
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void LevelUpRPC()
         {
-            level.Current += 1;
             LevelUp();
         }
 

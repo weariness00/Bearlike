@@ -39,6 +39,7 @@ namespace UI.Skill
             if (block.skill)
             {
                 block.icon.sprite = block.skill.icon;
+                block.coolTimeImage.fillAmount = 0;
                 block.timerText.gameObject.SetActive(false);
             }
         }
@@ -60,20 +61,20 @@ namespace UI.Skill
         {
             var skill = block.skill;
             float timer = skill.coolTime;
-            block.icon.fillAmount = 0;
+            block.coolTimeImage.fillAmount = 1;
             block.timerText.gameObject.SetActive(true);
             while (true)
             {
-                if (skill.IsUse)
-                    break;
-
                 timer -= Time.deltaTime;
-                block.icon.fillAmount = (skill.coolTime - timer) / skill.coolTime;
+                block.coolTimeImage.fillAmount = timer / skill.coolTime;
                 block.timerText.text = ((int)timer).ToString(CultureInfo.InvariantCulture);
                 yield return null;
+                
+                if (skill.IsUse)
+                    break;
             }
             
-            block.icon.fillAmount = 1;
+            block.coolTimeImage.fillAmount = 0;
             block.timerText.gameObject.SetActive(false);
         }
         
@@ -82,6 +83,7 @@ namespace UI.Skill
         {
             public SkillBase skill;
             public Image icon;
+            public Image coolTimeImage; // 쿨타임을 시각적으로 보여주는 이미지
             public TMP_Text timerText;
         }
     }

@@ -61,7 +61,10 @@ namespace UI.Skill
                     
                     // 모든 스킬들이 만렙이면 더이상 Block을 만들지 않는다.
                     if (randomInt == -1)
+                    {
+                        gameObject.SetActive(false);
                         return;
+                    }
                     
                     skill = SkillObjectList.GetFromIndex(randomInt);
                     foreach (var pcSkill in playerController.skillSystem.skillList)
@@ -74,9 +77,13 @@ namespace UI.Skill
                         }
                     }
 
-                    if (skill != null)
+                    if (skill)
                         break;
                 }
+                
+                var hasSkill = playerController.skillSystem.GetSkillFromId(skill.id);
+                if (hasSkill) skill = hasSkill;
+                else skill.SetJsonData(SkillBase.GetInfoData(skill.id));
                 
                 var obj = Instantiate(selectUIBlockObject, toggleGroup.transform);
                 var handle = obj.GetComponent<SkillSelectBlockHandle>();
@@ -90,17 +97,18 @@ namespace UI.Skill
             var activeToggle = toggleGroup.GetFirstActiveToggle();
             var handle = activeToggle.GetComponent<SkillSelectBlockHandle>();
             var skill = playerController.skillSystem.GetSkillFromId(handle.id);
-            if (skill == null)
+            if (!skill)
             {
                 await NetworkManager.Runner.SpawnAsync(
                     SkillObjectList.GetFromID(handle.id).gameObject, Vector3.zero, Quaternion.identity, playerController.Object.InputAuthority,
                     (runner, obj) =>
                     {
-                        obj.transform.SetParent(playerController.transform);
+                        obj.transform.SetParent(playerController.skillSystem.transform);
                         skill = obj.GetComponent<SkillBase>();
                         skill.ownerPlayer = playerController;
                         skill.LevelUp();
                     });
+                playerController.skillSystem.AddSkill(skill);
             }
             else
             {

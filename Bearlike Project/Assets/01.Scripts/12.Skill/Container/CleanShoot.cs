@@ -87,6 +87,7 @@ namespace Skill.Container
                 isInvoke = true;
                 cleanShootCanvas.gameObject.SetActive(true);
                 _areaRect.sizeDelta = range;
+                CoolTimeTimer = TickTimer.CreateFromSeconds(Runner, coolTime);
                 StartCoroutine(AreaSetting(runObject));
                 StartCoroutine(AttackMonsterFromArea(runObject));
             }
@@ -120,7 +121,6 @@ namespace Skill.Container
                 {
                     // 스킬을 사용했으면 초기화 해야됨
                     cleanShootCanvas.gameObject.SetActive(false);
-                    CoolTimeTimer = TickTimer.CreateFromSeconds(Runner, coolTime);
                     isInvoke = false;
                     
                     foreach (var (monster, aim) in _aimDictionary)

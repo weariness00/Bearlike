@@ -170,6 +170,7 @@ namespace UI
                     var stageType = NetworkStages.Get(i);
                     stageData = GameManager.Instance.GetStageIndex((int)stageType);
                 }
+                stageData.info.SetJsonData(StageBase.GetInfoData(stageData.info.id));
                 var index = i;
                 var stageSelectUIObject = Instantiate(stageSelectUIPrefab, stageToggleGroup);
                 var stageSelectUIHandler = stageSelectUIObject.GetComponent<StageSelectUIHandler>();
