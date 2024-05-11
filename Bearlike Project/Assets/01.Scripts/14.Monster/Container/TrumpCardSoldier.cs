@@ -3,9 +3,7 @@ using BehaviorTree.Base;
 using Fusion;
 using Manager;
 using Status;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.VFX;
 
 namespace Monster.Container
@@ -93,6 +91,7 @@ namespace Monster.Container
                 {
                     if (hit.GameObject.TryGetComponent(out targetStatus) || hit.GameObject.transform.root.TryGetComponent(out targetStatus))
                     {
+                        DebugManager.Log($"{hit.GameObject.name}");
                         targetStatus.ApplyDamageRPC(status.CalDamage(), Object.Id, crowdControlType);
                     }
                 }

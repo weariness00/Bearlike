@@ -3,7 +3,6 @@ using Data;
 using Fusion;
 using Fusion.Addons.SimpleKCC;
 using GamePlay;
-using GamePlay.Stage;
 using Item;
 using Manager;
 using Photon;
@@ -14,7 +13,6 @@ using UI.Skill;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
-using UnityEngine.Serialization;
 using Weapon;
 using Weapon.Gun;
 
@@ -51,6 +49,8 @@ namespace Player
 
         public Action<GameObject> MonsterKillAction;
         
+        [Networked] public float W { get; set; }
+        
         #region Animation Parametar
 
         private int _gunLayer;
@@ -85,6 +85,8 @@ namespace Player
         
         public override void Spawned()
         {
+            DebugManager.LogWarning("headRig를 Update에서 계속 바꿔주고 있는거고치기");
+            
             _gunLayer = animator.GetLayerIndex("Gun Layer");
 
             StatusInit();
@@ -124,11 +126,13 @@ namespace Player
             {
                 name = "Remote Player";
             }
-            
         }
 
         public override void FixedUpdateNetwork()
         {
+            // 임시
+            _headRig.weight = W;
+            
             if(!GameManager.Instance.isControl)
                 return;
             
@@ -168,7 +172,8 @@ namespace Player
             {
                 animator.SetTrigger(AniInjury); 
                 animator.SetLayerWeight(_gunLayer, 0);
-                _headRig.weight = 0;
+                // _headRig.weight = 0;
+                W = 0;
                 simpleKcc.Collider.transform.localPosition = new Vector3(0.05f, 0.33f, -0.44f);
                 simpleKcc.Collider.transform.Rotate(90,0,0);
                 foreach (var hitbox in _hitboxRoot.Hitboxes)
@@ -184,7 +189,7 @@ namespace Player
             {
                 animator.SetTrigger(AniRevive);
                 animator.SetLayerWeight(_gunLayer, 1);
-                _headRig.weight = 1;
+                W = 1;
                 simpleKcc.Collider.transform.localPosition = Vector3.zero;
                 simpleKcc.Collider.transform.localRotation = Quaternion.identity;
                 foreach (var hitbox in _hitboxRoot.Hitboxes)
@@ -207,7 +212,7 @@ namespace Player
                 
                 animator.SetTrigger(AniRevive);
                 animator.SetLayerWeight(_gunLayer, 1);
-                _headRig.weight = 1;
+                W = 1;
                 simpleKcc.Collider.transform.localPosition = Vector3.zero;
                 simpleKcc.Collider.transform.localRotation = Quaternion.identity;
                 foreach (var hitbox in _hitboxRoot.Hitboxes)
