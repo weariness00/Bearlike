@@ -155,126 +155,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 735411046}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
---- !u!1 &494935390
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 494935391}
-  - component: {fileID: 494935393}
-  - component: {fileID: 494935392}
-  m_Layer: 0
-  m_Name: Normal Portal VFX
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &494935391
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 494935390}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
-  m_LocalPosition: {x: 4.16, y: 1.81, z: -26.84}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 8397911901888585363}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
---- !u!73398921 &494935392
-VFXRenderer:
-  serializedVersion: 1
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 494935390}
-  m_Enabled: 0
-  m_CastShadows: 1
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 0
-  m_LightProbeUsage: 0
-  m_ReflectionProbeUsage: 0
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
---- !u!2083052967 &494935393
-VisualEffect:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 494935390}
-  m_Enabled: 1
-  m_Asset: {fileID: 8926484042661614526, guid: 684af47771b761b428c840ac82353096, type: 3}
-  m_InitialEventName: OnPlay
-  m_InitialEventNameOverriden: 0
-  m_StartSeed: 0
-  m_ResetSeedOnPlay: 1
-  m_AllowInstancing: 1
-  m_ResourceVersion: 1
-  m_PropertySheet:
-    m_Float:
-      m_Array:
-      - m_Value: 5.3
-        m_Name: Size
-        m_Overridden: 1
-      - m_Value: 3
-        m_Name: Depth
-        m_Overridden: 1
-      - m_Value: 2.7
-        m_Name: Out Particle Size
-        m_Overridden: 1
-    m_Vector2f:
-      m_Array: []
-    m_Vector3f:
-      m_Array: []
-    m_Vector4f:
-      m_Array: []
-    m_Uint:
-      m_Array: []
-    m_Int:
-      m_Array: []
-    m_Matrix4x4f:
-      m_Array: []
-    m_AnimationCurve:
-      m_Array: []
-    m_Gradient:
-      m_Array: []
-    m_NamedObject:
-      m_Array: []
-    m_Bool:
-      m_Array: []
 --- !u!1 &497595153
 GameObject:
   m_ObjectHideFlags: 0
@@ -306,7 +186,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2069077038}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &631237370
+--- !u!1 &660596808
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -314,39 +194,39 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 631237371}
-  - component: {fileID: 631237373}
-  - component: {fileID: 631237372}
+  - component: {fileID: 660596809}
+  - component: {fileID: 660596811}
+  - component: {fileID: 660596810}
   m_Layer: 0
-  m_Name: Survive PortalVFX
+  m_Name: Boss PortalVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!4 &631237371
+--- !u!4 &660596809
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 631237370}
+  m_GameObject: {fileID: 660596808}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
-  m_LocalPosition: {x: 4.16, y: 1.81, z: -26.84}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 3.01, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8397911901888585363}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
---- !u!73398921 &631237372
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!73398921 &660596810
 VFXRenderer:
   serializedVersion: 1
   m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 631237370}
+  m_GameObject: {fileID: 660596808}
   m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 0
@@ -379,13 +259,13 @@ VFXRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!2083052967 &631237373
+--- !u!2083052967 &660596811
 VisualEffect:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 631237370}
+  m_GameObject: {fileID: 660596808}
   m_Enabled: 1
   m_Asset: {fileID: 8926484042661614526, guid: 684af47771b761b428c840ac82353096, type: 3}
   m_InitialEventName: OnPlay
@@ -412,13 +292,13 @@ VisualEffect:
       m_Array: []
     m_Vector4f:
       m_Array:
-      - m_Value: {x: 0.45490196, y: 0.8666667, z: 0.7602258, w: 0}
+      - m_Value: {x: 0.8666667, y: 0.45490196, z: 0.46738064, w: 0}
         m_Name: ParticlesColor
         m_Overridden: 1
-      - m_Value: {x: 0.17254901, y: 0.93333334, z: 0.7148386, w: 0}
+      - m_Value: {x: 0.93333334, y: 0.17254901, z: 0.180321, w: 0}
         m_Name: Circle Color
         m_Overridden: 1
-      - m_Value: {x: 9.035295, y: 47.937256, z: 36.044285, w: 0}
+      - m_Value: {x: 47.937256, y: 9.035295, z: 9.821477, w: 0}
         m_Name: PortalColor
         m_Overridden: 1
     m_Uint:
@@ -540,6 +420,135 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 043c334dcb694849a87b4c0d44248443, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &723423563
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 723423564}
+  - component: {fileID: 723423566}
+  - component: {fileID: 723423565}
+  m_Layer: 0
+  m_Name: Survive PortalVFX
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &723423564
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 723423563}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 3.01, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8397911901888585363}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!73398921 &723423565
+VFXRenderer:
+  serializedVersion: 1
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 723423563}
+  m_Enabled: 0
+  m_CastShadows: 1
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 0
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!2083052967 &723423566
+VisualEffect:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 723423563}
+  m_Enabled: 1
+  m_Asset: {fileID: 8926484042661614526, guid: 684af47771b761b428c840ac82353096, type: 3}
+  m_InitialEventName: OnPlay
+  m_InitialEventNameOverriden: 0
+  m_StartSeed: 0
+  m_ResetSeedOnPlay: 1
+  m_AllowInstancing: 1
+  m_ResourceVersion: 1
+  m_PropertySheet:
+    m_Float:
+      m_Array:
+      - m_Value: 5.3
+        m_Name: Size
+        m_Overridden: 1
+      - m_Value: 3
+        m_Name: Depth
+        m_Overridden: 1
+      - m_Value: 2.7
+        m_Name: Out Particle Size
+        m_Overridden: 1
+    m_Vector2f:
+      m_Array: []
+    m_Vector3f:
+      m_Array: []
+    m_Vector4f:
+      m_Array:
+      - m_Value: {x: 0.45490196, y: 0.8666667, z: 0.7602258, w: 0}
+        m_Name: ParticlesColor
+        m_Overridden: 1
+      - m_Value: {x: 0.17254901, y: 0.93333334, z: 0.7148386, w: 0}
+        m_Name: Circle Color
+        m_Overridden: 1
+      - m_Value: {x: 9.035295, y: 47.937256, z: 36.044285, w: 0}
+        m_Name: PortalColor
+        m_Overridden: 1
+    m_Uint:
+      m_Array: []
+    m_Int:
+      m_Array: []
+    m_Matrix4x4f:
+      m_Array: []
+    m_AnimationCurve:
+      m_Array: []
+    m_Gradient:
+      m_Array: []
+    m_NamedObject:
+      m_Array: []
+    m_Bool:
+      m_Array: []
 --- !u!1 &735411045
 GameObject:
   m_ObjectHideFlags: 0
@@ -763,6 +772,135 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!1 &849364903
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 849364904}
+  - component: {fileID: 849364906}
+  - component: {fileID: 849364905}
+  m_Layer: 0
+  m_Name: Destroy PortalVFX
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &849364904
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 849364903}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 3.01, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8397911901888585363}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!73398921 &849364905
+VFXRenderer:
+  serializedVersion: 1
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 849364903}
+  m_Enabled: 0
+  m_CastShadows: 1
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 0
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!2083052967 &849364906
+VisualEffect:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 849364903}
+  m_Enabled: 1
+  m_Asset: {fileID: 8926484042661614526, guid: 684af47771b761b428c840ac82353096, type: 3}
+  m_InitialEventName: OnPlay
+  m_InitialEventNameOverriden: 0
+  m_StartSeed: 0
+  m_ResetSeedOnPlay: 1
+  m_AllowInstancing: 1
+  m_ResourceVersion: 1
+  m_PropertySheet:
+    m_Float:
+      m_Array:
+      - m_Value: 5.3
+        m_Name: Size
+        m_Overridden: 1
+      - m_Value: 3
+        m_Name: Depth
+        m_Overridden: 1
+      - m_Value: 2.7
+        m_Name: Out Particle Size
+        m_Overridden: 1
+    m_Vector2f:
+      m_Array: []
+    m_Vector3f:
+      m_Array: []
+    m_Vector4f:
+      m_Array:
+      - m_Value: {x: 0.7643338, y: 0.45490196, z: 0.8666667, w: 0}
+        m_Name: ParticlesColor
+        m_Overridden: 1
+      - m_Value: {x: 0.827333, y: 0.17254901, z: 0.93333334, w: 0}
+        m_Name: Circle Color
+        m_Overridden: 1
+      - m_Value: {x: 41.553566, y: 9.035295, z: 47.937256, w: 0}
+        m_Name: PortalColor
+        m_Overridden: 1
+    m_Uint:
+      m_Array: []
+    m_Int:
+      m_Array: []
+    m_Matrix4x4f:
+      m_Array: []
+    m_AnimationCurve:
+      m_Array: []
+    m_Gradient:
+      m_Array: []
+    m_NamedObject:
+      m_Array: []
+    m_Bool:
+      m_Array: []
 --- !u!1 &1243212547
 GameObject:
   m_ObjectHideFlags: 0
@@ -834,7 +972,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2885051411784432137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1838618942
+--- !u!1 &1785062419
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -842,39 +980,39 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1838618943}
-  - component: {fileID: 1838618945}
-  - component: {fileID: 1838618944}
+  - component: {fileID: 1785062420}
+  - component: {fileID: 1785062422}
+  - component: {fileID: 1785062421}
   m_Layer: 0
-  m_Name: Trap PortalVFX
+  m_Name: Normal Portal VFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!4 &1838618943
+--- !u!4 &1785062420
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1838618942}
+  m_GameObject: {fileID: 1785062419}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
-  m_LocalPosition: {x: 4.16, y: 1.81, z: -26.84}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 3.01, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8397911901888585363}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
---- !u!73398921 &1838618944
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!73398921 &1785062421
 VFXRenderer:
   serializedVersion: 1
   m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1838618942}
+  m_GameObject: {fileID: 1785062419}
   m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 0
@@ -907,13 +1045,133 @@ VFXRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!2083052967 &1838618945
+--- !u!2083052967 &1785062422
 VisualEffect:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1838618942}
+  m_GameObject: {fileID: 1785062419}
+  m_Enabled: 1
+  m_Asset: {fileID: 8926484042661614526, guid: 684af47771b761b428c840ac82353096, type: 3}
+  m_InitialEventName: OnPlay
+  m_InitialEventNameOverriden: 0
+  m_StartSeed: 0
+  m_ResetSeedOnPlay: 1
+  m_AllowInstancing: 1
+  m_ResourceVersion: 1
+  m_PropertySheet:
+    m_Float:
+      m_Array:
+      - m_Value: 5.3
+        m_Name: Size
+        m_Overridden: 1
+      - m_Value: 3
+        m_Name: Depth
+        m_Overridden: 1
+      - m_Value: 2.7
+        m_Name: Out Particle Size
+        m_Overridden: 1
+    m_Vector2f:
+      m_Array: []
+    m_Vector3f:
+      m_Array: []
+    m_Vector4f:
+      m_Array: []
+    m_Uint:
+      m_Array: []
+    m_Int:
+      m_Array: []
+    m_Matrix4x4f:
+      m_Array: []
+    m_AnimationCurve:
+      m_Array: []
+    m_Gradient:
+      m_Array: []
+    m_NamedObject:
+      m_Array: []
+    m_Bool:
+      m_Array: []
+--- !u!1 &1976331391
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1976331392}
+  - component: {fileID: 1976331394}
+  - component: {fileID: 1976331393}
+  m_Layer: 0
+  m_Name: Trap PortalVFX
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1976331392
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1976331391}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 3.01, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8397911901888585363}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!73398921 &1976331393
+VFXRenderer:
+  serializedVersion: 1
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1976331391}
+  m_Enabled: 0
+  m_CastShadows: 1
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 0
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!2083052967 &1976331394
+VisualEffect:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1976331391}
   m_Enabled: 1
   m_Asset: {fileID: 8926484042661614526, guid: 684af47771b761b428c840ac82353096, type: 3}
   m_InitialEventName: OnPlay
@@ -947,135 +1205,6 @@ VisualEffect:
         m_Name: Circle Color
         m_Overridden: 1
       - m_Value: {x: 47.937256, y: 46.95676, z: 9.035295, w: 0}
-        m_Name: PortalColor
-        m_Overridden: 1
-    m_Uint:
-      m_Array: []
-    m_Int:
-      m_Array: []
-    m_Matrix4x4f:
-      m_Array: []
-    m_AnimationCurve:
-      m_Array: []
-    m_Gradient:
-      m_Array: []
-    m_NamedObject:
-      m_Array: []
-    m_Bool:
-      m_Array: []
---- !u!1 &2055897288
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2055897289}
-  - component: {fileID: 2055897291}
-  - component: {fileID: 2055897290}
-  m_Layer: 0
-  m_Name: Boss PortalVFX
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &2055897289
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2055897288}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
-  m_LocalPosition: {x: 4.16, y: 1.81, z: -26.84}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 8397911901888585363}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
---- !u!73398921 &2055897290
-VFXRenderer:
-  serializedVersion: 1
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2055897288}
-  m_Enabled: 0
-  m_CastShadows: 1
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 0
-  m_LightProbeUsage: 0
-  m_ReflectionProbeUsage: 0
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
---- !u!2083052967 &2055897291
-VisualEffect:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2055897288}
-  m_Enabled: 1
-  m_Asset: {fileID: 8926484042661614526, guid: 684af47771b761b428c840ac82353096, type: 3}
-  m_InitialEventName: OnPlay
-  m_InitialEventNameOverriden: 0
-  m_StartSeed: 0
-  m_ResetSeedOnPlay: 1
-  m_AllowInstancing: 1
-  m_ResourceVersion: 1
-  m_PropertySheet:
-    m_Float:
-      m_Array:
-      - m_Value: 5.3
-        m_Name: Size
-        m_Overridden: 1
-      - m_Value: 3
-        m_Name: Depth
-        m_Overridden: 1
-      - m_Value: 2.7
-        m_Name: Out Particle Size
-        m_Overridden: 1
-    m_Vector2f:
-      m_Array: []
-    m_Vector3f:
-      m_Array: []
-    m_Vector4f:
-      m_Array:
-      - m_Value: {x: 0.8666667, y: 0.45490196, z: 0.46738064, w: 0}
-        m_Name: ParticlesColor
-        m_Overridden: 1
-      - m_Value: {x: 0.93333334, y: 0.17254901, z: 0.180321, w: 0}
-        m_Name: Circle Color
-        m_Overridden: 1
-      - m_Value: {x: 47.937256, y: 9.035295, z: 9.821477, w: 0}
         m_Name: PortalColor
         m_Overridden: 1
     m_Uint:
@@ -1488,7 +1617,7 @@ Transform:
   m_GameObject: {fileID: 5992768696594196776}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 4.8, z: -2}
+  m_LocalPosition: {x: 0, y: 1.98, z: -3.97}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2307,6 +2436,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Child Room
       objectReference: {fileID: 0}
+    - target: {fileID: 5895620739065839345, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+        type: 3}
+      propertyPath: Flags
+      value: 262145
+      objectReference: {fileID: 0}
+    - target: {fileID: 5895620739065839345, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+        type: 3}
+      propertyPath: SortKey
+      value: 4019098339
+      objectReference: {fileID: 0}
     - target: {fileID: 6822735359699462654, guid: 69ac511c1bea7e540bd78ef6a91f798f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2357,11 +2496,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7072353468347220368, guid: 69ac511c1bea7e540bd78ef6a91f798f,
-        type: 3}
-      propertyPath: m_Layer
-      value: 26
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2381,7 +2515,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &5699041853551936615 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8082968756175958697, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+  m_CorrespondingSourceObject: {fileID: 5895620739065839345, guid: 69ac511c1bea7e540bd78ef6a91f798f,
     type: 3}
   m_PrefabInstance: {fileID: 5699041853551936612}
   m_PrefabAsset: {fileID: 0}
@@ -2389,18 +2523,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &5699041853551936616 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1127993788810118042, guid: 69ac511c1bea7e540bd78ef6a91f798f,
-    type: 3}
-  m_PrefabInstance: {fileID: 5699041853551936612}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &5710321016467674954
@@ -2591,7 +2713,7 @@ MonoBehaviour:
   lootingTable: {fileID: 0}
   stageGameObject: {fileID: 2216216100159288197}
   destructObject: {fileID: 5699041853551936614}
-  navMeshSurface: {fileID: 5699041853551936616}
+  navMeshSurface: {fileID: 0}
   prevStagePortal: {fileID: 6400242058382401759}
   nextStagePortal: {fileID: 708792376}
   monsterSpawnerList:
@@ -2679,11 +2801,11 @@ MonoBehaviour:
     - {fileID: 1328881400512766195}
   otherPortal: {fileID: 0}
   portalVFXList:
-  - {fileID: 494935393}
   - {fileID: 0}
-  - {fileID: 631237373}
-  - {fileID: 1838618945}
-  - {fileID: 2055897291}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!114 &6536228260127126051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3232,15 +3354,16 @@ Transform:
   m_GameObject: {fileID: 2489316751539251877}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.29, z: 28.65}
+  m_LocalPosition: {x: 0, y: 0.05, z: 28.65}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1328881400512766195}
-  - {fileID: 494935391}
-  - {fileID: 631237371}
-  - {fileID: 1838618943}
-  - {fileID: 2055897289}
+  - {fileID: 1785062420}
+  - {fileID: 849364904}
+  - {fileID: 723423564}
+  - {fileID: 1976331392}
+  - {fileID: 660596809}
   m_Father: {fileID: 7630067077364074783}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &8484757208352749496
