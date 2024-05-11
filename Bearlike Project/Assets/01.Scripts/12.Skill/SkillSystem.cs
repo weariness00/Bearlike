@@ -28,6 +28,11 @@ namespace Skill
             }
         }
 
+        public void AddSkill(SkillBase skill)
+        {
+            skillList.Add(skill);
+        }
+
         public SkillBase GetSkillFromId(int id)
         {
             foreach (var skillBase in skillList)
