@@ -13,7 +13,6 @@ namespace Monster.Container
     public class ToySoldierGun : MonsterBase
     {
         private BehaviorTreeRunner _behaviorTreeRunner;
-
         public GunBase gun;
 
         [Header("Animation Clip")] 
@@ -39,13 +38,13 @@ namespace Monster.Container
                 transform.position = hit.position; // NavMesh 위치로 이동
             navMeshAgent.enabled = true;
             
-            _behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
             gun.BeforeShootAction += BeforeShoot;
         }
 
         public override void Spawned()
         {
             base.Spawned();
+            _behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
         }
 
         public override void FixedUpdateNetwork()

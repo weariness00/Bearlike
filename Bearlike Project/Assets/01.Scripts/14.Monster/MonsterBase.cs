@@ -213,14 +213,15 @@ namespace Monster
                               "어그로 시스템을 만들어 인식된 적들중 어그로가 높은 적을 인식하도록 바꾸기");
             
             // target이 쓰러진 상태면 Targeting 풀기
-            if (targetPlayer.status.isInjury ||
+            if (!targetPlayer ||
+                targetPlayer.status.isInjury ||
                 targetPlayer.status.isRevive ||
                 targetPlayer.status.IsDie)
             {
                 targetPlayer = null;
             }
             
-            if (targetPlayer == null)
+            if (!targetPlayer && players.Length != 0)
             {
                 // 직선 거리상 인식 범위 내에 있는 플레이어 탐색
                 var targetPlayers = players.Where(player => 
@@ -253,14 +254,15 @@ namespace Monster
         public INode.NodeState FindTargetFromNavMesh()
         {
             // target이 쓰러진 상태면 Targeting 풀기
-            if (targetPlayer.status.isInjury ||
+            if (!targetPlayer ||
+                targetPlayer.status.isInjury ||
                 targetPlayer.status.isRevive ||
                 targetPlayer.status.IsDie)
             {
                 targetPlayer = null;
             }
             
-            if (targetPlayer == null)
+            if (targetPlayer == null && players.Length != 0)
             {
                 var targetPlayers = players.Where(player => 
                     !player.status.isInjury &&
