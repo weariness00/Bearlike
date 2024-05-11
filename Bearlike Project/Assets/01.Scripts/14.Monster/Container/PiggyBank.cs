@@ -93,7 +93,7 @@ namespace Monster.Container
         private void Awake()
         {
             base.Awake();
-            _btRunner = new BehaviorTreeRunner(SettingTestBT());
+            _btRunner = new BehaviorTreeRunner(SettingBT());
             _visualEffect = GetComponentInChildren<VisualEffect>();
             _navMeshAgent = GetComponent<NavMeshAgent>();
 
