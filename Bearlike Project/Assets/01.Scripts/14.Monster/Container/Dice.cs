@@ -42,6 +42,7 @@ namespace Monster.Container
 
         public override void Spawned()
         {
+            base.Spawned();
             MoveDelayTimer = TickTimer.CreateFromSeconds(Runner, 0);
             AttackTimer = TickTimer.CreateFromSeconds(Runner, 0);
             
