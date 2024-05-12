@@ -40,6 +40,8 @@ namespace Weapon.Bullet
 
         public void Awake()
         {
+            gameObject.layer = LayerMask.NameToLayer("Bullet");//
+            
             status = GetComponent<StatusBase>();
         }
 
