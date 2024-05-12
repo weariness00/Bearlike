@@ -275,7 +275,7 @@ namespace GamePlay.Stage
             {
                 var monsters = FindObjectsOfType<MonsterBase>();
                 foreach (var monster in monsters)
-                    monster.DieRPC();
+                    monster.status.ApplyDamageRPC(999999, monster.Object.Id);
             }
             
             prevStagePortal.IsConnect = true;

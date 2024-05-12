@@ -53,8 +53,8 @@ namespace GamePlay.GM
         // F4 : 아이템 생성 Canvas
         
         // CapsLock + 1~3 : 1~3 번 플레이어 100 데미지
-        // CapsLock + 0 : 모든 플레이어 총알 100개씩 지급
         // CapsLock + 9 : 스킬 쿨타임 초기화
+        // CapsLock + 0 : 모든 플레이어 총알 100개씩 지급
         // ALT + 1~3 : 1~3번 플레이 부상에서 회복
         void GMAction()
         {

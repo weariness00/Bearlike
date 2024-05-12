@@ -98,7 +98,11 @@ namespace Monster.Container
             _navMeshAgent = GetComponent<NavMeshAgent>();
 
             _navMeshAgent.enabled = false;
-            DieAction += ()=> networkAnimator.Animator.SetTrigger(Dead);
+            DieAction += () =>
+            {
+                networkAnimator.Animator.SetTrigger(Dead);
+                isDead = true;
+            };
         }
 
         public override void Start()
@@ -129,7 +133,7 @@ namespace Monster.Container
         {
             base.FixedUpdateNetwork();
             
-            if (!status.IsDie)
+            if (!isDead)
                 _btRunner.Operator();
         }
 

@@ -108,6 +108,7 @@ namespace Monster
             {
                 if (_deadBody) _deadBody.OnDeadBodyRPC();
                 lootingTable.SpawnDropItem();
+                Destroy(this);
             };
             
             status.SetJsonData(GetStatusData(id));
@@ -130,6 +131,7 @@ namespace Monster
                 if (status.IsDie)
                 {
                     DieRPC();
+                    
                 }
             }
         }
@@ -324,7 +326,7 @@ namespace Monster
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void DieRPC()
         {
-            DieAction?.Invoke();
+            DieAction?.Invoke();//
             DebugManager.Log($"몬스터[{name}]이 사망했습니다.");
         }
         
