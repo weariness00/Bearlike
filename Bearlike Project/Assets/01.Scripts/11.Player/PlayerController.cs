@@ -332,35 +332,14 @@ namespace Player
         {
             if(status.isInjury)
                 return;
-            
-            void ChangeWeapon(int index)
+
+            if (HasInputAuthority)
             {
-                weaponSystem.ChangeEquipment(index, gameObject);
-                
-                // 장비에 맞는 애니메이터 Layer Weight 주기
-                animator.SetLayerWeight(_gunLayer, 0);
-                if (weaponSystem.equipment.IsGun)
-                    animator.SetLayerWeight(_gunLayer, 1);
-                
-                // 변경된 장비에 스킬이 적용되도록 스킬 초기화
-                foreach (var skillBase in skillSystem.skillList)
-                {
-                    skillBase.Earn(gameObject);
-                }
+                if (data.ChangeWeapon0) ChangeWeaponRPC(0);
+                else if (data.ChangeWeapon1) ChangeWeaponRPC(1);
+                else if (data.ChangeWeapon2) ChangeWeaponRPC(2);
             }
             
-            if (data.ChangeWeapon0)
-            {
-                ChangeWeapon(0);
-            }
-            else if (data.ChangeWeapon1)
-            {
-                ChangeWeapon(1);
-            }
-            else if (data.ChangeWeapon2)
-            {
-                ChangeWeapon(2);
-            }
 
             if (data.Attack && weaponSystem.equipment.IsGun)
             {
@@ -391,6 +370,25 @@ namespace Player
         [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
         private void UISettingRPC(PlayerInputData data) => UISetting(data);
 
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void ChangeWeaponRPC(int index)
+        {
+            weaponSystem.ChangeEquipment(index, gameObject);
+            
+            DebugManager.Log($"{name}이 총을 [ {index} ]로 변경");
+                
+            // 장비에 맞는 애니메이터 Layer Weight 주기
+            animator.SetLayerWeight(_gunLayer, 0);
+            if (weaponSystem.equipment.IsGun)
+                animator.SetLayerWeight(_gunLayer, 1);
+                
+            // 변경된 장비에 스킬이 적용되도록 스킬 초기화
+            foreach (var skillBase in skillSystem.skillList)
+            {
+                skillBase.Earn(gameObject);
+            }
+        }
+        
         #endregion
     }
 }

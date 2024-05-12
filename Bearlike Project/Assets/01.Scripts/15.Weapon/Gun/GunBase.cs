@@ -89,12 +89,13 @@ namespace Weapon.Gun
                 BeforeShootAction = null;
                 status.ClearAdditionalStatus();
             };
+            
+            IsGun = true;
         }
         
         public override void Start()
         {
             base.Start();
-            IsGun = true;
             
             BulletInit();
         }
@@ -196,7 +197,8 @@ namespace Weapon.Gun
         {
             SoundManager.Play(reloadSound);
 
-            ammo.Current -= needChargingAmmoCount;
+            if(HasInputAuthority)
+                ammo.Current -= needChargingAmmoCount;
             magazine.Current += needChargingAmmoCount;
                 
             AfterReloadAction?.Invoke();
@@ -205,7 +207,7 @@ namespace Weapon.Gun
 
         public void ReloadBullet()
         {
-            if (ReloadLateTimer.Expired(Runner) && ammo.isMin == false && HasStateAuthority)
+            if (ReloadLateTimer.Expired(Runner) && ammo.isMin == false && HasInputAuthority)
             { 
                 int needBulletCount = NeedReloadBulletCount();
                 if (needBulletCount != 0)

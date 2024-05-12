@@ -46,7 +46,7 @@ namespace Weapon.Bullet
         protected void Start()
         {
             direction = (destination - transform.position).normalized;
-            transform.rotation = Quaternion.LookRotation(destination);
+            // transform.rotation = Quaternion.LookRotation(destination);
 
             DebugManager.ToDo("Json으로 moveSpeed받아오도록 수정");
             status.moveSpeed.Max = 50;
