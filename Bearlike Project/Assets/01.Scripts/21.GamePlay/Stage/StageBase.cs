@@ -271,9 +271,12 @@ namespace GamePlay.Stage
             GameManager.Instance.stageCount.Current++;
             StopMonsterSpawn();
             
-            var monsters = FindObjectsOfType<MonsterBase>();
-            foreach (var monster in monsters)
-                monster.DieRPC();
+            if (HasStateAuthority)
+            {
+                var monsters = FindObjectsOfType<MonsterBase>();
+                foreach (var monster in monsters)
+                    monster.DieRPC();
+            }
             
             prevStagePortal.IsConnect = true;
             //prevStagePortal.portalVFXList[0].gameObject.SetActive(true);
@@ -283,7 +286,7 @@ namespace GamePlay.Stage
 
             if (destructObject != null) destructObject.tag = "Destruction";
 
-            StageClearAction?.Invoke();
+            if(StageInfo.stageType != StageType.Boss) StageClearAction?.Invoke();
             DebugManager.Log("스테이지 클리어\n" +
                              $"스테이지 모드 :{stageData.info.stageType}");
         }

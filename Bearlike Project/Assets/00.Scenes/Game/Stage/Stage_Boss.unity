@@ -878,7 +878,8 @@ MonoBehaviour:
   SortKey: 1907898705
   ObjectInterest: 1
   Flags: 262145
-  NestedObjects: []
+  NestedObjects:
+  - {fileID: 8654677963971022371}
   NetworkedBehaviours:
   - {fileID: 8124913317860333870}
   - {fileID: 1423062493400387}
@@ -969,7 +970,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5714360272763927007, guid: 9f3ae6190708af24481a579a05c235d1,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8654677963971022371}
   m_SourcePrefab: {fileID: 100100000, guid: 9f3ae6190708af24481a579a05c235d1, type: 3}
 --- !u!4 &8654677963971022368 stripped
 Transform:
@@ -995,6 +1000,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8654677963971022371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8654677963971022369}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 1451509828
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours: []
 --- !u!65 &8911787028370597983
 BoxCollider:
   m_ObjectHideFlags: 0

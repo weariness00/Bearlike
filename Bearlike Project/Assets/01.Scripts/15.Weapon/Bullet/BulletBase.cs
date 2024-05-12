@@ -103,7 +103,7 @@ namespace Weapon.Bullet
                 NetworkMeshSliceSystem.Instance.SliceRPC(networkObj.Id, Random.onUnitSphere, transform.position, 100f);
             }
 
-            if (penetrateCount-- == 0)
+            if (penetrateCount-- == 0)//
             {
                 Destroy(gameObject);
             }

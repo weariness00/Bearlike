@@ -98,9 +98,10 @@ namespace Monster.Container
             _navMeshAgent = GetComponent<NavMeshAgent>();
 
             _navMeshAgent.enabled = false;
-        }//
+            DieAction += ()=> networkAnimator.Animator.SetTrigger(Dead);
+        }
 
-        private void Start()
+        public override void Start()
         {
             base.Start();
             _gameManager = GameManager.Instance; 
@@ -109,7 +110,6 @@ namespace Monster.Container
             isDead = false;
 
             networkAnimator.Animator.SetFloat(AttackBlend, 0);
-            StartCoroutine(DieCoroutine(1.0f));
         }
 
         public override void Spawned()
@@ -127,7 +127,9 @@ namespace Monster.Container
 
         public override void FixedUpdateNetwork()
         {
-            if (!isDead)
+            base.FixedUpdateNetwork();
+            
+            if (!status.IsDie)
                 _btRunner.Operator();
         }
 
@@ -141,23 +143,6 @@ namespace Monster.Container
             }
         }
         
-        #region BT
-        
-        IEnumerator DieCoroutine(float waitTime)
-        {
-            while (true)
-            {
-                if (status.IsDie)
-                {
-                    networkAnimator.Animator.SetTrigger(Dead);
-                    isDead = true;
-                    yield break;
-                }
-
-                yield return new WaitForSeconds(waitTime);
-            }
-        }
-
         #region BT
 
         INode SettingBT()
@@ -361,8 +346,6 @@ namespace Monster.Container
             );
         }
 
-        #endregion
-        
         /// <summary>
         /// 파라미터로 넘어오는 애니메이션이 동작 중인지 확인하는 함수
         /// </summary>
