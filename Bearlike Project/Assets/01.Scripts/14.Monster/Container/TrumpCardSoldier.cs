@@ -158,7 +158,7 @@ namespace Monster.Container
             {
                 networkAnimator.Animator.SetFloat(AniMove, 0);
                 _isInitAnimation = false;
-                navMeshAgent.isStopped = true;
+                if(navMeshAgent.isActiveAndEnabled) navMeshAgent.isStopped = true;
                 return INode.NodeState.Success;
             }
             
@@ -171,7 +171,7 @@ namespace Monster.Container
                 _randomDir = Random.onUnitSphere * 2f;
                 _randomDir.y = 0;
 
-                navMeshAgent.isStopped = false;
+                if(navMeshAgent.isActiveAndEnabled) navMeshAgent.isStopped = false;
                 AniWalkTimer = TickTimer.CreateFromSeconds(Runner, walkClip.length);
             }
 
@@ -192,7 +192,7 @@ namespace Monster.Container
 
             networkAnimator.Animator.SetFloat(AniMove, 0);
             _isInitAnimation = false;
-            navMeshAgent.isStopped = true;
+            if(navMeshAgent.isActiveAndEnabled) navMeshAgent.isStopped = true;
             return INode.NodeState.Success;
         }
 

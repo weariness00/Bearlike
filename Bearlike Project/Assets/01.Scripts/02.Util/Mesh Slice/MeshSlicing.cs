@@ -272,36 +272,6 @@ namespace Util
                 newDots[0],
                 newDots[1]
             };
-            // var newDotList = newDots.ToList();
-            // newDotList.RemoveAt(0);
-            // newDotList.RemoveAt(0);
-            //
-            // int compareCount = length / 2;
-            // for (int i = 0; i < compareCount; i++)
-            // {
-            //     var lastDot = result.Last();
-            //     for (var j = 0; j < newDotList.Count / 2; j++)
-            //     {
-            //         var dot0 = newDotList[j * 2];
-            //         var dot1 = newDotList[j * 2 + 1];
-            //         if (CompareVector3(lastDot.Vertex, dot0.Vertex) &&
-            //             CompareVector3(lastDot.Vertex, dot1.Vertex) == false)
-            //         {
-            //             result.Add(dot1);
-            //             newDotList.RemoveAt(j * 2);
-            //             newDotList.RemoveAt(j * 2);
-            //             break;
-            //         }
-            //         if (CompareVector3(lastDot.Vertex, dot1.Vertex) &&
-            //             CompareVector3(lastDot.Vertex, dot0.Vertex) == false)
-            //         {
-            //             result.Add(dot0);
-            //             newDotList.RemoveAt(j * 2);
-            //             newDotList.RemoveAt(j * 2);
-            //             break;
-            //         }
-            //     }
-            // }
             
             int compareCount = length / 2;
             for (int i = 0; i < compareCount; i++)

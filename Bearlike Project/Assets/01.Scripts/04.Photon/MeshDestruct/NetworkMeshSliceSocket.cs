@@ -19,6 +19,7 @@ namespace Photon.MeshDestruct
         public NetworkPrefabRef copyPrefab; // Slice 되기전 Mesh를 Copy하는 프리펩
 
         private bool _isCallSpawned = false;
+        private IEnumerator _enumeratorSendSetIsDestructRPCCoroutine;
         
         private GameObject _sliceTargetObject;
         private GameObject _copyTargetObject;
@@ -34,6 +35,8 @@ namespace Photon.MeshDestruct
         {
             base.Spawned();
             _isCallSpawned = true;
+            if (_enumeratorSendSetIsDestructRPCCoroutine != null)
+                StartCoroutine(_enumeratorSendSetIsDestructRPCCoroutine);
             
             var clientNumber = UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber;
             SpawnedSuccessRPC(clientNumber, true);
@@ -124,9 +127,6 @@ namespace Photon.MeshDestruct
         IEnumerator SendSetIsDestructRPCCoroutine(int clientNumber)
         {
             NetworkBool value = false;
-            while (_isCallSpawned == false)
-                yield return null;
-
             while (IsOtherClientDestruct.Get(clientNumber))
             {
                 SetIsDestructRPC(clientNumber, value);
@@ -224,7 +224,13 @@ namespace Photon.MeshDestruct
             
             // 해당 클라이언트의 붕괴가 끝났음을 호스트에게 알리기
             var clientNumber = UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber;
-            StartCoroutine(SendSetIsDestructRPCCoroutine(clientNumber));
+            _enumeratorSendSetIsDestructRPCCoroutine = SendSetIsDestructRPCCoroutine(clientNumber);
+            if (_isCallSpawned)
+            {
+                StartCoroutine(_enumeratorSendSetIsDestructRPCCoroutine);
+                _enumeratorSendSetIsDestructRPCCoroutine = null;
+            }
+           
         }
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]

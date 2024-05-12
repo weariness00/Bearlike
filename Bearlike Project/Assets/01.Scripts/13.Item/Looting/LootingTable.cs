@@ -38,6 +38,11 @@ namespace Item.Looting
         // 드랍해야될 아이템을 스폰
         public void SpawnDropItem()
         {
+            _dropItems = null;
+            isDrop = true;
+            
+            if (_dropItems == null)
+                return;
             foreach (var dropItem in _dropItems)
             {
                 // 네트워크 객체이면 Runner를 통해 스폰
@@ -59,9 +64,6 @@ namespace Item.Looting
                     }
                 }
             }
-
-            _dropItems = null;
-            isDrop = true;
         }
     }
 }
