@@ -1278,6 +1278,7 @@ namespace Monster.Container
         {
             GameObject targetObject;
             
+            // 이부분을 한번에 켜주면 최적화 됨
             if (vfxName == "PigFartRange" || vfxName == "PigGroundAttackRange" || vfxName == "PigMeteorRange")
                 targetObject = transform.Find("Range_vfx").Find(vfxName).gameObject;
             else
