@@ -170,6 +170,8 @@ namespace Player
             // Status 관련 초기화
             status.InjuryAction += () =>
             {
+                GameManager.Instance.AlivePlayerCount--;
+
                 animator.SetTrigger(AniInjury); 
                 animator.SetLayerWeight(_gunLayer, 0);
                 // _headRig.weight = 0;
@@ -187,6 +189,8 @@ namespace Player
             };
             status.RecoveryFromInjuryAction += () =>
             {
+                GameManager.Instance.AlivePlayerCount++;
+                
                 animator.SetTrigger(AniRevive);
                 animator.SetLayerWeight(_gunLayer, 1);
                 W = 1;
@@ -203,7 +207,6 @@ namespace Player
             };
             status.ReviveAction += () =>
             {
-                GameManager.Instance.AlivePlayerCount--;
                 animator.SetTrigger(AniDie);
             };
             status.RecoveryFromReviveAction += () =>

@@ -17,7 +17,6 @@ namespace Weapon.Gun.Continer
         [SerializeField] private float reloadSpeed = 0.5f; // 재장전 속도
 
         [SerializeField] private float bulletRadian; // 산탄 정도(원의 반지름)
-        [SerializeField] private PlayerCameraController _playerCameraController;
         public bool bknock;
 
         private Coroutine _reloadCoroutine;
@@ -44,7 +43,7 @@ namespace Weapon.Gun.Continer
         {
             if (magazine.Current != 0)
             {
-                _playerCameraController.ReboundCamera();
+                if(playerCameraController) playerCameraController.ReboundCamera();
                 animatorInfo.SetFireSpeed(BulletFirePerSecond);
                 animatorInfo.PlayFireBullet();
                 var dst = CheckRay();

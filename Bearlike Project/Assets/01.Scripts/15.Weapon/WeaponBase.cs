@@ -1,6 +1,7 @@
 ﻿using System;
 using Status;
 using Fusion;
+using Player;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -22,6 +23,8 @@ namespace Weapon
         [Networked] public NetworkId OwnerId { get; set; }
         public StatusBase status;
         public LayerMask includeCollide;
+        
+        [HideInInspector] public PlayerCameraController playerCameraController;
         
         [Header("기본 이펙트")]
         public VisualEffect hitEffect; // 타격 이펙트
@@ -51,6 +54,10 @@ namespace Weapon
         void SetEquip(GameObject equipObject)
         {
             gameObject.SetActive(true);
+            
+            // 카메라 셋팅
+            playerCameraController = equipObject.GetComponent<PlayerCameraController>();
+            
             // 주인 설정
             OwnerId = equipObject.GetComponent<NetworkObject>().Id;
             

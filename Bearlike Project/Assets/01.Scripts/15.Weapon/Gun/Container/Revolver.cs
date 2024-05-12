@@ -9,20 +9,25 @@ namespace Weapon.Gun
     {
         public RevolverAnimator animatorInfo;
 
-        public override void Start()
+        public override void Awake()
         {
-            base.Start();
+            base.Awake();
 
-            AfterFireAction += () =>
+            EquipAction += (targetObject) =>
             {
-                animatorInfo.PlayFire();
-                animatorInfo.SetFireSpeed(fireLateSecond);
-            };
+                AfterFireAction += () =>
+                {
+                    if(playerCameraController) playerCameraController.ReboundCamera();
 
-            AfterReloadAction += () =>
-            {
-                animatorInfo.PlayReload();
-                animatorInfo.SetReloadSpeed(reloadLateSecond);
+                    animatorInfo.PlayFire();
+                    animatorInfo.SetFireSpeed(fireLateSecond);
+                };
+
+                AfterReloadAction += () =>
+                {
+                    animatorInfo.PlayReload();
+                    animatorInfo.SetReloadSpeed(reloadLateSecond);
+                };
             };
         }
     }

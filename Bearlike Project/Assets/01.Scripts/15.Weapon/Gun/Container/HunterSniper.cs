@@ -6,19 +6,24 @@ namespace Weapon.Gun.Container
     {
         public HunterSniperAnimator animatorInfo;
 
-        public override void Start()
+        public override void Awake()
         {
-            base.Start();
-            AfterFireAction += () =>
+            base.Awake();
+            EquipAction += (targetObject) =>
             {
-                animatorInfo.SetFireSpeed(fireLateSecond);
-                animatorInfo.PlayFire();
-            };
+                AfterFireAction += () =>
+                {
+                    if(playerCameraController) playerCameraController.ReboundCamera();
 
-            AfterReloadAction += () =>
-            {
-                animatorInfo.SetReloadSpeed(reloadLateSecond);
-                animatorInfo.PlayReload();
+                    animatorInfo.SetFireSpeed(fireLateSecond);
+                    animatorInfo.PlayFire();
+                };
+
+                AfterReloadAction += () =>
+                {
+                    animatorInfo.SetReloadSpeed(reloadLateSecond);
+                    animatorInfo.PlayReload();
+                };
             };
         }
     }

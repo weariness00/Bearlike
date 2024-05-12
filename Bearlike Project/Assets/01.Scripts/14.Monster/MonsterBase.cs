@@ -138,6 +138,14 @@ namespace Monster
 
         #region Member Function
 
+        public void RotateTarget()
+        {
+            Vector3 dir = (targetPlayer.transform.position - transform.position).normalized;
+            dir.y = 0;
+            Quaternion lookRotation = Quaternion.LookRotation(dir);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Runner.DeltaTime);
+        }
+
         /// <summary>
         /// Target과의 직선 거리를 알려주는 함수
         /// 장애물이 있는 경우 float.MaxValue를 반환

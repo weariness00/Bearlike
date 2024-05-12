@@ -209,6 +209,7 @@ namespace Monster.Container
 
             if (AniAttackTimer.Expired(Runner) == false)
             {
+                RotateTarget();
                 return INode.NodeState.Running;
             }
 
