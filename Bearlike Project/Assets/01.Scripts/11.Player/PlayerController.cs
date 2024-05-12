@@ -376,6 +376,9 @@ namespace Player
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void ChangeWeaponRPC(int index)
         {
+            DebugManager.ToDo("Muzzle 임시 처리");
+            weaponSystem.weaponList[index].transform.Find("Muzzle").gameObject.SetActive(false);
+            
             weaponSystem.ChangeEquipment(index, gameObject);
             
             DebugManager.Log($"{name}이 총을 [ {index} ]로 변경");

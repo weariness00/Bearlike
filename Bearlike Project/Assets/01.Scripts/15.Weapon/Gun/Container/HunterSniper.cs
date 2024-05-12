@@ -2,7 +2,7 @@
 
 namespace Weapon.Gun.Container
 {
-    public class HunterSniper : Sniper
+    public class HunterSniper : GunBase
     {
         public HunterSniperAnimator animatorInfo;
 

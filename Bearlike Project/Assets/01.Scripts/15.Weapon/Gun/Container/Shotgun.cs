@@ -46,6 +46,9 @@ namespace Weapon.Gun.Continer
                 if(playerCameraController) playerCameraController.ReboundCamera();
                 animatorInfo.SetFireSpeed(BulletFirePerSecond);
                 animatorInfo.PlayFireBullet();
+                
+                MuzzleRPC();
+                
                 var dst = CheckRay();
 
                 if (shootEffect != null) shootEffect.Play();
@@ -108,5 +111,7 @@ namespace Weapon.Gun.Continer
         }
 
         #endregion
+
+
     }
 }

@@ -143,7 +143,8 @@ namespace Weapon.Gun
                 if (isDst)
                     dst = CheckRay();
 
-                if (shootEffect != null) shootEffect.Play();
+                if (shootEffect != null)
+                    MuzzleRPC();
 
                 if (HasStateAuthority)
                 {
@@ -267,6 +268,14 @@ namespace Weapon.Gun
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void ReloadBulletRPC(int needChargingAmmoCount) => ReLoadBullet(needChargingAmmoCount);
 
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void MuzzleRPC()
+        {
+            if(false == shootEffect.gameObject.activeSelf)
+                shootEffect.gameObject.SetActive(true);
+            shootEffect.SendEvent("OnPlay");
+        }
+        
         #endregion
     }
 }

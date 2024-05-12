@@ -189,8 +189,8 @@ namespace Monster.Container
                         )
                     )
                 ),
-                // new SelectorNode(
-                //     false,
+                new SelectorNode(
+                    false,
                     new SequenceNode
                     (   // Kick
                         new ActionNode(CheckAttackAction),
@@ -198,8 +198,8 @@ namespace Monster.Container
                         new ActionNode(StartAttack),
                         new ActionNode(TermFuction)
                     ),
-                // new ActionNode(SuccessFunction)
-                // ),
+                new ActionNode(SuccessFunction)
+                ),
                 new SelectorNode
                 (
                     true,
@@ -436,7 +436,7 @@ namespace Monster.Container
                 
             // TODO: 위치를 어디 잡을까 ==> 
             // 가장 피가 적은 플레이어에게 이동?
-            int minHp = Int32.MaxValue;
+            int minHp = -1;
             Vector3 direction = new Vector3();
                 
             foreach (var player in _players)
@@ -452,8 +452,6 @@ namespace Monster.Container
             // TODO : 속도를 잘 설정해야한다.
             _navMeshAgent.speed = direction.magnitude / 5.0f;
             _navMeshAgent.SetDestination(transform.position + direction);
-            // 무게 중심으로 이동?
-            // 아니면 플레이어에게서 멀어지는 방향으로 이동?
                 
             _durationTime = _gameManager.PlayTimer;
                 
