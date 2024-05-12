@@ -1,5 +1,7 @@
 using Fusion;
 using GamePlay;
+using Manager;
+using Player;
 using Status;
 using UnityEngine;
 using Weapon.Gun;
@@ -12,65 +14,31 @@ namespace Skill.Container
     /// </summary>
     public class SniperContinuousMode : SkillBase
     {
-        [Networked] public TickTimer T { get; set; }
-        #region time
-
-        private GameManager _gm;
-        private float _currentPlayTime;
-        private float _previousPlayTime;
-
-        private float _deltaPlayTime;
-
-        #endregion
-
         #region property
 
-        private GunBase _sniper;
+        // TODO : 스킬 자체의 gun status로 작동되도록 변경해야함
+        public PlayerStatus playerStatus;
         
-        private bool _bOn;
-        private float _difference;
-
-        #endregion
+        private float _durationTime;
         
-        #region Value
-
-        public StatusValue<float> duration = new StatusValue<float>();
-        private const float CoolTime = 50.0f;
-        private const float DurationTime = 7.0f;
-
+        [Networked] private TickTimer DurationTimeTimer { get; set; }
+        
+        private int _type;              // 동전 앞뒷면
+        private float _difference;      // 차이 값 
+        
         #endregion
-
-        public override void Awake()
-        {
-            base.Awake();
-            
-            var tempCoolTime = new StatusValue<float>();
-            tempCoolTime.Max = CoolTime;
-            tempCoolTime.Min = tempCoolTime.Current = 0.0f;
-    
-            coolTime = tempCoolTime;
-    
-            var tempDuration = new StatusValue<float>();
-            tempDuration.Max = DurationTime;
-            tempDuration.Min = tempDuration.Current = 0.0f;
-    
-            duration = tempDuration;
-
-            _gm = GameManager.Instance;
-                
-            _difference = 0;
-        }
 
         private void Start()
         {
             base.Start();
-            _sniper = transform.root.GetComponentInChildren<GunBase>();    // or 인스펙터에서 추가하는 방식
-            // gameObject.SetActive(false);
+            var statusData = GetStatusData(id);
+            _durationTime = statusData.GetFloat("Duration Time");
+            Debug.Log($"SniperContinuousMode : {_durationTime}");
         }
 
         public override void Earn(GameObject earnTargetObject)
         {
-            
+            // 얻는 대상을 총으로 해야하나
         }
 
         public override void MainLoop()
@@ -99,6 +67,14 @@ namespace Skill.Container
             // {
             //     _previousPlayTime = _currentPlayTime;
             // }
+            
+            if (DurationTimeTimer.Expired(Runner) && true == isInvoke)
+            {
+                isInvoke = false;
+                CoolTimeTimer = TickTimer.CreateFromSeconds(Runner, coolTime);
+                
+                playerStatus.attackSpeed.Current -= (int)_difference;
+            }
         }
     
         public override void Run(GameObject runObject)
@@ -115,6 +91,19 @@ namespace Skill.Container
             //
             //     _bOn = true;
             // }
+            
+            if (CoolTimeTimer.Expired(Runner) && false == isInvoke)
+            {
+                isInvoke = true;
+                // TODO : VFX도 넣어보자(너무 티가 안남)
+                
+                playerStatus = runObject.GetComponent<PlayerStatus>();
+                
+                _difference = playerStatus.attackSpeed.Current * 3.0f;
+                playerStatus.attackSpeed.Current += (int)_difference;
+                
+                DurationTimeTimer = TickTimer.CreateFromSeconds(Runner, _durationTime);
+            }
         }
 
     }

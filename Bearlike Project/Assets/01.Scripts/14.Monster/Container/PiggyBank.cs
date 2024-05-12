@@ -162,9 +162,9 @@ namespace Monster.Container
 
         INode SettingBT()
         {
-            return new SelectorNode
+            return new SequenceNode // selector로 변경 가능
             (
-                true,
+                // true,
                 new SequenceNode
                 (
                     new ActionNode(CheckWalkAction),
@@ -517,9 +517,9 @@ namespace Monster.Container
             
             PlayVFXRPC("Shield_vfx");
             networkAnimator.Animator.SetTrigger(Defence);
-            _navMeshAgent.SetDestination(transform.position);
-            
-            status.AddCondition(CrowdControl.DamageIgnore);
+            _navMeshAgent.speed = 0.0f;
+
+            ApplyDefenceRPC();
             
             _durationTime = _gameManager.PlayTimer;
 
@@ -532,8 +532,9 @@ namespace Monster.Container
         /// <returns></returns>
         INode.NodeState StopDefence()
         {
-            status.DelCondition(CrowdControl.DamageIgnore);
             StopVFXRPC("Shield_vfx");
+
+            RemoveDefenceRPC();
             
             return INode.NodeState.Success;
         }
@@ -1184,6 +1185,22 @@ namespace Monster.Container
             transform.GetChild(0).DORotate(_lookDirection, RotationDuration).SetEase(Ease.Linear);
         }
 
+        #region Dfence
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void ApplyDefenceRPC()
+        {
+            status.AddCondition(CrowdControl.DamageIgnore);
+        }
+        
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void RemoveDefenceRPC()
+        {
+            status.DelCondition(CrowdControl.DamageIgnore);
+        }
+
+        #endregion
+        
         #region JumpRPC
         
         [Rpc(RpcSources.All, RpcTargets.All)]
