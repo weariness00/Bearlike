@@ -54,21 +54,21 @@ namespace Monster.Container
 
         [Header("공격 범위")]
         [SerializeField] private float attackRange = 10; // 발차기 감지 범위
-        [SerializeField] private float rushRange = 100; // 돌진 감지 범위
+        [SerializeField] private float rushRange = 50; // 돌진 감지 범위
         [SerializeField] private float jumpRange = 30; // 점프 감지 범위
-        [SerializeField] private float coinAtaackMinRange = 13; // 코인 공격 최소 감지 범위
+        [SerializeField] private float coinAtaackMinRange = 15; // 코인 공격 최소 감지 범위
         [SerializeField] private float coinAtaackMaxRange = 30; // 코인 공격 최대 감지 범위
 
         [SerializeField] private float jumpAttackDamageRange = 17;
         [SerializeField] private float fartDamageRange = 10;
         //
         [Header("상하 속도")] 
-        [SerializeField] private float upSpeed = 1.0f;
-        [SerializeField] private float downSpeed = 3.0f;
+        [SerializeField] private float upTime = 3.0f;
+        [SerializeField] private float downTime = 1.0f;
         
         [Header("이동 정도")] 
-        [SerializeField]private float runDistance = 3.0f;
-        [SerializeField] private float rushDistance = 5.0f;
+        [SerializeField]private float runDistance = 10.0f;
+        [SerializeField] private float rushDistance = 10.0f;
         [SerializeField]private float jumpHeight = 10.0f;
 
         private float _delayTime = 5.0f;
@@ -286,9 +286,9 @@ namespace Monster.Container
                 //     ( 
                 //         new SequenceNode
                 //         (   // Run
-                //             new ActionNode(StartRun),
-                //             new ActionNode(TermFuction),
-                //             new ActionNode(StopRun)
+                // new ActionNode(StartRun),
+                // new ActionNode(TermFuction),
+                // new ActionNode(StopRun)
                 //         ),
                 // new SequenceNode
                 // (   // JumpAttack OR Jump CoinAttack
@@ -302,13 +302,13 @@ namespace Monster.Container
                 // ),
                 // new SelectorNode(
                 //     false,
-                new SequenceNode
-                (   // Kick
-                    new ActionNode(CheckAttackAction),
-                    // new ActionNode(CheckAttackDistance),
-                    new ActionNode(StartAttack),
-                    new ActionNode(TermFuction)
-                )
+                // new SequenceNode
+                // (   // Kick
+                //     new ActionNode(CheckAttackAction),
+                //     // new ActionNode(CheckAttackDistance),
+                //     new ActionNode(StartAttack),
+                //     new ActionNode(TermFuction)
+                // )
                 //     new ActionNode(SuccessFunction)
                 // ),
                 // new SelectorNode
@@ -318,10 +318,10 @@ namespace Monster.Container
                 //         true,
                 //         new SequenceNode
                 //         (   // Rush
-                //             new ActionNode(CheckRushAction), 
-                //             // new ActionNode(CheckRushDistance),
-                //             new ActionNode(StartRush),
-                //             new ActionNode(TermFuction)
+                new ActionNode(CheckRushAction), 
+                new ActionNode(CheckRushDistance),
+                new ActionNode(StartRush),
+                new ActionNode(TermFuction)
                 //         ),
                 //         new SelectorNode(
                 //             false,
@@ -560,18 +560,20 @@ namespace Monster.Container
                 var position = player.transform.position;
                 centroid.x += position.x;
                 centroid.y += position.y;
+                centroid.z += position.z;
             }
             centroid.x /= _playerCount;
             centroid.y /= _playerCount;
+            centroid.z /= _playerCount;
 
-            var direction = transform.position - centroid;
+            var direction = (transform.position - centroid).normalized;
             
             networkAnimator.Animator.SetFloat(AttackBlend, RUSH_TYPE);
             networkAnimator.Animator.SetTrigger(Attack);
             
-            _navMeshAgent.speed = direction.magnitude * runDistance / 3.0f;   // animation의 길이가 3초
+            _navMeshAgent.speed = runDistance / 3.0f;   // animation의 길이가 3초
             _navMeshAgent.SetDestination(transform.position + direction * runDistance);
-
+            
             _durationTime = _gameManager.PlayTimer;
 
             return INode.NodeState.Success;
@@ -699,22 +701,21 @@ namespace Monster.Container
         /// 돌진 행동의 공격범위에 플레이어가 있는지 확인하는 노드
         /// </summary>
         /// <returns></returns>
-        // TODO : 러쉬의 범위를 제안하면 점프 공격의 패턴이 거의 안나올 가능성이 있기에 러쉬의 범위제한을 없애는 방향으로 가거나 점프공격을 포물선으로 움직이게 하면 되지 않을까
         INode.NodeState CheckRushDistance()
         {
             bool checkResult = false;
-            float maxDistance = rushRange;
+            float minDistance = rushRange;
             
             for (int index = 0; index < _playerCount; ++index)
             {
                 var distance = FastDistance(transform.position, _players[index].transform.position);
-                if (distance < attackRange)
+                if (distance < rushRange)
                 {
                     checkResult |= true;
 
-                    if (distance < maxDistance)
+                    if (distance < minDistance)
                     {
-                        maxDistance = distance;
+                        minDistance = distance;
                         _targetPlayerIndex = index;
                     }
                 }
@@ -737,10 +738,16 @@ namespace Monster.Container
             networkAnimator.Animator.SetFloat(AttackBlend, RUSH_TYPE);
             networkAnimator.Animator.SetTrigger(Attack);
 
-            Vector3 backVec = math.normalize(_players[_targetPlayerIndex].transform.position - transform.position);
-
-            _navMeshAgent.speed = FastDistance(transform.position, _players[_targetPlayerIndex].transform.position + backVec * rushDistance) / 3.0f;
-            _navMeshAgent.SetDestination(_players[_targetPlayerIndex].transform.position + backVec * rushDistance);
+            // 1. 고정 거리 돌진
+            // Vector3 backVec = (_players[_targetPlayerIndex].transform.position - transform.position).normalized;
+            // _navMeshAgent.speed = rushDistance / 3.0f;
+            // _navMeshAgent.SetDestination(transform.position + backVec * rushDistance);
+            
+            // 2. player뒤까지 돌진
+            Vector3 backVec = (_players[_targetPlayerIndex].transform.position - transform.position);
+            
+            _navMeshAgent.speed = (backVec.magnitude + (backVec.normalized.magnitude * rushDistance)) / 3.0f;   // player와 돼지의 거리 + 해당 벡터 * 10 만큼 더
+            _navMeshAgent.SetDestination(transform.position + backVec + backVec.normalized * rushDistance);
             
             _durationTime = _gameManager.PlayTimer;
 
@@ -886,9 +893,8 @@ namespace Monster.Container
                             
                         // TODO : 데미지 비율 상수로 조절하자
                         DebugManager.ToDo("데미지를 받을때 id받아오는 형식을 변수에 담아서 받아오자");
-                        if (type == 3)
-                            // status.hp.Current -= (int)(status.hp.Current / 100.0f);
-                            status.ApplyDamageRPC((int)(status.hp.Current / 10.0f), gameObject.GetComponent<NetworkObject>().Id);
+                        
+                        status.ApplyDamageRPC((int)(status.hp.Current / 10.0f), gameObject.GetComponent<NetworkObject>().Id);
                         
                         // TODO : 천천히 오는 vfx와 부딪히는 판정으로 하고싶다
                         // TODO : 바로 적용 시키면 부자연스러움
@@ -1044,12 +1050,12 @@ namespace Monster.Container
         
         IEnumerator RestCoroutine()
         {
-            int count = 0;
+            int count = 0;//
             while (true)
             {
                 _durationTime = _gameManager.PlayTimer;
                 // TODO : 상수화 시키자
-                status.hp.Current += (int)((status.hp.Max - status.hp.Current) / 0.05f);
+                RecoveryHPRPC();
                 yield return new WaitForSeconds(0.5f);
                 count++;
                 // TODO: 상수화 시키자
@@ -1185,7 +1191,7 @@ namespace Monster.Container
         {
             DebugManager.ToDo("돼지 BT : status에서 속도를 받아오도록 수정");
             // TODO : transform.position.y + height로 수정
-            transform.GetChild(0).DOMoveY(transform.position.y + jumpHeight, 3.0f).SetEase(Ease.OutCirc);
+            transform.GetChild(0).DOMoveY(transform.position.y + jumpHeight, upTime).SetEase(Ease.OutCirc);
 //
             if (type == 2)
             {
@@ -1203,7 +1209,7 @@ namespace Monster.Container
         public void JumpDownRPC(int type)
         {
             DebugManager.ToDo("돼지 BT : status에서 속도를 받아오도록 수정");
-            transform.GetChild(0).DOMoveY(transform.position.y, 1.0f).SetEase(Ease.InCirc);
+            transform.GetChild(0).DOMoveY(transform.position.y, downTime).SetEase(Ease.InCirc);
             
             DebugManager.Log($"Y Position : {transform.position.y - jumpHeight}");
             if (type == 2)
@@ -1229,6 +1235,12 @@ namespace Monster.Container
         
         #region RestRPC
 
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void RecoveryHPRPC()
+        {
+            status.hp.Current += (int)((status.hp.Max - status.hp.Current) / 0.05f);
+        }
+        
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void PressDownActionRPC()
         {
