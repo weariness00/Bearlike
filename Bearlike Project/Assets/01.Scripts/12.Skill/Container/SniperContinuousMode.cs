@@ -35,12 +35,7 @@ namespace Skill.Container
             _durationTime = statusData.GetFloat("Duration Time");
             Debug.Log($"SniperContinuousMode : {_durationTime}");
         }
-
-        public override void Earn(GameObject earnTargetObject)
-        {
-            // 얻는 대상을 총으로 해야하나
-        }
-
+        
         public override void MainLoop()
         {
             // if (coolTime.isMin == false)
@@ -71,13 +66,13 @@ namespace Skill.Container
             if (DurationTimeTimer.Expired(Runner) && true == isInvoke)
             {
                 isInvoke = false;
-                CoolTimeTimer = TickTimer.CreateFromSeconds(Runner, coolTime);
+                SetSkillCoolTimerRPC(coolTime);
                 
                 playerStatus.attackSpeed.Current -= (int)_difference;
             }
         }
     
-        public override void Run(GameObject runObject)
+        public override void Run()
         {
             // if (_bOn == false && Mathf.Round((coolTime.Current - coolTime.Min) * 10) * 0.1f <= 0f)
             // {
@@ -92,12 +87,12 @@ namespace Skill.Container
             //     _bOn = true;
             // }
             
-            if (CoolTimeTimer.Expired(Runner) && false == isInvoke)
+            if (IsUse && false == isInvoke)
             {
                 isInvoke = true;
                 // TODO : VFX도 넣어보자(너무 티가 안남)
-                
-                playerStatus = runObject.GetComponent<PlayerStatus>();
+
+                playerStatus = ownerPlayer.status;
                 
                 _difference = playerStatus.attackSpeed.Current * 3.0f;
                 playerStatus.attackSpeed.Current += (int)_difference;

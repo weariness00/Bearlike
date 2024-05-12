@@ -21,7 +21,7 @@ namespace Skill.Container
         
         private float _durationTime;
         
-        [Networked] private TickTimer DurationTimeTimer { get; set; }
+        private TickTimer DurationTimeTimer { get; set; }
         
         private int _type;              // 동전 앞뒷면
         private float _difference;      // 차이 값 
@@ -45,6 +45,7 @@ namespace Skill.Container
         
         public override void Earn(GameObject earnTargetObject)
         {
+            base.Earn(earnTargetObject);
             if (earnTargetObject.TryGetComponent(out PlayerController pc))
             {
                 pc.status.AddAdditionalStatus(status);
@@ -80,7 +81,7 @@ namespace Skill.Container
             if (DurationTimeTimer.Expired(Runner) && true == isInvoke)
             {
                 isInvoke = false;
-                CoolTimeTimer = TickTimer.CreateFromSeconds(Runner, coolTime);
+                SetSkillCoolTimerRPC(coolTime);
                 if (_type == 0)
                 {
                     playerStatus.attackSpeed.Current -= (int)_difference;
@@ -92,7 +93,7 @@ namespace Skill.Container
             }
         }
         
-        public override void Run(GameObject runObject)
+        public override void Run()
         {
             // 둘중 하나 채택
             // if(Math.Abs(CoolTime.Current - CoolTime.Min) < 1E-6)
@@ -125,14 +126,14 @@ namespace Skill.Container
             //     Debug.Log($"남은 쿨타임 : {coolTime.Current}");
             // }
 
-            if (CoolTimeTimer.Expired(Runner) && false == isInvoke)
+            if (IsUse && false == isInvoke)
             {
                 isInvoke = true;
                 // TODO : VFX도 넣어보자(너무 티가 안남)
                 
                 _type = Random.Range(0, 2);
-                
-                playerStatus = runObject.GetComponent<PlayerStatus>();
+
+                playerStatus = ownerPlayer.status;
                 
                 if (_type == 0)
                 {

@@ -66,25 +66,23 @@ namespace Player.Container
 
         void SkillControl(PlayerInputData data)
         {
-            if (HasInputAuthority == false || status.isInjury)
-            {
+            if (HasInputAuthority == false)
                 return;
-            }
             
             if (data.FirstSkill)
             {
                 skillCanvas.StartCoolTime(FlippingCoin);
-                FlippingCoin.Run(gameObject);
+                FlippingCoin.RunRPC();
             }
             else if (data.SecondSkill)
             {
                 skillCanvas.StartCoolTime(tmpSkill);
-                tmpSkill.Run(gameObject);
+                tmpSkill.RunRPC();
             }
             else if (data.Ultimate)
             {
                 skillCanvas.StartCoolTime(ultimateSkill);
-                ultimateSkill.Run(gameObject);
+                ultimateSkill.RunRPC();
             }
         }
     }

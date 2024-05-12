@@ -1,7 +1,4 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Data;
 using Fusion;
 using GamePlay;
@@ -9,10 +6,8 @@ using GamePlay.Stage;
 using GamePlay.StageLevel;
 using Manager;
 using Photon;
-using Script.Data;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.VFX;
 
 namespace UI
 {
@@ -32,7 +27,7 @@ namespace UI
 
         public List<StageData> nextStageList = new List<StageData>();
 
-        [Header("스테이지 선택 버튼")] public Button selectButton;
+        [Header("스테이지 선택 토글")] public Toggle selectToggle;
         [Header("스테이지 정보 그룹")] public Transform stageToggleGroup;
         public GameObject stageSelectUIPrefab;
         private List<StageSelectUIHandler> stageSelectUIHandlerList = new List<StageSelectUIHandler>();
@@ -52,7 +47,8 @@ namespace UI
             _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
             
             clientNumber = UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber;
-
+            
+            selectToggle.onValueChanged.AddListener(Ready);
             
             // 객체 동기화를 위한 함수
             if (IsSettingUI)
@@ -113,10 +109,9 @@ namespace UI
         }
 
         // 투표를 마쳤다는 표시
-        public void Ready()
+        public void Ready(bool value)
         {
-            var readyValue = NetworkReadyArray.Get(clientNumber);
-            ReadyRPC(clientNumber, !readyValue);
+            ReadyRPC(clientNumber, value);
             
             DebugManager.ToDo("투표 관련 UI도 만들어주고 업데이트 해줘야한다.");
         }

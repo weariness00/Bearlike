@@ -65,11 +65,6 @@ namespace Skill.Container
             _difference = 0;
         }
 
-        public override void Earn(GameObject earnTargetObject)
-        {
-            
-        }
-
         public override void MainLoop()
         {
             _currentPlayTime = _gm.PlayTimer;
@@ -88,7 +83,7 @@ namespace Skill.Container
             _previousPlayTime = _currentPlayTime;
         }
         
-        public override void Run(GameObject runObject)
+        public override void Run()
         {
             // 둘중 하나 채택
             // if(Math.Abs(CoolTime.Current - CoolTime.Min) < 1E-6)

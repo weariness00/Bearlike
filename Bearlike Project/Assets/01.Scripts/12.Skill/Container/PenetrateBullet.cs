@@ -12,6 +12,7 @@ namespace Skill.Container
     {
         public override void Earn(GameObject earnTargetObject)
         {
+            base.Earn(earnTargetObject);
             if (earnTargetObject.TryGetComponent(out PlayerController pc))
             {
                 if (pc.weaponSystem.equipment.IsGun)
@@ -26,7 +27,7 @@ namespace Skill.Container
         {
         }
 
-        public override void Run(GameObject runObject)
+        public override void Run()
         {
         }
 

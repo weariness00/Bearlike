@@ -4,6 +4,7 @@ using GamePlay;
 using Photon;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Loading
@@ -53,7 +54,7 @@ namespace Loading
             yield return new WaitForSeconds(0.5f);
 
             GameManager.Instance.isControl = true;
-            NetworkManager.UnloadScene(gameObject.scene.path);
+            SceneManager.UnloadSceneAsync(gameObject.scene.path);
         }
     }
 }

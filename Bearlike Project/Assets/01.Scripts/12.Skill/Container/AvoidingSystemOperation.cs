@@ -70,10 +70,6 @@ namespace Skill.Container
             DurationTimer = TickTimer.CreateFromTicks(Runner, 0);
         }
 
-        public override void Earn(GameObject earnTargetObject)
-        {
-        }
-
         public override void MainLoop()
         {
             // _currentPlayTime = _gm.PlayTimer;
@@ -94,7 +90,7 @@ namespace Skill.Container
             _previousPlayTime = _currentPlayTime;
         }
 
-        public override void Run(GameObject runObject)
+        public override void Run()
         {
             // if (_bOn == false && Mathf.Round((coolTime.Current - coolTime.Min) * 10) * 0.1f <= 0f)
             // {

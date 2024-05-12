@@ -69,6 +69,8 @@ namespace Skill.Container
 
         public override void Earn(GameObject earnTargetObject)
         {
+            base.Earn(earnTargetObject);
+            
             if (earnTargetObject.TryGetComponent(out PlayerController pc))
             {
                 status.AddAdditionalStatus(pc.status);
@@ -80,15 +82,20 @@ namespace Skill.Container
             
         }
 
-        public override void Run(GameObject runObject)
+        public override void Run()
         {
-            if (CoolTimeTimer.Expired(Runner) && isInvoke == false)
+            if (IsUse && isInvoke == false)
             {
                 isInvoke = true;
-                cleanShootCanvas.gameObject.SetActive(true);
                 _areaRect.sizeDelta = range;
-                StartCoroutine(AreaSetting(runObject));
-                StartCoroutine(AttackMonsterFromArea(runObject));
+                
+                if(HasInputAuthority)
+                {
+                    cleanShootCanvas.gameObject.SetActive(true);
+                    StartCoroutine(AreaSetting(ownerPlayer.gameObject));
+                }
+                
+                StartCoroutine(AttackMonsterFromArea());
             }
             else if (isInvoke)
             {
@@ -119,7 +126,7 @@ namespace Skill.Container
                 explain = explain.Replace("(Level)", $"{level.Current}");
         }
         
-        IEnumerator AttackMonsterFromArea(GameObject runObject)
+        IEnumerator AttackMonsterFromArea()
         {
             yield return _areaOpenAniTime;
             while (true)
@@ -129,7 +136,7 @@ namespace Skill.Container
                 {
                     // 스킬을 사용했으면 초기화 해야됨
                     isInvoke = false;
-                    CoolTimeTimer = TickTimer.CreateFromSeconds(Runner, coolTime);
+                    SetSkillCoolTimerRPC(coolTime);
                     cleanShootCanvas.gameObject.SetActive(false);
                     
                     foreach (var (monster, aim) in _aimDictionary)
@@ -137,16 +144,19 @@ namespace Skill.Container
                         Destroy(aim);
                     }
                     _aimDictionary.Clear();
-                    
-                    foreach (var monster in _monsterList)
+
+                    if (HasInputAuthority)
                     {
-                        var status = monster.GetComponent<MonsterStatus>();
-                        status.ApplyDamageRPC(status.CalDamage(), ownerPlayer.Object.Id, CrowdControl.Normality);
+                        foreach (var monster in _monsterList)
+                        {
+                            var status = monster.GetComponent<MonsterStatus>();
+                            status.ApplyDamageRPC(status.CalDamage(), ownerPlayer.Object.Id, CrowdControl.Normality);
                         
-                        // 총알 궤적 VFX 생성
-                        var monsterNetworkId = monster.GetComponent<NetworkObject>().Id;
-                        var viewPosition = Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f, 1f));
-                        SpawnTrajectoryRPC(monsterNetworkId, viewPosition);
+                            // 총알 궤적 VFX 생성
+                            var monsterNetworkId = monster.GetComponent<NetworkObject>().Id;
+                            var viewPosition = Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f, 1f));
+                            SpawnTrajectoryRPC(monsterNetworkId, viewPosition);
+                        }
                     }
                     break;
                 }

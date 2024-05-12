@@ -1557,9 +1557,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00998785dceb45bfb6aab2f0675df172, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _IsAsyncClient: []
-  _IsSpawnSuccess:
-    _value: 0
   firstSkill:
     skill: {fileID: 0}
     icon: {fileID: 8884985268613957250}
@@ -3956,6 +3953,7 @@ MonoBehaviour:
   Flags: 786433
   NestedObjects:
   - {fileID: 6653982448794407285}
+  - {fileID: 2136011376091040465}
   - {fileID: 7093958912352303388}
   - {fileID: 592236629455508476}
   - {fileID: 3816315270266910807}
@@ -3979,7 +3977,6 @@ MonoBehaviour:
   - {fileID: 4719698784326777624}
   - {fileID: 8992574548056908079}
   - {fileID: 1207115465948429785}
-  - {fileID: 1800973540513868868}
 --- !u!54 &7507528767881361376
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -8132,6 +8129,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Mega Shotgun
+      objectReference: {fileID: 0}
+    - target: {fileID: 4978868291306717186, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: SortKey
+      value: 2179111185
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
