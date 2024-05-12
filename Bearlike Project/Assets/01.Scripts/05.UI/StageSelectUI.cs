@@ -148,6 +148,7 @@ namespace UI
                 Destroy(selectHandler.gameObject);
             }
 
+            selectToggle.isOn = false;
             stageSelectUIHandlerList.Clear();
             for (int i = 0; i < NetworkStages.Length; i++)
             {
