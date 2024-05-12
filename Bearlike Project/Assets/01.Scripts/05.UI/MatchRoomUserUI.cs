@@ -10,6 +10,7 @@ using UnityEngine.UI;
 public class MatchRoomUserUI : NetworkBehaviour
 {
     public TMP_Text[] users_Text;
+    public Button startButton;
     public Button exitButton;
 
     private void Awake()
@@ -40,6 +41,11 @@ public class MatchRoomUserUI : NetworkBehaviour
     public override void Spawned()
     {
         DataUpdate();
+
+        if (HasStateAuthority == false)
+        {
+            startButton.gameObject.SetActive(false);
+        }
     }
 
     // UserData의 Action들에 넣고 뺼 용으로 사용하는 함수
