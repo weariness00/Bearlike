@@ -44,6 +44,7 @@ namespace UI.Skill
             {
                 block.icon.sprite = block.skill.icon;
                 block.coolTimeImage.fillAmount = 0;
+                block.useImage.gameObject.SetActive(false);
                 block.timerText.gameObject.SetActive(false);
             }
         }
@@ -73,9 +74,15 @@ namespace UI.Skill
         private IEnumerator StartCoolTimeCoroutine(SkillBlock block)
         {
             var skill = block.skill;
-
-            while (skill.IsUse)
+            
+            block.useImage.gameObject.SetActive(true);
+            while (true)
+            {
                 yield return null;
+                if (skill.isInvoke == false)
+                    break;
+            }   
+            block.useImage.gameObject.SetActive(false);
             
             float timer = skill.coolTime;
             block.coolTimeImage.fillAmount = 1;
@@ -108,6 +115,7 @@ namespace UI.Skill
             public SkillBase skill;
             public Image icon;
             public Image coolTimeImage; // 쿨타임을 시각적으로 보여주는 이미지
+            public Image useImage; // 스킬을 눌렀으나 아직 사용하지 않거나 스킬의 지속시간이 있을경우 활성화
             public TMP_Text timerText;
         }
     }
