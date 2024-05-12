@@ -12,7 +12,7 @@ namespace UI.Skill
     /// <summary>
     /// 스킬의 쿨타임 표시
     /// </summary>
-    public class SkillCanvas : NetworkBehaviourEx
+    public class SkillCanvas : MonoBehaviour
     {
         public SkillBlock firstSkill = new SkillBlock();
         public SkillBlock secondSkill = new SkillBlock();

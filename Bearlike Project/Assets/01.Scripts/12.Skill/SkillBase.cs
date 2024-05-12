@@ -57,7 +57,7 @@ namespace Skill
 
         public StatusBase status;
         public StatusValue<int> level = new StatusValue<int>() { Max = 1 };
-        [Networked] public TickTimer CoolTimeTimer { get; set; }
+        private TickTimer CoolTimeTimer { get; set; }
         // 쿨타임이 끝나서 사용할 수 있는 상태인지
         public bool IsUse => CoolTimeTimer.Expired(Runner);
 
@@ -92,9 +92,12 @@ namespace Skill
         /// 스킬을 습득 했을때 발동하도록 하는 함수
         /// </summary>
         /// <param name="earnTargetObject">해당 스킬을 습득한 대상</param>
-        public abstract void Earn(GameObject earnTargetObject);
+        public virtual void Earn(GameObject earnTargetObject)
+        {
+            ownerPlayer = earnTargetObject.GetComponent<PlayerController>();
+        }
         public abstract void MainLoop();
-        public abstract void Run(GameObject runObject);
+        public abstract void Run();
 
         /// <summary>
         /// 레벨업 (스킬 강화) 할시 동작하는 함수
@@ -153,12 +156,15 @@ namespace Skill
             ownerPlayer = pc;
         }
 
-        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        [Rpc(RpcSources.All, RpcTargets.All)]
         public void SetSkillCoolTimerRPC(float time) => CoolTimeTimer = TickTimer.CreateFromSeconds(Runner, time);
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void SetIsInvokeRPC(NetworkBool value) => isInvoke = value;
 
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void RunRPC() => Run();
+        
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void SetLevelRPC(StatusValueType type, int value)
         {

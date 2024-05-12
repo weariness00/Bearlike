@@ -13,6 +13,7 @@ namespace Skill.Container
     {
         public override void Earn(GameObject earnTargetObject)
         {
+            base.Earn(earnTargetObject);
             if (earnTargetObject.TryGetComponent(out PlayerController pc))
             {
                 if (pc.weaponSystem.equipment is GunBase gun)
@@ -20,7 +21,7 @@ namespace Skill.Container
                     gun.AfterFireAction += () =>
                     {
                         gun.SetMagazineRPC(StatusValueType.Current, ++gun.magazine.Current);
-                        gun.FireBulletRPC();
+                        if(HasStateAuthority) gun.FireBulletRPC();
                     };
                 }
             }
@@ -30,7 +31,7 @@ namespace Skill.Container
         {
         }
 
-        public override void Run(GameObject runObject)
+        public override void Run()
         {
         }
     }
