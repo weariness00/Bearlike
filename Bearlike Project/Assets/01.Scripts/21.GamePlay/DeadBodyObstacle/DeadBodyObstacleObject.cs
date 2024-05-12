@@ -95,6 +95,7 @@ namespace GamePlay.DeadBodyObstacle
             
             _status.hp.Current = hp;
 
+            MakeNetworkTransform();
             if (HasStateAuthority)
             {
                 // Nav Mesh Obstacle 생성
@@ -157,6 +158,18 @@ namespace GamePlay.DeadBodyObstacle
                 _navMeshObstacleList.Add(obstacle);
             }
         }
+        
+        /// <summary>
+        /// Rigid body를 기준으로 Network Transform 컴포넌트 부착
+        /// </summary>
+        private void MakeNetworkTransform()
+        {
+            foreach (var rb in _ragdollRigidBodies)
+            {
+                rb.gameObject.AddComponent<NetworkTransform>();
+            }
+        }
+            
 
         private IEnumerator CheckHP()
         {

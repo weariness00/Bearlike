@@ -152,7 +152,7 @@ namespace Weapon.Gun
                             var b = o.GetComponent<BulletBase>();
                             b.status.AddAdditionalStatus(status);
 
-                            b.OwnerId = OwnerId;
+                            b.ownerId = OwnerId;
                             b.hitEffect = hitEffect;
                             b.bknock = false;
                             b.status.attackRange.Max = status.attackRange.Max;

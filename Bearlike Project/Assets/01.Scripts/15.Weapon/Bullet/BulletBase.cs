@@ -8,6 +8,7 @@ using Status;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.VFX;
 using Random = UnityEngine.Random;
 
@@ -16,7 +17,7 @@ namespace Weapon.Bullet
     [RequireComponent(typeof(StatusBase))]
     public class BulletBase : NetworkBehaviourEx
     {
-        [HideInInspector] [Networked] public NetworkId OwnerId { get; set; } // 이 총을 쏜 주인의 ID
+        [HideInInspector] public NetworkId ownerId; // 이 총을 쏜 주인의 ID
         public StatusBase status;
         public int penetrateCount = 0; // 관통 가능 횟수
 
@@ -74,7 +75,7 @@ namespace Weapon.Bullet
                 otherStatus.AddAdditionalStatus(colliderStatus.status);
                 
                 // player가 건이다.
-                otherStatus.ApplyDamageRPC(status.CalDamage(), OwnerId);
+                otherStatus.ApplyDamageRPC(status.CalDamage(), ownerId);
                 otherStatus.RemoveAdditionalStatus(colliderStatus.status);
                 
                 if (bknock)
@@ -89,11 +90,11 @@ namespace Weapon.Bullet
             }
             else if (other.transform.root.gameObject.TryGetComponent(out PlayerStatus playerStatus))
             {
-                playerStatus.ApplyDamageRPC(status.CalDamage(), OwnerId);
+                playerStatus.ApplyDamageRPC(status.CalDamage(), ownerId);
             }
             else if (other.TryGetComponent(out StatusBase otherStatus))
             {
-                otherStatus.ApplyDamageRPC(status.CalDamage(), OwnerId);
+                otherStatus.ApplyDamageRPC(status.CalDamage(), ownerId);
             }
             // 메쉬 붕괴 객체와 충돌 시
             else if (other.CompareTag("Destruction"))

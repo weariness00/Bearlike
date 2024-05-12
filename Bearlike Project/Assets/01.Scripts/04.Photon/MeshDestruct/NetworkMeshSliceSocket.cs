@@ -18,6 +18,8 @@ namespace Photon.MeshDestruct
         public NetworkPrefabRef slicePrefab;
         public NetworkPrefabRef copyPrefab; // Slice 되기전 Mesh를 Copy하는 프리펩
 
+        private bool _isCallSpawned = false;
+        
         private GameObject _sliceTargetObject;
         private GameObject _copyTargetObject;
         private bool _isInitCopy;
@@ -31,6 +33,8 @@ namespace Photon.MeshDestruct
         public override void Spawned()
         {
             base.Spawned();
+            _isCallSpawned = true;
+            
             var clientNumber = UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber;
             SpawnedSuccessRPC(clientNumber, true);
         }
@@ -120,6 +124,9 @@ namespace Photon.MeshDestruct
         IEnumerator SendSetIsDestructRPCCoroutine(int clientNumber)
         {
             NetworkBool value = false;
+            while (_isCallSpawned == false)
+                yield return null;
+
             while (IsOtherClientDestruct.Get(clientNumber))
             {
                 SetIsDestructRPC(clientNumber, value);
