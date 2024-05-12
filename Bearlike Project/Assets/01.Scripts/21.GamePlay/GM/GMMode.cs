@@ -52,8 +52,9 @@ namespace GamePlay.GM
         // F3 : 몬스터 생성 Canvas
         // F4 : 아이템 생성 Canvas
         
-        // CTRL + 1~3 : 1~3 번 플레이어 100 데미지
-        // CTRL + 0 : 모든 플레이어 총알 100개씩 지급
+        // CapsLock + 1~3 : 1~3 번 플레이어 100 데미지
+        // CapsLock + 0 : 모든 플레이어 총알 100개씩 지급
+        // CapsLock + 9 : 스킬 쿨타임 초기화
         // ALT + 1~3 : 1~3번 플레이 부상에서 회복
         void GMAction()
         {
@@ -73,6 +74,18 @@ namespace GamePlay.GM
                 {
                     players[2].status.ApplyDamageRPC(100, players[2].Object.Id);
                     if(players[2].status.isInjury) players[0].status.GoReviveRPC();
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha9))
+                {
+                    foreach (var p in players)
+                    {
+                        if (p.name == "Local Player")
+                        {
+                            foreach (var skill in p.skillSystem.skillList)
+                                skill.SetSkillCoolTimerRPC(0f);
+                            break;
+                        }
+                    }
                 }
                 else if (Input.GetKeyDown(KeyCode.Alpha0))
                 {

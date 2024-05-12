@@ -18,6 +18,10 @@ namespace UI.Skill
         public SkillBlock secondSkill = new SkillBlock();
         public SkillBlock ultimateSkill = new SkillBlock();
 
+        private Coroutine _firstCoolTimeCoroutine;
+        private Coroutine _secondCoolTimeCoroutine;
+        private Coroutine _ultimateCoolTimeCoroutine;
+
         public void SetFirstSkill(SkillBase skill) => firstSkill.skill = skill;
         public void SetSecondSkill(SkillBase skill) => secondSkill.skill = skill;
         public void SetUltimateSkill(SkillBase skill) => ultimateSkill.skill = skill;
@@ -48,18 +52,31 @@ namespace UI.Skill
         {
             if (skill.IsUse)
             {
-                if(firstSkill.skill == skill)
-                    StartCoroutine(StartCoolTimeCoroutine(firstSkill));
+                if (firstSkill.skill == skill)
+                {
+                    if(_firstCoolTimeCoroutine != null) StopCoroutine(_firstCoolTimeCoroutine);
+                    _firstCoolTimeCoroutine = StartCoroutine(StartCoolTimeCoroutine(firstSkill));
+                }
                 else if(secondSkill.skill == skill)
-                    StartCoroutine(StartCoolTimeCoroutine(secondSkill));
+                {
+                    if(_secondCoolTimeCoroutine != null) StopCoroutine(_secondCoolTimeCoroutine);
+                    _secondCoolTimeCoroutine = StartCoroutine(StartCoolTimeCoroutine(secondSkill));
+                }
                 else if(ultimateSkill.skill == skill)
-                    StartCoroutine(StartCoolTimeCoroutine(ultimateSkill));
+                {
+                    if(_ultimateCoolTimeCoroutine != null) StopCoroutine(_ultimateCoolTimeCoroutine);
+                    _ultimateCoolTimeCoroutine = StartCoroutine(StartCoolTimeCoroutine(ultimateSkill));
+                }
             }
         }
 
         private IEnumerator StartCoolTimeCoroutine(SkillBlock block)
         {
             var skill = block.skill;
+
+            while (skill.IsUse)
+                yield return null;
+            
             float timer = skill.coolTime;
             block.coolTimeImage.fillAmount = 1;
             block.timerText.gameObject.SetActive(true);
@@ -76,6 +93,13 @@ namespace UI.Skill
             
             block.coolTimeImage.fillAmount = 0;
             block.timerText.gameObject.SetActive(false);
+
+            if (firstSkill.skill == skill)
+                _firstCoolTimeCoroutine = null;
+            else if (secondSkill.skill == skill)
+                _secondCoolTimeCoroutine = null;
+            else if (ultimateSkill.skill == skill)
+                _ultimateCoolTimeCoroutine = null;
         }
         
         [System.Serializable]

@@ -154,6 +154,9 @@ namespace Skill
         }
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void SetSkillCoolTimerRPC(float time) => CoolTimeTimer = TickTimer.CreateFromSeconds(Runner, time);
+
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void SetIsInvokeRPC(NetworkBool value) => isInvoke = value;
 
         [Rpc(RpcSources.All, RpcTargets.All)]

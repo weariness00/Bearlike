@@ -73,18 +73,18 @@ namespace Player.Container
             
             if (data.FirstSkill)
             {
-                skillCanvas.StartCoolTime(FlippingCoin);
                 FlippingCoin.Run(gameObject);
+                skillCanvas.StartCoolTime(FlippingCoin);
             }
             else if (data.SecondSkill)
             {
-                skillCanvas.StartCoolTime(tmpSkill);
                 tmpSkill.Run(gameObject);
+                skillCanvas.StartCoolTime(tmpSkill);
             }
             else if (data.Ultimate)
             {
-                skillCanvas.StartCoolTime(ultimateSkill);
                 ultimateSkill.Run(gameObject);
+                skillCanvas.StartCoolTime(ultimateSkill);
             }
         }
     }

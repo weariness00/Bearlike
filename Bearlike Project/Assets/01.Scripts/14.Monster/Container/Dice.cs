@@ -157,7 +157,7 @@ namespace Monster.Container
         {
             if (CheckNavMeshDis(status.attackRange.Current - 0.1f))
             {
-                return INode.NodeState.Running;
+                return INode.NodeState.Success;
             }
             
             if (_isCollide && MoveDelayTimer.Expired(Runner))

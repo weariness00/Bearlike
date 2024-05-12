@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Manager;
+using Photon;
 using UnityEngine;
 
 namespace Skill
@@ -8,7 +9,7 @@ namespace Skill
     /// <summary>
     /// 객체가 가지고 있는 스킬들을 관리해주는 시스템
     /// </summary>
-    public class SkillSystem : MonoBehaviour
+    public class SkillSystem : NetworkBehaviourEx
     {
         public List<SkillBase> skillList = new List<SkillBase>();
 
@@ -17,11 +18,11 @@ namespace Skill
             skillList = GetComponentsInChildren<SkillBase>().ToList();
         }
 
-        private void Update()
+        public override void FixedUpdateNetwork()
         {
             foreach (var skill in skillList)
             {
-                if (skill.isInvoke == false)
+                if (skill.isInvoke)
                 {
                     skill.MainLoop();
                 }
