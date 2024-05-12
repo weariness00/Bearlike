@@ -18,6 +18,7 @@ namespace UI.Weapon.Gun
         public Image amount;
 
         private int _magazineCount;
+        private int _ammoCount;
 
         private void Awake()
         {
@@ -41,7 +42,10 @@ namespace UI.Weapon.Gun
             {
                 var gun = weaponSystem.equipment as GunBase;
                 amount.fillAmount = (float)gun.magazine.Current / (float)gun.magazine.Max;
-            
+                
+                DebugManager.ToDo("ammo의 종류는 많으니 추후에 수정 필요");
+                _ammoCount = GunBase.ammo.Current;
+                
                 DebugManager.ToDo("총의 종류에 따라 Ammo를 받아오는 방식으로 변경해야함");
                 ammoCount.text = GunBase.ammo.Current.ToString();
             
@@ -54,7 +58,7 @@ namespace UI.Weapon.Gun
             if (weaponSystem.equipment.IsGun)
             {
                 var gun = weaponSystem.equipment as GunBase;
-                if (_magazineCount != gun.magazine.Current)
+                if (_magazineCount != gun.magazine.Current || _ammoCount != GunBase.ammo.Current)
                 {
                     bulletCount.text = gun.magazine.Current.ToString();
                 
