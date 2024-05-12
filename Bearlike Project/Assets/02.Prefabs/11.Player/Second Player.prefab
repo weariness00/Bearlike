@@ -3580,6 +3580,7 @@ MonoBehaviour:
   Flags: 786433
   NestedObjects:
   - {fileID: 4491082804579630670}
+  - {fileID: 9196520639817573866}
   - {fileID: 5203628710983792406}
   - {fileID: 2485356588158967286}
   - {fileID: 1510846061475938718}
@@ -7835,15 +7836,15 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4303053860246033292, guid: fb0375b9d4667184885fa46e6c1de475,
-        type: 3}
-      propertyPath: _playerCameraController
-      value: 
-      objectReference: {fileID: 4111289363253553492}
     - target: {fileID: 4743372364268393535, guid: fb0375b9d4667184885fa46e6c1de475,
         type: 3}
       propertyPath: m_Name
       value: Mega Shotgun
+      objectReference: {fileID: 0}
+    - target: {fileID: 4978868291306717186, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: SortKey
+      value: 142408557
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7871,6 +7872,18 @@ Transform:
 --- !u!114 &4491082804579630670 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 354496408801352614, guid: fb0375b9d4667184885fa46e6c1de475,
+    type: 3}
+  m_PrefabInstance: {fileID: 4231383221986977256}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &9196520639817573866 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4978868291306717186, guid: fb0375b9d4667184885fa46e6c1de475,
     type: 3}
   m_PrefabInstance: {fileID: 4231383221986977256}
   m_PrefabAsset: {fileID: 0}
