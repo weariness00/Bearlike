@@ -107,6 +107,7 @@ GameObject:
   - component: {fileID: 4954559184598586670}
   - component: {fileID: 2786087794774556420}
   - component: {fileID: 8355084743447907546}
+  - component: {fileID: 5245332092334057491}
   m_Layer: 0
   m_Name: Model
   m_TagString: Monster
@@ -285,6 +286,24 @@ MonoBehaviour:
   animator: {fileID: 0}
   attackClip: {fileID: -7151699867823042650, guid: 06b73b76c5896db4b9c9fffc851e2576,
     type: 3}
+--- !u!114 &5245332092334057491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3173723756818245486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 506319458, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Animator: {fileID: 2786087794774556420}
+  TotalWords: 1
+  ApplyTiming: 2
+  SyncSettings: 79
+  StateHashes: 00000000da912718a79d18d3558b690afa0b4e99
+  TriggerHashes: 00000000e8a2e574
 --- !u!1 &3465241712122150889
 GameObject:
   m_ObjectHideFlags: 0
@@ -347,7 +366,7 @@ MonoBehaviour:
   id: 0
   explain: 
   type: 
-  targetTransform: {fileID: 0}
+  targetPlayer: {fileID: 0}
   targetMask:
     serializedVersion: 2
     m_Bits: 4096
@@ -498,6 +517,7 @@ MonoBehaviour:
   - {fileID: 4519316146450510175}
   - {fileID: -5128691535337078838}
   - {fileID: 4954559184598586670}
+  - {fileID: 5245332092334057491}
 --- !u!114 &-5128691535337078838
 MonoBehaviour:
   m_ObjectHideFlags: 0
