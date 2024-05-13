@@ -328,7 +328,7 @@ namespace Status
         /// <param name="id">대미지를 준 대상의 Network ID</param>
         /// <param name="enemyProperty"></param>
         /// <param name="info"></param>
-        [Rpc(RpcSources.All, RpcTargets.All)]
+        [Rpc(RpcSources.All, RpcTargets.All, Channel = RpcChannel.Reliable)]
         public void ApplyDamageRPC(int damage, NetworkId id, CrowdControl enemyProperty = CrowdControl.Normality, RpcInfo info = default)
         {
             ApplyDamage(damage, id, enemyProperty);

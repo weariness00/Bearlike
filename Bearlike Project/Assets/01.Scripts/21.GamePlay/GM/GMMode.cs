@@ -1,4 +1,5 @@
 ﻿using Data;
+using Monster;
 using Player;
 using UnityEngine;
 using Weapon.Bullet;
@@ -51,6 +52,7 @@ namespace GamePlay.GM
         // F2 : 스테이지 Over
         // F3 : 몬스터 생성 Canvas
         // F4 : 아이템 생성 Canvas
+        // F5 : 모든 몬스터에게 99999 대미지
         
         // CapsLock + 1~3 : 1~3 번 플레이어 100 데미지
         // CapsLock + 9 : 스킬 쿨타임 초기화
@@ -126,6 +128,12 @@ namespace GamePlay.GM
                 gmMonsterSpawnerCanvas.gameObject.SetActive(!gmMonsterSpawnerCanvas.gameObject.activeSelf);
             else if(Input.GetKeyDown(KeyCode.F4))
                 gmItemSpawnerCanvas.gameObject.SetActive(!gmItemSpawnerCanvas.gameObject.activeSelf);
+            else if (Input.GetKeyDown(KeyCode.F5))
+            {
+                var monsters = FindObjectsOfType<MonsterBase>();
+                foreach (var monster in monsters)
+                    monster.status.ApplyDamageRPC(99999, monster.Object.Id);
+            }
         }
     }
 }
