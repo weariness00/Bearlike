@@ -14,24 +14,26 @@ namespace Skill.Container
     public class CleanShoot : SkillBase
     {
         public Canvas cleanShootCanvas;
+        public Canvas aimCanvas;
         public GameObject areaObject;
         public GameObject aimObject;
 
         // public VisualEffect trajectoryVFX; // 총알 궤적 이펙트
         public NetworkPrefabRef trajectoryVFX;
+        private float _trajectoryVFXDestroyTime;
         public Vector2 range;
 
         private RectTransform _areaRect;
         private Animation areaAnimation;
-        private WaitForSeconds _areaOpenAniTime; // UI 키는 애니메이션 시간
+        private float _aniAreaOpenTime;
+        private WaitForSeconds _areaOpenWaiter; // UI 키는 애니메이션 시간
 
         private Animation _aimAnimation;
         private WaitForSeconds _aimTargetingAniTime;
 
-        private float _trajectoryVFXDestroyTime;
-        
         private LayerMask _layerMask;
 
+        private TickTimer _cancelTimer; // 스킬을 취소 할 수 있게 하는데 바로 하지 않고 스킬 발동후 일정 시간 이후에 하게 하기 위해 사용
         private WaitForSeconds _findTime; // 몇초를 주기로 영역내에 몬스터 포착 업데이트를 하게 할지
 
         private List<MonsterBase> _monsterList = new List<MonsterBase>(); // 타격할 몬스터를 담는 컨테이너
@@ -41,11 +43,12 @@ namespace Skill.Container
         public override void Awake()
         {
             base.Awake();
-            
+
             {
                 areaAnimation = areaObject.GetComponent<Animation>();
                 var clip = areaAnimation.GetClip("Open Clean Shoot Area");
-                _areaOpenAniTime = new WaitForSeconds(clip.length);
+                _aniAreaOpenTime = clip.length;
+                _areaOpenWaiter = new WaitForSeconds(clip.length);
                 _areaRect = areaObject.GetComponent<RectTransform>();
             }
 
@@ -59,7 +62,7 @@ namespace Skill.Container
                 // _trajectoryVFXDestroyTime = trajectoryVFX.GetFloat("Duration");
                 _trajectoryVFXDestroyTime = 3f;
             }
-            
+
             _layerMask = LayerMask.GetMask("Default");
 
             _findTime = new WaitForSeconds(0.2f);
@@ -70,7 +73,7 @@ namespace Skill.Container
         public override void Earn(GameObject earnTargetObject)
         {
             base.Earn(earnTargetObject);
-            
+
             if (earnTargetObject.TryGetComponent(out PlayerController pc))
             {
                 status.AddAdditionalStatus(pc.status);
@@ -79,32 +82,42 @@ namespace Skill.Container
 
         public override void MainLoop()
         {
-            
         }
 
         public override void Run()
         {
             if (IsUse && isInvoke == false)
             {
+                _cancelTimer = TickTimer.CreateFromSeconds(Runner, _aniAreaOpenTime);
+
                 isInvoke = true;
                 _areaRect.sizeDelta = range;
-                
-                if(HasInputAuthority)
+
+                if (HasInputAuthority)
                 {
                     cleanShootCanvas.gameObject.SetActive(true);
+                    aimCanvas.gameObject.SetActive(true);
+                    ownerPlayer.cameraController.SetLensDistortion();
+                    ownerPlayer.cameraController.SetLensDistortion(-0.5f, 1f, 1f, null, 1.15f, 2f);
                     StartCoroutine(AreaSetting(ownerPlayer.gameObject));
                 }
-                
+
                 StartCoroutine(AttackMonsterFromArea());
             }
-            else if (isInvoke)
+            else if (_cancelTimer.Expired(Runner) && isInvoke)
             {
                 isInvoke = false;
-                StopAllCoroutines();
-                foreach (var (monster, aim) in _aimDictionary)
-                    Destroy(aim);
+                if (HasInputAuthority)
+                {
+                    ownerPlayer.cameraController.SetLensDistortion();
+                    StopAllCoroutines();
+                    foreach (var (monster, aim) in _aimDictionary)
+                        Destroy(aim);
+                    
+                    cleanShootCanvas.gameObject.SetActive(false);
+                    aimCanvas.gameObject.SetActive(false);
+                }
                 _aimDictionary.Clear();
-                cleanShootCanvas.gameObject.SetActive(false);
             }
         }
 
@@ -120,15 +133,15 @@ namespace Skill.Container
         public override void ExplainUpdate()
         {
             base.ExplainUpdate();
-            if(explain.Contains("(현재 공격력)"))
+            if (explain.Contains("(현재 공격력)"))
                 explain = explain.Replace("(현재 공격력)", $"({status.CalDamage()})");
-            if(explain.Contains("(Level)"))
+            if (explain.Contains("(Level)"))
                 explain = explain.Replace("(Level)", $"{level.Current}");
         }
-        
+
         IEnumerator AttackMonsterFromArea()
         {
-            yield return _areaOpenAniTime;
+            yield return _areaOpenWaiter;
             while (true)
             {
                 yield return null;
@@ -138,26 +151,28 @@ namespace Skill.Container
                     isInvoke = false;
                     SetSkillCoolTimerRPC(coolTime);
                     cleanShootCanvas.gameObject.SetActive(false);
-                    
+                    aimCanvas.gameObject.SetActive(false);
+
                     foreach (var (monster, aim) in _aimDictionary)
-                    {
                         Destroy(aim);
-                    }
                     _aimDictionary.Clear();
 
                     if (HasInputAuthority)
                     {
+                        ownerPlayer.cameraController.SetLensDistortion();
+
                         foreach (var monster in _monsterList)
                         {
                             var targetStatus = monster.GetComponent<MonsterStatus>();
                             targetStatus.ApplyDamageRPC(status.CalDamage(), ownerPlayer.Object.Id, CrowdControl.Normality);
-                        
+
                             // 총알 궤적 VFX 생성
                             var monsterNetworkId = monster.GetComponent<NetworkObject>().Id;
                             var viewPosition = Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f, 1f));
                             SpawnTrajectoryRPC(monsterNetworkId, viewPosition);
                         }
                     }
+
                     break;
                 }
             }
@@ -174,7 +189,7 @@ namespace Skill.Container
 
             // 영역 여는 애니메이션 길이만큼 대기
             areaAnimation.Play();
-            yield return _areaOpenAniTime;
+            yield return _areaOpenWaiter;
 
             DebugManager.ToDo("영역에 잡힌 Monster들의 위치를 UI로 띄어주기");
 
@@ -207,9 +222,9 @@ namespace Skill.Container
                         if (Physics.Raycast(monsterPosition, dir, out var hit, _layerMask) == false)
                         {
                             _monsterList.Add(monster);
-                            if ( _aimDictionary.ContainsKey(monster.gameObject) == false)
+                            if (_aimDictionary.ContainsKey(monster.gameObject) == false)
                             {
-                                StartCoroutine(AimSetting(runObject,monster.gameObject));
+                                StartCoroutine(AimSetting(runObject, monster.gameObject));
                             }
                         }
                     }
@@ -220,7 +235,7 @@ namespace Skill.Container
         // Aim UI생성해주고 셋팅
         IEnumerator AimSetting(GameObject runObject, GameObject target)
         {
-            var aim = Instantiate(aimObject, cleanShootCanvas.transform);
+            var aim = Instantiate(aimObject, aimCanvas.transform);
             aim.SetActive(true);
             _aimDictionary.TryAdd(target, aim);
 
@@ -242,9 +257,10 @@ namespace Skill.Container
             var screenHalf = screen / 2f;
             var areaMin = (screenHalf - rangeHalf) / screen;
             var areaMax = (screenHalf + rangeHalf) / screen;
-            
+
             var aimRect = aim.GetComponent<RectTransform>();
-            
+            var camera = ownerPlayer.cameraController.targetCamera;
+
             while (true)
             {
                 yield return null;
@@ -252,13 +268,14 @@ namespace Skill.Container
                 {
                     break;
                 }
-                Vector3 monsterViewportPosition = Camera.main.WorldToViewportPoint(target.transform.position);
+
+                Vector3 monsterViewportPosition = camera.WorldToViewportPoint(target.transform.position);
                 if (monsterViewportPosition.x >= areaMin.x && monsterViewportPosition.x <= areaMax.x &&
                     monsterViewportPosition.y >= areaMin.y && monsterViewportPosition.y <= areaMax.y &&
                     monsterViewportPosition.z > 0)
                 {
                     var dir = (target.transform.position - runObject.transform.position);
-                    var aimPos = monsterViewportPosition * screen - (Vector2)cleanShootCanvas.transform.position;
+                    var aimPos = monsterViewportPosition * screen - (Vector2)aimCanvas.transform.position;
                     var dirMagnitudeNormalize = Mathf.Clamp((50 - dir.magnitude) / 50, 0, 1);
                     var aimScale = new Vector3(dirMagnitudeNormalize, dirMagnitudeNormalize, 1f);
                     aimRect.anchoredPosition = aimPos;
@@ -282,7 +299,7 @@ namespace Skill.Container
             var dis = Vector3.Magnitude(monster.transform.position - viewPosition);
             var trajectoryVFXObject = await NetworkManager.Runner.SpawnAsync(trajectoryVFX, viewPosition);
             var vfx = trajectoryVFXObject.GetComponent<VisualEffect>();
-            
+
             vfx.SetFloat("Distance", dis);
             vfx.transform.LookAt(monster.transform);
             Destroy(vfx.gameObject, _trajectoryVFXDestroyTime);
