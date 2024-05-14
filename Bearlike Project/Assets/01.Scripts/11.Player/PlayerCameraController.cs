@@ -118,7 +118,7 @@ namespace Player
             SetVignette();
             SetVignetteColor(Color.red);
 
-            SetChromaticAberration(1f);
+            SetChromaticAberration(1f, duration, boundsThreshold);
             SetVignette(0.2f, 1, false, null, duration, boundsThreshold);
         }
 
@@ -208,7 +208,7 @@ namespace Player
                 DebugManager.LogWarning("Chromatic Aberration이 없습니다.");
         }
 
-        public void SetChromaticAberration(float intensity = 0f, float duration = 0f)
+        public void SetChromaticAberration(float intensity = 0f, float duration = 0f, float boundsThreshold = 0f)
         {
             if (_globalVolume.profile.TryGet(out ChromaticAberration profile))
             {
@@ -216,22 +216,28 @@ namespace Player
                 if(duration == 0f)
                     profile.intensity.value = intensity;
                 else
-                    _chromaticAberrationCoroutine = StartCoroutine(SetChromaticAberrationCoroutine(profile, intensity, duration));
+                    _chromaticAberrationCoroutine = StartCoroutine(SetChromaticAberrationCoroutine(profile, intensity, duration, boundsThreshold));
             }
             else
                 DebugManager.LogWarning("Chromatic Aberration이 없습니다.");
         }
 
         private Coroutine _chromaticAberrationCoroutine;
-        private IEnumerator SetChromaticAberrationCoroutine(ChromaticAberration profile, float intensity, float duration)
+        private IEnumerator SetChromaticAberrationCoroutine(
+            ChromaticAberration profile,
+            float intensity,
+            float duration,
+            float boundsThreshold)
         {
             float timer = 0f;
             float originIntensity = profile.intensity.value;
             float normalizeTime = 0f;
+            boundsThreshold = boundsThreshold == 0f ? 0.5f : boundsThreshold;
+            float normalizeBoundThreshold = Mathf.PI / (duration / boundsThreshold);
             while (timer < duration)
             {
                 timer += Time.deltaTime;
-                normalizeTime = timer / duration;
+                normalizeTime = Mathf.Abs(Mathf.Sin(normalizeBoundThreshold * timer));
                 profile.intensity.value = Mathf.Lerp(originIntensity, intensity, normalizeTime);
 
                 yield return null;
