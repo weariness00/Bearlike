@@ -273,14 +273,37 @@ namespace Photon
             }
             
             // 마우스 휠 클릭시 UI와 상호작용 할 수 있도록 플레이어 정지
-            if (KeyManager.InputActionDown(KeyToAction.Esc) || KeyManager.InputActionDown(KeyToAction.LockCursor))
+            if ( KeyManager.InputActionDown(KeyToAction.LockCursor))
             {
-                Cursor.lockState = Cursor.lockState == CursorLockMode.None ? CursorLockMode.Locked : CursorLockMode.None;
+                // Cursor.lockState = Cursor.lockState == CursorLockMode.None ? CursorLockMode.Locked : CursorLockMode.None;
+                switch (Cursor.lockState)
+                {
+                    case CursorLockMode.None:
+                        Cursor.lockState = CursorLockMode.Locked;
+                        isCursor = true;
+                        break;
+                    case CursorLockMode.Locked:
+                        Cursor.lockState = CursorLockMode.None;
+                        isCursor = false;
+                        break;
+                }
                 isCursor = !isCursor;
             }
             if (KeyManager.InputAction(KeyToAction.Esc))
             {
-                playerInputData.Escape = true;
+                switch (Cursor.lockState)
+                {
+                    case CursorLockMode.None:
+                        Cursor.lockState = CursorLockMode.Locked;
+                        isCursor = true;
+                        playerInputData.Escape = false;
+                        break;
+                    case CursorLockMode.Locked:
+                        Cursor.lockState = CursorLockMode.None;
+                        isCursor = false;
+                        playerInputData.Escape = true;
+                        break;
+                }
             }
             if (isCursor)
             {
@@ -309,11 +332,11 @@ namespace Photon
             if (KeyManager.InputAction(KeyToAction.Attack))
                 playerInputData.Attack = trueValue;
 
-            if (KeyManager.InputAction(KeyToAction.FirstSkill))
+            if (KeyManager.InputActionDown(KeyToAction.FirstSkill))
                 playerInputData.FirstSkill = trueValue;
-            if (KeyManager.InputAction(KeyToAction.SecondSkill))
+            if (KeyManager.InputActionDown(KeyToAction.SecondSkill))
                 playerInputData.SecondSkill = trueValue;
-            if (KeyManager.InputAction(KeyToAction.Ultimate))
+            if (KeyManager.InputActionDown(KeyToAction.Ultimate))
                 playerInputData.Ultimate = trueValue;
 
             if (KeyManager.InputActionDown(KeyToAction.ChangeWeapon0))
