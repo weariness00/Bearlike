@@ -41,6 +41,8 @@ namespace Player
         public bool isHelpOtherPlayer; // 다른 플레이어와 상호작용중인지
         
         public bool IsImmortal => ImmortalTimer.ExpiredOrNotRunning(Runner) == false;
+
+        private PlayerCameraController _playerCameraController;
         
         #endregion
 
@@ -50,6 +52,8 @@ namespace Player
         // ObjectState abstract class Function
         void Awake()
         {
+            _playerCameraController = GetComponent<PlayerCameraController>();
+            
             condition = (int)CrowdControl.Normality;
             property = (int)CrowdControl.Normality;
             
@@ -120,8 +124,9 @@ namespace Player
         {
             base.ApplyDamage(applyDamage, ownerId, cc);
 
-            HpControlRPC();
+            _playerCameraController.ScreenHitImpact(1,1);
             
+            HpControlRPC();
         }
 
         /// <summary>

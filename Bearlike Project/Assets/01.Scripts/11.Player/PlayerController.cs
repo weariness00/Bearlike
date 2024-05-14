@@ -157,8 +157,8 @@ namespace Player
 
                 if (HasInputAuthority)
                     UISetting(data);
-                else if(HasStateAuthority)
-                    UISettingRPC(data);
+                // else if(HasStateAuthority)
+                //     UISettingRPC(data);
             }
         }
         #endregion
@@ -231,32 +231,38 @@ namespace Player
 
         private void UISetting(PlayerInputData data)
         {
-            if (data.Escape)
-            {
-                _stageSelectUI.gameObject.SetActive(false);
-                skillInventory.canvas.gameObject.SetActive(false);
-                itemInventory.canvas.gameObject.SetActive(false);
-            }
-            
             if (data.StageSelect)
             {
-                _stageSelectUI.gameObject.SetActive(!_stageSelectUI.gameObject.activeSelf);
-                skillInventory.canvas.gameObject.SetActive(false);
-                itemInventory.canvas.gameObject.SetActive(false);
+                GameSettingUI.ActiveUIAllDisable();
+
+                var uiObj = _stageSelectUI.gameObject;
+                if (!uiObj.activeSelf)
+                {
+                    uiObj.SetActive(true);
+                    GameSettingUI.AddActiveUI(uiObj);
+                }
             }
                 
             if (data.ItemInventory)
             {
-                _stageSelectUI.gameObject.SetActive(false);
-                skillInventory.canvas.gameObject.SetActive(false);
-                itemInventory.canvas.gameObject.SetActive(!itemInventory.canvas.gameObject.activeSelf);
+                GameSettingUI.ActiveUIAllDisable();
+                var uiObj = itemInventory.canvas.gameObject;
+                if (!uiObj.activeSelf)
+                {
+                    uiObj.SetActive(true);
+                    GameSettingUI.AddActiveUI(uiObj);
+                }
             }
 
             if (data.SkillInventory)
             {
-                _stageSelectUI.gameObject.SetActive(false);
-                skillInventory.canvas.gameObject.SetActive(!skillInventory.canvas.gameObject.activeSelf);
-                itemInventory.canvas.gameObject.SetActive(false);
+                GameSettingUI.ActiveUIAllDisable();
+                var uiObj = skillInventory.canvas.gameObject;
+                if (!uiObj.activeSelf)
+                {
+                    uiObj.SetActive(true);
+                    GameSettingUI.AddActiveUI(uiObj);
+                }
             }
         }
         

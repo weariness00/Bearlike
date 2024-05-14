@@ -1,17 +1,30 @@
-﻿using System;
-using Manager;
+﻿using Manager;
 using Photon;
 using UnityEngine;
 using UnityEngine.UI;
+using Util;
 
 namespace UI
 {
-    public class GameSettingUI : MonoBehaviour
+    public class GameSettingUI : Singleton<GameSettingUI>
     {
+        #region Static
+
+        private UniqueQueue<GameObject> _ActiveUIQueue;
+        public static void AddActiveUI(GameObject uiObject) => Instance._ActiveUIQueue.Enqueue(uiObject);
+
+        #endregion
+        
         public Button goLobbyButton;
         public Button quitGameButton;
 
         private bool childrenActiveSelf;
+
+        private void Awake()
+        {
+            base.Awake();
+            _ActiveUIQueue = new UniqueQueue<GameObject>();
+        }
 
         private void Start()
         {
@@ -28,8 +41,15 @@ namespace UI
         {
             if (KeyManager.InputActionDown(KeyToAction.Esc))
             {
-                var value = !childrenActiveSelf;
-                ActiveChildren(value);
+                if (_ActiveUIQueue.IsEmpty())
+                {
+                    ActiveChildren(!childrenActiveSelf);
+                }
+                else
+                {
+                    var queue = _ActiveUIQueue.Dequeue();
+                    queue.SetActive(false);
+                }
             }
         }
 
@@ -41,6 +61,13 @@ namespace UI
             }
 
             childrenActiveSelf = value;
+        }
+
+        public static void ActiveUIAllDisable()
+        {
+            var list = Instance._ActiveUIQueue.AllDequeue();
+            foreach (var uiObj in list)
+                uiObj.SetActive(false);
         }
     }
 }
