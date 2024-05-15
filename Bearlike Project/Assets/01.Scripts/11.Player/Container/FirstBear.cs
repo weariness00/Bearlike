@@ -24,8 +24,6 @@ namespace Player.Container
             if(!GameManager.Instance.isControl)
                 return;
             
-            base.FixedUpdateNetwork();
-            
             if(status.isInjury || status.isRevive)
                 return;
             
@@ -36,6 +34,8 @@ namespace Player.Container
 
                 SkillControl(data);
             }
+            
+            base.FixedUpdateNetwork();
         }
 
         void SkillInit()

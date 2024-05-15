@@ -50,6 +50,7 @@ namespace Player
         public Action<GameObject> MonsterKillAction;
         
         [Networked] public float W { get; set; }
+        private TickTimer _uiKeyDownTimer;
         
         #region Animation Parametar
 
@@ -90,7 +91,8 @@ namespace Player
             _gunLayer = animator.GetLayerIndex("Gun Layer");
 
             StatusInit();
-            
+
+            _uiKeyDownTimer = TickTimer.CreateFromTicks(Runner, 1);
             Cursor.lockState = CursorLockMode.Locked;
             simpleKcc = gameObject.GetOrAddComponent<SimpleKCC>();
             simpleKcc.Collider.tag = "Player";
@@ -157,8 +159,6 @@ namespace Player
 
                 if (HasInputAuthority)
                     UISetting(data);
-                // else if(HasStateAuthority)
-                //     UISettingRPC(data);
             }
         }
         #endregion
@@ -231,38 +231,47 @@ namespace Player
 
         private void UISetting(PlayerInputData data)
         {
+            if(_uiKeyDownTimer.Expired(Runner) == false)
+                return;
+
             if (data.StageSelect)
             {
-                GameSettingUI.ActiveUIAllDisable();
-
                 var uiObj = _stageSelectUI.gameObject;
-                if (!uiObj.activeSelf)
+                var isActive = uiObj.activeSelf;
+                GameSettingUI.ActiveUIAllDisable();
+                if (!isActive)
                 {
                     uiObj.SetActive(true);
                     GameSettingUI.AddActiveUI(uiObj);
                 }
+                
+                _uiKeyDownTimer = TickTimer.CreateFromTicks(Runner, 2);
             }
                 
             if (data.ItemInventory)
             {
-                GameSettingUI.ActiveUIAllDisable();
                 var uiObj = itemInventory.canvas.gameObject;
-                if (!uiObj.activeSelf)
+                var isActive = uiObj.activeSelf;
+                GameSettingUI.ActiveUIAllDisable();
+                if (!isActive)
                 {
                     uiObj.SetActive(true);
                     GameSettingUI.AddActiveUI(uiObj);
                 }
+                _uiKeyDownTimer = TickTimer.CreateFromTicks(Runner, 2);
             }
 
             if (data.SkillInventory)
             {
-                GameSettingUI.ActiveUIAllDisable();
                 var uiObj = skillInventory.canvas.gameObject;
-                if (!uiObj.activeSelf)
+                var isActive = uiObj.activeSelf;
+                GameSettingUI.ActiveUIAllDisable();
+                if (!isActive)
                 {
                     uiObj.SetActive(true);
                     GameSettingUI.AddActiveUI(uiObj);
                 }
+                _uiKeyDownTimer = TickTimer.CreateFromTicks(Runner, 2);
             }
         }
         

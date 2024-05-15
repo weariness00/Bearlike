@@ -31,6 +31,8 @@ namespace Photon
 
         public Action<SessionInfo[]> SessionListUpdateAction;
 
+        private TickTimer _keyDownTimer;
+
         #region Unity Event Function
 
         protected override void Awake()
@@ -165,6 +167,8 @@ namespace Photon
             });
 
             gameObject.transform.parent = Managers.Instance.transform;
+            
+            _keyDownTimer = TickTimer.CreateFromTicks(_runner, 0);
         }
 
         async Task RandomMatching()
@@ -273,36 +277,43 @@ namespace Photon
             }
             
             // 마우스 휠 클릭시 UI와 상호작용 할 수 있도록 플레이어 정지
-            if ( KeyManager.InputActionDown(KeyToAction.LockCursor))
+            if (_keyDownTimer.Expired(runner))
             {
-                // Cursor.lockState = Cursor.lockState == CursorLockMode.None ? CursorLockMode.Locked : CursorLockMode.None;
-                switch (Cursor.lockState)
+                if (KeyManager.InputActionDown(KeyToAction.LockCursor))
                 {
-                    case CursorLockMode.None:
-                        Cursor.lockState = CursorLockMode.Locked;
-                        isCursor = true;
-                        break;
-                    case CursorLockMode.Locked:
-                        Cursor.lockState = CursorLockMode.None;
-                        isCursor = false;
-                        break;
+                    // Cursor.lockState = Cursor.lockState == CursorLockMode.None ? CursorLockMode.Locked : CursorLockMode.None;
+                    switch (Cursor.lockState)
+                    {
+                        case CursorLockMode.None:
+                            Cursor.lockState = CursorLockMode.Locked;
+                            isCursor = true;
+                            break;
+                        case CursorLockMode.Locked:
+                            Cursor.lockState = CursorLockMode.None;
+                            isCursor = false;
+                            break;
+                    }
+                    isCursor = !isCursor;
+
+                    _keyDownTimer = TickTimer.CreateFromTicks(runner, 2);
                 }
-                isCursor = !isCursor;
-            }
-            if (KeyManager.InputAction(KeyToAction.Esc))
-            {
-                switch (Cursor.lockState)
+                if (KeyManager.InputAction(KeyToAction.Esc))
                 {
-                    case CursorLockMode.None:
-                        Cursor.lockState = CursorLockMode.Locked;
-                        isCursor = true;
-                        playerInputData.Escape = false;
-                        break;
-                    case CursorLockMode.Locked:
-                        Cursor.lockState = CursorLockMode.None;
-                        isCursor = false;
-                        playerInputData.Escape = true;
-                        break;
+                    switch (Cursor.lockState)
+                    {
+                        case CursorLockMode.None:
+                            Cursor.lockState = CursorLockMode.Locked;
+                            isCursor = true;
+                            playerInputData.Escape = false;
+                            break;
+                        case CursorLockMode.Locked:
+                            Cursor.lockState = CursorLockMode.None;
+                            isCursor = false;
+                            playerInputData.Escape = true;
+                            break;
+                    }
+                    
+                    _keyDownTimer = TickTimer.CreateFromTicks(runner, 2);
                 }
             }
             if (isCursor)
