@@ -46,7 +46,7 @@ namespace Skill.Container
                     (runner, o) =>
                     {
                         var b = o.GetComponent<BulletBase>();
-                        b.status.AddAdditionalStatus(status);
+                        b.status.AddAdditionalStatus(gun.status);
 
                         b.ownerId = gun.OwnerId;
                         b.hitEffect = gun.hitEffect;

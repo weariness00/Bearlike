@@ -1,7 +1,9 @@
 ﻿using Fusion;
 using Manager;
+using Monster;
 using Player;
 using Skill.Support;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Skill.Container
@@ -9,8 +11,9 @@ namespace Skill.Container
     public class DeadBodyGravityField : SkillBase
     {
         public NetworkPrefabRef gravityFieldPrefab;
-        public float gravityPower = 10f;
-        public float rotateStrength = 1f;
+        public float gravityPower = 10f; // 중력장에 끓어올 수 있는 질량 최대치
+        public float positionStrength = 1f; // 중력장에 끌려가는 힘
+        public float rotateStrength = 1f; // 중력장에 끌려가면서 회전되는 힘
         public float gravityFieldDuration = 10f; // 중력장 지속 시간 
 
         #region Unity Envet Function
@@ -20,6 +23,7 @@ namespace Skill.Container
             base.Awake();
             var data = GetStatusData(id);
             gravityPower = data.GetFloat("Gravity Power");
+            positionStrength = data.GetFloat("Gravity Position Power");
             rotateStrength = data.GetFloat("Gravity Rotate Power");
         }
 
@@ -53,7 +57,8 @@ namespace Skill.Container
         {
             if (HasStateAuthority)
             {
-                Runner.SpawnAsync(gravityFieldPrefab, targetObject.transform.position, null, null, (runner, o) =>
+                var monster = targetObject.GetComponent<MonsterBase>();
+                Runner.SpawnAsync(gravityFieldPrefab, monster.pivot.position, null, null, (runner, o) =>
                 {
                     var gf = o.GetComponent<GravityField>();
                     gf.gravityPower = gravityPower;

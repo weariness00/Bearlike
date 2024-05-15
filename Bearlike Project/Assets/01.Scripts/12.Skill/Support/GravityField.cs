@@ -18,17 +18,18 @@ namespace Skill.Support
         [Header("Status")]
         public StatusBase status;
      
-        public float gravityPower = 10f;
-        public float rotateStrength = 1f;
+        public float gravityPower = 10f; // 중력장에 끓어올 수 있는 질량 최대치
+        public float positionStrength = 1f; // 중력장에 끌려가는 힘
+        public float rotateStrength = 1f; // 중력장에 끌려가면서 회전되는 힘
         public float gravityFieldDuration = 10f; // 중력장 지속 시간 
-
+        
         [Header("VFX")] 
         public VisualEffect blackHoleVFX;
         public VisualEffect explodeVFX;
 
         private bool _isUpdate;
         
-        private List<Rigidbody> _targetRigidBodyList = new List<Rigidbody>();
+        private List<RigidBodyOriginInfo> _targetRigidBodyList = new List<RigidBodyOriginInfo>();
         private List<MonsterBase> _monsterList = new List<MonsterBase>();
         private TickTimer _durationTimer; // 지속시간 타이머
         
@@ -40,13 +41,20 @@ namespace Skill.Support
             else
                 rb = other.attachedRigidbody;
             
-            if (rb)
+            if (rb && rb.mass < gravityPower)
             {
+                RigidBodyOriginInfo rbInfo = new RigidBodyOriginInfo()
+                {
+                    rigidbody = rb,
+                    useGravity = rb.useGravity,
+                    isKinematic = rb.isKinematic
+                };
+                
                 rb.isKinematic = false;
                 
                 if(other.TryGetComponent(out MonsterBase monster)) _monsterList.Add(monster);
                 // if(rb.TryGetComponent(out NavMeshAgent navMeshAgent)) _navMeshAgentList.Add(navMeshAgent);
-                _targetRigidBodyList.Add(rb);
+                _targetRigidBodyList.Add(rbInfo);
             }
         }
 
@@ -78,11 +86,16 @@ namespace Skill.Support
         {
             for (var i = 0; i < _targetRigidBodyList.Count; i++)
             {
-                var rb = _targetRigidBodyList[i];
-                if(!rb) _targetRigidBodyList.RemoveAt(i);
+                var rbInfo = _targetRigidBodyList[i];
+                var rb = rbInfo.rigidbody;
+                if (!rb)
+                {
+                    _targetRigidBodyList.RemoveAt(i);
+                    continue;
+                }
 
                 Vector3 dir = transform.position - rb.transform.position;
-                Vector3 force = gravityPower * dir.normalized;
+                Vector3 force = positionStrength * dir.normalized;
                 
                 Vector3 torqueDirection = Vector3.Cross(dir, Vector3.up);
                 Vector3 rotationalForce = torqueDirection * rotateStrength;
@@ -95,10 +108,13 @@ namespace Skill.Support
         // 지속시간이 끝나고 대미지를 입히는 로직
         private void ApplyExplodeDamage()
         {
-            foreach (var rb in _targetRigidBodyList)
+            foreach (var rbInfo in _targetRigidBodyList)
             {
-                if (rb)
-                    rb.isKinematic = true;
+                if (rbInfo.rigidbody)
+                {
+                    rbInfo.rigidbody.useGravity = rbInfo.useGravity;
+                    rbInfo.rigidbody.isKinematic = rbInfo.isKinematic;
+                }
             }
                 
             foreach (var monster in _monsterList)
@@ -110,8 +126,7 @@ namespace Skill.Support
 
         private IEnumerator ExplodeCoroutine()
         {
-            var explodeTime = explodeVFX.GetFloat("ExplodeTime");
-            yield return new WaitForSeconds(explodeTime);
+            yield return new WaitForSeconds(1f);
             
             ApplyExplodeDamage();
             Destroy(gameObject);
@@ -122,6 +137,13 @@ namespace Skill.Support
         {
             blackHoleVFX.Stop();
             explodeVFX.gameObject.SetActive(true);
+        }
+        
+        private struct RigidBodyOriginInfo
+        {
+            public Rigidbody rigidbody;
+            public bool useGravity;
+            public bool isKinematic;
         }
     }
 }

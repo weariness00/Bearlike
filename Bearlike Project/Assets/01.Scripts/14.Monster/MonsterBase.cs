@@ -110,8 +110,10 @@ namespace Monster
                 lootingTable.SpawnDropItem();
                 Destroy(this);
             };
-            
-            status.SetJsonData(GetStatusData(id));
+
+            var statusData = GetStatusData(id);
+            status.SetJsonData(statusData);
+            if (statusData.HasFloat("Rigidbody Mass")) rigidbody.mass = statusData.GetFloat("Rigidbody Mass");
         }
 
         private void OnDestroy()
