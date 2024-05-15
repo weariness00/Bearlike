@@ -3561,6 +3561,7 @@ MonoBehaviour:
   mode: 0
   targetCamera: {fileID: 8451841307542792475}
   weaponCamera: {fileID: 6128144320921080608}
+  uiCamera: {fileID: 0}
   firstOffset: {x: 0, y: 0, z: 0.27}
   thirdOffset: {x: 0, y: 0, z: -2}
 --- !u!114 &6044406679217952669
@@ -3604,6 +3605,7 @@ MonoBehaviour:
   - {fileID: 3149006354213416159}
   - {fileID: 7787721648455933414}
   - {fileID: 5306327907534091017}
+  - {fileID: 4987421900864778705}
 --- !u!54 &7552828475408946812
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -6095,6 +6097,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e36969931f6d4addad35beb9351fd889, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
   canvas: {fileID: 4861238172356618835}
   toggleGroup: {fileID: 3752769399434269690}
   selectUIBlockObject: {fileID: 5198700945744738040}

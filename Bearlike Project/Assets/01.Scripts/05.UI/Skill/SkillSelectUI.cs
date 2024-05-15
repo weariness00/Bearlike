@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Fusion;
 using Photon;
 using Player;
 using Skill;
@@ -9,7 +10,7 @@ using Util;
 
 namespace UI.Skill
 {
-    public class SkillSelectUI : MonoBehaviour
+    public class SkillSelectUI : NetworkBehaviourEx
     {
         public Canvas canvas;
         public ToggleGroup toggleGroup;
@@ -97,17 +98,8 @@ namespace UI.Skill
             var handle = activeToggle.GetComponent<SkillSelectBlockHandle>();
             if (!playerController.skillSystem.TryGetSkillFromID(handle.id, out var skill))
             {
-                await NetworkManager.Runner.SpawnAsync(
-                    SkillObjectList.GetFromID(handle.id).gameObject, Vector3.zero, Quaternion.identity, playerController.Object.InputAuthority,
-                    (runner, obj) =>
-                    {
-                        obj.transform.SetParent(playerController.skillSystem.transform);
-                        skill = obj.GetComponent<SkillBase>();
-                        skill.ownerPlayer = playerController;
-                        skill.LevelUp();
-                        skill.Earn(playerController.gameObject);
-                    });
-                playerController.skillSystem.AddSkill(skill);
+                var skillObj = await NetworkManager.Runner.SpawnAsync(SkillObjectList.GetFromID(handle.id).gameObject, Vector3.zero, Quaternion.identity, playerController.Object.InputAuthority);
+                InitSpawnSkillRPC(skillObj.Id);
             }
             else
             {
@@ -117,6 +109,22 @@ namespace UI.Skill
             gameObject.SetActive(false);
         }
         
+        #endregion
+
+        #region RPC Function
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void InitSpawnSkillRPC(NetworkId skillID)
+        {
+            var skill = Runner.FindObject(skillID).GetComponent<SkillBase>();
+            skill.gameObject.transform.SetParent(playerController.skillSystem.transform);
+            skill.ownerPlayer = playerController;
+            skill.LevelUp();
+            skill.Earn(playerController.gameObject);
+            playerController.skillSystem.AddSkill(skill);
+        }
+        
+
         #endregion
     }
 }
