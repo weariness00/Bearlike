@@ -25,6 +25,8 @@ namespace Weapon
         public StatusBase status;
         public LayerMask includeCollide;
         
+        public PlayerStatus _ownerState;
+        
         [HideInInspector] public PlayerCameraController playerCameraController;
         
         [Header("기본 이펙트")]
@@ -52,7 +54,7 @@ namespace Weapon
             base.Spawned();
         }
         
-        void SetEquip(GameObject equipObject)
+        public void SetEquip(GameObject equipObject)
         {
             gameObject.SetActive(true);
             
@@ -61,6 +63,7 @@ namespace Weapon
             
             // 주인 설정
             OwnerId = equipObject.GetComponent<NetworkObject>().Id;
+            _ownerState = Runner.FindObject(OwnerId).GetComponent<PlayerStatus>();
             
             // 주인의 스테이터스 추가
             status.AddAdditionalStatus(equipObject.GetComponent<StatusBase>());

@@ -1,3 +1,4 @@
+using System.Collections;
 using Fusion;
 using GamePlay;
 using Manager;
@@ -16,8 +17,11 @@ namespace Skill.Container
     {
         #region property
 
-        // TODO : 스킬 자체의 status로 작동되도록 변경해야함
         public PlayerStatus playerStatus;
+        public GameObject effectObject;
+        public GameObject effectTableObject;
+
+        public FlippingCoinEffect effect;
         
         private float _durationTime;
         
@@ -33,7 +37,10 @@ namespace Skill.Container
             base.Start();
             var statusData = GetStatusData(id);
             _durationTime = statusData.GetFloat("Duration Time");
-            Debug.Log($"FlippingCoin : {_durationTime}");
+            
+            effectObject.SetActive(false);
+            effectTableObject.SetActive(false);
+            effect = effectObject.GetComponent<FlippingCoinEffect>();
         }
 
         public override void Spawned()
@@ -48,40 +55,20 @@ namespace Skill.Container
             base.Earn(earnTargetObject);
             if (earnTargetObject.TryGetComponent(out PlayerController pc))
             {
+                DebugManager.ToDo("FlippingCoin은 player status에 더할 필요가 없다.");
                 pc.status.AddAdditionalStatus(status);
+                playerStatus = pc.status;
             }
         }
 
         public override void MainLoop()
         {
-            // _currentPlayTime = _gm.PlayTimer;
-            //
-            // _deltaPlayTime = _currentPlayTime - _previousPlayTime;
-            //
-            // coolTime -= _deltaPlayTime;
-            // duration -= _deltaPlayTime;
-            //
-            // if (_bOn && Mathf.Round((duration.Current - duration.Min) * 10) * 0.1f <= 0f)
-            // {
-            //     if (_type == 0)
-            //     {
-            //         playerStatus.SetAttackSpeedRPC(StatusValueType.Current, playerStatus.attackSpeed.Current - _difference);
-            //     }
-            //     else
-            //     {
-            //         playerStatus.damage.Current -= (int)_difference;
-            //     }
-            //     
-            //     Debug.Log($"현재 Attack : {playerStatus.damage.Current}, AttackSpeed : {playerStatus.attackSpeed.Current}");
-            //     
-            //     duration.Current = duration.Min;
-            //     _bOn = false;
-            // }
-            //
             if (DurationTimeTimer.Expired(Runner) && true == isInvoke)
             {
                 isInvoke = false;
-                SetSkillCoolTimerRPC(coolTime);
+                // SetSkillCoolTimerRPC(coolTime);
+                SetSkillCoolTimerRPC(1);
+
                 if (_type == 0)
                 {
                     playerStatus.attackSpeed.Current -= (int)_difference;
@@ -95,45 +82,13 @@ namespace Skill.Container
         
         public override void Run()
         {
-            // 둘중 하나 채택
-            // if(Math.Abs(CoolTime.Current - CoolTime.Min) < 1E-6)
-            // if (_bOn == false && Mathf.Round((coolTime.Current - coolTime.Min) * 10) * 0.1f <= 0f)
-            // {
-            //     _type = Random.Range(0, 2);
-            //
-            //     playerStatus = runObject.GetComponent<PlayerStatus>();
-            //     
-            //     if (_type == 0)
-            //     {
-            //         _difference = playerStatus.attackSpeed.Current * AttackValue;
-            //         playerStatus.attackSpeed.Current += _difference;
-            //     }
-            //     else
-            //     {
-            //         _difference = playerStatus.damage.Current * AttackSpeedValue;
-            //         playerStatus.damage.Current += (int)_difference;
-            //     }
-            //     
-            //     duration.Current = duration.Max;
-            //     coolTime.Current = coolTime.Max;
-            //
-            //     _bOn = true;
-            //     
-            //     Debug.Log($"현재 Attack : {playerStatus.damage.Current}, AttackSpeed : {playerStatus.attackSpeed.Current}");
-            // }
-            // else
-            // {
-            //     Debug.Log($"남은 쿨타임 : {coolTime.Current}");
-            // }
-
             if (IsUse && false == isInvoke)
             {
+                StartCoroutine(StartEffect());
                 isInvoke = true;
                 // TODO : VFX도 넣어보자(너무 티가 안남)
                 
                 _type = Random.Range(0, 2);
-
-                playerStatus = ownerPlayer.status;
                 
                 if (_type == 0)
                 {
@@ -146,9 +101,19 @@ namespace Skill.Container
                     playerStatus.damage.Current += (int)_difference;
                 }
                 
-                DurationTimeTimer = TickTimer.CreateFromSeconds(Runner, _durationTime);
+                // DurationTimeTimer = TickTimer.CreateFromSeconds(Runner, _durationTime);
+                DurationTimeTimer = TickTimer.CreateFromSeconds(Runner, 1);
             }
         }
 
+        IEnumerator StartEffect()
+        {
+            effectObject.SetActive(true);
+            effectTableObject.SetActive(true);
+            effect.FlickCoin();
+            yield return new WaitForSeconds(2.0f);
+            effectObject.SetActive(false);
+            effectTableObject.SetActive(false);
+        }
     }
 }

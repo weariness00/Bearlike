@@ -13,10 +13,9 @@ namespace Weapon.Gun.Continer
     {
         [Header("Shotgun Information")]
         public MegaShotGunAnimator animatorInfo;
-        
-        [SerializeField] private float reloadSpeed = 0.5f; // 재장전 속도
 
         [SerializeField] private float bulletRadian; // 산탄 정도(원의 반지름)
+        
         public bool bknock;
 
         private Coroutine _reloadCoroutine;
@@ -33,7 +32,7 @@ namespace Weapon.Gun.Continer
             base.Start();
 
             bknock = false;
-            bulletRadian = 3;
+            // bulletRadian = 3;
             // json화
             ammo.Max = 36;
             ammo.Current = ammo.Max;
@@ -76,7 +75,7 @@ namespace Weapon.Gun.Continer
 
                 --magazine.Current;
                 // if (HasStateAuthority)
-                    // SetMagazineRPC(StatusValueType.Current, magazine.Current);
+                //     SetMagazineRPC(StatusValueType.Current, magazine.Current);
                 SoundManager.Play(shootSound);
                 DebugManager.Log($"{name}에서 총알을 발사");
             }
@@ -99,8 +98,8 @@ namespace Weapon.Gun.Continer
         {
             animatorInfo.PlayReloadStart();
             yield return new WaitForSeconds(animatorInfo.ReloadStartTime);
-            animatorInfo.SetReloadSpeed(reloadSpeed);
-            var runningWait = new WaitForSeconds(reloadSpeed);
+            animatorInfo.SetReloadSpeed(reloadLateSecond);
+            var runningWait = new WaitForSeconds(reloadLateSecond);
             for (int i = 0; i < repeatCount; ++i)
             {
                 yield return runningWait;

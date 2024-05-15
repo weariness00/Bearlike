@@ -21,6 +21,7 @@ namespace Player
         [Header("카메라")] 
         public Camera targetCamera;
         public Camera weaponCamera;
+        public Camera SkillCamera;
         public Vector3 firstOffset;
         public Vector3 thirdOffset;
 
@@ -31,6 +32,7 @@ namespace Player
                 targetCamera.GetComponent<AudioListener>().enabled = false;
                 targetCamera.enabled = false;
                 weaponCamera.enabled = false;
+                SkillCamera.enabled = false;
 
                 return;
             }
@@ -72,6 +74,7 @@ namespace Player
             targetCameraTransform.localPosition = firstOffset;
             
             weaponCamera.enabled = true;
+            SkillCamera.enabled = true;
         }
 
         private void SetThirdPersonCamera()
@@ -82,12 +85,14 @@ namespace Player
             targetCameraTransform.localPosition = thirdOffset;
 
             weaponCamera.enabled = false;
+            SkillCamera.enabled = false;
         }
 
         public void WeaponClipping()
         {
             var cameraData = targetCamera.GetComponent<UniversalAdditionalCameraData>();
             cameraData.cameraStack.Add(weaponCamera);
+            cameraData.cameraStack.Add(SkillCamera);
         }
 
         public void ShakeCamera(float duration, Vector3 strength, int vibrato, float randomness = 0.0f)
