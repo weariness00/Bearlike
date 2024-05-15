@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Data;
 using Fusion;
 using Manager;
+using UI.Status;
 using Unity.Mathematics;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
@@ -174,8 +175,12 @@ namespace Status
                     damageRate *= 1.5f;
                 }
 
-                hp.Current -= (int)(damageRate * applyDamage);
-                DebugManager.Log($"{gameObject.name}에게 {damageRate * applyDamage}만큼 데미지\n" +
+                var realDamage = (int)(damageRate * applyDamage);
+                hp.Current -= realDamage;
+                DamageText(realDamage);
+                
+                DebugManager.Log(
+                    $"{gameObject.name}에게 {damageRate * applyDamage}만큼 데미지\n" +
                     $"남은 hp : {hp.Current}");
             }
         }
@@ -185,6 +190,8 @@ namespace Status
         {
             
         }
+        
+        public virtual void DamageText(int realDamage){}
 
         public virtual void ShowInfo()
         {

@@ -31,12 +31,13 @@ namespace Util
             return true;
         }
 
-        public static IEnumerator LoadCoroutine(string fileName, Action<string> action = null)
+        public static IEnumerator LoadCoroutine(string fileName, Action<string> action = null, bool isReLoad = false)
         {
             fileName = Path.GetFileNameWithoutExtension(fileName);
             var path = Application.persistentDataPath + $"/Json/{fileName}.json";
-            string data;
             float time = 0f;
+            
+            string data;
             while (true)
             {
                 yield return null;
@@ -46,7 +47,19 @@ namespace Util
                     continue;
                 }
                 data = File.ReadAllText(path);
-                action?.Invoke(data);
+                try
+                {
+                    action?.Invoke(data);
+                }
+                catch (Exception e)
+                {
+                    DebugManager.LogError("Json 데이터 불러오기 실패\n" +
+                                          $"파일 이름 : {fileName}\n" +
+                                          $"저장 경로 : {path}\n" +
+                                          $"걸린 시간 : {time}\n" +
+                                          e);
+                    yield break;
+                }
                 break;
             }
 
@@ -55,6 +68,7 @@ namespace Util
                              $"저장 경로 : {path}\n" +
                              $"데이터 : {data}\n" +
                              $"걸린 시간 : {time}");
+            
         }
 
         public static void Save(string data, string fileName, Action doneAction = null)

@@ -38,7 +38,6 @@ namespace Item.Looting
         // 드랍해야될 아이템을 스폰
         public void SpawnDropItem()
         {
-            _dropItems = null;
             isDrop = true;
             
             if (_dropItems == null)

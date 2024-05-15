@@ -81,8 +81,7 @@ namespace UI.Skill
                         break;
                 }
                 
-                var hasSkill = playerController.skillSystem.GetSkillFromId(skill.id);
-                if (hasSkill) skill = hasSkill;
+                if (playerController.skillSystem.TryGetSkillFromID(skill.id, out var hasSkill)) skill = hasSkill;
                 else skill.SetJsonData(SkillBase.GetInfoData(skill.id));
                 
                 var obj = Instantiate(selectUIBlockObject, toggleGroup.transform);
@@ -96,8 +95,7 @@ namespace UI.Skill
         {
             var activeToggle = toggleGroup.GetFirstActiveToggle();
             var handle = activeToggle.GetComponent<SkillSelectBlockHandle>();
-            var skill = playerController.skillSystem.GetSkillFromId(handle.id);
-            if (!skill)
+            if (!playerController.skillSystem.TryGetSkillFromID(handle.id, out var skill))
             {
                 await NetworkManager.Runner.SpawnAsync(
                     SkillObjectList.GetFromID(handle.id).gameObject, Vector3.zero, Quaternion.identity, playerController.Object.InputAuthority,
@@ -107,6 +105,7 @@ namespace UI.Skill
                         skill = obj.GetComponent<SkillBase>();
                         skill.ownerPlayer = playerController;
                         skill.LevelUp();
+                        skill.Earn(playerController.gameObject);
                     });
                 playerController.skillSystem.AddSkill(skill);
             }

@@ -18,7 +18,6 @@ namespace UI.Status
         private void Awake()
         {
             _status = GetComponent<StatusBase>();
-            //
             if(_status == null)
                 DestroyImmediate(this);
 
@@ -45,7 +44,6 @@ namespace UI.Status
                     height = headPosition.y;
             }
             headPosition = new Vector3(0, height, 0) * transform.localScale.y;
-
         }
 
         private void Start()

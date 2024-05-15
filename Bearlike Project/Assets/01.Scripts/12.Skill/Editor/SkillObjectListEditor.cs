@@ -37,6 +37,8 @@ namespace Skill.Editor
                     {
                         skillBase.SetJsonData( data.FirstOrDefault(s => s.ID == skillBase.id));
                     }
+
+                    EditorUtility.SetDirty(target);
                 });
 
                 script.skillList = skillList;

@@ -50,6 +50,21 @@ namespace Skill
             return null;
         }
 
+        public bool TryGetSkillFromID(int id, out SkillBase skill)
+        {
+            foreach (var skillBase in skillList)
+            {
+                if (skillBase.id.Equals(id))
+                {
+                    skill = skillBase;
+                    return true;
+                }
+            }
+
+            skill = null;
+            return false;
+        }
+
         public SkillBase GetSkillFromName(string skillName)
         {
             foreach (var skillBase in skillList)

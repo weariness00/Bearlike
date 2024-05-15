@@ -1,0 +1,65 @@
+digraph G {
+node0 [shape="box" color="cyan" style="filled" label="VFXValue`1 Boolean (True)
+_vfx_enabled_a"]
+node1 [shape="box" color="cyan" style="filled" label="VFXExpressionCombine Float2
+Count_a"]
+node2 [shape="box" color="lightgray" style="filled" label="VFXExpressionMax Float"]
+node3 [shape="box" color="lightgray" style="filled" label="VFXValue`1 Float (1)"]
+node4 [shape="box" color="lightslategray" style="filled" label="VFXValue`1 Float (0)"]
+node5 [shape="box" color="cyan" style="filled" label="VFXExpressionCombine Float2
+Delay_a"]
+node6 [shape="box" color="lightgray" style="filled" label="VFXExpressionMax Float"]
+node7 [shape="box" color="lightgray" style="filled" label="VFXValue`1 Float (0)"]
+node8 [shape="box" color="cyan" style="filled" label="VFXExpressionCombine Float3
+bounds_center"]
+node9 [shape="box" color="lightgray" style="filled" label="VFXValue`1 Float (-0.008661509)"]
+node10 [shape="box" color="lightgray" style="filled" label="VFXValue`1 Float (1.401422)"]
+node11 [shape="box" color="lightgray" style="filled" label="VFXValue`1 Float (-0.01848245)"]
+node12 [shape="box" color="cyan" style="filled" label="VFXExpressionCombine Float3
+bounds_size"]
+node13 [shape="box" color="lightgray" style="filled" label="VFXValue`1 Float (3.004998)"]
+node14 [shape="box" color="lightgray" style="filled" label="VFXValue`1 Float (3.960069)"]
+node15 [shape="box" color="lightgray" style="filled" label="VFXValue`1 Float (3.060745)"]
+node16 [shape="box" color="cyan" style="filled" label="VFXMeshValue Mesh (994)
+mesh"]
+node17 [shape="box" color="cyan" style="filled" label="VFXValue`1 Uint32 (4294967295)
+subMeshMask"]
+node18 [shape="box" color="cyan" style="filled" label="VFXValue`1 Boolean (True)
+_vfx_enabled_a"]
+node19 [shape="box" color="cyan" style="filled" label="VFXValue`1 Float (1)
+Lifetime_a"]
+node20 [shape="box" color="cyan" style="filled" label="VFXValue`1 Boolean (True)
+_vfx_enabled_a"]
+node21 [shape="box" color="cyan" style="filled" label="VFXBuiltInExpression Float (DeltaTime)
+deltaTime_a"]
+node22 [shape="box" color="cyan" style="filled" label="VFXValue`1 Boolean (True)
+_vfx_enabled_b"]
+node23 [shape="box" color="cyan" style="filled" label="VFXValue`1 Boolean (True)
+_vfx_enabled_a"]
+node24 [shape="box" color="cyan" style="filled" label="VFXValue`1 Float (0.8)
+Size_a"]
+node25 [shape="box" color="cyan" style="filled" label="VFXValue`1 Boolean (True)
+_vfx_enabled_b"]
+node26 [shape="box" color="cyan" style="filled" label="VFXExpressionBakeCurve Float4
+Size_b"]
+node27 [shape="box" color="lightgray" style="filled" label="VFXValue`1 Curve (UnityEngine.AnimationCurve)"]
+node28 [shape="box" color="cyan" style="filled" label="VFXValue`1 Float4 ((1.00, 1.00, 1.00, 0.00))
+_Fresnel_Color"]
+node29 [shape="box" color="cyan" style="filled" label="VFXValue`1 Float (2.44)
+_Fresnel_Power"]
+node2 -> node1 [headlabel="0"]
+node2 -> node1 [headlabel="1"]
+node3 -> node2 [headlabel="0"]
+node4 -> node2 [headlabel="1"]
+node6 -> node5 [headlabel="0"]
+node6 -> node5 [headlabel="1"]
+node7 -> node6 [headlabel="0"]
+node4 -> node6 [headlabel="1"]
+node9 -> node8 [headlabel="0"]
+node10 -> node8 [headlabel="1"]
+node11 -> node8 [headlabel="2"]
+node13 -> node12 [headlabel="0"]
+node14 -> node12 [headlabel="1"]
+node15 -> node12 [headlabel="2"]
+node27 -> node26 
+}

@@ -238,11 +238,11 @@ namespace Player
             {
                 var uiObj = _stageSelectUI.gameObject;
                 var isActive = uiObj.activeSelf;
-                GameSettingUI.ActiveUIAllDisable();
+                GameUIManager.ActiveUIAllDisable();
                 if (!isActive)
                 {
                     uiObj.SetActive(true);
-                    GameSettingUI.AddActiveUI(uiObj);
+                    GameUIManager.AddActiveUI(uiObj);
                 }
                 
                 _uiKeyDownTimer = TickTimer.CreateFromTicks(Runner, 2);
@@ -252,11 +252,11 @@ namespace Player
             {
                 var uiObj = itemInventory.canvas.gameObject;
                 var isActive = uiObj.activeSelf;
-                GameSettingUI.ActiveUIAllDisable();
+                GameUIManager.ActiveUIAllDisable();
                 if (!isActive)
                 {
                     uiObj.SetActive(true);
-                    GameSettingUI.AddActiveUI(uiObj);
+                    GameUIManager.AddActiveUI(uiObj);
                 }
                 _uiKeyDownTimer = TickTimer.CreateFromTicks(Runner, 2);
             }
@@ -265,11 +265,11 @@ namespace Player
             {
                 var uiObj = skillInventory.canvas.gameObject;
                 var isActive = uiObj.activeSelf;
-                GameSettingUI.ActiveUIAllDisable();
+                GameUIManager.ActiveUIAllDisable();
                 if (!isActive)
                 {
                     uiObj.SetActive(true);
-                    GameSettingUI.AddActiveUI(uiObj);
+                    GameUIManager.AddActiveUI(uiObj);
                 }
                 _uiKeyDownTimer = TickTimer.CreateFromTicks(Runner, 2);
             }
