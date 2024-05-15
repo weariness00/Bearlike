@@ -398,20 +398,21 @@ namespace Player
         {
             DebugManager.ToDo("Muzzle 임시 처리");
             weaponSystem.weaponList[index].transform.Find("Muzzle").gameObject.SetActive(false);
-            
-            weaponSystem.ChangeEquipment(index, gameObject);
-            
-            DebugManager.Log($"{name}이 총을 [ {index} ]로 변경");
-                
-            // 장비에 맞는 애니메이터 Layer Weight 주기
-            animator.SetLayerWeight(_gunLayer, 0);
-            if (weaponSystem.equipment.IsGun)
-                animator.SetLayerWeight(_gunLayer, 1);
-                
-            // 변경된 장비에 스킬이 적용되도록 스킬 초기화
-            foreach (var skillBase in skillSystem.skillList)
+
+            if (weaponSystem.ChangeEquipment(index, gameObject))
             {
-                skillBase.Earn(gameObject);
+                DebugManager.Log($"{name}이 총을 [ {index} ]로 변경");
+                
+                // 장비에 맞는 애니메이터 Layer Weight 주기
+                animator.SetLayerWeight(_gunLayer, 0);
+                if (weaponSystem.equipment.IsGun)
+                    animator.SetLayerWeight(_gunLayer, 1);
+                
+                // 변경된 장비에 스킬이 적용되도록 스킬 초기화
+                foreach (var skillBase in skillSystem.skillList)
+                {
+                    skillBase.Earn(gameObject);
+                }
             }
         }
         

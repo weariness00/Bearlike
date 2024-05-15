@@ -40,7 +40,7 @@ namespace Weapon.Bullet
 
         public void Awake()
         {
-            gameObject.layer = LayerMask.NameToLayer("Bullet");//
+            gameObject.layer = LayerMask.NameToLayer("Bullet");
             
             status = GetComponent<StatusBase>();
         }
@@ -66,7 +66,7 @@ namespace Weapon.Bullet
             transform.position += direction * Runner.DeltaTime * status.moveSpeed;
 
             // if (FastDistance(transform.position, _oldPosition) >= maxMoveDistance) Destroy(gameObject);
-            if (FastDistance(transform.position, _oldPosition) >= status.attackRange.Current) Destroy(gameObject);
+            // if (FastDistance(transform.position, _oldPosition) >= status.attackRange.Current) Destroy(gameObject);
         }
 
         private void OnTriggerEnter(Collider other)

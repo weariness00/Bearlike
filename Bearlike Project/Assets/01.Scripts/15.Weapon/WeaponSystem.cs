@@ -26,12 +26,10 @@ namespace Weapon
             ((WeaponBase)equipment).gameObject.SetActive(true);
         }
 
-        public void ChangeEquipment(int index, GameObject equipTargetObject)
+        public bool ChangeEquipment(int index, GameObject equipTargetObject)
         {
-            if(weaponList.Count < index)
-                return;
-            if((WeaponBase)equipment == weaponList[index])
-                return;
+            if(weaponList.Count < index)  return false;
+            if((WeaponBase)equipment == weaponList[index]) return false;
             
             // 장비 해제
             equipment.ReleaseEquipAction?.Invoke(equipTargetObject);
@@ -41,6 +39,8 @@ namespace Weapon
             
             // 변경한 장비를 착용
             equipment.EquipAction?.Invoke(equipTargetObject);
+
+            return true;
         }
     }
 }

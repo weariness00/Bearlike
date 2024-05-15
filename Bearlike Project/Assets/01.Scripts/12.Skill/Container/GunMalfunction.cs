@@ -1,6 +1,7 @@
-﻿using Player;
-using Status;
+﻿using Manager;
+using Player;
 using UnityEngine;
+using Weapon.Bullet;
 using Weapon.Gun;
 
 namespace Skill.Container
@@ -20,8 +21,8 @@ namespace Skill.Container
                 {
                     gun.AfterFireAction += () =>
                     {
-                        gun.SetMagazineRPC(StatusValueType.Current, ++gun.magazine.Current);
-                        if(HasStateAuthority) gun.FireBulletRPC();
+                        AdditionalBullet(gun);
+                        DebugManager.Log($"{name}으로 인해 추가적인 탄환 발사");
                     };
                 }
             }
@@ -33,6 +34,31 @@ namespace Skill.Container
 
         public override void Run()
         {
+        }
+        
+        private void AdditionalBullet(GunBase gun)
+        {
+            if (HasStateAuthority && gun.magazine.Current > 0)
+            {
+                var dst = gun.CheckRay();
+                
+                Runner.SpawnAsync(gun.bullet.gameObject, gun.fireTransform.position - gun.fireTransform.forward, gun.fireTransform.rotation, null,
+                    (runner, o) =>
+                    {
+                        var b = o.GetComponent<BulletBase>();
+                        b.status.AddAdditionalStatus(status);
+
+                        b.ownerId = gun.OwnerId;
+                        b.hitEffect = gun.hitEffect;
+                        b.bknock = false;
+                        b.status.attackRange.Max = gun.status.attackRange.Max;
+                        b.status.attackRange.Current = gun.status.attackRange.Current;
+                        b.destination = gun.fireTransform.position + (dst * gun.status.attackRange);
+
+                        gun.BeforeShootAction?.Invoke(b);
+                    });
+                
+            }
         }
     }
 }
