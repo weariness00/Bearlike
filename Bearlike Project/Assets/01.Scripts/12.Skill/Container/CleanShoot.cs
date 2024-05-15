@@ -98,7 +98,7 @@ namespace Skill.Container
                     cleanShootCanvas.gameObject.SetActive(true);
                     aimCanvas.gameObject.SetActive(true);
                     ownerPlayer.cameraController.SetLensDistortion();
-                    ownerPlayer.cameraController.SetLensDistortion(-0.5f, 1f, 1f, null, 1.15f, 2f);
+                    ownerPlayer.cameraController.SetLensDistortion(-0.5f, 1f, 1f, null, 1.15f, _aniAreaOpenTime);
                     StartCoroutine(AreaSetting(ownerPlayer.gameObject));
                 }
 
