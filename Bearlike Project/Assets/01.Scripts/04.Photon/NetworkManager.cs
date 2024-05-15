@@ -168,7 +168,7 @@ namespace Photon
 
             gameObject.transform.parent = Managers.Instance.transform;
             
-            _keyDownTimer = TickTimer.CreateFromTicks(_runner, 0);
+            _keyDownTimer = TickTimer.CreateFromTicks(_runner, 2);
         }
 
         async Task RandomMatching()
@@ -281,7 +281,6 @@ namespace Photon
             {
                 if (KeyManager.InputActionDown(KeyToAction.LockCursor))
                 {
-                    // Cursor.lockState = Cursor.lockState == CursorLockMode.None ? CursorLockMode.Locked : CursorLockMode.None;
                     switch (Cursor.lockState)
                     {
                         case CursorLockMode.None:
@@ -388,6 +387,8 @@ namespace Photon
         {
             DebugManager.Log("서버 연결 성공\n" +
                              $"세션 이름 : {runner.SessionInfo.Name}");
+
+            _keyDownTimer = TickTimer.CreateFromTicks(runner, 2);
         }
 
         public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)

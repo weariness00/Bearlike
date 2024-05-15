@@ -153,9 +153,14 @@ namespace Player
 
             if (GetInput(out PlayerInputData data))
             {
-                MouseRotateControl(data.MouseAxis);
-                MoveControl(data);
-                WeaponControl(data);
+                if (!data.Cursor)
+                {
+                    MouseRotateControl(data.MouseAxis);
+                    MoveControl(data);
+                    WeaponControl(data);
+                }
+                else
+                    simpleKcc.Move();
 
                 if (HasInputAuthority)
                     UISetting(data);

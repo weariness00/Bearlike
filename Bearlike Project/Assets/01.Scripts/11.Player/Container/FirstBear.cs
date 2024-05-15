@@ -21,20 +21,20 @@ namespace Player.Container
 
         public override void FixedUpdateNetwork()
         {
-            if(!GameManager.Instance.isControl)
+            if (!GameManager.Instance.isControl)
                 return;
-            
-            if(status.isInjury || status.isRevive)
+
+            if (status.isInjury || status.isRevive)
                 return;
-            
+
             if (GetInput(out PlayerInputData data))
             {
-                if (data.Cursor)
-                    return;
-
-                SkillControl(data);
+                if (!data.Cursor)
+                {
+                    SkillControl(data);
+                }
             }
-            
+
             base.FixedUpdateNetwork();
         }
 
@@ -43,22 +43,22 @@ namespace Player.Container
             FlippingCoin = skillSystem.GetSkillFromName("FlippingCoin");
             tmpSkill = skillSystem.GetSkillFromName("SniperContinuousMode");
             ultimateSkill = skillSystem.GetSkillFromName("Clean Shoot");
-            
+
             if (HasInputAuthority)
             {
                 FlippingCoin.Object.AssignInputAuthority(Object.InputAuthority);
                 tmpSkill.Object.AssignInputAuthority(Object.InputAuthority);
                 ultimateSkill.Object.AssignInputAuthority(Object.InputAuthority);
-                
+
                 skillCanvas.gameObject.SetActive(true);
-                
+
                 skillCanvas.SetFirstSkill(FlippingCoin);
                 skillCanvas.SetSecondSkill(tmpSkill);
                 skillCanvas.SetUltimateSkill(ultimateSkill);
 
                 skillCanvas.Initialize();
             }
-            
+
             FlippingCoin.LevelUp();
             tmpSkill.LevelUp();
             ultimateSkill.LevelUp();
@@ -68,7 +68,7 @@ namespace Player.Container
         {
             if (HasInputAuthority == false)
                 return;
-            
+
             if (data.FirstSkill)
             {
                 skillCanvas.StartCoolTime(FlippingCoin);
