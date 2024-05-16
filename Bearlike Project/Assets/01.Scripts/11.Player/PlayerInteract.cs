@@ -79,7 +79,7 @@ namespace Player
                         }
                     
                         // 상호작용 키를 눌렀는지
-                        if (data.Interact)
+                        if (data.Interact && !_isInteractKeyPress)
                         {
                             _isInteractKeyPress = true;
                             interact.InteractKeyDownAction?.Invoke(gameObject);

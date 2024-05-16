@@ -18,6 +18,8 @@ namespace Player
         [Networked] private TickTimer ImmortalTimer { get; set; }
         
         #endregion
+
+       [HideInInspector] public PlayerController playerController;
         
         // Member Variable
         #region Member Perperty
@@ -43,7 +45,9 @@ namespace Player
         public bool IsImmortal => ImmortalTimer.ExpiredOrNotRunning(Runner) == false;
 
         private PlayerCameraController _playerCameraController;
-        
+
+        public AudioSource applyDamageSound;
+            
         #endregion
 
         #region Unity Event Function
@@ -126,6 +130,8 @@ namespace Player
 
             _playerCameraController.ScreenHitImpact(1,1);
             
+            applyDamageSound.Play();
+            
             HpControlRPC();
         }
 
@@ -175,12 +181,21 @@ namespace Player
             }
         }
 
+        public void LevelUp()
+        {
+            level.Current++;
+            playerController.skillSelectUI.SpawnSkillBlocks(3);
+        }
+
         // DeBug Function
         public override void ShowInfo()
         {
         }
 
         #region RPC Function
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void LevelUpRPC() => LevelUp();
         
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void SetRecoveryInjuryTimeRPC(float time) => recoveryFromInjuryTime.Current = time;
