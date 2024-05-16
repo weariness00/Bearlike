@@ -4,7 +4,9 @@ using Data;
 using Status;
 using Fusion;
 using Manager;
+using Photon;
 using Player;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.VFX;
 using Weapon.Bullet;
@@ -123,8 +125,9 @@ namespace Weapon.Gun
         public virtual void BulletInit()
         {
             magazine.Current = int.MaxValue;
-
-            fireLateSecond = 60 / bulletFirePerMinute;
+            
+            // TODO : 여기서 공격속도 반영 해야함
+            fireLateSecond = 60 / (bulletFirePerMinute);
         }
         
         private void SetCamera(GameObject equipObject)
@@ -274,6 +277,18 @@ namespace Weapon.Gun
             if(false == shootEffect.gameObject.activeSelf)
                 shootEffect.gameObject.SetActive(true);
             shootEffect.SendEvent("OnPlay");
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void SetFireSpeedRPC()
+        {
+            float attackSpeed;
+
+            if (_ownerState) attackSpeed = _ownerState.attackSpeed.Current;
+            else attackSpeed = 1;
+            
+            // TODO : 여기서 공격속도 반영 해야함
+            fireLateSecond = 60 / (bulletFirePerMinute * attackSpeed);
         }
         
         #endregion

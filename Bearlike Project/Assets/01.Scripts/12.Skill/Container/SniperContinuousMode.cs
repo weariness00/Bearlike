@@ -19,6 +19,8 @@ namespace Skill.Container
         // TODO : 스킬 자체의 gun status로 작동되도록 변경해야함
         public PlayerStatus playerStatus;
         
+        // pc의 weapon system을 받아와서 weaponList의 모든 무기의 fireLateSecond를 player status의 attackSpeed로 다시 설정해야한다.
+        
         private float _durationTime;
         
         [Networked] private TickTimer DurationTimeTimer { get; set; }
@@ -33,7 +35,24 @@ namespace Skill.Container
             base.Start();
             var statusData = GetStatusData(id);
             _durationTime = statusData.GetFloat("Duration Time");
-            Debug.Log($"SniperContinuousMode : {_durationTime}");
+        }
+        
+        public override void Spawned()
+        {
+            base.Spawned();
+            
+            DurationTimeTimer = TickTimer.CreateFromTicks(Runner, 0);
+        }
+        
+        public override void Earn(GameObject earnTargetObject)
+        {
+            base.Earn(earnTargetObject);
+            if (earnTargetObject.TryGetComponent(out PlayerController pc))
+            {
+                DebugManager.ToDo("FlippingCoin은 player status에 더할 필요가 없다.");
+                pc.status.AddAdditionalStatus(status);
+                playerStatus = pc.status;
+            }
         }
         
         public override void MainLoop()
