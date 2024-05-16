@@ -41,6 +41,7 @@ namespace Skill.Container
             base.Earn(earnTargetObject);
             if (earnTargetObject.TryGetComponent(out PlayerController pc))
             {
+                // TODO : 무기가 스나이퍼인지 확인해서 넣기
                 pc.status.AddAdditionalStatus(status);
             }
         }

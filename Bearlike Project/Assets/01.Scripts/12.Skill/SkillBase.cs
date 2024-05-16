@@ -9,6 +9,8 @@ using Player;
 using Status;
 using UI.Inventory;
 using UnityEngine;
+using UnityEngine.Serialization;
+using UnityEngine.VFX;
 
 namespace Skill
 {
@@ -66,6 +68,8 @@ namespace Skill
         // 쿨타임이 끝나서 사용할 수 있는 상태인지
         public bool IsUse => CoolTimeTimer.Expired(Runner);
 
+        public VisualEffect effectVFX;
+
         #endregion
 
         #region Unity Event Function
@@ -78,6 +82,7 @@ namespace Skill
             var statusData = GetStatusData(id);
             status.SetJsonData(statusData);
             if(statusData.HasInt("Level Max")) level.Max = statusData.GetInt("Level Max");
+            if(effectVFX) effectVFX.gameObject.SetActive(false);
         }
 
         public virtual void Start()
@@ -204,6 +209,16 @@ namespace Skill
             LevelUp();
         }
 
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void StartVFXRPC()
+        {
+            if (effectVFX)
+            {
+                effectVFX.gameObject.SetActive(true);
+                effectVFX.SendEvent("OnPlay");
+            }
+        }
+        
         #endregion
     }
 }

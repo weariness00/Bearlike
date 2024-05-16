@@ -21,7 +21,7 @@ namespace Skill.Container
         public GameObject effectObject;
         public GameObject effectTableObject;
 
-        public FlippingCoinEffect effect;
+        public FlippingCoinEffect effectRought;
         
         private float _durationTime;
         
@@ -40,7 +40,7 @@ namespace Skill.Container
             
             effectObject.SetActive(false);
             effectTableObject.SetActive(false);
-            effect = effectObject.GetComponent<FlippingCoinEffect>();
+            effectRought = effectObject.GetComponent<FlippingCoinEffect>();
         }
 
         public override void Spawned()
@@ -57,7 +57,6 @@ namespace Skill.Container
             {
                 DebugManager.ToDo("FlippingCoin은 player status에 더할 필요가 없다.");
                 pc.status.AddAdditionalStatus(status);
-                // playerStatus = pc.status;
             }
         }
 
@@ -86,6 +85,7 @@ namespace Skill.Container
             {
                 // TODO : run이 rpc여서 모든 클라에서 실행된다.
                 StartCoroutine(StartEffect());
+                StartVFXRPC();
                 isInvoke = true;
                 // TODO : VFX도 넣어보자(너무 티가 안남)
                 
@@ -109,7 +109,7 @@ namespace Skill.Container
         {
             effectObject.SetActive(true);
             effectTableObject.SetActive(true);
-            effect.FlickCoin();
+            effectRought.FlickCoin();
             yield return new WaitForSeconds(2.0f);
             effectObject.SetActive(false);
             effectTableObject.SetActive(false);

@@ -52,6 +52,7 @@ namespace Player
 
             SetOwnerCamera();
             WeaponClipping();
+            SkillClipping();
         }
 
         public void ChangeCameraMode(CameraMode mode)
@@ -103,7 +104,13 @@ namespace Player
         {
             var cameraData = targetCamera.GetComponent<UniversalAdditionalCameraData>();
             cameraData.cameraStack.Add(weaponCamera);
+        }
+
+        public void SkillClipping()
+        {
+            var cameraData = targetCamera.GetComponent<UniversalAdditionalCameraData>();
             cameraData.cameraStack.Add(SkillCamera);
+            DebugManager.Log($"{cameraData.cameraStack.Count}");
         }
 
         private Tween _shakePositionTween;
