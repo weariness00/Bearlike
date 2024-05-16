@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Text.RegularExpressions;
 using Data;
 using Fusion;
 using Photon;
@@ -38,6 +41,8 @@ namespace Skill
         public static StatusJsonData GetStatusData(int id) => _statusDataChasing.TryGetValue(id, out var data) ? data : new StatusJsonData();
         public static void ClearStatusData() => _statusDataChasing.Clear();
 
+        protected static string pattern = @"\[(.*?)\]";  // 대괄호 안의 문자열을 찾기 위한 정규 표현식
+        
         #endregion
 
         #region Member Variable
@@ -113,6 +118,23 @@ namespace Skill
         {
             explain = _originExplain;
         }
+        
+        protected string ComputeAndReplace(Match m)
+        {
+            string expression = m.Groups[1].Value;
+            try
+            {
+                var table = new DataTable();
+                var result = table.Compute(expression, null);
+                return result.ToString();  // 계산 결과를 문자열로 변환하여 반환합니다.
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error calculating expression '{expression}': {ex.Message}");
+                return expression;  // 오류 발생 시 원래의 수식을 반환합니다.
+            }
+        }
+        
         #endregion
         
         #region Inventory Interface

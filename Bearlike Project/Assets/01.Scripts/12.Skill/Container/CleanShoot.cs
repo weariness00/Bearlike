@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Status;
 using Fusion;
 using Manager;
@@ -128,8 +129,6 @@ namespace Skill.Container
             ExplainUpdate();
         }
 
-        #endregion
-
         public override void ExplainUpdate()
         {
             base.ExplainUpdate();
@@ -137,7 +136,11 @@ namespace Skill.Container
                 explain = explain.Replace("(현재 공격력)", $"({status.CalDamage()})");
             if (explain.Contains("(Level)"))
                 explain = explain.Replace("(Level)", $"{level.Current}");
+            
+            explain = Regex.Replace(explain, pattern, ComputeAndReplace);
         }
+        
+        #endregion
 
         IEnumerator AttackMonsterFromArea()
         {

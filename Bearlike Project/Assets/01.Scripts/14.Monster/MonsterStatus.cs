@@ -3,6 +3,7 @@ using Monster;
 using Player;
 using UI.Status;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Status
 {
@@ -11,13 +12,13 @@ namespace Status
     /// </summary>
     public class MonsterStatus : StatusBase
     {
-        private MonsterBase _monsterBase;
+        [HideInInspector] public MonsterBase monsterBase;
         
         private void Start()
         {
             InvokeRepeating(nameof(MainLoop), 0.0f, 1.0f);
 
-            _monsterBase = GetComponent<MonsterBase>();
+            monsterBase = GetComponent<MonsterBase>();
         }
 
         #region Member Function
@@ -54,7 +55,7 @@ namespace Status
         {
             var randomDir = Random.insideUnitSphere;
             randomDir.y = Mathf.Abs(randomDir.y);
-            DamageTextCanvas.SpawnDamageText(_monsterBase.pivot.position + Random.insideUnitSphere, realDamage);
+            DamageTextCanvas.SpawnDamageText(monsterBase.pivot.position + Random.insideUnitSphere, realDamage);
         }
 
         #endregion

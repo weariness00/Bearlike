@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using BehaviorTree.Base;
@@ -133,7 +134,6 @@ namespace Monster
                 if (status.IsDie)
                 {
                     DieRPC();
-                    
                 }
             }
         }
@@ -213,6 +213,30 @@ namespace Monster
             }
             var dis = NavMeshDistanceFromTarget(targetPlayer.transform.position);
             return dis < checkDis;
+        }
+
+        public void UpdateNavMeshAgent()
+        {
+            StopCoroutine(nameof(UpdateNavMeshAgentCoroutine));
+            StartCoroutine(UpdateNavMeshAgentCoroutine());
+        }
+
+        private IEnumerator UpdateNavMeshAgentCoroutine()
+        {
+            if (!navMeshAgent)
+                yield break;
+            
+            rigidbody.isKinematic = false;
+            while (true)
+            {
+                if (navMeshAgent.isOnNavMesh)
+                {
+                    rigidbody.isKinematic = true;
+                    break;
+                }
+
+                yield return null;
+            }
         }
         
         #endregion

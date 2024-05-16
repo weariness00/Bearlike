@@ -101,10 +101,21 @@ namespace Player
             cameraData.cameraStack.Add(weaponCamera);
         }
 
+        private Tween _shakePositionTween;
+        private Tween _shakeRotationTween;
+
+        public void StopShake()
+        {
+            _shakePositionTween?.Kill();
+            _shakeRotationTween?.Kill();
+        }
         public void ShakeCamera(float duration, Vector3 strength, int vibrato, float randomness = 0.0f)
         {
-            targetCamera.transform.DOShakePosition(duration, strength, vibrato, randomness);
-            targetCamera.transform.DOShakeRotation(duration, strength, vibrato, randomness);
+            _shakePositionTween?.Kill();
+            _shakeRotationTween?.Kill();
+
+            _shakePositionTween = targetCamera.transform.DOShakePosition(duration, strength, vibrato, randomness);
+            _shakeRotationTween = targetCamera.transform.DOShakeRotation(duration, strength, vibrato, randomness);
         }
 
         public void ReboundCamera()
@@ -336,7 +347,7 @@ namespace Player
                 targetCamera.fieldOfView += 0.5f;
                 yield return new WaitForSeconds(0.01f);
                 if (movement >= 4.0f)
-                {
+                {   
                     StartCoroutine(ReboundCameraFrontCoroutine());
                     yield break;
                 }
