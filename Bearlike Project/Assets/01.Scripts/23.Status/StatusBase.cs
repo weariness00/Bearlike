@@ -42,6 +42,7 @@ namespace Status
         public StatusValue<float> avoid = new StatusValue<float>(){Min = 0, Max = 1, isOverMax = true, isOverMin = true};           // 회피율 0 ~ 1 사이값
         public StatusValue<float> moveSpeed = new StatusValue<float>(){Max = 99999f};           // 이동 속도
         public StatusValue<float> attackSpeed = new StatusValue<float>(){Max = 99999f};     // 초당 공격 속도
+        public float attackSpeedMultiple = 1f;
         [Networked] public TickTimer AttackLateTimer { get; set; }
         public StatusValue<float> attackRange = new StatusValue<float>(){Max = 99999f};
         
@@ -74,7 +75,7 @@ namespace Status
         public void ClearAdditionalStatus() => _additionalStatusList.Clear();
         public void AddAdditionalStatus(StatusBase otherStatus) => _additionalStatusList.Add(otherStatus);
         public void RemoveAdditionalStatus(StatusBase otherStatus) => _additionalStatusList.Remove(otherStatus);
-
+    
         public virtual int CalDamage(int additionalDamage = 0, float additionalDamageMultiple = 0f, float additionalCriticalHitMultiple = 0f)
         {
             var d = AddAllDamage() + additionalDamage;
