@@ -36,12 +36,13 @@ namespace Status
         public StatusValue<int> hp = new StatusValue<int>(){Max = 99999};                  // 체력        
         public StatusValue<int> damage = new StatusValue<int>(){Max = 99999};  // 공격력
         public float damageMultiple = 1; // 공격력 배율
-        public float criticalHitMultiple = 1; // 치명타 배율
         public StatusValue<float> criticalHitChance = new StatusValue<float>(){Max = 1, isOverMax = true}; // 치명타 확률 0~1 값 1 이상이 될수도 있다.
+        public float criticalHitMultiple = 1; // 치명타 배율
         public StatusValue<int> defence = new StatusValue<int>(){Max = 99999};             // 방어력
         public StatusValue<float> avoid = new StatusValue<float>(){Min = 0, Max = 1, isOverMax = true, isOverMin = true};           // 회피율 0 ~ 1 사이값
         public StatusValue<float> moveSpeed = new StatusValue<float>(){Max = 99999f};           // 이동 속도
         public StatusValue<float> attackSpeed = new StatusValue<float>(){Max = 99999f};     // 초당 공격 속도
+        public float attackSpeedMultiple = 1;   // 공격 속도 배율
         [Networked] public TickTimer AttackLateTimer { get; set; }
         public StatusValue<float> attackRange = new StatusValue<float>(){Max = 99999f};
         
@@ -83,8 +84,16 @@ namespace Status
 
             return (int)Math.Round(chm * dm * d);
         }
+        
+        public virtual int CalAttackSpeed(int additionalAttackSpeed = 0, float additionalAttackSpeedMultiple = 0f)
+        {
+            var ats = AddAllAttackSpeed() + additionalAttackSpeed;
+            var atsm = AddAllAttackSpeedMultiple() + 1 + additionalAttackSpeedMultiple;
 
-        public float CalCriticalHit()
+            return (int)Math.Round(atsm * ats);
+        }
+
+        private float CalCriticalHit()
         {
             float chm = AddAllCriticalHitMultiple();
             float chc = AddAllCriticalHitChance();
@@ -137,6 +146,31 @@ namespace Status
             }
 
             return chm;
+        }
+
+        private float AddAllAttackSpeed()
+        {
+            var value = attackSpeed.Current;
+            foreach (var statusBase in _additionalStatusList)
+            {
+                value += statusBase.AddAllAttackSpeed();
+            }
+            return value;
+        }
+        
+        private float AddAllAttackSpeedMultiple()
+        {
+            float asm = attackSpeedMultiple - 1;
+            
+            // TODO : asm의 값을 체크해주는 방법 생각
+            if (asm < 0)
+                asm = 0;
+            foreach (var statusBase in _additionalStatusList)
+            {
+                asm += statusBase.AddAllAttackSpeedMultiple();
+            }
+
+            return asm;
         }
         
         private float AddAllCriticalHitChance()

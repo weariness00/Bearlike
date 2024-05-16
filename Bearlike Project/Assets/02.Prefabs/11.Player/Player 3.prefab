@@ -4173,7 +4173,7 @@ MonoBehaviour:
   mode: 0
   targetCamera: {fileID: 7251487793613596239}
   weaponCamera: {fileID: 4931533912480079503}
-  uiCamera: {fileID: 4384581159391793847}
+  uiCamera: {fileID: 0}
   SkillCamera: {fileID: 3009489927179751103}
   firstOffset: {x: 0, y: 0, z: 0.27}
   thirdOffset: {x: 0, y: 0, z: -2}
@@ -4322,7 +4322,6 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -4331,6 +4330,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 0
@@ -4363,6 +4363,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 0
@@ -8551,6 +8552,16 @@ PrefabInstance:
         type: 3}
       propertyPath: SortKey
       value: 2888086079
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569949494085307128, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: attackSpeed._max
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569949494085307128, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: attackSpeed._current
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2813304304395061658, guid: fb0375b9d4667184885fa46e6c1de475,
         type: 3}

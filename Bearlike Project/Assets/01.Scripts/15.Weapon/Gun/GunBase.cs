@@ -110,7 +110,8 @@ namespace Weapon.Gun
             {
                 if (FireLateTimer.Expired(Runner))
                 {
-                    FireLateTimer = TickTimer.CreateFromSeconds(Runner, fireLateSecond);
+                    FireLateTimer = TickTimer.CreateFromSeconds(Runner, fireLateSecond / status.CalAttackSpeed());
+                    DebugManager.Log($"{status.CalAttackSpeed()}");
                     FireBulletRPC();
                 }
             };
@@ -277,18 +278,6 @@ namespace Weapon.Gun
             if(false == shootEffect.gameObject.activeSelf)
                 shootEffect.gameObject.SetActive(true);
             shootEffect.SendEvent("OnPlay");
-        }
-
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        public void SetFireSpeedRPC()
-        {
-            float attackSpeed;
-
-            if (_ownerState) attackSpeed = _ownerState.attackSpeed.Current;
-            else attackSpeed = 1;
-            
-            // TODO : 여기서 공격속도 반영 해야함
-            fireLateSecond = 60 / (bulletFirePerMinute * attackSpeed);
         }
         
         #endregion

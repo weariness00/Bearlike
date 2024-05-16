@@ -17,7 +17,7 @@ namespace Skill.Container
     {
         #region property
 
-        public PlayerStatus playerStatus;
+        // public PlayerStatus playerStatus;
         public GameObject effectObject;
         public GameObject effectTableObject;
 
@@ -57,7 +57,7 @@ namespace Skill.Container
             {
                 DebugManager.ToDo("FlippingCoin은 player status에 더할 필요가 없다.");
                 pc.status.AddAdditionalStatus(status);
-                playerStatus = pc.status;
+                // playerStatus = pc.status;
             }
         }
 
@@ -71,11 +71,11 @@ namespace Skill.Container
 
                 if (_type == 0)
                 {
-                    playerStatus.attackSpeed.Current -= (int)_difference;
+                    status.attackSpeedMultiple -= 0.5f;
                 }
                 else
                 {
-                    playerStatus.damage.Current -= (int)_difference;
+                    status.damageMultiple -= 0.2f;
                 }
             }
         }
@@ -84,6 +84,7 @@ namespace Skill.Container
         {
             if (IsUse && false == isInvoke)
             {
+                // TODO : run이 rpc여서 모든 클라에서 실행된다.
                 StartCoroutine(StartEffect());
                 isInvoke = true;
                 // TODO : VFX도 넣어보자(너무 티가 안남)
@@ -92,13 +93,11 @@ namespace Skill.Container
                 
                 if (_type == 0)
                 {
-                    _difference = playerStatus.attackSpeed.Current * 1.5f;
-                    playerStatus.attackSpeed.Current += (int)_difference;
+                    status.attackSpeedMultiple += 0.5f;
                 }
                 else
                 {
-                    _difference = playerStatus.damage.Current * 1.2f;
-                    playerStatus.damage.Current += (int)_difference;
+                    status.damageMultiple += 0.2f;
                 }
                 
                 // DurationTimeTimer = TickTimer.CreateFromSeconds(Runner, _durationTime);
