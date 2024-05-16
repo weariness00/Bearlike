@@ -28,9 +28,9 @@ public class FlippingCoinEffect : MonoBehaviour
         transform.localEulerAngles = new Vector3(0, 90, 0);
         
         Vector3 forceDirection = new Vector3(forceX, forceY, forceZ);  // 힘의 방향
-
-        rb.AddForce(forceDirection * forcePower, ForceMode.Impulse);
-        // 회전의 축을 캐릭터의 회전값에 right를 더해서 진행해야한다.
+        
+        // rb.AddForce(forceDirection * forcePower, ForceMode.Impulse);
+        // // 회전의 축을 캐릭터의 회전값에 right를 더해서 진행해야한다.
         rb.AddTorque(Vector3.right * torqueMagnitude , ForceMode.Impulse);
     }
 }
