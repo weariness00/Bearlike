@@ -50,6 +50,7 @@ namespace Skill.Container
         {
             if (DurationTimeTimer.Expired(Runner) && true == isInvoke)
             {
+                StopVFXRPC();
                 isInvoke = false;
                 SetSkillCoolTimerRPC(coolTime);
                 
@@ -61,6 +62,7 @@ namespace Skill.Container
         {
             if (IsUse && false == isInvoke)
             {
+                StartVFXRPC();
                 isInvoke = true;
                 // TODO : VFX도 넣어보자(너무 티가 안남)
 

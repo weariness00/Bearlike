@@ -84,7 +84,7 @@ namespace Skill.Container
             if (IsUse && false == isInvoke)
             {
                 // TODO : run이 rpc여서 모든 클라에서 실행된다.
-                StartCoroutine(StartEffect());
+                // StartCoroutine(StartEffect());
                 StartVFXRPC();
                 isInvoke = true;
                 // TODO : VFX도 넣어보자(너무 티가 안남)

@@ -219,6 +219,15 @@ namespace Skill
             }
         }
         
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void StopVFXRPC()
+        {
+            if (effectVFX)
+            {
+                effectVFX.SendEvent("StopPlay");
+            }
+        }
+        
         #endregion
     }
 }

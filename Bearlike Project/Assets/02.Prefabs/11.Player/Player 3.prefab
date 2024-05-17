@@ -7720,6 +7720,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7726773809401872581}
     m_Modifications:
+    - target: {fileID: 2874158568860651011, guid: 0243d90e774983344936053f3db5cb2f,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6335169101691228491, guid: 0243d90e774983344936053f3db5cb2f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -7774,6 +7779,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: FlippingCoin_vfx
+      objectReference: {fileID: 0}
+    - target: {fileID: 6870720589237129253, guid: 0243d90e774983344936053f3db5cb2f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7967,6 +7977,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: FlipCoin
+      objectReference: {fileID: 0}
+    - target: {fileID: 7543167055463917554, guid: 7341525e7784f484cbbf38791bb27f1c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8592,6 +8607,86 @@ MonoBehaviour:
   m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1001 &5747704305434437072
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 9142983819399699210}
+    m_Modifications:
+    - target: {fileID: 24200739876606655, guid: a38095a11104b47498ee9eb6b3ba9cf1,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 24200739876606655, guid: a38095a11104b47498ee9eb6b3ba9cf1,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 24200739876606655, guid: a38095a11104b47498ee9eb6b3ba9cf1,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 24200739876606655, guid: a38095a11104b47498ee9eb6b3ba9cf1,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 24200739876606655, guid: a38095a11104b47498ee9eb6b3ba9cf1,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 24200739876606655, guid: a38095a11104b47498ee9eb6b3ba9cf1,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 24200739876606655, guid: a38095a11104b47498ee9eb6b3ba9cf1,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 24200739876606655, guid: a38095a11104b47498ee9eb6b3ba9cf1,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 24200739876606655, guid: a38095a11104b47498ee9eb6b3ba9cf1,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 24200739876606655, guid: a38095a11104b47498ee9eb6b3ba9cf1,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6404765444542248799, guid: a38095a11104b47498ee9eb6b3ba9cf1,
+        type: 3}
+      propertyPath: m_Name
+      value: SniperConti
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a38095a11104b47498ee9eb6b3ba9cf1, type: 3}
+--- !u!4 &5734780990052808559 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 24200739876606655, guid: a38095a11104b47498ee9eb6b3ba9cf1,
+    type: 3}
+  m_PrefabInstance: {fileID: 5747704305434437072}
+  m_PrefabAsset: {fileID: 0}
+--- !u!2083052967 &5958074597964007222 stripped
+VisualEffect:
+  m_CorrespondingSourceObject: {fileID: 2120254085294416614, guid: a38095a11104b47498ee9eb6b3ba9cf1,
+    type: 3}
+  m_PrefabInstance: {fileID: 5747704305434437072}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6394228921169251027
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9033,15 +9128,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 77261413800431814, guid: 08d601a4a5a38a04ab26efede8c71ad7,
         type: 3}
       insertIndex: -1
+      addedObject: {fileID: 5124476518507849160}
+    - targetCorrespondingSourceObject: {fileID: 77261413800431814, guid: 08d601a4a5a38a04ab26efede8c71ad7,
+        type: 3}
+      insertIndex: -1
       addedObject: {fileID: 4346934141940101082}
     - targetCorrespondingSourceObject: {fileID: 77261413800431814, guid: 08d601a4a5a38a04ab26efede8c71ad7,
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 8505760513867167423}
-    - targetCorrespondingSourceObject: {fileID: 77261413800431814, guid: 08d601a4a5a38a04ab26efede8c71ad7,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 5124476518507849160}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 08d601a4a5a38a04ab26efede8c71ad7, type: 3}
 --- !u!114 &1570449933029124202 stripped
@@ -9097,7 +9192,7 @@ PrefabInstance:
     - target: {fileID: -5320853382675779889, guid: cc580b57f8a4fcd4abaecfda0b38bc64,
         type: 3}
       propertyPath: Flags
-      value: 1
+      value: 262145
       objectReference: {fileID: 0}
     - target: {fileID: -5320853382675779889, guid: cc580b57f8a4fcd4abaecfda0b38bc64,
         type: 3}
@@ -9187,12 +9282,21 @@ PrefabInstance:
         type: 3}
     - target: {fileID: 7856296637238042012, guid: cc580b57f8a4fcd4abaecfda0b38bc64,
         type: 3}
+      propertyPath: effectVFX
+      value: 
+      objectReference: {fileID: 5958074597964007222}
+    - target: {fileID: 7856296637238042012, guid: cc580b57f8a4fcd4abaecfda0b38bc64,
+        type: 3}
       propertyPath: skillName
       value: SniperContinousMode
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 972581711291099202, guid: cc580b57f8a4fcd4abaecfda0b38bc64,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5734780990052808559}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cc580b57f8a4fcd4abaecfda0b38bc64, type: 3}
 --- !u!114 &56647657628479281 stripped
@@ -9434,6 +9538,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: bottle
+      objectReference: {fileID: 0}
+    - target: {fileID: 9030961615690234278, guid: 79aff2b67ca1b2e4bb7e29dfe945dde7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
