@@ -40,6 +40,7 @@ namespace Status
         public float criticalHitMultiple = 1; // 치명타 배율
         public StatusValue<int> defence = new StatusValue<int>(){Max = 99999};             // 방어력
         public StatusValue<float> avoid = new StatusValue<float>(){Min = 0, Max = 1, isOverMax = true, isOverMin = true};           // 회피율 0 ~ 1 사이값
+        public float avoidMultiple = 1;
         public StatusValue<float> moveSpeed = new StatusValue<float>(){Max = 99999f};           // 이동 속도
         public StatusValue<float> attackSpeed = new StatusValue<float>(){Max = 99999f};     // 초당 공격 속도
         public float attackSpeedMultiple = 1;   // 공격 속도 배율

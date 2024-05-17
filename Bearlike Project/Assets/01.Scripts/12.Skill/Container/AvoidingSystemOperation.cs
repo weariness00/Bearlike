@@ -12,24 +12,11 @@ namespace Skill.Container
     /// </summary>
     public sealed class AvoidingSystemOperation : SkillBase
     {
-        #region time
-
-        // private GameManager _gm;
-        private float _currentPlayTime;
-        private float _previousPlayTime;
-
-        private float _deltaPlayTime;
-
-        #endregion
-
         #region property
-
-        public PlayerStatus playerStatus;
         
-        private int _type;
-        private bool _bOn;              // 현재 발동 중인지 판단하는 bool
-
-        private float _difference;      // 차이 값 
+        private float _durationTime;
+        
+        [Networked] private TickTimer DurationTimeTimer { get; set; }
 
         #endregion
         
@@ -45,65 +32,27 @@ namespace Skill.Container
         
         public override void Awake()
         {
-            base.Awake();   
-            var tempCoolTime = new StatusValue<float>();
-            tempCoolTime.Max = CoolTime;
-            tempCoolTime.Min = tempCoolTime.Current = 0.0f;
-
-            coolTime = tempCoolTime;
-
-            var tempDuration = new StatusValue<float>();
-            tempDuration.Max = DurationTime;
-            tempDuration.Min = tempDuration.Current = 0.0f;
-
-            duration = tempDuration;
+            base.Start();
+            var statusData = GetStatusData(id);
+            _durationTime = statusData.GetFloat("Duration Time");
             
-            // _gm = GameObject.Find("GameManager").GetComponent<GameManager>();
-            
-            _bOn = false;
-            _difference = 0;
         }
 
         public override void Spawned()
         {
             base.Spawned();
+            
             DurationTimer = TickTimer.CreateFromTicks(Runner, 0);
         }
 
         public override void MainLoop()
         {
-            // _currentPlayTime = _gm.PlayTimer;
-            
-            _deltaPlayTime = _currentPlayTime - _previousPlayTime;
-            
-            // coolTime.Current -= _deltaPlayTime;
-            // duration.Current -= _deltaPlayTime;
-            //
-            // if (_bOn && Mathf.Round((duration.Current - duration.Min) * 10) * 0.1f <= 0f)
-            // {
-            //     playerStatus.avoid.Current -= _difference;
-            //     
-            //     duration.Current = duration.Min;
-            //     _bOn = false;
-            // }
-            
-            _previousPlayTime = _currentPlayTime;
+
         }
 
         public override void Run()
         {
-            // if (_bOn == false && Mathf.Round((coolTime.Current - coolTime.Min) * 10) * 0.1f <= 0f)
-            // {
-            //     playerStatus = runObject.GetComponent<PlayerStatus>();
-            //
-            //     _difference = playerStatus.avoid * AvoidValue;
-            //     playerStatus.avoid.Current += _difference;
-            //
-            //     duration.Current = duration.Max;
-            //     coolTime.Current = coolTime.Max;
-            //
-            //     _bOn = true;
-            // }
+
         }
     }
 }
