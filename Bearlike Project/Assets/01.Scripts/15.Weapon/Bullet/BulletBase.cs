@@ -1,4 +1,5 @@
-﻿using Fusion;
+﻿using System.Collections;
+using Fusion;
 using GamePlay;
 using Manager;
 using Photon;
@@ -8,6 +9,7 @@ using Status;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Serialization;
 using UnityEngine.VFX;
 using Random = UnityEngine.Random;
@@ -27,7 +29,7 @@ namespace Weapon.Bullet
         public VisualEffect hitEffect;
 
         private Vector3 direction;
-        public bool bknock = false;
+        public int nuckBack;
 
         #endregion
 
@@ -76,14 +78,25 @@ namespace Weapon.Bullet
                 StatusBase otherStatus = colliderStatus.originalStatus;
                 otherStatus.AddAdditionalStatus(colliderStatus.status);
                 
-                // player가 건이다.
                 otherStatus.ApplyDamageRPC(status.CalDamage(), ownerId);
                 otherStatus.RemoveAdditionalStatus(colliderStatus.status);
                 
-                if (bknock)
+                if (nuckBack > 0)
                 {
-                    // TODO : 수정 필요
-                    otherStatus.gameObject.transform.Translate(direction);
+                    Rigidbody enemyRb = other.GetComponent<Rigidbody>();
+                    if (enemyRb != null)
+                    {
+                        // navagent를 멈춰주는 코드는 해당 객체에 둬야하나?
+                        NavMeshAgent _nav = other.GetComponent<NavMeshAgent>();
+                        
+                        Vector3 knockbackDirection = other.transform.position - transform.position;
+                        knockbackDirection.y = 0;
+                        knockbackDirection.Normalize();
+                        enemyRb.AddForce(knockbackDirection * nuckBack * 10, ForceMode.Impulse);
+                        
+                        _nav.enabled = false;
+                        Invoke("EnableNavMeshAgent", 0.5f);
+                    }
                 }
 
                 // var hitEffectObject = Instantiate(hitEffect.gameObject, transform.position, Quaternion.identity);
@@ -111,6 +124,13 @@ namespace Weapon.Bullet
             }
         }
 
+        IEnumerator RestartNavAgentCorutine(NavMeshAgent _nav)
+        {
+            // TODO : 시간은 자연스럽게 조정해보자
+            yield return new WaitForSeconds(0.5f);
+            _nav.enabled = true;
+        }
+        
         [BurstCompile]
         public static float FastDistance(float3 pointA, float3 pointB)
         {

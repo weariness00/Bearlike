@@ -15,8 +15,6 @@ namespace Weapon.Gun.Continer
         public MegaShotGunAnimator animatorInfo;
 
         [SerializeField] private float bulletRadian; // 산탄 정도(원의 반지름)
-        
-        public bool bknock;
 
         private Coroutine _reloadCoroutine;
 
@@ -30,9 +28,7 @@ namespace Weapon.Gun.Continer
         public override void Start()
         {
             base.Start();
-
-            bknock = false;
-            // bulletRadian = 3;
+            
             // json화
             ammo.Max = 36;
             ammo.Current = ammo.Max;
@@ -53,6 +49,8 @@ namespace Weapon.Gun.Continer
                 if (shootEffect != null) shootEffect.Play();
                 if (HasStateAuthority)
                 {
+                    int nuckBack = status.GetAllNuckBack();
+                    
                     for (int i = 0; i < 10; ++i)
                     {
                         Runner.SpawnAsync(bullet.gameObject, transform.position + dst, transform.rotation, null,
@@ -65,7 +63,7 @@ namespace Weapon.Gun.Continer
                                 b.status.AddAdditionalStatus(status);
                                 b.ownerId = OwnerId;
                                 b.hitEffect = hitEffect;
-                                b.bknock = bknock;
+                                b.nuckBack = nuckBack;
                                 b.status.attackRange.Max = status.attackRange.Max;
                                 b.status.attackRange.Current = status.attackRange.Current;
                                 b.destination = fireTransform.position + (dst * status.attackRange) + randomVector3;

@@ -52,6 +52,8 @@ namespace Status
         public int burnDamage;
         public int poisonDamage;
 
+        public int nuckback = 0;    // 넉백 속성
+        
         public bool IsDie => hp.isMin;
         
         #endregion
@@ -121,8 +123,7 @@ namespace Status
             var d = damage.Current;
             foreach (var statusBase in _additionalStatusList)
             {
-                if(statusBase != null)
-                    d += statusBase.AddAllDamage();
+                d += statusBase.AddAllDamage();
             }
 
             return d;
@@ -133,8 +134,7 @@ namespace Status
             float dm = damageMultiple - 1;
             foreach (var statusBase in _additionalStatusList)
             {
-                if(statusBase != null)
-                    dm += statusBase.AddAllDamageMagnification();
+                dm += statusBase.AddAllDamageMagnification();
             }
 
             return dm;
@@ -145,8 +145,7 @@ namespace Status
             float chm = criticalHitMultiple - 1;
             foreach (var statusBase in _additionalStatusList)
             {
-                if(statusBase != null)
-                    chm += statusBase.AddAllCriticalHitMultiple();
+                chm += statusBase.AddAllCriticalHitMultiple();
             }
 
             return chm;
@@ -157,8 +156,7 @@ namespace Status
             var value = attackSpeed.Current;
             foreach (var statusBase in _additionalStatusList)
             {
-                if(statusBase != null)
-                    value += statusBase.AddAllAttackSpeed();
+                value += statusBase.AddAllAttackSpeed();
             }
             return value;
         }
@@ -172,8 +170,7 @@ namespace Status
                 asm = 0;
             foreach (var statusBase in _additionalStatusList)
             {
-                if(statusBase != null)
-                 asm += statusBase.AddAllAttackSpeedMultiple();
+                asm += statusBase.AddAllAttackSpeedMultiple();
             }
 
             return asm;
@@ -184,10 +181,22 @@ namespace Status
             float chc = criticalHitChance;
             foreach (var statusBase in _additionalStatusList)
             {
-                if(statusBase != null)
-                 chc += statusBase.AddAllCriticalHitChance();
+                chc += statusBase.AddAllCriticalHitChance();
             }
             return chc;
+        }
+
+        public int GetAllNuckBack()
+        {
+            int nb = nuckback;
+            foreach (var statusBase in _additionalStatusList)
+            {
+                var value = statusBase.GetAllNuckBack();
+                if (nb < value)
+                    nb = value;
+            }
+
+            return nb;
         }
 
         public virtual void ApplyDamage(int applyDamage, NetworkId ownerId, CrowdControl cc)

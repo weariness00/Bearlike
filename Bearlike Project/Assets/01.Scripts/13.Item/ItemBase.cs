@@ -121,7 +121,7 @@ namespace Item
         
         public virtual void GetItem(GameObject targetObject)
         {
-            PlayerController pc;//  
+            PlayerController pc;
             if (targetObject.TryGetComponent(out pc) || targetObject.transform.root.TryGetComponent(out pc))
             {
                 pc.itemInventory.AddItemRPC(new NetworkItemInfo(){Id = info.id, amount = info.amount.Current});
