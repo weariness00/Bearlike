@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Status;
 using Fusion;
-using Manager;
 using Photon;
-using Unity.AI.Navigation;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -14,8 +11,6 @@ namespace GamePlay.DeadBodyObstacle
 {
     public class DeadBodyObstacleObject : NetworkBehaviourEx
     {
-        public static NavMeshSurface stageSurface;
-
         public bool isOnStart = true;
         
         private NetworkMecanimAnimator _networkAnimator;
@@ -25,6 +20,8 @@ namespace GamePlay.DeadBodyObstacle
         private Collider[] _ragdollColliders;
         private List<NavMeshObstacle> _navMeshObstacleList;
 
+        private float movementThreshold = 0.01f;
+        
         #region Unity Event Function
 
         private void Awake()
@@ -99,9 +96,10 @@ namespace GamePlay.DeadBodyObstacle
             if (HasStateAuthority)
             {
                 // Nav Mesh Obstacle 생성
-                MakeNavMeshObstacle();
+                // MakeNavMeshObstacle();
+                InvokeRepeating(nameof(BakeNavMeshToCollider), 1,0.1f);
                 StartCoroutine(CheckHP());
-                StartCoroutine(BakeNavMesh());
+                // StartCoroutine(BakeNavMesh());
             }
         }
 
@@ -185,16 +183,19 @@ namespace GamePlay.DeadBodyObstacle
             }
         }
 
-        private IEnumerator BakeNavMesh()
+        private IEnumerator BakeNavMeshToCollider()
         {
-            bool isAllActive = false;
+            var updateTime = new WaitForSeconds(0.1f);
+            
             while (true)
             {
-                yield return null;
-                isAllActive = true;
-                foreach (var obstacle in _navMeshObstacleList)
+                yield return updateTime;
+                
+                bool isAllActive = true;
+                foreach (var rb in _ragdollRigidBodies)
                 {
-                    if (obstacle.isActiveAndEnabled == false)
+                    if (rb.velocity.magnitude > movementThreshold ||
+                        rb.angularVelocity.magnitude > movementThreshold)
                     {
                         isAllActive = false;
                         break;
@@ -204,10 +205,6 @@ namespace GamePlay.DeadBodyObstacle
                 if (isAllActive)
                     break;
             }
-            
-            DebugManager.ToDo("Nav Mesh 리빌딩 하기");
-            // if(stageSurface)
-            //     stageSurface.BuildNavMesh();
         }
 
         #endregion
