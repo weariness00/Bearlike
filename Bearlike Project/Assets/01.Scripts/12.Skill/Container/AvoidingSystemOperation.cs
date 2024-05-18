@@ -20,17 +20,7 @@ namespace Skill.Container
 
         #endregion
         
-        #region Value
-
-        public float duration = 10.0f;
-        private const float AvoidValue = 0.3f;
-        private const float CoolTime = 30.0f;
-        [Networked] private TickTimer DurationTimer { get; set; }
-        private const float DurationTime = 10.0f;
-
-        #endregion
-        
-        public override void Awake()
+        public override void Start()
         {
             base.Start();
             var statusData = GetStatusData(id);
@@ -42,17 +32,41 @@ namespace Skill.Container
         {
             base.Spawned();
             
-            DurationTimer = TickTimer.CreateFromTicks(Runner, 0);
+            DurationTimeTimer = TickTimer.CreateFromTicks(Runner, 0);
+        }
+        
+        public override void Earn(GameObject earnTargetObject)
+        {
+            base.Earn(earnTargetObject);
+            if (earnTargetObject.TryGetComponent(out PlayerController pc))
+            {
+                pc.status.AddAdditionalStatus(status);
+            }
         }
 
         public override void MainLoop()
         {
+            if (DurationTimeTimer.Expired(Runner) && true == isInvoke)
+            {
+                isInvoke = false;
+                SetSkillCoolTimerRPC(coolTime);
 
+                status.avoidMultiple -= 0.3f;
+            }
         }
 
         public override void Run()
         {
-
+            if (IsUse && false == isInvoke)
+            {
+                StartVFXRPC();
+                isInvoke = true;
+                // TODO : VFX도 넣어보자(너무 티가 안남)
+                
+                status.avoidMultiple += 0.3f;
+                
+                DurationTimeTimer = TickTimer.CreateFromSeconds(Runner, _durationTime);
+            }
         }
     }
 }

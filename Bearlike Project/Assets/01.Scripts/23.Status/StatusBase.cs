@@ -121,7 +121,8 @@ namespace Status
             var d = damage.Current;
             foreach (var statusBase in _additionalStatusList)
             {
-                d += statusBase.AddAllDamage();
+                if(statusBase != null)
+                    d += statusBase.AddAllDamage();
             }
 
             return d;
@@ -132,7 +133,8 @@ namespace Status
             float dm = damageMultiple - 1;
             foreach (var statusBase in _additionalStatusList)
             {
-                dm += statusBase.AddAllDamageMagnification();
+                if(statusBase != null)
+                    dm += statusBase.AddAllDamageMagnification();
             }
 
             return dm;
@@ -143,7 +145,8 @@ namespace Status
             float chm = criticalHitMultiple - 1;
             foreach (var statusBase in _additionalStatusList)
             {
-                chm += statusBase.AddAllCriticalHitMultiple();
+                if(statusBase != null)
+                    chm += statusBase.AddAllCriticalHitMultiple();
             }
 
             return chm;
@@ -154,7 +157,8 @@ namespace Status
             var value = attackSpeed.Current;
             foreach (var statusBase in _additionalStatusList)
             {
-                value += statusBase.AddAllAttackSpeed();
+                if(statusBase != null)
+                    value += statusBase.AddAllAttackSpeed();
             }
             return value;
         }
@@ -168,7 +172,8 @@ namespace Status
                 asm = 0;
             foreach (var statusBase in _additionalStatusList)
             {
-                asm += statusBase.AddAllAttackSpeedMultiple();
+                if(statusBase != null)
+                 asm += statusBase.AddAllAttackSpeedMultiple();
             }
 
             return asm;
@@ -179,7 +184,8 @@ namespace Status
             float chc = criticalHitChance;
             foreach (var statusBase in _additionalStatusList)
             {
-                chc += statusBase.AddAllCriticalHitChance();
+                if(statusBase != null)
+                 chc += statusBase.AddAllCriticalHitChance();
             }
             return chc;
         }
