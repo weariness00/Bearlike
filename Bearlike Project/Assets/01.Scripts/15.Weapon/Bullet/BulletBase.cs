@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using DG.Tweening;
 using Fusion;
 using GamePlay;
 using Manager;
@@ -29,7 +30,7 @@ namespace Weapon.Bullet
         public VisualEffect hitEffect;
 
         private Vector3 direction;
-        public int nuckBack;
+        public int knockBack;
 
         #endregion
 
@@ -81,22 +82,22 @@ namespace Weapon.Bullet
                 otherStatus.ApplyDamageRPC(status.CalDamage(), ownerId);
                 otherStatus.RemoveAdditionalStatus(colliderStatus.status);
                 
-                if (nuckBack > 0)
+                if (knockBack > 0)
                 {
-                    Rigidbody enemyRb = other.GetComponent<Rigidbody>();
-                    if (enemyRb != null)
-                    {
+                    // Rigidbody _enemyRb = other.transform.parent.gameObject.GetComponent<Rigidbody>();
+                    // if (_enemyRb != null)
+                    // {
                         // navagent를 멈춰주는 코드는 해당 객체에 둬야하나?
-                        NavMeshAgent _nav = other.GetComponent<NavMeshAgent>();
+                        // RPC화 해야함
                         
-                        Vector3 knockbackDirection = other.transform.position - transform.position;
+                        var parent = otherStatus.gameObject;
+                        
+                        Vector3 knockbackDirection = parent.transform.position - transform.position;
                         knockbackDirection.y = 0;
                         knockbackDirection.Normalize();
-                        enemyRb.AddForce(knockbackDirection * nuckBack * 10, ForceMode.Impulse);
-                        
-                        _nav.enabled = false;
-                        Invoke("EnableNavMeshAgent", 0.5f);
-                    }
+
+                        otherStatus.KnockBackRPC(knockbackDirection, knockBack);
+                        // }
                 }
 
                 // var hitEffectObject = Instantiate(hitEffect.gameObject, transform.position, Quaternion.identity);
@@ -118,7 +119,7 @@ namespace Weapon.Bullet
                 NetworkMeshSliceSystem.Instance.SliceRPC(networkObj.Id, Random.onUnitSphere, transform.position, 100f);
             }
 
-            if (penetrateCount-- == 0)//
+            if (penetrateCount-- == 0)
             {
                 Destroy(gameObject);
             }
@@ -126,9 +127,8 @@ namespace Weapon.Bullet
 
         IEnumerator RestartNavAgentCorutine(NavMeshAgent _nav)
         {
-            // TODO : 시간은 자연스럽게 조정해보자
             yield return new WaitForSeconds(0.5f);
-            _nav.enabled = true;
+            if(_nav != null) _nav.enabled = true;
         }
         
         [BurstCompile]

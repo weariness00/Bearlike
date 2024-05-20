@@ -55,7 +55,6 @@ namespace Skill.Container
             base.Earn(earnTargetObject);
             if (earnTargetObject.TryGetComponent(out PlayerController pc))
             {
-                DebugManager.ToDo("FlippingCoin은 player status에 더할 필요가 없다.");
                 pc.status.AddAdditionalStatus(status);
             }
         }

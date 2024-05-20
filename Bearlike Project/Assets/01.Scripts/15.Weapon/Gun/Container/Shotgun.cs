@@ -63,7 +63,7 @@ namespace Weapon.Gun.Continer
                                 b.status.AddAdditionalStatus(status);
                                 b.ownerId = OwnerId;
                                 b.hitEffect = hitEffect;
-                                b.nuckBack = nuckBack;
+                                b.knockBack = nuckBack;
                                 b.status.attackRange.Max = status.attackRange.Max;
                                 b.status.attackRange.Current = status.attackRange.Current;
                                 b.destination = fireTransform.position + (dst * status.attackRange) + randomVector3;

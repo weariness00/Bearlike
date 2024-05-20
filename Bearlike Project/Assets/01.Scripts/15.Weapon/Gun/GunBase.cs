@@ -160,7 +160,7 @@ namespace Weapon.Gun
 
                             b.ownerId = OwnerId;
                             b.hitEffect = hitEffect;
-                            b.nuckBack = 0;
+                            b.knockBack = 0;
                             b.status.attackRange.Max = status.attackRange.Max;
                             b.status.attackRange.Current = status.attackRange.Current;
                             b.destination = fireTransform.position + (dst * status.attackRange);

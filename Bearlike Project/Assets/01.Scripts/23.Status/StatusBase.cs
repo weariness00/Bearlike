@@ -1,10 +1,13 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Data;
+using DG.Tweening;
 using Fusion;
 using Manager;
 using UI.Status;
 using Unity.Mathematics;
+using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
@@ -52,7 +55,7 @@ namespace Status
         public int burnDamage;
         public int poisonDamage;
 
-        public int nuckback = 0;    // 넉백 속성
+        public int knockBack = 0;    // 넉백 속성
         
         public bool IsDie => hp.isMin;
         
@@ -188,7 +191,7 @@ namespace Status
 
         public int GetAllNuckBack()
         {
-            int nb = nuckback;
+            int nb = knockBack;
             foreach (var statusBase in _additionalStatusList)
             {
                 var value = statusBase.GetAllNuckBack();
@@ -235,8 +238,7 @@ namespace Status
             }
         }
 
-        // 상태이상 적용
-        public void ApplyCrowdControl()
+        public void KnockBack()
         {
             
         }
@@ -389,6 +391,27 @@ namespace Status
         public void ApplyDamageRPC(int damage, NetworkId id, CrowdControl enemyProperty = CrowdControl.Normality, RpcInfo info = default)
         {
             ApplyDamage(damage, id, enemyProperty);
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All, Channel = RpcChannel.Reliable)]
+        public void KnockBackRPC(Vector3 direction, int amount)
+        {
+            KnockBack();
+                        
+            UnityEngine.AI.NavMeshAgent _enemynav = gameObject.GetComponent<UnityEngine.AI.NavMeshAgent>();
+            
+            if(_enemynav != null) _enemynav.enabled = false;
+
+            transform.DOMove(transform.position + direction * amount * 10, 0.5f)
+                .SetEase(Ease.OutCirc);
+                        
+            StartCoroutine(RestartNavAgentCorutine(_enemynav));
+        }
+        
+        IEnumerator RestartNavAgentCorutine(UnityEngine.AI.NavMeshAgent _nav)
+        {
+            yield return new WaitForSeconds(0.5f);
+            if(_nav != null) _nav.enabled = true;
         }
 
         #endregion

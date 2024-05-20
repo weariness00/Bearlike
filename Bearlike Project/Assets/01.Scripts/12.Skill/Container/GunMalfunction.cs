@@ -50,7 +50,7 @@ namespace Skill.Container
 
                         b.ownerId = gun.OwnerId;
                         b.hitEffect = gun.hitEffect;
-                        b.bknock = false;
+                        b.knockBack = status.knockBack;
                         b.status.attackRange.Max = gun.status.attackRange.Max;
                         b.status.attackRange.Current = gun.status.attackRange.Current;
                         b.destination = gun.fireTransform.position + (dst * gun.status.attackRange);

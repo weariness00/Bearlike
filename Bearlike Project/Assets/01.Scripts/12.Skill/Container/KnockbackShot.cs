@@ -1,4 +1,7 @@
+using Fusion;
+using Player;
 using Status;
+using UnityEngine;
 
 namespace Skill.Container
 {
@@ -8,30 +11,59 @@ namespace Skill.Container
     /// </summary>
     public class KnockbackShot : SkillBase
     {
-        #region Value
-
-        public StatusValue<float> duration = new StatusValue<float>();
-        private const float AttackValue = 0.5f;
-        private const float AttackSpeedValue = 0.2f;
-        private const float CoolTime = 30.0f;
-        private const float DurationTime = 10.0f;
-
-        #endregion
         
-        public override void Awake()
+        private float _durationTime;
+        private TickTimer DurationTimeTimer { get; set; }
+
+        private int diff;
+        
+        public override void Start()
         {
-            base.Awake();
+            base.Start();
+            var statusData = GetStatusData(id);
+            _durationTime = statusData.GetFloat("Duration Time");
+        }
+        
+        public override void Spawned()
+        {
+            base.Spawned();
             
+            DurationTimeTimer = TickTimer.CreateFromTicks(Runner, 0);
         }
 
+        public override void Earn(GameObject earnTargetObject)
+        {
+            base.Earn(earnTargetObject);
+            if (earnTargetObject.TryGetComponent(out PlayerController pc))
+            {
+                pc.status.AddAdditionalStatus(status);
+            }
+        }
+        
         public override void MainLoop()
         {
-        }
+            if (DurationTimeTimer.Expired(Runner) && true == isInvoke)
+            {
+                isInvoke = false;
+                SetSkillCoolTimerRPC(coolTime);
 
+                status.knockBack -= diff;
+            }
+        }
+        
         public override void Run()
         {
-            
-        }
+            if (IsUse && false == isInvoke)
+            {
+                StartVFXRPC();
+                isInvoke = true;
 
+                diff = level.Current;
+                
+                status.knockBack += diff;
+                
+                DurationTimeTimer = TickTimer.CreateFromSeconds(Runner, _durationTime);
+            }
+        }
     }
 }
