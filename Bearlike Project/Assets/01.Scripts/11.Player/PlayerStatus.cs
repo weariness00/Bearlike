@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Fusion;
+using Manager;
 using Status;
 using Unity.Mathematics;
 using UnityEngine;
@@ -12,17 +13,9 @@ namespace Player
     /// </summary>
     public sealed class PlayerStatus : StatusBase
     {
-        #region Networked Property
-        
-        // public GameObject immortalityIndicator;
-        [Networked] private TickTimer ImmortalTimer { get; set; }
-        
-        #endregion
-
-       [HideInInspector] public PlayerController playerController;
-        
-        // Member Variable
         #region Member Perperty
+        [HideInInspector] public PlayerController playerController;
+        
         public StatusValue<int> level = new StatusValue<int>();               // 레벨
         public StatusValue<int> experience = new StatusValue<int>();                 // 경험치
         public List<int> experienceAmountList = new List<int>();  // 레벨별 경험치량
@@ -42,9 +35,9 @@ namespace Player
         public bool isRevive; // 소생 상태인지
         public bool isHelpOtherPlayer; // 다른 플레이어와 상호작용중인지
         
+        // 무적 시간
+        [Networked] private TickTimer ImmortalTimer { get; set; }
         public bool IsImmortal => ImmortalTimer.ExpiredOrNotRunning(Runner) == false;
-
-        private PlayerCameraController _playerCameraController;
 
         public AudioSource applyDamageSound;
             
@@ -56,7 +49,7 @@ namespace Player
         // ObjectState abstract class Function
         void Awake()
         {
-            _playerCameraController = GetComponent<PlayerCameraController>();
+            playerController = GetComponent<PlayerController>();
             
             condition = (int)CrowdControl.Normality;
             property = (int)CrowdControl.Normality;
@@ -64,11 +57,11 @@ namespace Player
             for(int i = 0; i < 10; ++i)
                 experienceAmountList.Add(10 * (int)math.pow(i,2));    // 임시 수치 적용
             
-            level.Max = 10;
+            level.Max = 200;
             level.Min = 1;
             level.Current = 1;
 
-            experience.Max = experienceAmountList[level.Current];
+            experience.Max = 100;
             experience.Min = 0;
             experience.Current = 0;
             
@@ -128,7 +121,7 @@ namespace Player
         {
             base.ApplyDamage(applyDamage, ownerId, cc);
 
-            _playerCameraController.ScreenHitImpact(1,1);
+            playerController.cameraController.ScreenHitImpact(1,1);
             
             applyDamageSound.Play();
             
@@ -171,13 +164,18 @@ namespace Player
         public void IncreaseExp(int value)
         {
             experience.Current += value;
-
-            while (experienceAmountList[level.Current] <= experience.Current && level.Max > level.Current)
+            
+            while (experience.Max <= experience.Current)
             {
-                experience.Current -= experienceAmountList[level.Current];
-                level.Current++;
-                experience.Max = experienceAmountList[level.Current];
-                if(level.Max <= level.Current) Debug.Log("최대 레벨 도달");
+                if (level.isMax)
+                {
+                    DebugManager.Log("최대 레벨 도달");
+                    return;
+                }
+                
+                experience.Current -= experience.Max;
+                experience.Max = (int)(1.5f * experience.Max);
+                LevelUpRPC();
             }
         }
 

@@ -28,6 +28,7 @@ namespace Player
         [Header("컴포넌트")] 
         public PlayerStatus status;
         public PlayerCameraController cameraController;
+        public PlayerSoundController soundController;
         public SkillSystem skillSystem;
         public WeaponSystem weaponSystem;
         public Canvas gunUI;
@@ -74,6 +75,7 @@ namespace Player
             // 상호작용으로 착요하게 바꿀 예정
             status = gameObject.GetComponent<PlayerStatus>();
             cameraController = GetComponent<PlayerCameraController>();
+            soundController = GetComponent<PlayerSoundController>();
             weaponSystem = gameObject.GetComponentInChildren<WeaponSystem>();
             animator = GetComponentInChildren<Animator>();
 
