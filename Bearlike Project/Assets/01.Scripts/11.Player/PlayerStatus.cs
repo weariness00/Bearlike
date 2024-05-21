@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Fusion;
+using Manager;
 using Status;
 using Unity.Mathematics;
 using UnityEngine;
@@ -118,13 +119,15 @@ namespace Player
         public void BePoisoned(int value)
         {
             hp.Current -= value;
+            
         }
         
         public override void ApplyDamage(int applyDamage, NetworkId ownerId, CrowdControl cc) // MonsterRef instigator,
         {
             base.ApplyDamage(applyDamage, ownerId, cc);
 
-            _playerCameraController.ScreenHitImpact(1,1);
+            // _playerCameraController.ScreenHitImpact(1,1);
+            URPRendererFeaturesManager.Instance.StartEffect("HitEffect");
             
             HpControlRPC();
         }
