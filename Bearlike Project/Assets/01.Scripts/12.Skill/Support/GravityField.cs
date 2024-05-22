@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Fusion;
 using GamePlay;
@@ -7,9 +6,7 @@ using Monster;
 using Photon;
 using Player;
 using Status;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.VFX;
 using Random = UnityEngine.Random;
 
@@ -30,7 +27,7 @@ namespace Skill.Support
         
         [Header("VFX")] 
         public VisualEffect blackHoleVFX;
-        public VisualEffect explodeVFX;
+        public GameObject explodeVFXObject;
 
         private bool _isUpdate;
         
@@ -187,7 +184,7 @@ namespace Skill.Support
             var oneSecondWait = new WaitForSeconds(1f);
             blackHoleVFX.Stop();
             yield return oneSecondWait;
-            explodeVFX.gameObject.SetActive(true);
+            explodeVFXObject.SetActive(true);
             ApplyExplodeDamage();
             yield return oneSecondWait;
             Destroy(gameObject);

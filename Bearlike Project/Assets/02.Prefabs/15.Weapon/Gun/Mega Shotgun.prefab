@@ -728,7 +728,6 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -737,6 +736,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 0
@@ -753,6 +753,7 @@ MonoBehaviour:
     isOverMin: 1
     isMin: 0
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 0
@@ -769,6 +770,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 100
@@ -781,6 +783,7 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0
 --- !u!114 &4303053860246033292
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -800,11 +803,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   playerCameraController: {fileID: 0}
-  hitEffect: {fileID: 1790844729464940925}
-  hitSound: {fileID: 0}
   id: 1
   explain: 
   shootEffect: {fileID: 0}
+  hitEffectPrefab:
+    RawGuidValue: 8ec31fcb5aff43949af9992aeb7147e6
   shootSound: {fileID: 7320537936138231556}
   emptyAmmoSound: {fileID: 1046444510010820628}
   reloadSound: {fileID: 7198553607401874559}
@@ -822,9 +825,7 @@ MonoBehaviour:
   reloadLateSecond: 0
   fireTransform: {fileID: 7545871670962195290}
   animatorInfo: {fileID: 1115696106776451374}
-  reloadSpeed: 0.5
   bulletRadian: 10
-  bknock: 0
 --- !u!114 &354496408801352614
 MonoBehaviour:
   m_ObjectHideFlags: 0

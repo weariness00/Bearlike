@@ -131,9 +131,16 @@ namespace Photon
 
         #region Network Connect Function
 
-        public void LobbyConnect()
+        public async void LobbyConnect()
         {
-            _runner.JoinSessionLobby(SessionLobby.Shared);
+            if (_runner.IsRunning)
+            {
+                DebugManager.LogWarning("기존 연결 종료 중...");
+                await _runner.Shutdown();
+                DebugManager.LogWarning("기존 연결 종료 완료");
+            }
+            
+            await _runner.JoinSessionLobby(SessionLobby.Shared);
         }
         
         async Task Matching(GameMode mode, string sessionName)
@@ -154,7 +161,7 @@ namespace Photon
             }
             
             // Start or join (depends on gamemode) a session with a specific name   
-            await _runner.StartGame(new StartGameArgs()
+            var result = await _runner.StartGame(new StartGameArgs()
             {
                 GameMode = mode,
                 SessionName = sessionName,
@@ -165,6 +172,17 @@ namespace Photon
                 IsVisible = true,
                 IsOpen = true,
             });
+
+            if (result.Ok)
+                DebugManager.Log("게임 정상 시작");
+            else
+            {
+                DebugManager.LogError($"게임 시작 실패\n{result.ShutdownReason}");
+                if (result.ShutdownReason == ShutdownReason.Error)
+                    DebugManager.LogError($"게임 시작 에러: {result.ErrorMessage}");
+                LobbyConnect();
+                return;
+            }
 
             gameObject.transform.parent = Managers.Instance.transform;
             
@@ -378,7 +396,11 @@ namespace Photon
         public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
         {
             var player = runner.LocalPlayer;
-            DebugManager.Log($"서버 종료 : {runner.LocalPlayer}");
+            
+            if(shutdownReason == ShutdownReason.Ok)
+                DebugManager.Log($"서버 종료 : {runner.LocalPlayer}");
+            else if(shutdownReason == ShutdownReason.Error)
+                DebugManager.LogError($"비정상 서버 종료\n {runner}");
 
             SceneManager.LoadScene(lobbyScene.ScenePath);
         }

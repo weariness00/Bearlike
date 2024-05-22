@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using DG.Tweening;
 using Fusion;
 using GamePlay;
 using Manager;
@@ -11,8 +10,6 @@ using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Serialization;
-using UnityEngine.VFX;
 using Random = UnityEngine.Random;
 
 namespace Weapon.Bullet
@@ -27,7 +24,7 @@ namespace Weapon.Bullet
         #region 속성
 
         public Vector3 destination = Vector3.zero;
-        public VisualEffect hitEffect;
+        public IWeaponHitEffect hitEffect;
 
         private Vector3 direction;
         public int knockBack;
@@ -74,6 +71,8 @@ namespace Weapon.Bullet
 
         private void OnTriggerEnter(Collider other)
         {
+            if (!HasStateAuthority) return;
+            
             if (other.TryGetComponent(out ColliderStatus colliderStatus))
             {
                 StatusBase otherStatus = colliderStatus.originalStatus;
@@ -81,6 +80,7 @@ namespace Weapon.Bullet
                 
                 otherStatus.ApplyDamageRPC(status.CalDamage(), ownerId);
                 otherStatus.RemoveAdditionalStatus(colliderStatus.status);
+                hitEffect?.OnWeaponHitEffect(transform.position);
                 
                 if (knockBack > 0)
                 {

@@ -8,6 +8,11 @@ using UnityEngine.VFX;
 
 namespace Weapon
 {
+    public interface IWeaponHitEffect
+    {
+        public void OnWeaponHitEffect(Vector3 hitPosition);
+    }
+    
     public interface IEquipment
     {
         public Action AttackAction { get; set; }
@@ -27,12 +32,6 @@ namespace Weapon
         
         [HideInInspector] public PlayerCameraController playerCameraController;
         
-        [Header("기본 이펙트")]
-        public VisualEffect hitEffect; // 타격 이펙트
-
-        [Header("기본 사운드")] 
-        public AudioSource hitSound;
-
         private Action<GameObject> _equipAction;
 
         public virtual void Awake()
