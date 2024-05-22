@@ -4,16 +4,14 @@ using Data;
 using Status;
 using Fusion;
 using Manager;
-using Photon;
 using Player;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.VFX;
 using Weapon.Bullet;
 
 namespace Weapon.Gun
 {
-    public class GunBase : WeaponBase, IJsonData<GunJsonData>
+    public class GunBase : WeaponBase, IJsonData<GunJsonData>, IWeaponHitEffect
     {
         #region Static
 
@@ -36,9 +34,10 @@ namespace Weapon.Gun
         [Header("총 정보")] 
         public int id;
         public string explain;
-        
+
         [Header("총 이펙트")] 
         public VisualEffect shootEffect; // 발사 이펙트
+        public NetworkPrefabRef hitEffectPrefab;
         
         [Header("사운드")]
         public AudioSource shootSound;
@@ -159,7 +158,7 @@ namespace Weapon.Gun
                             b.status.AddAdditionalStatus(status);
 
                             b.ownerId = OwnerId;
-                            b.hitEffect = hitEffect;
+                            b.hitEffect = this;
                             b.knockBack = 0;
                             b.status.attackRange.Max = status.attackRange.Max;
                             b.status.attackRange.Current = status.attackRange.Current;
@@ -234,6 +233,15 @@ namespace Weapon.Gun
             return ray.direction;
         }
         
+        #endregion
+
+        #region Weapon Interface
+
+        public virtual void OnWeaponHitEffect(Vector3 hitPosition)
+        {
+            Runner.SpawnAsync(hitEffectPrefab, hitPosition);
+        }
+
         #endregion
 
         #region Json Interface

@@ -5217,6 +5217,7 @@ MonoBehaviour:
   - {fileID: 2136011376091040465}
   - {fileID: 7093958912352303388}
   - {fileID: 592236629455508476}
+  - {fileID: 2164080246948581435}
   - {fileID: 3816315270266910807}
   - {fileID: 1041117243990438129}
   - {fileID: 5571413268369336907}
@@ -9650,6 +9651,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3894390410395096859}
     m_Modifications:
+    - target: {fileID: 2811269193302312777, guid: 0f1b1844c83e1944e9eded47132bc861,
+        type: 3}
+      propertyPath: Flags
+      value: 262145
+      objectReference: {fileID: 0}
+    - target: {fileID: 2811269193302312777, guid: 0f1b1844c83e1944e9eded47132bc861,
+        type: 3}
+      propertyPath: SortKey
+      value: 1412176199
+      objectReference: {fileID: 0}
     - target: {fileID: 3021774675860755019, guid: 0f1b1844c83e1944e9eded47132bc861,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -9715,6 +9726,16 @@ PrefabInstance:
       propertyPath: SortKey
       value: 706084546
       objectReference: {fileID: 0}
+    - target: {fileID: 6591360967261449838, guid: 0f1b1844c83e1944e9eded47132bc861,
+        type: 3}
+      propertyPath: NestedObjects.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6591360967261449838, guid: 0f1b1844c83e1944e9eded47132bc861,
+        type: 3}
+      propertyPath: NestedObjects.Array.data[1]
+      value: 
+      objectReference: {fileID: 2164080246948581435}
     - target: {fileID: 7054352895572623144, guid: 0f1b1844c83e1944e9eded47132bc861,
         type: 3}
       propertyPath: shootEffect
@@ -9748,6 +9769,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 4110653872920844146}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2164080246948581435 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2811269193302312777, guid: 0f1b1844c83e1944e9eded47132bc861,
+    type: 3}
+  m_PrefabInstance: {fileID: 4110653872920844146}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &7093958912352303388 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6591360967261449838, guid: 0f1b1844c83e1944e9eded47132bc861,
@@ -10345,6 +10378,11 @@ PrefabInstance:
       propertyPath: SortKey
       value: 2888086079
       objectReference: {fileID: 0}
+    - target: {fileID: 354496408801352614, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: NestedObjects.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2569949494085307128, guid: fb0375b9d4667184885fa46e6c1de475,
         type: 3}
       propertyPath: attackSpeed._max
@@ -10435,6 +10473,11 @@ PrefabInstance:
       propertyPath: _playerCameraController
       value: 
       objectReference: {fileID: 8389592379722413424}
+    - target: {fileID: 4653799704652283969, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: SortKey
+      value: 2950406306
+      objectReference: {fileID: 0}
     - target: {fileID: 4743372364268393535, guid: fb0375b9d4667184885fa46e6c1de475,
         type: 3}
       propertyPath: m_Name

@@ -15,6 +15,9 @@ namespace Monster.Container
         private BehaviorTreeRunner _behaviorTreeRunner;
         public GunBase gun;
 
+        [Header("Effect")] 
+        [SerializeField] private GameObject dieEffectObject;
+
         [Header("Animation Clip")] 
         public AnimationClip idleClip;
         public AnimationClip moveClip;
@@ -31,6 +34,11 @@ namespace Monster.Container
         public override void Start()
         {
             base.Start();
+
+            DieAction += () =>
+            {
+                dieEffectObject.SetActive(true);
+            };
 
             navMeshAgent = GetComponent<NavMeshAgent>();
             navMeshAgent.enabled = false;

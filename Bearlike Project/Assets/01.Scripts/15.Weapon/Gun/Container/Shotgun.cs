@@ -1,9 +1,6 @@
 ﻿using System.Collections;
-using DG.Tweening;
 using Fusion;
 using Manager;
-using Player;
-using Status;
 using UnityEngine;
 using Weapon.Bullet;
 
@@ -62,7 +59,7 @@ namespace Weapon.Gun.Continer
                                 var b = o.GetComponent<BulletBase>();
                                 b.status.AddAdditionalStatus(status);
                                 b.ownerId = OwnerId;
-                                b.hitEffect = hitEffect;
+                                b.hitEffect = this;
                                 b.knockBack = nuckBack;
                                 b.status.attackRange.Max = status.attackRange.Max;
                                 b.status.attackRange.Current = status.attackRange.Current;
@@ -108,7 +105,6 @@ namespace Weapon.Gun.Continer
         }
 
         #endregion
-
 
     }
 }
