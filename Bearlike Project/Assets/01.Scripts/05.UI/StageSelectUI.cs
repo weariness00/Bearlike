@@ -76,6 +76,7 @@ namespace UI
                         }
                         else
                         {
+                            selectToggle.gameObject.SetActive(false);
                             gameObject.SetActive(false);
                         }
                         break;
@@ -186,6 +187,7 @@ namespace UI
             }
 
             gameObject.SetActive(true);
+            selectToggle.gameObject.SetActive(true);
             GameUIManager.AddActiveUI(gameObject);
             
             DebugManager.Log("스테이지 선택 UI 셋팅");
@@ -210,6 +212,9 @@ namespace UI
 
                 GameManager.Instance.SetStage(nextStageList[bicSelectIndex]);
             }
+
+            foreach (var stageSelectUIHandler in stageSelectUIHandlerList)
+                stageSelectUIHandler.toggle.interactable = false;
         }
 
         #region Vraiable RPC Function
