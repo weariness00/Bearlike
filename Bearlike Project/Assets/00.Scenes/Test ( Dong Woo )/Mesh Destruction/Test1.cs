@@ -59,18 +59,7 @@ namespace Test
         {
             if (Input.GetKeyDown(KeyCode.A))
             {
-                // SlicesMetadata m = new SlicesMetadata(new Plane(sliceN, sliceP), GetComponent<MeshFilter>().mesh, true, false, true, false);
-                // GameObject a = new GameObject("a", typeof(MeshFilter), typeof(MeshRenderer));
-                // GameObject b = new GameObject("b", typeof(MeshFilter), typeof(MeshRenderer));
-                //
-                // var met = GetComponent<MeshRenderer>().sharedMaterials;
-                // a.GetComponent<MeshFilter>().sharedMesh = m.PositiveSideMesh;
-                // a.GetComponent<MeshRenderer>().sharedMaterials = met;
-                // b.GetComponent<MeshFilter>().sharedMesh = m.NegativeSideMesh;
-                // b.GetComponent<MeshRenderer>().sharedMaterials = met;
-                //
-                // Destroy(gameObject);
-                // CMeshSlicer.Slicer(gameObject, sliceN, sliceP, gameObject.GetComponent<MeshRenderer>().sharedMaterial);
+                Slice(gameObject, sliceN, sliceP);
             }
             else if (Input.GetKeyDown(KeyCode.S))
                 MeshSlicing.Slice(gameObject, sliceN, sliceP);
