@@ -28,7 +28,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 1.24, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1428562674735892431}
   m_Father: {fileID: 6831913940448254236}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6245958607451884763
@@ -136,7 +137,6 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -145,6 +145,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 0
@@ -161,6 +162,7 @@ MonoBehaviour:
     isOverMin: 1
     isMin: 0
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 1
@@ -190,6 +192,7 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0
   monsterBase: {fileID: 0}
 --- !u!114 &4854486632741455185
 MonoBehaviour:
@@ -233,6 +236,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4096
   gun: {fileID: 1802220238903691281}
+  dieEffectObject: {fileID: 1428562674735892464}
   idleClip: {fileID: 6502710776952731769, guid: 1b41998b475852b4b87c7c182731e594,
     type: 3}
   moveClip: {fileID: -6089626556859248405, guid: 1b41998b475852b4b87c7c182731e594,
@@ -511,6 +515,101 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1001 &1502036205995429010
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4103758611438689336}
+    m_Modifications:
+    - target: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 507512403959860066, guid: f14573c9eef1b524a9ec2d47dcdd0255,
+        type: 3}
+      propertyPath: m_Name
+      value: Die Effect Smoke
+      objectReference: {fileID: 0}
+    - target: {fileID: 507512403959860066, guid: f14573c9eef1b524a9ec2d47dcdd0255,
+        type: 3}
+      propertyPath: m_Layer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 507512403959860066, guid: f14573c9eef1b524a9ec2d47dcdd0255,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8522078527465317234, guid: f14573c9eef1b524a9ec2d47dcdd0255,
+        type: 3}
+      propertyPath: m_Layer
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f14573c9eef1b524a9ec2d47dcdd0255, type: 3}
+--- !u!4 &1428562674735892431 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
+    type: 3}
+  m_PrefabInstance: {fileID: 1502036205995429010}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1428562674735892464 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 507512403959860066, guid: f14573c9eef1b524a9ec2d47dcdd0255,
+    type: 3}
+  m_PrefabInstance: {fileID: 1502036205995429010}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3783443060632113221
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1015,7 +1114,6 @@ MonoBehaviour:
     isMin: 1
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -1024,6 +1122,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 99999
@@ -1040,6 +1139,7 @@ MonoBehaviour:
     isOverMin: 1
     isMin: 1
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 99999
@@ -1069,6 +1169,7 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0
 --- !u!1 &779914382828814620 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -4732242431634960039, guid: 1b41998b475852b4b87c7c182731e594,
@@ -1166,7 +1267,6 @@ MonoBehaviour:
     isMin: 1
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -1175,6 +1275,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 99999
@@ -1191,6 +1292,7 @@ MonoBehaviour:
     isOverMin: 1
     isMin: 1
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 99999
@@ -1220,6 +1322,7 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0
 --- !u!1 &2512855207185064290 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -7611636337553870553, guid: 1b41998b475852b4b87c7c182731e594,
@@ -1365,7 +1468,6 @@ MonoBehaviour:
     isMin: 1
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -1374,6 +1476,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 99999
@@ -1390,6 +1493,7 @@ MonoBehaviour:
     isOverMin: 1
     isMin: 1
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 99999
@@ -1419,6 +1523,7 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0
 --- !u!1 &2912178944670455428 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2083862851890480833, guid: 1b41998b475852b4b87c7c182731e594,
@@ -1564,7 +1669,6 @@ MonoBehaviour:
     isMin: 1
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -1573,6 +1677,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 99999
@@ -1589,6 +1694,7 @@ MonoBehaviour:
     isOverMin: 1
     isMin: 1
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 99999
@@ -1618,6 +1724,7 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0
 --- !u!1 &3037002153700458857 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -7015231402420645588, guid: 1b41998b475852b4b87c7c182731e594,
@@ -1763,7 +1870,6 @@ MonoBehaviour:
     isMin: 1
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -1772,6 +1878,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 99999
@@ -1788,6 +1895,7 @@ MonoBehaviour:
     isOverMin: 1
     isMin: 1
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 99999
@@ -1817,6 +1925,7 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0
 --- !u!1 &3473231897472220187 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 338363060723379294, guid: 1b41998b475852b4b87c7c182731e594,
@@ -1852,7 +1961,6 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -1861,6 +1969,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 0
@@ -1877,6 +1986,7 @@ MonoBehaviour:
     isOverMin: 1
     isMin: 0
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 10000
@@ -1906,6 +2016,7 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0
 --- !u!114 &1802220238903691281
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1924,13 +2035,12 @@ MonoBehaviour:
   includeCollide:
     serializedVersion: 2
     m_Bits: 0
-  _ownerState: {fileID: 0}
   playerCameraController: {fileID: 0}
-  hitEffect: {fileID: 0}
-  hitSound: {fileID: 0}
   id: 1000
   explain: 
   shootEffect: {fileID: 0}
+  hitEffectPrefab:
+    RawGuidValue: 00000000000000000000000000000000
   shootSound: {fileID: 0}
   emptyAmmoSound: {fileID: 0}
   reloadSound: {fileID: 0}
@@ -2098,7 +2208,6 @@ MonoBehaviour:
     isMin: 1
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -2107,6 +2216,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 99999
@@ -2123,6 +2233,7 @@ MonoBehaviour:
     isOverMin: 1
     isMin: 1
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 99999
@@ -2152,6 +2263,7 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0
 --- !u!1 &4008528906819941096 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -8998092384562060627, guid: 1b41998b475852b4b87c7c182731e594,
@@ -2297,7 +2409,6 @@ MonoBehaviour:
     isMin: 1
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -2306,6 +2417,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 99999
@@ -2322,6 +2434,7 @@ MonoBehaviour:
     isOverMin: 1
     isMin: 1
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 99999
@@ -2351,6 +2464,7 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0
 --- !u!1 &4053262457704672532 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 1b41998b475852b4b87c7c182731e594,
@@ -2523,7 +2637,6 @@ MonoBehaviour:
     isMin: 1
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -2532,6 +2645,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 99999
@@ -2548,6 +2662,7 @@ MonoBehaviour:
     isOverMin: 1
     isMin: 1
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 99999
@@ -2577,6 +2692,7 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0
 --- !u!1 &4974837835727533603 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8181723086095296102, guid: 1b41998b475852b4b87c7c182731e594,
@@ -2722,7 +2838,6 @@ MonoBehaviour:
     isMin: 1
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 2
   criticalHitChance:
     _min: 0
     _max: 1
@@ -2731,6 +2846,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 2
   defence:
     _min: 0
     _max: 99999
@@ -2747,6 +2863,7 @@ MonoBehaviour:
     isOverMin: 1
     isMin: 1
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 99999
@@ -2776,6 +2893,7 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0
 --- !u!1 &4977183581884859741 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8184165821489321240, guid: 1b41998b475852b4b87c7c182731e594,
@@ -2921,7 +3039,6 @@ MonoBehaviour:
     isMin: 1
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -2930,6 +3047,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 99999
@@ -2946,6 +3064,7 @@ MonoBehaviour:
     isOverMin: 1
     isMin: 1
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 99999
@@ -2975,6 +3094,7 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0
 --- !u!1 &5451504159709042978 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -61116021307520665, guid: 1b41998b475852b4b87c7c182731e594,
@@ -3120,7 +3240,6 @@ MonoBehaviour:
     isMin: 1
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -3129,6 +3248,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 99999
@@ -3145,6 +3265,7 @@ MonoBehaviour:
     isOverMin: 1
     isMin: 1
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 99999
@@ -3174,3 +3295,4 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0

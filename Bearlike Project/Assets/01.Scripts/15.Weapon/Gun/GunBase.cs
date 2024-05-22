@@ -4,16 +4,14 @@ using Data;
 using Status;
 using Fusion;
 using Manager;
-using Photon;
 using Player;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.VFX;
 using Weapon.Bullet;
 
 namespace Weapon.Gun
 {
-    public class GunBase : WeaponBase, IJsonData<GunJsonData>
+    public class GunBase : WeaponBase, IJsonData<GunJsonData>, IWeaponHitEffect
     {
         #region Static
 
@@ -36,9 +34,10 @@ namespace Weapon.Gun
         [Header("총 정보")] 
         public int id;
         public string explain;
-        
+
         [Header("총 이펙트")] 
         public VisualEffect shootEffect; // 발사 이펙트
+        public NetworkPrefabRef hitEffectPrefab;
         
         [Header("사운드")]
         public AudioSource shootSound;
@@ -110,7 +109,7 @@ namespace Weapon.Gun
             {
                 if (FireLateTimer.Expired(Runner))
                 {
-                    FireLateTimer = TickTimer.CreateFromSeconds(Runner, fireLateSecond);
+                    FireLateTimer = TickTimer.CreateFromSeconds(Runner, fireLateSecond / status.CalAttackSpeed());
                     FireBulletRPC();
                 }
             };
@@ -158,8 +157,8 @@ namespace Weapon.Gun
                             b.status.AddAdditionalStatus(status);
 
                             b.ownerId = OwnerId;
-                            b.hitEffect = hitEffect;
-                            b.bknock = false;
+                            b.hitEffect = this;
+                            b.knockBack = 0;
                             b.status.attackRange.Max = status.attackRange.Max;
                             b.status.attackRange.Current = status.attackRange.Current;
                             b.destination = fireTransform.position + (dst * status.attackRange);
@@ -235,6 +234,15 @@ namespace Weapon.Gun
         
         #endregion
 
+        #region Weapon Interface
+
+        public virtual void OnWeaponHitEffect(Vector3 hitPosition)
+        {
+            Runner.SpawnAsync(hitEffectPrefab, hitPosition);
+        }
+
+        #endregion
+
         #region Json Interface
 
         public GunJsonData GetJsonData()
@@ -277,18 +285,6 @@ namespace Weapon.Gun
             if(false == shootEffect.gameObject.activeSelf)
                 shootEffect.gameObject.SetActive(true);
             shootEffect.SendEvent("OnPlay");
-        }
-
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        public void SetFireSpeedRPC()
-        {
-            float attackSpeed;
-
-            if (_ownerState) attackSpeed = _ownerState.attackSpeed.Current;
-            else attackSpeed = 1;
-            
-            // TODO : 여기서 공격속도 반영 해야함
-            fireLateSecond = 60 / (bulletFirePerMinute * attackSpeed);
         }
         
         #endregion

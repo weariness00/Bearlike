@@ -3523,6 +3523,7 @@ MonoBehaviour:
   playerType: 1
   status: {fileID: 3119487648565583453}
   cameraController: {fileID: 4111289363253553492}
+  soundController: {fileID: 0}
   skillSystem: {fileID: 3149006354213416159}
   weaponSystem: {fileID: 4873826561568888664}
   gunUI: {fileID: 2734686267890153244}
@@ -3562,6 +3563,7 @@ MonoBehaviour:
   targetCamera: {fileID: 8451841307542792475}
   weaponCamera: {fileID: 6128144320921080608}
   uiCamera: {fileID: 0}
+  SkillCamera: {fileID: 0}
   firstOffset: {x: 0, y: 0, z: 0.27}
   thirdOffset: {x: 0, y: 0, z: -2}
 --- !u!114 &6044406679217952669
@@ -3584,6 +3586,7 @@ MonoBehaviour:
   - {fileID: 9196520639817573866}
   - {fileID: 5203628710983792406}
   - {fileID: 2485356588158967286}
+  - {fileID: 3768832502207127089}
   - {fileID: 1510846061475938718}
   - {fileID: 3347043576452172088}
   - {fileID: 2699057857236427147}
@@ -3709,7 +3712,6 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -3718,6 +3720,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 0
@@ -3734,6 +3737,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 10
@@ -3750,6 +3754,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 0
@@ -3762,6 +3767,8 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0
+  playerController: {fileID: 0}
   level:
     _min: 0
     _max: 100
@@ -3800,6 +3807,7 @@ MonoBehaviour:
     isMax: 0
   isRevive: 0
   isHelpOtherPlayer: 0
+  applyDamageSound: {fileID: 0}
 --- !u!114 &1813872816123753130
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6104,6 +6112,7 @@ MonoBehaviour:
   toggleGroup: {fileID: 3752769399434269690}
   selectUIBlockObject: {fileID: 5198700945744738040}
   playerController: {fileID: 4304092530995406759}
+  selectCount: 0
 --- !u!1 &7279871377464235292
 GameObject:
   m_ObjectHideFlags: 0
@@ -7413,6 +7422,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7779793956319290377}
     m_Modifications:
+    - target: {fileID: 2811269193302312777, guid: 0f1b1844c83e1944e9eded47132bc861,
+        type: 3}
+      propertyPath: SortKey
+      value: 1271152350
+      objectReference: {fileID: 0}
     - target: {fileID: 3021774675860755019, guid: 0f1b1844c83e1944e9eded47132bc861,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -7495,6 +7509,18 @@ PrefabInstance:
 --- !u!114 &2485356588158967286 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3545447780185818254, guid: 0f1b1844c83e1944e9eded47132bc861,
+    type: 3}
+  m_PrefabInstance: {fileID: 1391110214233102712}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3768832502207127089 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2811269193302312777, guid: 0f1b1844c83e1944e9eded47132bc861,
     type: 3}
   m_PrefabInstance: {fileID: 1391110214233102712}
   m_PrefabAsset: {fileID: 0}
@@ -7811,6 +7837,11 @@ PrefabInstance:
       propertyPath: SortKey
       value: 851383451
       objectReference: {fileID: 0}
+    - target: {fileID: 354496408801352614, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: NestedObjects.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2813304304395061658, guid: fb0375b9d4667184885fa46e6c1de475,
         type: 3}
       propertyPath: m_IsActive
@@ -7881,6 +7912,11 @@ PrefabInstance:
       propertyPath: _playerCameraController
       value: 
       objectReference: {fileID: 4111289363253553492}
+    - target: {fileID: 4653799704652283969, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: SortKey
+      value: 913703678
+      objectReference: {fileID: 0}
     - target: {fileID: 4743372364268393535, guid: fb0375b9d4667184885fa46e6c1de475,
         type: 3}
       propertyPath: m_Name

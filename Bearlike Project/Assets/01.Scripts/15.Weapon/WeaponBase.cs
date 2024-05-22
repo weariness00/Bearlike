@@ -8,6 +8,11 @@ using UnityEngine.VFX;
 
 namespace Weapon
 {
+    public interface IWeaponHitEffect
+    {
+        public void OnWeaponHitEffect(Vector3 hitPosition);
+    }
+    
     public interface IEquipment
     {
         public Action AttackAction { get; set; }
@@ -25,16 +30,8 @@ namespace Weapon
         public StatusBase status;
         public LayerMask includeCollide;
         
-        public PlayerStatus _ownerState;
-        
         [HideInInspector] public PlayerCameraController playerCameraController;
         
-        [Header("기본 이펙트")]
-        public VisualEffect hitEffect; // 타격 이펙트
-
-        [Header("기본 사운드")] 
-        public AudioSource hitSound;
-
         private Action<GameObject> _equipAction;
 
         public virtual void Awake()
@@ -63,7 +60,6 @@ namespace Weapon
             
             // 주인 설정
             OwnerId = equipObject.GetComponent<NetworkObject>().Id;
-            _ownerState = Runner.FindObject(OwnerId).GetComponent<PlayerStatus>();
             
             // 주인의 스테이터스 추가
             status.AddAdditionalStatus(equipObject.GetComponent<StatusBase>());

@@ -1,4 +1,5 @@
-﻿using Fusion;
+﻿using System.Collections;
+using Fusion;
 using GamePlay;
 using Manager;
 using Photon;
@@ -8,8 +9,7 @@ using Status;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.VFX;
+using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
 namespace Weapon.Bullet
@@ -24,10 +24,10 @@ namespace Weapon.Bullet
         #region 속성
 
         public Vector3 destination = Vector3.zero;
-        public VisualEffect hitEffect;
+        public IWeaponHitEffect hitEffect;
 
         private Vector3 direction;
-        public bool bknock = false;
+        public int knockBack;
 
         #endregion
 
@@ -71,19 +71,33 @@ namespace Weapon.Bullet
 
         private void OnTriggerEnter(Collider other)
         {
+            if (!HasStateAuthority) return;
+            
             if (other.TryGetComponent(out ColliderStatus colliderStatus))
             {
                 StatusBase otherStatus = colliderStatus.originalStatus;
                 otherStatus.AddAdditionalStatus(colliderStatus.status);
                 
-                // player가 건이다.
                 otherStatus.ApplyDamageRPC(status.CalDamage(), ownerId);
                 otherStatus.RemoveAdditionalStatus(colliderStatus.status);
+                hitEffect?.OnWeaponHitEffect(transform.position);
                 
-                if (bknock)
+                if (knockBack > 0)
                 {
-                    // TODO : 수정 필요
-                    otherStatus.gameObject.transform.Translate(direction);
+                    // Rigidbody _enemyRb = other.transform.parent.gameObject.GetComponent<Rigidbody>();
+                    // if (_enemyRb != null)
+                    // {
+                        // navagent를 멈춰주는 코드는 해당 객체에 둬야하나?
+                        // RPC화 해야함
+                        
+                        var parent = otherStatus.gameObject;
+                        
+                        Vector3 knockbackDirection = parent.transform.position - transform.position;
+                        knockbackDirection.y = 0;
+                        knockbackDirection.Normalize();
+
+                        otherStatus.KnockBackRPC(knockbackDirection, knockBack);
+                        // }
                 }
 
                 // var hitEffectObject = Instantiate(hitEffect.gameObject, transform.position, Quaternion.identity);
@@ -105,12 +119,18 @@ namespace Weapon.Bullet
                 NetworkMeshSliceSystem.Instance.SliceRPC(networkObj.Id, Random.onUnitSphere, transform.position, 100f);
             }
 
-            if (penetrateCount-- == 0)//
+            if (penetrateCount-- == 0)
             {
                 Destroy(gameObject);
             }
         }
 
+        IEnumerator RestartNavAgentCorutine(NavMeshAgent _nav)
+        {
+            yield return new WaitForSeconds(0.5f);
+            if(_nav != null) _nav.enabled = true;
+        }
+        
         [BurstCompile]
         public static float FastDistance(float3 pointA, float3 pointB)
         {

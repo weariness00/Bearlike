@@ -17,11 +17,11 @@ namespace Skill.Container
     {
         #region property
 
-        public PlayerStatus playerStatus;
+        // public PlayerStatus playerStatus;
         public GameObject effectObject;
         public GameObject effectTableObject;
 
-        public FlippingCoinEffect effect;
+        public FlippingCoinEffect effectRought;
         
         private float _durationTime;
         
@@ -40,7 +40,7 @@ namespace Skill.Container
             
             effectObject.SetActive(false);
             effectTableObject.SetActive(false);
-            effect = effectObject.GetComponent<FlippingCoinEffect>();
+            effectRought = effectObject.GetComponent<FlippingCoinEffect>();
         }
 
         public override void Spawned()
@@ -55,9 +55,7 @@ namespace Skill.Container
             base.Earn(earnTargetObject);
             if (earnTargetObject.TryGetComponent(out PlayerController pc))
             {
-                DebugManager.ToDo("FlippingCoin은 player status에 더할 필요가 없다.");
                 pc.status.AddAdditionalStatus(status);
-                playerStatus = pc.status;
             }
         }
 
@@ -71,11 +69,11 @@ namespace Skill.Container
 
                 if (_type == 0)
                 {
-                    playerStatus.attackSpeed.Current -= (int)_difference;
+                    status.attackSpeedMultiple -= 0.5f;
                 }
                 else
                 {
-                    playerStatus.damage.Current -= (int)_difference;
+                    status.damageMultiple -= 0.2f;
                 }
             }
         }
@@ -84,7 +82,9 @@ namespace Skill.Container
         {
             if (IsUse && false == isInvoke)
             {
-                StartCoroutine(StartEffect());
+                // TODO : run이 rpc여서 모든 클라에서 실행된다.
+                // StartCoroutine(StartEffect());
+                StartVFXRPC();
                 isInvoke = true;
                 // TODO : VFX도 넣어보자(너무 티가 안남)
                 
@@ -92,13 +92,11 @@ namespace Skill.Container
                 
                 if (_type == 0)
                 {
-                    _difference = playerStatus.attackSpeed.Current * 1.5f;
-                    playerStatus.attackSpeed.Current += (int)_difference;
+                    status.attackSpeedMultiple += 0.5f;
                 }
                 else
                 {
-                    _difference = playerStatus.damage.Current * 1.2f;
-                    playerStatus.damage.Current += (int)_difference;
+                    status.damageMultiple += 0.2f;
                 }
                 
                 // DurationTimeTimer = TickTimer.CreateFromSeconds(Runner, _durationTime);
@@ -110,7 +108,7 @@ namespace Skill.Container
         {
             effectObject.SetActive(true);
             effectTableObject.SetActive(true);
-            effect.FlickCoin();
+            effectRought.FlickCoin();
             yield return new WaitForSeconds(2.0f);
             effectObject.SetActive(false);
             effectTableObject.SetActive(false);

@@ -115,15 +115,15 @@ namespace Player
         public void BePoisoned(int value)
         {
             hp.Current -= value;
+            
         }
         
         public override void ApplyDamage(int applyDamage, NetworkId ownerId, CrowdControl cc) // MonsterRef instigator,
         {
             base.ApplyDamage(applyDamage, ownerId, cc);
 
-            playerController.cameraController.ScreenHitImpact(1,1);
-            
-            applyDamageSound.Play();
+            // _playerCameraController.ScreenHitImpact(1,1);
+            URPRendererFeaturesManager.Instance.StartEffect("HitEffect");
             
             HpControlRPC();
         }

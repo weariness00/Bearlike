@@ -42,6 +42,7 @@ namespace GamePlay
         public SceneReference gmModeScene;
         public SceneReference gameResultScene;
         public SceneReference loadingScene;
+        public SceneReference modelUIScene;
         
         #region Unity Event Function
         protected override void Awake()
@@ -56,6 +57,7 @@ namespace GamePlay
             if (NetworkManager.Instance.isTest)
             {
                 NetworkManager.LoadScene(gmModeScene, LoadSceneMode.Additive);
+                NetworkManager.LoadScene(modelUIScene, LoadSceneMode.Additive);
             }
             
             if (Runner.IsServer == false)

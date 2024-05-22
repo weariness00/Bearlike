@@ -2515,6 +2515,7 @@ Transform:
   - {fileID: 1405022390}
   - {fileID: 1529013678}
   - {fileID: 1703281989}
+  - {fileID: 1779702564}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1385172337
@@ -3175,6 +3176,54 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+--- !u!1 &1779702563
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1779702564}
+  - component: {fileID: 1779702565}
+  m_Layer: 0
+  m_Name: URP Renderer Features EffectManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1779702564
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1779702563}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1385172336}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1779702565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1779702563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 636156403a87dc94ca1ea62dd8d4ce0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _rendererFeaturesEffectNames:
+  - HitEffect
+  - FireEffect
+  - ShieldEffect
 --- !u!1 &1819336134
 GameObject:
   m_ObjectHideFlags: 0

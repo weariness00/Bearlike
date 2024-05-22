@@ -7,6 +7,7 @@ namespace Weapon.Gun
 {
     public class Revolver : GunBase
     {
+        
         public RevolverAnimator animatorInfo;
 
         public override void Awake()

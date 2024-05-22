@@ -15,21 +15,23 @@ public class FlippingCoinEffect : MonoBehaviour
     public float forceX = 0;
     public float forceY = 1;
     public float forceZ = 0;
-    
-    void Start()
+
+    public void rotationCoin()
     {
-        FlickCoin();
-        // rb = GetComponent<Rigidbody>();
+        rb.useGravity = false;
+        transform.DORotate(new Vector3(0, 360, 0), 1).SetEase(Ease.OutCirc);
     }
 
     public void FlickCoin()
     {
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
         transform.localPosition = new Vector3(0, 0, 2);
         transform.localEulerAngles = new Vector3(0, 90, 0);
         
         Vector3 forceDirection = new Vector3(forceX, forceY, forceZ);  // 힘의 방향
         
-        // rb.AddForce(forceDirection * forcePower, ForceMode.Impulse);
+        rb.AddForce(forceDirection * forcePower, ForceMode.Impulse);
         // // 회전의 축을 캐릭터의 회전값에 right를 더해서 진행해야한다.
         rb.AddTorque(Vector3.right * torqueMagnitude , ForceMode.Impulse);
     }
