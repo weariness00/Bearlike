@@ -1,4 +1,5 @@
 using System;
+using Player;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -11,12 +12,14 @@ namespace UI.Weapon.Gun
 {
     public class GunUI : MonoBehaviour
     {
-        public WeaponSystem weaponSystem;
+        [SerializeField]private PlayerController playerController;
+        [SerializeField]private Animation ShotAnimation;
+        
         public TMP_Text bulletCount;
         public TMP_Text ammoCount;
 
-        public Image amount;
-
+        private WeaponSystem _weaponSystem;
+        
         private int _magazineCount;
         private int _ammoCount;
 
@@ -27,6 +30,7 @@ namespace UI.Weapon.Gun
 
         private void Start()
         {
+            _weaponSystem = playerController.weaponSystem;
             SetUI();
         }
         
@@ -38,34 +42,46 @@ namespace UI.Weapon.Gun
 
         private void SetUI()
         {
-            if (weaponSystem.equipment.IsGun)
+            if (_weaponSystem.equipment.IsGun)
             {
-                var gun = weaponSystem.equipment as GunBase;
-                amount.fillAmount = (float)gun.magazine.Current / (float)gun.magazine.Max;
+                var gun = _weaponSystem.equipment as GunBase;
                 
                 DebugManager.ToDo("ammo의 종류는 많으니 추후에 수정 필요");
                 _ammoCount = GunBase.ammo.Current;
                 
                 DebugManager.ToDo("총의 종류에 따라 Ammo를 받아오는 방식으로 변경해야함");
-                ammoCount.text = GunBase.ammo.Current.ToString();
+                ammoCount.text = "/ "+ GunBase.ammo.Current;
             
                 bulletCount.text = gun.magazine.Current.ToString();
+
+                // if (gun.magazine.Current >= 10)
+                //     bulletCount.rectTransform.position = new Vector3(-120, 230, 0);
+                // else
+                //     bulletCount.rectTransform.position = new Vector3(-85, 230, 0);
             }
         }
 
         private void GunUpdate()
         {
-            if (weaponSystem.equipment.IsGun)
+            if (_weaponSystem.equipment.IsGun)
             {
-                var gun = weaponSystem.equipment as GunBase;
+                var gun = _weaponSystem.equipment as GunBase;
                 if (_magazineCount != gun.magazine.Current || _ammoCount != GunBase.ammo.Current)
                 {
+                    DebugManager.Log($"{ShotAnimation.clip.name}");
+                    // ShotAnimation.Play("ShotAnim");
+                    ShotAnimation.Play();
+                    
                     bulletCount.text = gun.magazine.Current.ToString();
-                
-                    amount.fillAmount = (float)gun.magazine.Current / (float)gun.magazine.Max;
-                
                     _magazineCount = gun.magazine.Current;
-                    ammoCount.text = GunBase.ammo.Current.ToString();
+                    
+                    ammoCount.text = "/ "+ GunBase.ammo.Current;
+                    _ammoCount = GunBase.ammo.Current;
+                    
+                    // if (gun.magazine.Current >= 10)
+                    //     bulletCount.rectTransform.position = new Vector3(-120, 230, 0);
+                    // else
+                    //     bulletCount.rectTransform.position = new Vector3(-85, 230, 0);
                 }
             }
         }

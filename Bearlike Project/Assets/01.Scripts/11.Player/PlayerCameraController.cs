@@ -6,6 +6,7 @@ using Fusion;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.Serialization;
 using DebugManager = Manager.DebugManager;
 
 namespace Player
@@ -25,7 +26,7 @@ namespace Player
         public Camera targetCamera;
         public Camera weaponCamera;
         public Camera uiCamera;
-        public Camera SkillCamera;
+        public Camera skillCamera;
         public Vector3 firstOffset;
         public Vector3 thirdOffset;
 
@@ -43,7 +44,7 @@ namespace Player
                 targetCamera.GetComponent<AudioListener>().enabled = false;
                 targetCamera.enabled = false;
                 weaponCamera.enabled = false;
-                SkillCamera.enabled = false;
+                skillCamera.enabled = false;
 
                 return;
             }
@@ -51,8 +52,8 @@ namespace Player
             targetCamera.tag = "MainCamera";
 
             SetOwnerCamera();
-            WeaponClipping();
-            SkillClipping();
+            TargetCameraAddOverlay(weaponCamera);
+            TargetCameraAddOverlay(skillCamera);
         }
 
         public void ChangeCameraMode(CameraMode mode)
@@ -86,7 +87,7 @@ namespace Player
             targetCameraTransform.localPosition = firstOffset;
             
             weaponCamera.enabled = true;
-            SkillCamera.enabled = true;
+            skillCamera.enabled = true;
         }
 
         private void SetThirdPersonCamera()
@@ -97,22 +98,15 @@ namespace Player
             targetCameraTransform.localPosition = thirdOffset;
 
             weaponCamera.enabled = false;
-            SkillCamera.enabled = false;
+            skillCamera.enabled = false;
         }
 
-        public void WeaponClipping()
+        public void TargetCameraAddOverlay(Camera overlayCamera)
         {
             var cameraData = targetCamera.GetComponent<UniversalAdditionalCameraData>();
-            cameraData.cameraStack.Add(weaponCamera);
+            cameraData.cameraStack.Add(overlayCamera);
         }
-
-        public void SkillClipping()
-        {
-            var cameraData = targetCamera.GetComponent<UniversalAdditionalCameraData>();
-            cameraData.cameraStack.Add(SkillCamera);
-            DebugManager.Log($"{cameraData.cameraStack.Count}");
-        }
-
+        
         private Tween _shakePositionTween;
         private Tween _shakeRotationTween;
 

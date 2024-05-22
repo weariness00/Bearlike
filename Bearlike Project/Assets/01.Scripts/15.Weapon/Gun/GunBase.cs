@@ -111,7 +111,6 @@ namespace Weapon.Gun
                 if (FireLateTimer.Expired(Runner))
                 {
                     FireLateTimer = TickTimer.CreateFromSeconds(Runner, fireLateSecond / status.CalAttackSpeed());
-                    // DebugManager.Log($"Attack Speed : {status.CalAttackSpeed()}");
                     FireBulletRPC();
                 }
             };
