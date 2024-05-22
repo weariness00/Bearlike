@@ -2436,6 +2436,31 @@ PrefabInstance:
       propertyPath: m_Name
       value: Child Room
       objectReference: {fileID: 0}
+    - target: {fileID: 4560912327769023459, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+        type: 3}
+      propertyPath: m_Carve
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4560912327769023459, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+        type: 3}
+      propertyPath: m_CarveOnlyStationary
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5821454833145574897, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+        type: 3}
+      propertyPath: m_Activated
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5821454833145574897, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+        type: 3}
+      propertyPath: m_AreaIndex
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5821454833145574897, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+        type: 3}
+      propertyPath: m_AutoUpdatePositions
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5895620739065839345, guid: 69ac511c1bea7e540bd78ef6a91f798f,
         type: 3}
       propertyPath: Flags
@@ -2496,8 +2521,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedComponents:
+    - {fileID: 5821454833145574897, guid: 69ac511c1bea7e540bd78ef6a91f798f, type: 3}
+    m_RemovedGameObjects:
+    - {fileID: 1654941294337670372, guid: 69ac511c1bea7e540bd78ef6a91f798f, type: 3}
+    - {fileID: 4486653918116761149, guid: 69ac511c1bea7e540bd78ef6a91f798f, type: 3}
+    - {fileID: 463206121210332688, guid: 69ac511c1bea7e540bd78ef6a91f798f, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 69ac511c1bea7e540bd78ef6a91f798f, type: 3}
@@ -2523,6 +2552,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5699041853551936616 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2025757025847433502, guid: 69ac511c1bea7e540bd78ef6a91f798f,
+    type: 3}
+  m_PrefabInstance: {fileID: 5699041853551936612}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &5710321016467674954
@@ -2713,7 +2754,7 @@ MonoBehaviour:
   lootingTable: {fileID: 0}
   stageGameObject: {fileID: 2216216100159288197}
   destructObject: {fileID: 5699041853551936614}
-  navMeshSurface: {fileID: 0}
+  navMeshSurface: {fileID: 5699041853551936616}
   prevStagePortal: {fileID: 6400242058382401759}
   nextStagePortal: {fileID: 708792376}
   monsterSpawnerList:

@@ -211,8 +211,8 @@ namespace Player
                 normalizeTime = timer / durationTime;
 
                 lensDistortion.intensity.value = Mathf.Lerp(originIntensity, intensity, normalizeTime);
-                lensDistortion.xMultiplier.value = Mathf.Lerp(originIntensity, originXMultiplier, normalizeTime);
-                lensDistortion.yMultiplier.value = Mathf.Lerp(originIntensity, originYMultiplier, normalizeTime);
+                lensDistortion.xMultiplier.value = Mathf.Lerp(originXMultiplier, multiplierX, normalizeTime);
+                lensDistortion.yMultiplier.value = Mathf.Lerp(originYMultiplier, multiplierY, normalizeTime);
                 lensDistortion.center.value = Vector2.Lerp(originCenter, center, normalizeTime);
                 lensDistortion.scale.value = Mathf.Lerp(originScale, scale, normalizeTime);
                 

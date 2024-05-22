@@ -177,6 +177,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 7
@@ -189,6 +190,7 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  monsterBase: {fileID: 0}
 --- !u!114 &4854486632741455185
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -226,7 +228,7 @@ MonoBehaviour:
   id: 1
   explain: 
   type: 
-  targetTransform: {fileID: 0}
+  targetPlayer: {fileID: 0}
   targetMask:
     serializedVersion: 2
     m_Bits: 4096
@@ -577,6 +579,51 @@ PrefabInstance:
       propertyPath: m_Name
       value: Toy_solider_Modeling_Gun
       objectReference: {fileID: 0}
+    - target: {fileID: 1630794972795428178, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 4ca9d101b1c9c9f4b9e663b56695736f, type: 2}
+    - target: {fileID: 1630794972795428178, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 71542b35fe9125b4bb71bebb769facd7, type: 2}
+    - target: {fileID: 1630794972795428178, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      propertyPath: m_Materials.Array.data[2]
+      value: 
+      objectReference: {fileID: 2100000, guid: 7015e09950430d546b371e45f7ac1b5a, type: 2}
+    - target: {fileID: 1630794972795428178, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      propertyPath: m_Materials.Array.data[3]
+      value: 
+      objectReference: {fileID: 2100000, guid: aa4f20062ab10b5469794e2ce4be6071, type: 2}
+    - target: {fileID: 1630794972795428178, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      propertyPath: m_Materials.Array.data[4]
+      value: 
+      objectReference: {fileID: 2100000, guid: d991dae9d0522014a8529cc5c80b57e3, type: 2}
+    - target: {fileID: 1630794972795428178, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      propertyPath: m_Materials.Array.data[5]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8874f5ffda4ca714fa9c7152d3f3a36c, type: 2}
+    - target: {fileID: 1630794972795428178, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      propertyPath: m_Materials.Array.data[6]
+      value: 
+      objectReference: {fileID: 2100000, guid: c5cd48041b5f98347b76b0e99d7b9331, type: 2}
+    - target: {fileID: 1630794972795428178, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      propertyPath: m_Materials.Array.data[7]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8ef7dff6d202c014e903f27063d472da, type: 2}
+    - target: {fileID: 1630794972795428178, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      propertyPath: m_Materials.Array.data[8]
+      value: 
+      objectReference: {fileID: 2100000, guid: e6b19a8b107b982498351786e1e40e75, type: 2}
     - target: {fileID: 4167280743394806330, guid: 1b41998b475852b4b87c7c182731e594,
         type: 3}
       propertyPath: m_LocalRotation.w
@@ -1009,6 +1056,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 99999
@@ -1159,6 +1207,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 99999
@@ -1357,6 +1406,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 99999
@@ -1555,6 +1605,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 99999
@@ -1753,6 +1804,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 99999
@@ -1841,6 +1893,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 99999
@@ -1871,6 +1924,8 @@ MonoBehaviour:
   includeCollide:
     serializedVersion: 2
     m_Bits: 0
+  _ownerState: {fileID: 0}
+  playerCameraController: {fileID: 0}
   hitEffect: {fileID: 0}
   hitSound: {fileID: 0}
   id: 1000
@@ -2084,6 +2139,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 99999
@@ -2282,6 +2338,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 99999
@@ -2507,6 +2564,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 99999
@@ -2705,6 +2763,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 99999
@@ -2903,6 +2962,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 99999
@@ -3101,6 +3161,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 99999

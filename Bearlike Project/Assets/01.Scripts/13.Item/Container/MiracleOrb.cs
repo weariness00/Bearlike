@@ -35,6 +35,7 @@ namespace Item.Container
             if (targetObject.TryGetComponent(out pc) || targetObject.transform.root.TryGetComponent(out pc))
             {
                 pc.skillSelectUI.SpawnSkillBlocks(_skillBlockSpawnCount);
+                pc.skillSelectUI.AddSelectCount();
                 Destroy(gameObject);   
             }
         }

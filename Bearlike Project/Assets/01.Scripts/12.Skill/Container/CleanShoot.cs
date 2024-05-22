@@ -28,6 +28,8 @@ namespace Skill.Container
         private Animation areaAnimation;
         private float _aniAreaOpenTime;
         private WaitForSeconds _areaOpenWaiter; // UI 키는 애니메이션 시간
+        private float _aniAreaCloseTime;
+        private WaitForSeconds _areaCloseWaiter; // UI 키는 애니메이션 시간
 
         private Animation _aimAnimation;
         private WaitForSeconds _aimTargetingAniTime;
@@ -47,10 +49,15 @@ namespace Skill.Container
 
             {
                 areaAnimation = areaObject.GetComponent<Animation>();
-                var clip = areaAnimation.GetClip("Open Clean Shoot Area");
-                _aniAreaOpenTime = clip.length;
-                _areaOpenWaiter = new WaitForSeconds(clip.length);
                 _areaRect = areaObject.GetComponent<RectTransform>();
+                
+                var openClip = areaAnimation.GetClip("Open Clean Shoot Area");
+                _aniAreaOpenTime = openClip.length;
+                _areaOpenWaiter = new WaitForSeconds(openClip.length);
+                
+                var closeClip = areaAnimation.GetClip("Close Clean Shoot Area");
+                _aniAreaCloseTime = closeClip.length;
+                _areaCloseWaiter = new WaitForSeconds(closeClip.length);
             }
 
             {
@@ -67,6 +74,12 @@ namespace Skill.Container
             _layerMask = LayerMask.GetMask("Default");
 
             _findTime = new WaitForSeconds(0.2f);
+        }
+
+        public override void Spawned()
+        {
+            base.Spawned();
+            _cancelTimer = TickTimer.CreateFromSeconds(Runner, 0f);
         }
 
         #region Skill Base Function
@@ -87,6 +100,8 @@ namespace Skill.Container
 
         public override void Run()
         {
+            if(_cancelTimer.Expired(Runner) == false) return;
+            
             if (IsUse && isInvoke == false)
             {
                 _cancelTimer = TickTimer.CreateFromSeconds(Runner, _aniAreaOpenTime);
@@ -96,27 +111,31 @@ namespace Skill.Container
 
                 if (HasInputAuthority)
                 {
+                    StopAllCoroutines();
+                    
                     cleanShootCanvas.gameObject.SetActive(true);
                     aimCanvas.gameObject.SetActive(true);
-                    ownerPlayer.cameraController.SetLensDistortion();
-                    ownerPlayer.cameraController.SetLensDistortion(-0.5f, 1f, 1f, null, 1.15f, _aniAreaOpenTime);
-                    StartCoroutine(AreaSetting(ownerPlayer.gameObject));
+                    ownerPlayer.cameraController.SetLensDistortion(-0.2f, 1f, 1f, null, 1.05f, _aniAreaOpenTime);
+                    StartCoroutine(AreaOpenSetting(ownerPlayer.gameObject));
                 }
 
                 StartCoroutine(AttackMonsterFromArea());
             }
-            else if (_cancelTimer.Expired(Runner) && isInvoke)
+            else if (isInvoke)
             {
+                _cancelTimer = TickTimer.CreateFromSeconds(Runner, _aniAreaCloseTime);
+                
                 isInvoke = false;
                 if (HasInputAuthority)
                 {
-                    ownerPlayer.cameraController.SetLensDistortion();
+                    ownerPlayer.cameraController.SetLensDistortion(0f, 1f,1f, null, 1f, _aniAreaCloseTime);
+                    areaAnimation.Play("Close Clean Shoot Area");
                     StopAllCoroutines();
                     foreach (var (monster, aim) in _aimDictionary)
                         Destroy(aim);
-                    
-                    cleanShootCanvas.gameObject.SetActive(false);
                     aimCanvas.gameObject.SetActive(false);
+
+                    StartCoroutine(AreaCloseSetting());
                 }
                 _aimDictionary.Clear();
             }
@@ -181,7 +200,7 @@ namespace Skill.Container
             }
         }
 
-        IEnumerator AreaSetting(GameObject runObject)
+        IEnumerator AreaOpenSetting(GameObject runObject)
         {
             // viewport상의 영역 크기 잡아주기
             var rangeHalf = range / 2f;
@@ -191,7 +210,7 @@ namespace Skill.Container
             var areaMax = (screenHalf + rangeHalf) / screen;
 
             // 영역 여는 애니메이션 길이만큼 대기
-            areaAnimation.Play();
+            areaAnimation.Play("Open Clean Shoot Area");
             yield return _areaOpenWaiter;
 
             DebugManager.ToDo("영역에 잡힌 Monster들의 위치를 UI로 띄어주기");
@@ -233,6 +252,12 @@ namespace Skill.Container
                     }
                 }
             }
+        }
+
+        IEnumerator AreaCloseSetting()
+        {
+            yield return _areaCloseWaiter;
+            cleanShootCanvas.gameObject.SetActive(false);
         }
 
         // Aim UI생성해주고 셋팅

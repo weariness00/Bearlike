@@ -5,6 +5,7 @@ using Player;
 using Skill;
 using Status;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Util;
 
@@ -19,6 +20,8 @@ namespace UI.Skill
 
         [Header("Player")]
         public PlayerController playerController;
+
+        public int selectCount = 0; // 횟수가 남아있다면 스킬을 선택후 다시 스킬 선택창 리롤
         
         #region Unity Event Function
 
@@ -40,10 +43,15 @@ namespace UI.Skill
 
         #region Member Funtion
 
+        public void AddSelectCount() => ++selectCount;
+        public void RemoveSelectCount() => --selectCount;
+        
         // Select UI를 초반 셋팅 해주는 함수
         public void SpawnSkillBlocks(int count)
         {
             gameObject.SetActive(true);
+            
+            if(selectCount > 0) return;
             
             // 이미 있는 스킬들 삭제
             var handles = toggleGroup.GetComponentsInChildren<SkillSelectBlockHandle>().ToList();
@@ -105,8 +113,12 @@ namespace UI.Skill
             {
                 skill.LevelUpRPC(); 
             }
-            
-            gameObject.SetActive(false);
+
+            RemoveSelectCount();
+            if (selectCount > 0)
+                SpawnSkillBlocks(3);
+            else
+                gameObject.SetActive(false);
         }
         
         #endregion

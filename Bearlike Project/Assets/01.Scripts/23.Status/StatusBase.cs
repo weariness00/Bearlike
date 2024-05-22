@@ -38,15 +38,15 @@ namespace Status
         
         public StatusValue<int> hp = new StatusValue<int>(){Max = 99999};                  // 체력        
         public StatusValue<int> damage = new StatusValue<int>(){Max = 99999};  // 공격력
-        public float damageMultiple = 1; // 공격력 배율
+        public float damageMultiple = 1f; // 공격력 배율
         public StatusValue<float> criticalHitChance = new StatusValue<float>(){Max = 1, isOverMax = true}; // 치명타 확률 0~1 값 1 이상이 될수도 있다.
-        public float criticalHitMultiple = 1; // 치명타 배율
+        public float criticalHitMultiple = 1f; // 치명타 배율
         public StatusValue<int> defence = new StatusValue<int>(){Max = 99999};             // 방어력
         public StatusValue<float> avoid = new StatusValue<float>(){Min = 0, Max = 1, isOverMax = true, isOverMin = true};           // 회피율 0 ~ 1 사이값
-        public float avoidMultiple = 1;
+        public float avoidMultiple = 1f;
         public StatusValue<float> moveSpeed = new StatusValue<float>(){Max = 99999f};           // 이동 속도
         public StatusValue<float> attackSpeed = new StatusValue<float>(){Max = 99999f};     // 초당 공격 속도
-        public float attackSpeedMultiple = 1;   // 공격 속도 배율
+        public float attackSpeedMultiple = 1f;   // 공격 속도 배율
         [Networked] public TickTimer AttackLateTimer { get; set; }
         public StatusValue<float> attackRange = new StatusValue<float>(){Max = 99999f};
         
@@ -81,7 +81,7 @@ namespace Status
         public void ClearAdditionalStatus() => _additionalStatusList.Clear();
         public void AddAdditionalStatus(StatusBase otherStatus) => _additionalStatusList.Add(otherStatus);
         public void RemoveAdditionalStatus(StatusBase otherStatus) => _additionalStatusList.Remove(otherStatus);
-
+    
         public virtual int CalDamage(int additionalDamage = 0, float additionalDamageMultiple = 0f, float additionalCriticalHitMultiple = 0f)
         {
             var d = AddAllDamage() + additionalDamage;

@@ -1,88 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5815091224838915515
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5921475977255648396}
-  - component: {fileID: 6987481556050881229}
-  - component: {fileID: 1111419740323160992}
-  m_Layer: 9
-  m_Name: Sphere
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5921475977255648396
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5815091224838915515}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2017883913535490166}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &6987481556050881229
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5815091224838915515}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &1111419740323160992
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5815091224838915515}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &7240546031753786553
 GameObject:
   m_ObjectHideFlags: 0
@@ -111,11 +28,11 @@ Transform:
   m_GameObject: {fileID: 7240546031753786553}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 15, y: 0.18, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 1
   m_Children:
-  - {fileID: 5921475977255648396}
+  - {fileID: 8517464695466807690}
   - {fileID: 7845929225701324343}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -206,7 +123,7 @@ GameObject:
   - component: {fileID: 7845929225701324343}
   - component: {fileID: 3173380308310748106}
   - component: {fileID: 4625347622966929111}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Drop Effect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -246,7 +163,7 @@ VisualEffect:
   m_PropertySheet:
     m_Float:
       m_Array:
-      - m_Value: 2
+      - m_Value: 0
         m_Name: Circle Mesh Rate
         m_Overridden: 1
       - m_Value: 5
@@ -257,34 +174,34 @@ VisualEffect:
         m_Overridden: 1
       - m_Value: 1.2
         m_Name: Circle Mesh Size
-        m_Overridden: 1
+        m_Overridden: 0
       - m_Value: 1
         m_Name: Flare Rate
         m_Overridden: 1
       - m_Value: 0
         m_Name: Circle Mesh Up Speed
-        m_Overridden: 1
+        m_Overridden: 0
       - m_Value: 3
         m_Name: Glow Ground Rate
         m_Overridden: 1
-      - m_Value: 2
+      - m_Value: 1
         m_Name: Aura Rate
-        m_Overridden: 1
+        m_Overridden: 0
     m_Vector2f:
       m_Array: []
     m_Vector3f:
       m_Array:
-      - m_Value: {x: 2, y: 0.5, z: 0}
+      - m_Value: {x: 1, y: 1, z: 0}
         m_Name: Flare Size
-        m_Overridden: 0
+        m_Overridden: 1
     m_Vector4f:
       m_Array:
-      - m_Value: {x: 0.9245283, y: 0.22308825, z: 0.06541473, w: 0}
+      - m_Value: {x: 0.25539756, y: 0.066666655, z: 0.9254902, w: 0}
         m_Name: Color
         m_Overridden: 1
-      - m_Value: {x: 1.8443027, y: 0.7821388, z: 0.30899313, w: 1}
+      - m_Value: {x: 0.4628709, y: 0, z: 2.4622889, w: 1}
         m_Name: Circle Color
-        m_Overridden: 1
+        m_Overridden: 0
     m_Uint:
       m_Array: []
     m_Int:
@@ -298,63 +215,27 @@ VisualEffect:
           m_Curve:
           - serializedVersion: 3
             time: 0
-            value: 0.08673096
-            inSlope: 9.13269
-            outSlope: 9.13269
+            value: 1
+            inSlope: -0.10531382
+            outSlope: -0.10531382
             tangentMode: 34
             weightedMode: 0
             inWeight: 0
             outWeight: 0.33333334
           - serializedVersion: 3
-            time: 0.1
-            value: 1
-            inSlope: -0.010076987
-            outSlope: -0.010076987
-            tangentMode: 0
+            time: 0.5036735
+            value: 0.9469562
+            inSlope: 0.00077946857
+            outSlope: 0.00077946857
+            tangentMode: 34
             weightedMode: 0
-            inWeight: 0
-            outWeight: 0
-          - serializedVersion: 3
-            time: 0.3
-            value: 1
-            inSlope: -0.009972296
-            outSlope: -0.009972296
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0
-          - serializedVersion: 3
-            time: 0.5
-            value: 0.6
-            inSlope: 0.0014197825
-            outSlope: 0.0014197825
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0
-          - serializedVersion: 3
-            time: 0.7
-            value: 1
-            inSlope: -0.00046133998
-            outSlope: -0.00046133998
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0
-          - serializedVersion: 3
-            time: 0.9
-            value: 1
-            inSlope: -0.0007271765
-            outSlope: -0.0007271765
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0
+            inWeight: 0.33333334
+            outWeight: 0.33333334
           - serializedVersion: 3
             time: 1
-            value: 0
-            inSlope: -9.999998
-            outSlope: -9.999998
+            value: 1
+            inSlope: 0.10687276
+            outSlope: 0.10687276
             tangentMode: 34
             weightedMode: 0
             inWeight: 0.33333334
@@ -363,7 +244,7 @@ VisualEffect:
           m_PostInfinity: 2
           m_RotationOrder: 4
         m_Name: Circle Mesh Size Curve
-        m_Overridden: 1
+        m_Overridden: 0
     m_Gradient:
       m_Array: []
     m_NamedObject:
@@ -410,3 +291,77 @@ VFXRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!1001 &5480589588365442420
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2017883913535490166}
+    m_Modifications:
+    - target: {fileID: 4195923504090262782, guid: 00baa6de1d2c10044bdc63389b7e33c2,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4195923504090262782, guid: 00baa6de1d2c10044bdc63389b7e33c2,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 4195923504090262782, guid: 00baa6de1d2c10044bdc63389b7e33c2,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4195923504090262782, guid: 00baa6de1d2c10044bdc63389b7e33c2,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4195923504090262782, guid: 00baa6de1d2c10044bdc63389b7e33c2,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4195923504090262782, guid: 00baa6de1d2c10044bdc63389b7e33c2,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4195923504090262782, guid: 00baa6de1d2c10044bdc63389b7e33c2,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4195923504090262782, guid: 00baa6de1d2c10044bdc63389b7e33c2,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4195923504090262782, guid: 00baa6de1d2c10044bdc63389b7e33c2,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4195923504090262782, guid: 00baa6de1d2c10044bdc63389b7e33c2,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6157271142792823940, guid: 00baa6de1d2c10044bdc63389b7e33c2,
+        type: 3}
+      propertyPath: m_Name
+      value: Miracle Orb
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 00baa6de1d2c10044bdc63389b7e33c2, type: 3}
+--- !u!4 &8517464695466807690 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4195923504090262782, guid: 00baa6de1d2c10044bdc63389b7e33c2,
+    type: 3}
+  m_PrefabInstance: {fileID: 5480589588365442420}
+  m_PrefabAsset: {fileID: 0}

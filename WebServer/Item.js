@@ -52,7 +52,7 @@ async function MakeInfoData(app)
 async function MakeStatusData(app)
 {
     app.get('/Item/Status/Version', async (req, res) => {
-        var version = await TableVesrionData("Item");
+        var version = await TableVesrionData("Item Status");
         res.json(version);
     })
 
