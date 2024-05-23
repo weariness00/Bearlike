@@ -182,7 +182,8 @@ namespace Player
         public void LevelUp()
         {
             level.Current++;
-            playerController.skillSelectUI.SpawnSkillBlocks(3);
+            if(HasInputAuthority)
+                playerController.skillSelectUI.SpawnSkillBlocks(3);
         }
 
         // DeBug Function

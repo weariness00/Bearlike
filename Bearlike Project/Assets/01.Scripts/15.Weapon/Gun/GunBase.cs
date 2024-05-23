@@ -123,6 +123,7 @@ namespace Weapon.Gun
 
         public virtual void BulletInit()
         {
+            bullet.hitEffect = this;
             magazine.Current = int.MaxValue;
             
             // TODO : 여기서 공격속도 반영 해야함
@@ -157,7 +158,6 @@ namespace Weapon.Gun
                             b.status.AddAdditionalStatus(status);
 
                             b.ownerId = OwnerId;
-                            b.hitEffect = this;
                             b.knockBack = 0;
                             b.status.attackRange.Max = status.attackRange.Max;
                             b.status.attackRange.Current = status.attackRange.Current;

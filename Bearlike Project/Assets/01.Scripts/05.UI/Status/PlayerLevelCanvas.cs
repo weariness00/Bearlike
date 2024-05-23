@@ -13,6 +13,11 @@ namespace UI.Status
 
         private int _currentLevel = 0;
 
+        private void Awake()
+        {
+            gameObject.SetActive(false);
+        }
+
         private void Update()
         {
             if (_currentLevel != playerStatus.level.Current)

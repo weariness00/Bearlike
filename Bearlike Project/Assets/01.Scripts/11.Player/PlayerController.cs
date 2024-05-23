@@ -10,6 +10,7 @@ using Skill;
 using Status;
 using UI;
 using UI.Skill;
+using UI.Status;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
@@ -37,6 +38,8 @@ namespace Player
         public SkillInventory skillInventory;
         public SkillSelectUI skillSelectUI;
         public SkillCanvas skillCanvas;
+        public PlayerLevelCanvas levelCanvas;
+        
         public Animator animator;
         [HideInInspector] public SimpleKCC simpleKcc;
         [HideInInspector] public RigBuilder rigBuilder;
@@ -124,6 +127,7 @@ namespace Player
 
                 gunUI.gameObject.SetActive(true);
                 hpUI.gameObject.SetActive(true);
+                levelCanvas.gameObject.SetActive(true);
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
             }
             else
