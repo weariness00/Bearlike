@@ -37,6 +37,8 @@ namespace UI.Weapon.Gun
         private void Update()
         {
             DebugManager.ToDo("Gun만다루는 UI가 아닌 Weapon 전체를 다루는 UI로 꾸바기");
+            
+            DebugManager.Log($"{bulletCount.rectTransform.position}");
             GunUpdate();
         }
 
@@ -53,11 +55,11 @@ namespace UI.Weapon.Gun
                 ammoCount.text = "/ "+ GunBase.ammo.Current;
             
                 bulletCount.text = gun.magazine.Current.ToString();
-
-                // if (gun.magazine.Current >= 10)
-                //     bulletCount.rectTransform.position = new Vector3(-120, 230, 0);
-                // else
-                //     bulletCount.rectTransform.position = new Vector3(-85, 230, 0);
+                
+                if (gun.magazine.Current >= 10)
+                    bulletCount.rectTransform.position = new Vector3(1782, 230, 0);
+                else
+                    bulletCount.rectTransform.position = new Vector3(1820, 230, 0);
             }
         }
 
@@ -78,10 +80,10 @@ namespace UI.Weapon.Gun
                     ammoCount.text = "/ "+ GunBase.ammo.Current;
                     _ammoCount = GunBase.ammo.Current;
                     
-                    // if (gun.magazine.Current >= 10)
-                    //     bulletCount.rectTransform.position = new Vector3(-120, 230, 0);
-                    // else
-                    //     bulletCount.rectTransform.position = new Vector3(-85, 230, 0);
+                    if (gun.magazine.Current >= 10)
+                        bulletCount.rectTransform.position = new Vector3(1782, 230, 0);
+                    else
+                        bulletCount.rectTransform.position = new Vector3(1820, 230, 0);
                 }
             }
         }
