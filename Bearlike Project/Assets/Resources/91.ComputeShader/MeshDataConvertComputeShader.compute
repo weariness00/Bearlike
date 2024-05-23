@@ -31,7 +31,6 @@ int polygonLength;
 StructuredBuffer<float3> vertices;
 StructuredBuffer<float3> normals;
 StructuredBuffer<float2> uvs;
-StructuredBuffer<int> triangles; // 삼각형 인덱스 배열
 RWStructuredBuffer<uint> dotLength; // 정점 개수
 
 RWStructuredBuffer<PolygonData> sliceData0;
@@ -41,6 +40,8 @@ RWStructuredBuffer<DotData> newDotData;
 RWStructuredBuffer<uint> sliceCount0;
 RWStructuredBuffer<uint> sliceCount1;
 RWStructuredBuffer<uint> newDotCount;
+
+StructuredBuffer<int> subMeshIndices;
 
 [numthreads(32,1,1)]
 void CSMeshSlice(uint3 id : SV_DispatchThreadID)
@@ -56,7 +57,7 @@ void CSMeshSlice(uint3 id : SV_DispatchThreadID)
     for (i = 0; i < 3; ++i)
     {
         polygon[i] = (DotData)0;
-        indices[i] = triangles[idx * 3 + i];
+        indices[i] = subMeshIndices[idx * 3 + i];
         polygon[i].Vertex = vertices[indices[i]];
         polygon[i].Normal = normals[indices[i]];
         polygon[i].UV = uvs[indices[i]];

@@ -27,6 +27,7 @@ namespace Player
         public Camera weaponCamera;
         public Camera uiCamera;
         public Camera skillCamera;
+        public Camera noVolumeCamera;
         public Vector3 firstOffset;
         public Vector3 thirdOffset;
 
@@ -52,8 +53,9 @@ namespace Player
             targetCamera.tag = "MainCamera";
 
             SetOwnerCamera();
+            TargetCameraAddOverlay(noVolumeCamera);//
             TargetCameraAddOverlay(weaponCamera);
-            TargetCameraAddOverlay(skillCamera);
+            TargetCameraAddOverlay(skillCamera);            
         }
 
         public void ChangeCameraMode(CameraMode mode)

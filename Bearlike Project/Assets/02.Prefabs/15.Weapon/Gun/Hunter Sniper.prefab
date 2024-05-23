@@ -115,7 +115,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -5722435108937020095, guid: 83ca3cc55a97908429458bdd8b0f820d, type: 3}
+  - {fileID: 2100000, guid: 49b5b7811e9af5a41be34e8ed4069af9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -333,6 +333,8 @@ MonoBehaviour:
   id: 2
   explain: 
   shootEffect: {fileID: 0}
+  hitEffectPrefab:
+    RawGuidValue: 8ec31fcb5aff43949af9992aeb7147e6
   shootSound: {fileID: 1782216583886392960}
   emptyAmmoSound: {fileID: 4304385853962779226}
   reloadSound: {fileID: 6585645445144313122}
@@ -350,8 +352,6 @@ MonoBehaviour:
   reloadLateSecond: 0
   fireTransform: {fileID: 4176947573868929608}
   animatorInfo: {fileID: 6731491014207379001}
-  hitEffectPrefab:
-    RawGuidValue: 8ec31fcb5aff43949af9992aeb7147e6
 --- !u!114 &6591360967261449838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -693,7 +693,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -5722435108937020095, guid: 83ca3cc55a97908429458bdd8b0f820d, type: 3}
+  - {fileID: 2100000, guid: 49b5b7811e9af5a41be34e8ed4069af9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

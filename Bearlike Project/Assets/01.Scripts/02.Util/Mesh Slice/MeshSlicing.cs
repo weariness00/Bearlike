@@ -36,6 +36,8 @@ namespace Util
 
             public static readonly int NewDotData = Shader.PropertyToID("newDotData");
             public static readonly int NewDotCount = Shader.PropertyToID("newDotCount");
+
+            public static readonly int SubMeshIndices = Shader.PropertyToID("subMeshIndices");
             
             // Cap Data
             public static readonly int UVForward = Shader.PropertyToID("uvForward");
@@ -107,7 +109,6 @@ namespace Util
             ComputeBuffer verticesBuffer = new ComputeBuffer(dotCount, sizeof(float) * 3);
             ComputeBuffer normalsBuffer = new ComputeBuffer(dotCount, sizeof(float) * 3);
             ComputeBuffer uvsBuffer = new ComputeBuffer(dotCount, sizeof(float) * 2);
-            ComputeBuffer trianglesBuffer = new ComputeBuffer(triangleCount, sizeof(int));
             ComputeBuffer dotLengthBuffer = new ComputeBuffer(1, sizeof(uint));
             
             ComputeBuffer sliceDataBuffer0 = new ComputeBuffer(polygonCount * 2, Marshal.SizeOf(typeof(PolygonData)));
@@ -116,7 +117,7 @@ namespace Util
             ComputeBuffer sliceCountBuffer0 = new ComputeBuffer(1, sizeof(uint));
             ComputeBuffer sliceCountBuffer1 = new ComputeBuffer(1, sizeof(uint));
             ComputeBuffer newDotCountBuffer = new ComputeBuffer(1, sizeof(uint));
-                
+
             PolygonData[] slicePolygonData0 = new PolygonData[polygonCount * 2];
             PolygonData[] slicePolygonData1 = new PolygonData[polygonCount * 2];
             DotData[] newDotData = new DotData[polygonCount * 2];
@@ -128,7 +129,6 @@ namespace Util
             verticesBuffer.SetData(mesh.vertices);
             normalsBuffer.SetData(mesh.normals);
             uvsBuffer.SetData(mesh.uv);
-            trianglesBuffer.SetData(mesh.triangles);
             dotLengthBuffer.SetData(dotLength);
             
             sliceDataBuffer0.SetData(slicePolygonData0);
@@ -138,14 +138,13 @@ namespace Util
             sliceCountBuffer1.SetData(sliceCount1);
             newDotCountBuffer.SetData(newDotCount);
             
-            int meshSliceKernelID = sliceShader.FindKernel(CSParam.MeshSliceKernel);
-            sliceShader.SetInt(CSParam.PolygonLength, polygonCount);
             sliceShader.SetVector(CSParam.SlicePoint, slicePoint);
             sliceShader.SetVector(CSParam.SliceNormal, sliceNormal);
+            
+            int meshSliceKernelID = sliceShader.FindKernel(CSParam.MeshSliceKernel);
             sliceShader.SetBuffer(meshSliceKernelID, CSParam.Vertices, verticesBuffer);
             sliceShader.SetBuffer(meshSliceKernelID, CSParam.Normals, normalsBuffer);
             sliceShader.SetBuffer(meshSliceKernelID, CSParam.UVs, uvsBuffer);
-            sliceShader.SetBuffer(meshSliceKernelID, CSParam.Triangles, trianglesBuffer);
             sliceShader.SetBuffer(meshSliceKernelID, CSParam.DotLength, dotLengthBuffer);
             
             sliceShader.SetBuffer(meshSliceKernelID, CSParam.SliceData0, sliceDataBuffer0);
@@ -155,7 +154,24 @@ namespace Util
             sliceShader.SetBuffer(meshSliceKernelID, CSParam.SliceCount1, sliceCountBuffer1);
             sliceShader.SetBuffer(meshSliceKernelID, CSParam.NewDotCount, newDotCountBuffer);
 
-            sliceShader.Dispatch(meshSliceKernelID, polygonCount / CSParam.ThreadX + 1,1,1);
+            ComputeBuffer indicesBuffer = null;
+            for (int i = 0; i < mesh.subMeshCount; i++)
+            {
+                var indices = mesh.GetIndices(i);
+                var subMeshPolygonCount = indices.Length / 3;
+
+                indicesBuffer = new ComputeBuffer(indices.Length, sizeof(int));
+                indicesBuffer.SetData(indices);
+                sliceShader.SetInt(CSParam.PolygonLength, subMeshPolygonCount);
+                sliceShader.SetBuffer(meshSliceKernelID, CSParam.SubMeshIndices, indicesBuffer);
+
+                sliceShader.Dispatch(meshSliceKernelID, subMeshPolygonCount / CSParam.ThreadX + 1,1,1);
+                
+                // 컴퓨트 쉐이더 끝나는 시점 알기 위한 함수
+                newDotCountBuffer.GetData(newDotCount);
+                
+                indicesBuffer.Release();
+            }
             
             sliceDataBuffer0.GetData(slicePolygonData0);
             sliceDataBuffer1.GetData(slicePolygonData1);
@@ -169,7 +185,6 @@ namespace Util
                 verticesBuffer.Release();
                 normalsBuffer.Release();
                 uvsBuffer.Release();
-                trianglesBuffer.Release();
                 dotLengthBuffer.Release();
             
                 sliceDataBuffer0.Release();
@@ -178,6 +193,8 @@ namespace Util
                 sliceCountBuffer0.Release();
                 sliceCountBuffer1.Release();
                 newDotCountBuffer.Release();
+                
+                indicesBuffer.Release();
                 DebugManager.LogWarning("Slice된 객체가 없습니다.");
                 return new List<GameObject>(){targetObject};
             }
@@ -185,7 +202,7 @@ namespace Util
             // 새롭게 생긴 정점들 정렬
             // 정렬된 값을 Buffer에 Set
             ComputeBuffer newDotCenterBuffer = new ComputeBuffer(1, Marshal.SizeOf(typeof(DotData)));
-
+            
             var sortDots = SortNewDot(newDotData, (int)newDotCount[0]);
             newDotCount[0] = (uint)sortDots.Length - 1; // 배열의 마지막 원소는 첫번째 원소와 값이 동일하기에 길이를 1 빼준다.
             
@@ -242,13 +259,12 @@ namespace Util
             sliceDataBuffer0.GetData(slicePolygonData0);
             sliceDataBuffer1.GetData(slicePolygonData1);
 
-            var sliceObject0 = MakeSliceObject(targetObject, MakeMeshFromPolygonData(slicePolygonData0));
-            var sliceObject1 = MakeSliceObject(targetObject, MakeMeshFromPolygonData(slicePolygonData1));
+            var sliceObject0 = MakeSliceObject(targetObject, MakeMeshFromPolygonData(slicePolygonData0, sortDots.Length - 1));
+            var sliceObject1 = MakeSliceObject(targetObject, MakeMeshFromPolygonData(slicePolygonData1, sortDots.Length - 1));
                         
             verticesBuffer.Release();
             normalsBuffer.Release();
             uvsBuffer.Release();
-            trianglesBuffer.Release();
             dotLengthBuffer.Release();
             
             sliceDataBuffer0.Release();
@@ -257,6 +273,8 @@ namespace Util
             sliceCountBuffer0.Release();
             sliceCountBuffer1.Release();
             newDotCountBuffer.Release();
+            
+            indicesBuffer.Release();
             
             newDotCenterBuffer.Release();
             
@@ -310,7 +328,7 @@ namespace Util
             target[idx11] = temp1;
         }
         
-        private static Mesh MakeMeshFromPolygonData(PolygonData[] slicePolygonData)
+        private static Mesh MakeMeshFromPolygonData(PolygonData[] slicePolygonData, int newPolygonCount)
         {
             HashSet<DotData> dotData = new HashSet<DotData>(new DotDataEqualityComparer());
             foreach (var data in slicePolygonData)
@@ -348,15 +366,26 @@ namespace Util
             slicePolygonBuffer.Release();
             sliceDotDataBuffer.Release();
             
-            int[] triangles = new int[slicePolygonData.Length * 3];
-            for (var i = 0; i < slicePolygonData.Length; i++)
+            int[] triangles = new int[(slicePolygonData.Length - newPolygonCount) * 3];
+            int[] sliceMeshTriangles = new int[newPolygonCount * 3];
+            for (var i = 0; i < triangles.Length / 3; i++)
             {
                 var polygon = slicePolygonData[i];
                 triangles[i * 3 + 0] = polygon.Dot0.Index;
                 triangles[i * 3 + 1] = polygon.Dot1.Index;
                 triangles[i * 3 + 2] = polygon.Dot2.Index;
             }
+            for (int i = 0; i < sliceMeshTriangles.Length / 3; i++)
+            {
+                var polygon = slicePolygonData[triangles.Length / 3 + i];
+                sliceMeshTriangles[i * 3 + 0] = polygon.Dot0.Index;
+                sliceMeshTriangles[i * 3 + 1] = polygon.Dot1.Index;
+                sliceMeshTriangles[i * 3 + 2] = polygon.Dot2.Index;
+            }
+
+            mesh.subMeshCount = 2;
             mesh.SetTriangles(triangles, 0);
+            mesh.SetTriangles(sliceMeshTriangles, 1);
             
             return mesh;
         }
@@ -372,7 +401,12 @@ namespace Util
             
             GameObject sliceGameObject = new GameObject(originObject.name, components);
             sliceGameObject.GetComponent<MeshFilter>().sharedMesh = sliceMesh;
-            sliceGameObject.GetComponent<MeshRenderer>().sharedMaterials = originMeshRenderer.sharedMaterials;
+            //
+            var mats = originMeshRenderer.sharedMaterials.ToList();
+            if(sliceMesh.subMeshCount > originMeshRenderer.sharedMaterials.Length)
+                mats.Add(originMeshRenderer.sharedMaterials.Last());
+            sliceGameObject.GetComponent<MeshRenderer>().sharedMaterials = mats.ToArray();
+            
             sliceGameObject.transform.position = originObject.transform.position;
             sliceGameObject.transform.rotation = originObject.transform.rotation;
             sliceGameObject.transform.localScale = originObject.transform.localScale;

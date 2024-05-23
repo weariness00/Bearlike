@@ -30,7 +30,7 @@ float3 calculateCelShading(Light l, SurfaceVariables s)
 {
     float shadowAttenuationSmoothstepped = smoothstep(0.0f, s.ec.shadowAttenuation, l.shadowAttenuation);
     float distanceAttenuationSmoothstepped = smoothstep(0.0f, s.ec.distanceAttenuation, l.distanceAttenuation);
-    
+
     float attenuation = shadowAttenuationSmoothstepped * distanceAttenuationSmoothstepped;
     float diffuse = saturate(dot(s.normal, l.direction));
     diffuse *= attenuation;
@@ -94,7 +94,7 @@ void LightingCelShaded_float(
     const int pixelLightCount = GetAdditionalLightsCount();
     for (int i =0; i < pixelLightCount; ++i)
     {
-        light = GetAdditionalLight(i, Position, 1);
+        light = GetAdditionalLight(i, shadowCoord, 1);
         Color += calculateCelShading(light,s);
     }
     
