@@ -401,7 +401,12 @@ namespace Util
             
             GameObject sliceGameObject = new GameObject(originObject.name, components);
             sliceGameObject.GetComponent<MeshFilter>().sharedMesh = sliceMesh;
-            sliceGameObject.GetComponent<MeshRenderer>().sharedMaterials = originMeshRenderer.sharedMaterials;
+            //
+            var mats = originMeshRenderer.sharedMaterials.ToList();
+            if(sliceMesh.subMeshCount > originMeshRenderer.sharedMaterials.Length)
+                mats.Add(originMeshRenderer.sharedMaterials.Last());
+            sliceGameObject.GetComponent<MeshRenderer>().sharedMaterials = mats.ToArray();
+            
             sliceGameObject.transform.position = originObject.transform.position;
             sliceGameObject.transform.rotation = originObject.transform.rotation;
             sliceGameObject.transform.localScale = originObject.transform.localScale;
