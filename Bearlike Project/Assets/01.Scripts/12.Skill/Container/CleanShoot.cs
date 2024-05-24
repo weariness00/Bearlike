@@ -186,7 +186,7 @@ namespace Skill.Container
                         foreach (var monster in _monsterList)
                         {
                             var targetStatus = monster.GetComponent<MonsterStatus>();
-                            targetStatus.ApplyDamageRPC(status.CalDamage(), ownerPlayer.Object.Id, CrowdControl.Normality);
+                            targetStatus.PlayerApplyDamage(status.CalDamage(), ownerPlayer.Object.Id, CrowdControl.Normality);
 
                             // 총알 궤적 VFX 생성
                             var monsterNetworkId = monster.GetComponent<NetworkObject>().Id;

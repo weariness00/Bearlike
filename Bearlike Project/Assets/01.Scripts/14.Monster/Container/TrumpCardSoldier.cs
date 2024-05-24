@@ -98,7 +98,7 @@ namespace Monster.Container
                     if (hit.GameObject.TryGetComponent(out targetStatus) || hit.GameObject.transform.root.TryGetComponent(out targetStatus))
                     {
                         DebugManager.Log($"{hit.GameObject.name}");
-                        targetStatus.ApplyDamageRPC(status.CalDamage(), Object.Id, crowdControlType);
+                        targetStatus.PlayerApplyDamage(status.CalDamage(), Object.Id, crowdControlType);
                     }
                 }
             }

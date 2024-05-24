@@ -77,7 +77,7 @@ namespace Monster.Container
                     {
                         if (hit.GameObject.TryGetComponent(out targetStatus) || hit.GameObject.transform.root.TryGetComponent(out targetStatus))
                         {
-                            targetStatus.ApplyDamageRPC(status.CalDamage(), Object.Id,CrowdControl.Normality);
+                            targetStatus.PlayerApplyDamage(status.CalDamage(), Object.Id,CrowdControl.Normality);
                         }
                     }
                 }
@@ -226,7 +226,7 @@ namespace Monster.Container
                 StatusBase playerStatus;
                 if (hit.transform.TryGetComponent(out playerStatus) || hit.transform.parent.TryGetComponent(out playerStatus))
                 {
-                    playerStatus.ApplyDamageRPC(status.CalDamage(), Object.Id, CrowdControl.Normality);
+                    playerStatus.PlayerApplyDamage(status.CalDamage(), Object.Id, CrowdControl.Normality);
                 }
             }
             return INode.NodeState.Failure;

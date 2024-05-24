@@ -123,7 +123,7 @@ namespace Player
             base.ApplyDamage(applyDamage, ownerId, cc);
 
             // _playerCameraController.ScreenHitImpact(1,1);
-            URPRendererFeaturesManager.Instance.StartEffect("HitEffect");
+            // URPRendererFeaturesManager.Instance.StartEffect("HitEffect");
             
             HpControlRPC();
         }

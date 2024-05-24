@@ -143,7 +143,7 @@ namespace Monster.Container
             {
                 // TODO : 충돌 데미지 DB에서 밸런스 맞추자
                 if(other.gameObject.layer != LayerMask.NameToLayer("Bullet"))
-                    otherStatus.ApplyDamageRPC(1, gameObject.GetComponent<NetworkObject>().Id);
+                    otherStatus.PlayerApplyDamage(1, gameObject.GetComponent<NetworkObject>().Id);
             }
         }
         
@@ -655,7 +655,7 @@ namespace Monster.Container
                 if (Hit.GameObject.TryGetComponent(out targetStatus) || Hit.GameObject.transform.root.TryGetComponent(out targetStatus))
                 {
                     DebugManager.Log($"{targetStatus.gameObject.name} was hit");
-                    targetStatus.ApplyDamageRPC(status.CalDamage(), Object.Id);
+                    targetStatus.PlayerApplyDamage(status.CalDamage(), Object.Id);
                 }
             }
             DebugManager.Log($"AttackRange : {status.attackRange.Current}");
@@ -890,7 +890,7 @@ namespace Monster.Container
                             {
                                 //TODO : 데미지를 조정하자
                                 // _players[index].GetComponent<StatusBase>().ApplyDamageRPC(status.CalDamage(), gameObject.GetComponent<NetworkObject>().Id);
-                                _players[index].GetComponent<StatusBase>().ApplyDamageRPC(1, gameObject.GetComponent<NetworkObject>().Id);
+                                _players[index].GetComponent<StatusBase>().PlayerApplyDamage(1, gameObject.GetComponent<NetworkObject>().Id);
                             }
                         }
                         CameraShakeRPC();
@@ -971,7 +971,7 @@ namespace Monster.Container
                     if (distance <= fartDamageRange)
                     {
                         //TODO : 데미지를 조정하자
-                        _playerStatusBases[index].ApplyDamageRPC(1, gameObject.GetComponent<NetworkObject>().Id);
+                        _playerStatusBases[index].PlayerApplyDamage(1, gameObject.GetComponent<NetworkObject>().Id);
                     }
                     DebugManager.Log($"player to meteor distance : {distance}");
                 }
@@ -1145,7 +1145,7 @@ namespace Monster.Container
                     if (coinAtaackMinRange <= distance && distance <= coinAtaackMaxRange)
                     {
                         //TODO : 데미지를 조정하자
-                        _playerStatusBases[index].ApplyDamageRPC(1, gameObject.GetComponent<NetworkObject>().Id);
+                        _playerStatusBases[index].PlayerApplyDamage(1, gameObject.GetComponent<NetworkObject>().Id);
                     }
                     // DebugManager.Log($"player to meteor distance : {distance}");
                 }

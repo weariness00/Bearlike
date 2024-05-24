@@ -175,7 +175,7 @@ namespace Skill.Support
             {
                 if (!monster) continue;
                 monster.UpdateNavMeshAgent();
-                monster.status.ApplyDamageRPC(status.CalDamage(), Object.Id);
+                monster.status.PlayerApplyDamage(status.CalDamage(), Object.Id);
             }
         }
 

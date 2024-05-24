@@ -78,7 +78,7 @@ namespace Weapon.Bullet
                 StatusBase otherStatus = colliderStatus.originalStatus;
                 otherStatus.AddAdditionalStatus(colliderStatus.status);
                 
-                otherStatus.ApplyDamageRPC(status.CalDamage(), ownerId);
+                otherStatus.PlayerApplyDamage(status.CalDamage(), ownerId);
                 otherStatus.RemoveAdditionalStatus(colliderStatus.status);
                 hitEffect?.OnWeaponHitEffect(transform.position);
                 
@@ -106,11 +106,11 @@ namespace Weapon.Bullet
             }
             else if (other.transform.root.gameObject.TryGetComponent(out PlayerStatus playerStatus))
             {
-                playerStatus.ApplyDamageRPC(status.CalDamage(), ownerId);
+                playerStatus.PlayerApplyDamage(status.CalDamage(), ownerId);
             }
             else if (other.TryGetComponent(out StatusBase otherStatus))
             {
-                otherStatus.ApplyDamageRPC(status.CalDamage(), ownerId);
+                otherStatus.PlayerApplyDamage(status.CalDamage(), ownerId);
             }
             // 메쉬 붕괴 객체와 충돌 시
             else if (other.CompareTag("Destruction"))

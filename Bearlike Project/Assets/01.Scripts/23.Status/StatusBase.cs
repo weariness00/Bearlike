@@ -387,6 +387,13 @@ namespace Status
         /// <param name="id">대미지를 준 대상의 Network ID</param>
         /// <param name="enemyProperty"></param>
         /// <param name="info"></param>
+        public void PlayerApplyDamage(int damage, NetworkId id, CrowdControl enemyProperty = CrowdControl.Normality, RpcInfo info = default)
+        {
+            URPRendererFeaturesManager.Instance.StartEffect("HitEffect");
+            ApplyDamageRPC(damage, id, enemyProperty);
+        }
+        
+        
         [Rpc(RpcSources.All, RpcTargets.All, Channel = RpcChannel.Reliable)]
         public void ApplyDamageRPC(int damage, NetworkId id, CrowdControl enemyProperty = CrowdControl.Normality, RpcInfo info = default)
         {

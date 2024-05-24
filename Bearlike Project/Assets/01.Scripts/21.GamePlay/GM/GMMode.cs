@@ -64,17 +64,17 @@ namespace GamePlay.GM
             {
                 if (Input.GetKeyDown(KeyCode.Alpha1))
                 {
-                    players[0].status.ApplyDamageRPC(100, players[0].Object.Id);
+                    players[0].status.PlayerApplyDamage(100, players[0].Object.Id);
                     if(players[0].status.isInjury) players[0].status.GoReviveRPC();
                 }
                 else if (players.Length >= 2 && Input.GetKeyDown(KeyCode.Alpha2))
                 {
-                    players[1].status.ApplyDamageRPC(100, players[1].Object.Id);
+                    players[1].status.PlayerApplyDamage(100, players[1].Object.Id);
                     if(players[1].status.isInjury) players[0].status.GoReviveRPC();
                 }
                 else if (players.Length >= 3 && Input.GetKeyDown(KeyCode.Alpha3))
                 {
-                    players[2].status.ApplyDamageRPC(100, players[2].Object.Id);
+                    players[2].status.PlayerApplyDamage(100, players[2].Object.Id);
                     if(players[2].status.isInjury) players[0].status.GoReviveRPC();
                 }
                 else if (Input.GetKeyDown(KeyCode.Alpha9))
@@ -132,7 +132,7 @@ namespace GamePlay.GM
             {
                 var monsters = FindObjectsOfType<MonsterBase>();
                 foreach (var monster in monsters)
-                    monster.status.ApplyDamageRPC(99999, monster.Object.Id);
+                    monster.status.PlayerApplyDamage(99999, monster.Object.Id);
             }
         }
     }
