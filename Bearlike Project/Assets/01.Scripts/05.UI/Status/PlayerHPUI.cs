@@ -12,6 +12,8 @@ namespace UI.Status
         public StatusBase statusBase;
         public TMP_Text hpText;
         public Image hpImage;
+        
+        [SerializeField]private Animation damageAnimation;
 
         private int _currentHp;
         private float _ratio;
@@ -25,7 +27,7 @@ namespace UI.Status
         {
             _currentHp = statusBase.hp.Current;
             _ratio = ((float)(_currentHp) / (float)(statusBase.hp.Max));
-            hpText.text = _ratio * 100 + " %";
+            hpText.text = _ratio * 100 + "%";
             hpImage.fillAmount = _ratio;
         }
         
@@ -33,12 +35,18 @@ namespace UI.Status
         {
             if (statusBase.hp.Current != _currentHp)
             {
+                if (statusBase.hp.Current < _currentHp)
+                {
+                    damageAnimation.Play();
+                }
+                
                 _currentHp = statusBase.hp.Current;
                 _ratio = ((float)(_currentHp) / (float)(statusBase.hp.Max));
                 
-                // StartCoroutine(InterporationHPCoroutine(statusBase.hp.Current < _currentHp));
+                StartCoroutine(InterporationHPCoroutine(statusBase.hp.Current < _currentHp));
                 // text 에니메이션 넣기
-                hpText.text = _ratio * 100 + " %";
+                hpText.text = _ratio * 100 + "%";
+                
                 hpImage.fillAmount = _ratio;
             }
         }

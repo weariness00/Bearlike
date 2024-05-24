@@ -3,6 +3,7 @@ using Player;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Weapon;
 using Weapon.Gun;
@@ -13,7 +14,7 @@ namespace UI.Weapon.Gun
     public class GunUI : MonoBehaviour
     {
         [SerializeField]private PlayerController playerController;
-        [SerializeField]private Animation ShotAnimation;
+        [SerializeField]private Animation shotAnimation;
         
         public TMP_Text bulletCount;
         public TMP_Text ammoCount;
@@ -38,7 +39,6 @@ namespace UI.Weapon.Gun
         {
             DebugManager.ToDo("Gun만다루는 UI가 아닌 Weapon 전체를 다루는 UI로 꾸바기");
             
-            DebugManager.Log($"{bulletCount.rectTransform.position}");
             GunUpdate();
         }
 
@@ -55,11 +55,6 @@ namespace UI.Weapon.Gun
                 ammoCount.text = "/ "+ GunBase.ammo.Current;
             
                 bulletCount.text = gun.magazine.Current.ToString();
-                
-                if (gun.magazine.Current >= 10)
-                    bulletCount.rectTransform.position = new Vector3(1782, 230, 0);
-                else
-                    bulletCount.rectTransform.position = new Vector3(1820, 230, 0);
             }
         }
 
@@ -70,20 +65,14 @@ namespace UI.Weapon.Gun
                 var gun = _weaponSystem.equipment as GunBase;
                 if (_magazineCount != gun.magazine.Current || _ammoCount != GunBase.ammo.Current)
                 {
-                    DebugManager.Log($"{ShotAnimation.clip.name}");
                     // ShotAnimation.Play("ShotAnim");
-                    ShotAnimation.Play();
+                    shotAnimation.Play();
                     
                     bulletCount.text = gun.magazine.Current.ToString();
                     _magazineCount = gun.magazine.Current;
                     
                     ammoCount.text = "/ "+ GunBase.ammo.Current;
                     _ammoCount = GunBase.ammo.Current;
-                    
-                    if (gun.magazine.Current >= 10)
-                        bulletCount.rectTransform.position = new Vector3(1782, 230, 0);
-                    else
-                        bulletCount.rectTransform.position = new Vector3(1820, 230, 0);
                 }
             }
         }
