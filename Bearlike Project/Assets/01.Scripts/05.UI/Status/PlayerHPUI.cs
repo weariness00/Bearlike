@@ -40,11 +40,11 @@ namespace UI.Status
                     damageAnimation.Play();
                 }
                 
+                StartCoroutine(InterporationHPCoroutine(statusBase.hp.Current < _currentHp));
+                
                 _currentHp = statusBase.hp.Current;
                 _ratio = ((float)(_currentHp) / (float)(statusBase.hp.Max));
                 
-                StartCoroutine(InterporationHPCoroutine(statusBase.hp.Current < _currentHp));
-                // text 에니메이션 넣기
                 hpText.text = _ratio * 100 + "%";
                 
                 hpImage.fillAmount = _ratio;
