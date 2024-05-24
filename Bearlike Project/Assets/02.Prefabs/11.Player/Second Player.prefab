@@ -183,9 +183,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4796126b143a33a42b945635044e3f10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
   statusBase: {fileID: 3119487648565583453}
   hpText: {fileID: 3365843249276926160}
   hpImage: {fileID: 1454855871765611107}
+  damageAnimation: {fileID: 0}
 --- !u!1 &304682903761836192
 GameObject:
   m_ObjectHideFlags: 0
@@ -3563,7 +3567,8 @@ MonoBehaviour:
   targetCamera: {fileID: 8451841307542792475}
   weaponCamera: {fileID: 6128144320921080608}
   uiCamera: {fileID: 0}
-  SkillCamera: {fileID: 0}
+  skillCamera: {fileID: 0}
+  noVolumeCamera: {fileID: 0}
   firstOffset: {x: 0, y: 0, z: 0.27}
   thirdOffset: {x: 0, y: 0, z: -2}
 --- !u!114 &6044406679217952669
@@ -3609,6 +3614,7 @@ MonoBehaviour:
   - {fileID: 7787721648455933414}
   - {fileID: 5306327907534091017}
   - {fileID: 4987421900864778705}
+  - {fileID: 971889599638779058}
 --- !u!54 &7552828475408946812
 Rigidbody:
   m_ObjectHideFlags: 0

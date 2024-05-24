@@ -1,5 +1,8 @@
 using System;
 using System.Collections;
+using Fusion;
+using Manager;
+using Photon;
 using Status;
 using TMPro;
 using UnityEngine;
@@ -7,7 +10,7 @@ using UnityEngine.UI;
 
 namespace UI.Status
 {
-    public class PlayerHP : MonoBehaviour
+    public class PlayerHP : NetworkBehaviourEx
     {
         public StatusBase statusBase;
         public TMP_Text hpText;
@@ -40,37 +43,29 @@ namespace UI.Status
                     damageAnimation.Play();
                 }
                 
-                StartCoroutine(InterporationHPCoroutine(statusBase.hp.Current < _currentHp));
-                
                 _currentHp = statusBase.hp.Current;
-                _ratio = ((float)(_currentHp) / (float)(statusBase.hp.Max));
-                
+                _ratio = _currentHp / (float)(statusBase.hp.Max);
                 hpText.text = _ratio * 100 + "%";
                 
-                hpImage.fillAmount = _ratio;
+                StartCoroutine(LerpHealth(_ratio));
             }
         }
-
-        IEnumerator InterporationHPCoroutine(bool type)
+        
+        private IEnumerator LerpHealth(float targetHealth)
         {
-            float rate = hpImage.fillAmount - _ratio;
-            if (type)
+            float startHealth = hpImage.fillAmount;
+            
+            float elapsedTime = 0f;
+            float duration = 0.5f; // 보간에 걸리는 시간
+            while (elapsedTime < duration)
             {
-                while (hpImage.fillAmount >= _ratio)
-                {
-                    hpImage.fillAmount -= rate / 5;
-                    yield return new WaitForSeconds(0.1f);
-                }
+                // elapsedTime += Runner.DeltaTime;
+                elapsedTime += Time.deltaTime;
+                hpImage.fillAmount = Mathf.Lerp(startHealth, targetHealth, elapsedTime / duration);
+                yield return null;
             }
-            else
-            {
-                while (hpImage.fillAmount <= _ratio)
-                {
-                    hpImage.fillAmount -= rate / 5;
-                    yield return new WaitForSeconds(0.1f);
-                }
-            }
-            hpImage.fillAmount = _ratio;
+
+            hpImage.fillAmount = targetHealth;
         }
     }
 }
