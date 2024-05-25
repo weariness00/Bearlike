@@ -33,6 +33,7 @@ namespace GamePlay.DeadBodyObstacle
             _ragdollColliders = GetComponentsInChildren<Collider>();
 
             SetDeadBodyComponentActive(false);
+            SetLagDollLayer(LayerMask.NameToLayer("Ignore Nav Mesh"));
         }
 
         public override void Spawned()
@@ -89,17 +90,16 @@ namespace GamePlay.DeadBodyObstacle
 
             // 레그돌 활성화
             SetDeadBodyComponentActive(true);
+            SetLagDollLayer(LayerMask.NameToLayer("DeadBody"));
             
             _status.hp.Current = hp;
 
             MakeNetworkTransform();
+            NavMeshRebuildSystem.ReBuild();
             if (HasStateAuthority)
             {
-                // Nav Mesh Obstacle 생성
-                // MakeNavMeshObstacle();
                 InvokeRepeating(nameof(BakeNavMeshToCollider), 1,0.1f);
                 StartCoroutine(CheckHP());
-                // StartCoroutine(BakeNavMesh());
             }
         }
 
@@ -117,13 +117,13 @@ namespace GamePlay.DeadBodyObstacle
                     rb.constraints = 0;
             }
 
-            foreach (var col in _ragdollColliders)
-            {
-                if(value)
-                    col.gameObject.layer = LayerMask.NameToLayer("Ignore Nav Mesh");
-            }
-
             if(_networkAnimator) _networkAnimator.Animator.enabled = !value;
+        }
+
+        private void SetLagDollLayer(LayerMask mask)
+        {
+            foreach (var col in _ragdollColliders)
+                col.gameObject.layer = mask;
         }
 
         /// <summary>
@@ -182,29 +182,39 @@ namespace GamePlay.DeadBodyObstacle
                 yield return null;
             }
         }
-
+        
+        /// <summary>
+        /// RigidBody의 움직임이 멈추었는지 판단하고 NavMesh ReBuild
+        /// </summary>
+        /// <returns></returns>
         private IEnumerator BakeNavMeshToCollider()
         {
             var updateTime = new WaitForSeconds(0.1f);
             
+            float stopThreshold = 0.1f; // 멈춤을 감지할 속도 임계값
+            float stopDuration = 2.0f; // 멈춤을 판단하기 위한 지속 시간
             while (true)
             {
                 yield return updateTime;
                 
-                bool isAllActive = true;
-                foreach (var rb in _ragdollRigidBodies)
+                float totalVelocity = 0.0f;
+
+                // 모든 Rigidbody의 속도를 합산합니다.
+                foreach (Rigidbody rb in _ragdollRigidBodies)
                 {
-                    if (rb.velocity.magnitude > movementThreshold ||
-                        rb.angularVelocity.magnitude > movementThreshold)
-                    {
-                        isAllActive = false;
-                        break;
-                    }
+                    totalVelocity += rb.velocity.magnitude;
                 }
 
-                if (isAllActive)
+                // 평균 속도를 계산합니다.
+                float averageVelocity = totalVelocity / _ragdollRigidBodies.Length;
+
+                // 평균 속도가 임계값보다 낮으면 멈춘 것으로 간주합니다.
+                if (averageVelocity < stopThreshold)
                     break;
             }
+
+            SetDeadBodyComponentActive(false);
+            NavMeshRebuildSystem.ReBuildRPC();
         }
 
         #endregion

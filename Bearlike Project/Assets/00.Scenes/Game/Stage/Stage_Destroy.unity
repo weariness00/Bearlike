@@ -912,13 +912,13 @@ GameObject:
   - component: {fileID: 1243212550}
   - component: {fileID: 1243212549}
   - component: {fileID: 1243212548}
-  m_Layer: 0
+  m_Layer: 31
   m_Name: Box Volume
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1243212548
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2436,31 +2436,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Child Room
       objectReference: {fileID: 0}
-    - target: {fileID: 4560912327769023459, guid: 69ac511c1bea7e540bd78ef6a91f798f,
-        type: 3}
-      propertyPath: m_Carve
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4560912327769023459, guid: 69ac511c1bea7e540bd78ef6a91f798f,
-        type: 3}
-      propertyPath: m_CarveOnlyStationary
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5821454833145574897, guid: 69ac511c1bea7e540bd78ef6a91f798f,
-        type: 3}
-      propertyPath: m_Activated
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5821454833145574897, guid: 69ac511c1bea7e540bd78ef6a91f798f,
-        type: 3}
-      propertyPath: m_AreaIndex
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5821454833145574897, guid: 69ac511c1bea7e540bd78ef6a91f798f,
-        type: 3}
-      propertyPath: m_AutoUpdatePositions
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5895620739065839345, guid: 69ac511c1bea7e540bd78ef6a91f798f,
         type: 3}
       propertyPath: Flags
@@ -2521,12 +2496,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5821454833145574897, guid: 69ac511c1bea7e540bd78ef6a91f798f, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects:
-    - {fileID: 1654941294337670372, guid: 69ac511c1bea7e540bd78ef6a91f798f, type: 3}
-    - {fileID: 4486653918116761149, guid: 69ac511c1bea7e540bd78ef6a91f798f, type: 3}
-    - {fileID: 463206121210332688, guid: 69ac511c1bea7e540bd78ef6a91f798f, type: 3}
+    - {fileID: 5753470341097310708, guid: 69ac511c1bea7e540bd78ef6a91f798f, type: 3}
+    - {fileID: 6806348356262515275, guid: 69ac511c1bea7e540bd78ef6a91f798f, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 69ac511c1bea7e540bd78ef6a91f798f, type: 3}
@@ -2718,7 +2691,7 @@ GameObject:
   - component: {fileID: 171165031080720621}
   - component: {fileID: 1522813840445059678}
   - component: {fileID: 7572092324282950752}
-  m_Layer: 0
+  m_Layer: 26
   m_Name: Destory Stage Data
   m_TagString: Untagged
   m_Icon: {fileID: 0}

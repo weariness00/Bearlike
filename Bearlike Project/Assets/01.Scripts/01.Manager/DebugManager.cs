@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using Util;
 
@@ -14,6 +15,7 @@ namespace Manager
         public bool logError = true;
         
         public bool isToDo = true;
+        public bool isToDoError = true;
 
         public bool drawRay = true;
         public bool drawBoxRay = true;
@@ -47,6 +49,12 @@ namespace Manager
         {
             if (!DebugManager.Instance.isDebug || !DebugManager.Instance.isToDo) return;
             Debug.Log("TO DO List\n" + massage);
+        }
+
+        public static void ToDoError(object massage)
+        {
+            if (!DebugManager.Instance.isDebug || !DebugManager.Instance.isToDoError) return;
+            Debug.LogError("TO DO List\n" + massage);
         }
 
         #endregion

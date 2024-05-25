@@ -20,7 +20,8 @@ namespace Monster.Container
         [SerializeField] private GameObject dieEffectObject;
         public VisualEffect prickVFX; // 찌르는 VFX
 
-        [Header("Animation Clip")]
+        [Header("Animation Clip")] 
+        public TrumpCardSoldierAnimator animatorInfo;
         public AnimationClip idleClip;
         public AnimationClip walkClip;
         public AnimationClip attackClip;
@@ -199,6 +200,21 @@ namespace Monster.Container
             networkAnimator.Animator.SetFloat(AniMove, 0);
             _isInitAnimation = false;
             if(navMeshAgent.isActiveAndEnabled) navMeshAgent.isStopped = true;
+            return INode.NodeState.Success;
+        }
+
+        private INode.NodeState Jump()
+        {
+            if (!_isInitAnimation)
+            {
+                animatorInfo.PlayJump();
+            }
+            
+            if(animatorInfo.JumpTimerExpired == false)
+            {
+                return INode.NodeState.Running;
+            }
+            
             return INode.NodeState.Success;
         }
 

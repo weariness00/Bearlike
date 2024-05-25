@@ -37,8 +37,6 @@ namespace UI.Weapon.Gun
         private void Update()
         {
             DebugManager.ToDo("Gun만다루는 UI가 아닌 Weapon 전체를 다루는 UI로 꾸바기");
-            
-            DebugManager.Log($"{bulletCount.rectTransform.position}");
             GunUpdate();
         }
 
