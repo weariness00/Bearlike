@@ -47,7 +47,7 @@ namespace UI.Status
                 _ratio = _currentHp / (float)(statusBase.hp.Max);
                 hpText.text = _ratio * 100 + "%";
                 
-                StartCoroutine(LerpHealth(_ratio));
+                StartCoroutine(LerpHealth(_ratio));//
             }
         }
         
