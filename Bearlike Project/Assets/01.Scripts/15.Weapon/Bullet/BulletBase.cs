@@ -10,6 +10,7 @@ using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace Weapon.Bullet
@@ -17,17 +18,18 @@ namespace Weapon.Bullet
     [RequireComponent(typeof(StatusBase))]
     public class BulletBase : NetworkBehaviourEx
     {
-        [HideInInspector] public NetworkId ownerId; // 이 총을 쏜 주인의 ID
+        [Networked] public NetworkId OwnerId { get; set; } // 이 총을 쏜 주인의 ID
         public StatusBase status;
         public int penetrateCount = 0; // 관통 가능 횟수
 
         #region 속성
 
         public Vector3 destination = Vector3.zero;
-        public IWeaponHitEffect hitEffect;
+        [Networked] public NetworkId HitEffectId { get; set; }
+        private IWeaponHitEffect _hitEffect;
 
         private Vector3 direction;
-        public int knockBack;
+        [Networked] public int KnockBack { get; set; }
 
         #endregion
 
@@ -59,6 +61,10 @@ namespace Weapon.Bullet
         {
             _oldPosition = transform.position;
             Destroy(gameObject, 30f);
+
+            var ownerObj = Runner.FindObject(OwnerId);
+            if(ownerObj && ownerObj.TryGetComponent(out StatusBase s)) status.AddAdditionalStatus(s); 
+            Runner.FindObject(HitEffectId)?.TryGetComponent(out _hitEffect);
         }
 
         public override void FixedUpdateNetwork()
@@ -78,11 +84,11 @@ namespace Weapon.Bullet
                 StatusBase otherStatus = colliderStatus.originalStatus;
                 otherStatus.AddAdditionalStatus(colliderStatus.status);
                 
-                otherStatus.ApplyDamageRPC(status.CalDamage(), ownerId);
+                otherStatus.ApplyDamageRPC(status.CalDamage(), OwnerId);
                 otherStatus.RemoveAdditionalStatus(colliderStatus.status);
-                hitEffect?.OnWeaponHitEffect(transform.position);
+                _hitEffect?.OnWeaponHitEffect(transform.position);
                 
-                if (knockBack > 0)
+                if (KnockBack > 0)
                 {
                     // Rigidbody _enemyRb = other.transform.parent.gameObject.GetComponent<Rigidbody>();
                     // if (_enemyRb != null)
@@ -96,7 +102,7 @@ namespace Weapon.Bullet
                         knockbackDirection.y = 0;
                         knockbackDirection.Normalize();
 
-                        otherStatus.KnockBackRPC(knockbackDirection, knockBack);
+                        otherStatus.KnockBackRPC(knockbackDirection, KnockBack);
                         // }
                 }
 
@@ -106,11 +112,11 @@ namespace Weapon.Bullet
             }
             else if (other.transform.root.gameObject.TryGetComponent(out PlayerStatus playerStatus))
             {
-                playerStatus.ApplyDamageRPC(status.CalDamage(), ownerId);
+                playerStatus.ApplyDamageRPC(status.CalDamage(), OwnerId);
             }
             else if (other.TryGetComponent(out StatusBase otherStatus))
             {
-                otherStatus.ApplyDamageRPC(status.CalDamage(), ownerId);
+                otherStatus.ApplyDamageRPC(status.CalDamage(), OwnerId);
             }
             // 메쉬 붕괴 객체와 충돌 시
             else if (other.CompareTag("Destruction"))
@@ -136,23 +142,5 @@ namespace Weapon.Bullet
         {
             return math.distance(pointA, pointB);
         }
-
-        // #region RPC Function
-        //
-        // [Rpc(RpcSources.All, RpcTargets.All)]
-        // public void SetDamageRPC(StatusValueType type, int value)
-        // {
-        //     switch (type)
-        //     {
-        //         case StatusValueType.Current:
-        //             damage.Current = value;
-        //             break;
-        //         case StatusValueType.Max:
-        //             damage.Max = value;
-        //             break;
-        //     }
-        // }
-        //
-        // #endregion
     }
 }

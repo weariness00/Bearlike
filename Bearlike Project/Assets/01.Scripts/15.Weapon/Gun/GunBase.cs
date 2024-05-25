@@ -123,7 +123,6 @@ namespace Weapon.Gun
 
         public virtual void BulletInit()
         {
-            bullet.hitEffect = this;
             magazine.Current = int.MaxValue;
             
             // TODO : 여기서 공격속도 반영 해야함
@@ -151,16 +150,17 @@ namespace Weapon.Gun
 
                 if (HasStateAuthority)
                 {
+                    int nuckBack = status.GetAllNuckBack();
+
                     Runner.SpawnAsync(bullet.gameObject, fireTransform.position, fireTransform.rotation, null,
                         (runner, o) =>
                         {
                             var b = o.GetComponent<BulletBase>();
                             b.status.AddAdditionalStatus(status);
 
-                            b.ownerId = OwnerId;
-                            b.knockBack = 0;
-                            b.status.attackRange.Max = status.attackRange.Max;
-                            b.status.attackRange.Current = status.attackRange.Current;
+                            b.OwnerId = OwnerId;
+                            b.HitEffectId = Object.Id;
+                            b.KnockBack = nuckBack;
                             b.destination = fireTransform.position + (dst * status.attackRange);
 
                             BeforeShootAction?.Invoke(b);
