@@ -199,6 +199,49 @@ namespace Monster
             var dis = StraightDistanceFromTarget(targetPlayer.transform.position);
             return dis < checkDis;
         }
+
+        /// <summary>
+        /// 경로에 Nav Mesh Link가 포함되어있는지 확인
+        /// </summary>
+        /// <param name="agent"></param>
+        /// <param name="targetPosition"></param>
+        /// <returns></returns>
+        public bool IsIncludeLink(Vector3 targetPosition)
+        {
+            if (navMeshAgent == null) return false;
+            
+            // 경로 계산
+            NavMeshPath path = new NavMeshPath();
+            if (navMeshAgent.CalculatePath(targetPosition, path))
+            {
+                // 경로에 네비메쉬 링크가 포함되어 있는지 확인
+                NavMeshHit hit;
+                for (int i = 0; i < path.corners.Length - 1; i++)
+                {
+                    if (NavMesh.Raycast(path.corners[i], path.corners[i + 1], out hit, NavMesh.AllAreas))
+                    {
+                        if (hit.hit && hit.mask == NavMesh.GetAreaFromName("OffMeshLink"))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+        
+        Vector3 SetAgentDestination(Vector3 targetPosition)
+        {
+            if (!navMeshAgent) return targetPosition;
+            
+            // 목표 위치 근처의 가장 가까운 네비메쉬 표면 위치를 찾기
+            if (NavMesh.SamplePosition(targetPosition, out var hit, 5f, NavMesh.AllAreas))
+                return hit.position;
+            
+            DebugManager.LogWarning("목표 위치 근처에 유효한 네비메쉬 표면을 찾을 수 없습니다.");
+            return targetPosition;
+        }
         
         /// <summary>
         /// 타겟과의 거리를 판단하여 인자로 넣은 값과 비교해 거리가 인자보다 낮으면 true

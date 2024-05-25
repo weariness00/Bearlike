@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using BehaviorTree.Base;
+using DG.Tweening.Core.Enums;
 using Fusion;
 using Manager;
 using Status;
@@ -161,6 +162,9 @@ namespace Monster.Container
 
         private INode.NodeState Move()
         {
+            if (navMeshAgent.isOnNavMesh == false)
+                return INode.NodeState.Failure;
+            
             if (CheckNavMeshDis(status.attackRange.Current - 0.2f))
             {
                 networkAnimator.Animator.SetFloat(AniMove, 0);
@@ -175,18 +179,18 @@ namespace Monster.Container
                 
                 networkAnimator.Animator.SetFloat(AniMove, 1);
                 
-                _randomDir = Random.onUnitSphere * 2f;
+                _randomDir = Random.onUnitSphere * walkClip.length;
                 _randomDir.y = 0;
 
-                if(navMeshAgent.isActiveAndEnabled) navMeshAgent.isStopped = false;
                 AniWalkTimer = TickTimer.CreateFromSeconds(Runner, walkClip.length);
-            }
-
-            if (AniWalkTimer.Expired(Runner) == false && navMeshAgent.isOnNavMesh)
-            {
+                
+                if(navMeshAgent.isActiveAndEnabled) navMeshAgent.isStopped = false;
                 if (targetPlayer)
                 {
-                    navMeshAgent.stoppingDistance = status.attackRange.Current - 0.2f;
+                    if (IsIncludeLink(targetPlayer.transform.position))
+                        navMeshAgent.stoppingDistance = 0;
+                    else
+                        navMeshAgent.stoppingDistance = status.attackRange.Current - 0.2f;
                     navMeshAgent.SetDestination(targetPlayer.transform.position);
                 }
                 else
@@ -194,6 +198,10 @@ namespace Monster.Container
                     navMeshAgent.stoppingDistance = 0;
                     navMeshAgent.SetDestination(transform.position + _randomDir);
                 }
+            }
+
+            if (AniWalkTimer.Expired(Runner) == false)
+            {
                 return INode.NodeState.Running;
             }
 
