@@ -39,7 +39,8 @@ namespace Weapon.Gun.Continer
                 animatorInfo.SetFireSpeed(BulletFirePerSecond);
                 animatorInfo.PlayFireBullet();
                 
-                MuzzleRPC();
+                if (shootEffect != null)
+                    MuzzleRPC();
                 
                 var dst = CheckRay();
 
