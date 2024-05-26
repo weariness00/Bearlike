@@ -72,12 +72,6 @@ namespace Weapon
                 {
                     r.gameObject.layer = LayerMask.NameToLayer("Weapon");
                 }
-
-                DebugManager.ToDo("Muzzle Layer 설정 변경해야함");
-                var muzzle_transform = transform.Find("Muzzle");
-                
-                if(null != muzzle_transform)
-                    muzzle_transform.gameObject.layer = LayerMask.NameToLayer("Weapon");
             }
         }
         

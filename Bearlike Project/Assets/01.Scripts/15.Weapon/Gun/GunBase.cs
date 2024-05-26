@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Data;
 using Status;
@@ -6,6 +7,7 @@ using Fusion;
 using Manager;
 using Player;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.VFX;
 using Weapon.Bullet;
 
@@ -37,6 +39,8 @@ namespace Weapon.Gun
 
         [Header("총 이펙트")] 
         public VisualEffect shootEffect; // 발사 이펙트
+        public VisualEffect shotsmoke;      // 총구 연기
+        public Material shotOverHeating;    // 총열 과열
         public NetworkPrefabRef hitEffectPrefab;
         
         [Header("사운드")]
@@ -67,6 +71,8 @@ namespace Weapon.Gun
         /// </summary>
         public Action AfterFireAction;
         public Action AfterReloadAction;
+        
+        private static readonly int Value = Shader.PropertyToID("_Value");
 
         #region Unity Event Function
 
@@ -84,6 +90,7 @@ namespace Weapon.Gun
             magazine.Current = magazine.Max;
 
             EquipAction += SetCamera;
+            // EquipAction += SetVFX;
             ReleaseEquipAction += (obj) =>
             {
                 AfterFireAction = null;  
@@ -145,9 +152,14 @@ namespace Weapon.Gun
                 if (isDst)
                     dst = CheckRay();
 
-                if (shootEffect != null)
-                    MuzzleRPC();
+                {   // Shot VFX & Effect
+                    if (shootEffect != null)
+                        MuzzleRPC();
 
+                    if (shotsmoke != null)
+                        SmokeRPC();
+                }
+                
                 if (HasStateAuthority)
                 {
                     Runner.SpawnAsync(bullet.gameObject, fireTransform.position, fireTransform.rotation, null,
@@ -231,6 +243,52 @@ namespace Weapon.Gun
             
             return ray.direction;
         }
+
+        private void SetVFX(GameObject gameObject)
+        {
+            shotOverHeating.SetFloat(Value, 0.0f);
+            // shotsmoke.gameObject.SetActive(false);
+            
+            DebugManager.ToDo("Muzzle Layer 설정 변경해야함");
+            var muzzleTransform = transform.Find("Muzzle");
+                
+            if(null != muzzleTransform)
+                muzzleTransform.gameObject.layer = LayerMask.NameToLayer("Weapon");
+                
+            var smokeTransform = transform.Find("Smoke");
+                
+            if(null != smokeTransform)
+                smokeTransform.gameObject.layer = LayerMask.NameToLayer("Weapon");
+        }
+        
+        // weaponSystem에서 작동해여 코루틴이 끝까지 작동함
+        IEnumerator OverHeatCoroutine()
+        {
+            float value;
+        
+            float elapsedTime = 0f;
+            float duration = 0.6f; // 보간에 걸리는 시간
+        
+            while (elapsedTime < duration)
+            {
+                elapsedTime += Time.deltaTime;
+                value = Mathf.Lerp(0, 0.8f, elapsedTime / duration);
+                shotOverHeating.SetFloat(Value, value);
+                yield return null;
+            }
+        
+            while (elapsedTime > 0.0f)
+            {
+                elapsedTime -= Time.deltaTime;
+                value = Mathf.Lerp(0, 0.8f, elapsedTime / duration);
+                shotOverHeating.SetFloat(Value, value);
+                yield return null;
+            }
+            // if(shotOverHeating != null)
+            //     shotOverHeating.SetFloat(Value, 0.0f);
+            // if(shotsmoke != null)
+            //     shotsmoke.gameObject.SetActive(false);
+        }
         
         #endregion
 
@@ -259,9 +317,6 @@ namespace Weapon.Gun
 
         #region RPC Function
 
-        [Rpc(RpcSources.All,RpcTargets.StateAuthority)]
-        public void SetDestinationRPC(Vector3 dir) => bullet.destination = dir;
-
         [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
         public void SetMagazineRPC(StatusValueType type, int value)
         {
@@ -285,6 +340,15 @@ namespace Weapon.Gun
             if(false == shootEffect.gameObject.activeSelf)
                 shootEffect.gameObject.SetActive(true);
             shootEffect.SendEvent("OnPlay");
+        }
+        
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void SmokeRPC()
+        {
+            if (false == shotsmoke.gameObject.activeSelf)
+                shotsmoke.gameObject.SetActive(true);
+            shotsmoke.SendEvent("OnPlay");
+            StartCoroutine(OverHeatCoroutine());
         }
         
         #endregion
