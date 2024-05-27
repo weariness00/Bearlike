@@ -23,8 +23,6 @@ namespace UI.Weapon
             }
 
             Init();
-
-            TargetCameraAddOverlay(overlayCamera);
         }
     
         void Init()
@@ -34,24 +32,10 @@ namespace UI.Weapon
             {
                 if (player.HasInputAuthority)
                 {
-                    var cameras = player.GetComponentsInChildren<Camera>();
-                    foreach (var camera in cameras)
-                    {
-                        if (camera.name == "Camera")
-                        {
-                            _mainCameras = camera;
-                            break;
-                        }
-                    }
+                    player.cameraController.TargetCameraAddOverlay(3, overlayCamera);
                     break;
                 }
             }
-        }
-    
-        public void TargetCameraAddOverlay(Camera overlayCamera)
-        {
-            var cameraData = _mainCameras.GetComponent<UniversalAdditionalCameraData>();
-            cameraData.cameraStack.Add(overlayCamera);
         }
     }
 }

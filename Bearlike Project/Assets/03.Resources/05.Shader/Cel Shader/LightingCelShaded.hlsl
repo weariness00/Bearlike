@@ -98,7 +98,7 @@ void LightingCelShaded_float(float Smoothness,
 
    int pixelLightCount = GetAdditionalLightsCount();
    for (int i = 0; i < pixelLightCount; i++) {
-      light = GetAdditionalLight(i, shadowCoord, 1);
+      light = GetAdditionalLight(i, Position, 1);
       Color += CalculateCelShading(light, s);
    }
    
