@@ -174,7 +174,7 @@ namespace Skill.Support
             foreach (var monster in _monsterList)
             {
                 if (!monster) continue;
-                monster.UpdateNavMeshAgent();
+                monster.EnableNavMeshAgent();
                 monster.status.ApplyDamageRPC(status.CalDamage(), Object.Id);
             }
         }

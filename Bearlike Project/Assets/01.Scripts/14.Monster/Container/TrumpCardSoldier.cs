@@ -162,16 +162,8 @@ namespace Monster.Container
 
         private INode.NodeState Move()
         {
-            if (navMeshAgent.isOnNavMesh == false)
+            if (navMeshAgent.isOnNavMesh == false || navMeshAgent.isActiveAndEnabled == false)
                 return INode.NodeState.Failure;
-            
-            if (CheckNavMeshDis(status.attackRange.Current - 0.2f))
-            {
-                networkAnimator.Animator.SetFloat(AniMove, 0);
-                _isInitAnimation = false;
-                if(navMeshAgent.isActiveAndEnabled) navMeshAgent.isStopped = true;
-                return INode.NodeState.Success;
-            }
             
             if (!_isInitAnimation)
             {
@@ -183,8 +175,7 @@ namespace Monster.Container
                 _randomDir.y = 0;
 
                 AniWalkTimer = TickTimer.CreateFromSeconds(Runner, walkClip.length);
-                
-                if(navMeshAgent.isActiveAndEnabled) navMeshAgent.isStopped = false;
+                navMeshAgent.isStopped = !navMeshAgent.isActiveAndEnabled;
                 if (targetPlayer)
                 {
                     if (IsIncludeLink(targetPlayer.transform.position))
@@ -228,6 +219,9 @@ namespace Monster.Container
 
         private INode.NodeState Attack()
         {
+            if (navMeshAgent.isOnNavMesh == false || navMeshAgent.isActiveAndEnabled == false)
+                return INode.NodeState.Failure;
+            
             if (!_isInitAnimation)
             {
                 _isInitAnimation = true;
