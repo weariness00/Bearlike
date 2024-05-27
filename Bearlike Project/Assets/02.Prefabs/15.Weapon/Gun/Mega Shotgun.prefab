@@ -712,7 +712,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hp:
     _min: 0
-    _max: 0
+    _max: 99999
     _current: 0
     isOverMax: 0
     isOverMin: 0
@@ -720,8 +720,8 @@ MonoBehaviour:
     isMax: 0
   damage:
     _min: 0
-    _max: 100
-    _current: 100
+    _max: 99999
+    _current: 0
     isOverMax: 0
     isOverMin: 0
     isMin: 0
@@ -738,7 +738,7 @@ MonoBehaviour:
   criticalHitMultiple: 1
   defence:
     _min: 0
-    _max: 0
+    _max: 99999
     _current: 0
     isOverMax: 0
     isOverMin: 0
@@ -755,7 +755,7 @@ MonoBehaviour:
   avoidMultiple: 1
   moveSpeed:
     _min: 0
-    _max: 0
+    _max: 99999
     _current: 0
     isOverMax: 0
     isOverMin: 0
@@ -763,8 +763,8 @@ MonoBehaviour:
     isMax: 0
   attackSpeed:
     _min: 0
-    _max: 1
-    _current: 1
+    _max: 99999
+    _current: 0
     isOverMax: 0
     isOverMin: 0
     isMin: 0
@@ -772,8 +772,8 @@ MonoBehaviour:
   attackSpeedMultiple: 1
   attackRange:
     _min: 0
-    _max: 100
-    _current: 100
+    _max: 99999
+    _current: 0
     isOverMax: 0
     isOverMin: 0
     isMin: 0
@@ -804,7 +804,9 @@ MonoBehaviour:
   playerCameraController: {fileID: 0}
   id: 1
   explain: 
-  shootEffect: {fileID: 7520474472476782691}
+  shootEffect: {fileID: 0}
+  shotsmoke: {fileID: 0}
+  shotOverHeating: {fileID: 2100000, guid: ecbde57b0d823b54bb1d6eca307a6ad2, type: 2}
   hitEffectPrefab:
     RawGuidValue: 8ec31fcb5aff43949af9992aeb7147e6
   shootSound: {fileID: 7320537936138231556}
@@ -1302,12 +1304,6 @@ PrefabInstance:
 --- !u!4 &320176895774765441 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7634912066636466383, guid: 892fecd515ddeb74ca3618fad85412ac,
-    type: 3}
-  m_PrefabInstance: {fileID: 7891950463313312078}
-  m_PrefabAsset: {fileID: 0}
---- !u!2083052967 &7520474472476782691 stripped
-VisualEffect:
-  m_CorrespondingSourceObject: {fileID: 422142723598567725, guid: 892fecd515ddeb74ca3618fad85412ac,
     type: 3}
   m_PrefabInstance: {fileID: 7891950463313312078}
   m_PrefabAsset: {fileID: 0}

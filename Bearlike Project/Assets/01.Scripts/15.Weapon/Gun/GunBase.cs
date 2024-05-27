@@ -28,7 +28,10 @@ namespace Weapon.Gun
         public static void AddStatusData(int id, StatusJsonData data) => StatusDataChasing.TryAdd(id, data);
         public static StatusJsonData GetStatusData(int id) => StatusDataChasing.TryGetValue(id, out var data) ? data : new StatusJsonData();
         public static void ClearStatusData() => StatusDataChasing.Clear();
-
+        
+        // Overheating Material 캐싱
+        private static readonly int Value = Shader.PropertyToID("_Heating_Multiple");
+        
         #endregion
         
         private Camera _camera;
@@ -72,8 +75,6 @@ namespace Weapon.Gun
         public Action AfterFireAction;
         public Action AfterReloadAction;
         
-        private static readonly int Value = Shader.PropertyToID("_Value");
-
         #region Unity Event Function
 
         public override void Awake()
