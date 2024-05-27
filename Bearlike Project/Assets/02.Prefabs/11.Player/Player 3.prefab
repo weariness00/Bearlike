@@ -10190,7 +10190,11 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 706cb27a592402d45bf92a136236fad1, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 3021774675860755019, guid: 0f1b1844c83e1944e9eded47132bc861,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2459862531207822502}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0f1b1844c83e1944e9eded47132bc861, type: 3}
 --- !u!4 &1217231827307349305 stripped
@@ -10782,7 +10786,7 @@ PrefabInstance:
         type: 3}
       propertyPath: shootEffect
       value: 
-      objectReference: {fileID: 867611178839193253}
+      objectReference: {fileID: 0}
     - target: {fileID: 4879660233733431077, guid: 708d555e024d01a4c8169812e29e27f5,
         type: 3}
       propertyPath: shotOverHeating
@@ -10962,7 +10966,7 @@ PrefabInstance:
     - target: {fileID: 354496408801352614, guid: fb0375b9d4667184885fa46e6c1de475,
         type: 3}
       propertyPath: NestedObjects.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2569949494085307128, guid: fb0375b9d4667184885fa46e6c1de475,
         type: 3}
@@ -11088,7 +11092,7 @@ PrefabInstance:
         type: 3}
       propertyPath: shootEffect
       value: 
-      objectReference: {fileID: 3522600936483437232}
+      objectReference: {fileID: 0}
     - target: {fileID: 4303053860246033292, guid: fb0375b9d4667184885fa46e6c1de475,
         type: 3}
       propertyPath: bulletRadian
