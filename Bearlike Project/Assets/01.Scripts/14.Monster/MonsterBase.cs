@@ -52,7 +52,7 @@ namespace Monster
         [HideInInspector] public LootingTable lootingTable;
         private DeadBodyObstacleObject _deadBody;
         public Transform pivot; // Pivot이 메쉬 가운데가 아닌 다리에 위치할 떄가 있다. 그때 진짜 pivot으로 사용할 변수
-        protected NavMeshAgent navMeshAgent;
+        [HideInInspector] public NavMeshAgent navMeshAgent;
         
         protected PlayerController[] players;
         
@@ -199,6 +199,49 @@ namespace Monster
             var dis = StraightDistanceFromTarget(targetPlayer.transform.position);
             return dis < checkDis;
         }
+
+        /// <summary>
+        /// 경로에 Nav Mesh Link가 포함되어있는지 확인
+        /// </summary>
+        /// <param name="agent"></param>
+        /// <param name="targetPosition"></param>
+        /// <returns></returns>
+        public bool IsIncludeLink(Vector3 targetPosition)
+        {
+            if (navMeshAgent == null) return false;
+            
+            // 경로 계산
+            NavMeshPath path = new NavMeshPath();
+            if (navMeshAgent.CalculatePath(targetPosition, path))
+            {
+                // 경로에 네비메쉬 링크가 포함되어 있는지 확인
+                NavMeshHit hit;
+                for (int i = 0; i < path.corners.Length - 1; i++)
+                {
+                    if (NavMesh.Raycast(path.corners[i], path.corners[i + 1], out hit, NavMesh.AllAreas))
+                    {
+                        if (hit.hit && hit.mask == NavMesh.GetAreaFromName("OffMeshLink"))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+        
+        Vector3 SetAgentDestination(Vector3 targetPosition)
+        {
+            if (!navMeshAgent) return targetPosition;
+            
+            // 목표 위치 근처의 가장 가까운 네비메쉬 표면 위치를 찾기
+            if (NavMesh.SamplePosition(targetPosition, out var hit, 5f, NavMesh.AllAreas))
+                return hit.position;
+            
+            DebugManager.LogWarning("목표 위치 근처에 유효한 네비메쉬 표면을 찾을 수 없습니다.");
+            return targetPosition;
+        }
         
         /// <summary>
         /// 타겟과의 거리를 판단하여 인자로 넣은 값과 비교해 거리가 인자보다 낮으면 true
@@ -215,27 +258,47 @@ namespace Monster
             return dis < checkDis;
         }
 
-        public void UpdateNavMeshAgent()
+        public void DisableNavMeshAgent()
         {
-            StopCoroutine(nameof(UpdateNavMeshAgentCoroutine));
-            StartCoroutine(UpdateNavMeshAgentCoroutine());
+            if (!navMeshAgent)
+                return;
+
+            navMeshAgent.isStopped = true;
+
+            navMeshAgent.enabled = false;
+            rigidbody.useGravity = true;
+            rigidbody.isKinematic = false;
+        }
+        
+        /// <summary>
+        /// Agent가 Surface위에 있다면 다시 활성화
+        /// 활성화 방법은 RigidBody의 isKinematic을 활성화 해주면 된다.
+        /// </summary>
+        /// <param name="duration"> 이 시간만큼 뒤에 동작한다.</param>
+        public void EnableNavMeshAgent(float duration = 0f)
+        {
+            StopCoroutine(nameof(EnableNavMeshAgentCoroutine));
+            StartCoroutine(EnableNavMeshAgentCoroutine(duration));
         }
 
-        private IEnumerator UpdateNavMeshAgentCoroutine()
+        private IEnumerator EnableNavMeshAgentCoroutine(float duration)
         {
             if (!navMeshAgent)
                 yield break;
-            
-            rigidbody.isKinematic = false;
+
+            if (duration != 0)
+                yield return new WaitForSeconds(duration);
+
+            navMeshAgent.enabled = true;
             while (true)
             {
+                yield return null;
                 if (navMeshAgent.isOnNavMesh)
                 {
+                    navMeshAgent.enabled = true;
                     rigidbody.isKinematic = true;
                     break;
                 }
-
-                yield return null;
             }
         }
         
@@ -264,8 +327,7 @@ namespace Monster
                     !player.status.isInjury &&
                     !player.status.isRevive &&
                     !player.status.IsDie &&
-                    StraightDistanceFromTarget(player.transform.position) <= status.attackRange.Current + 10f
-                    ).ToList();
+                    StraightDistanceFromTarget(player.transform.position) <= status.attackRange.Current + 10f).ToList();
 
                 // 인식범위 내에 있는 아무 플레이어를 Target으로 지정
                 targetPlayer = targetPlayers.Count != 0 ? targetPlayers[Random.Range(0, targetPlayers.Count)] : null;

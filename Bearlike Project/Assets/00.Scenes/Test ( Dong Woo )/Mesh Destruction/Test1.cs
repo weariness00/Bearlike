@@ -13,6 +13,8 @@ namespace Test
         public int testNumber = 0;
         public Vector3 sliceP;
         public Vector3 sliceN;
+
+        public Material subMat;
         
         public ComputeShader sliceShader;
         
@@ -62,7 +64,7 @@ namespace Test
                 Slice(gameObject, sliceN, sliceP);
             }
             else if (Input.GetKeyDown(KeyCode.S))
-                MeshSlicing.Slice(gameObject, sliceN, sliceP);
+                MeshSlicing.Slice(gameObject, sliceN, sliceP, subMat);
         }
 
         #endregion

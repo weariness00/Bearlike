@@ -101,6 +101,7 @@ namespace GamePlay.Stage
             {
                 SetIsStartRPC(true);
                 Destroy(GetComponent<Collider>());
+                Destroy(GetComponent<Rigidbody>());
             }
         }
 

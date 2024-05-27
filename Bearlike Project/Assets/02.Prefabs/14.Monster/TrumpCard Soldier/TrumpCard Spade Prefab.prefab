@@ -74,6 +74,7 @@ MonoBehaviour:
   crowdControlType: 2
   dieEffectObject: {fileID: 6297748403304007800}
   prickVFX: {fileID: 0}
+  animatorInfo: {fileID: 0}
   idleClip: {fileID: 7780236524212964778, guid: 5d2f767215dc2e74a84bb996a69bc6c6,
     type: 3}
   walkClip: {fileID: -9178764447734441153, guid: 5d2f767215dc2e74a84bb996a69bc6c6,
@@ -274,8 +275,8 @@ MonoBehaviour:
   TotalWords: 2
   ApplyTiming: 2
   SyncSettings: 79
-  StateHashes: 0000000013a2de07d1d01fa535071882ebac59e1
-  TriggerHashes: 00000000e8a2e574
+  StateHashes: 0000000013a2de07d1d01fa535071882ebac59e128a981077af3fe2e
+  TriggerHashes: 00000000e8a2e57444b775c6
 --- !u!195 &5260587215463507880
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -904,6 +905,7 @@ MonoBehaviour:
   _IsSpawnSuccess:
     _value: 0
   monster: {fileID: 3247183115326026178}
+  jump: {fileID: -7151699867823042650, guid: 5d2f767215dc2e74a84bb996a69bc6c6, type: 3}
 --- !u!1 &1622006153056507563 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1053467011305465356, guid: 88ae1074751685e4cbe70aaf11d1c462,

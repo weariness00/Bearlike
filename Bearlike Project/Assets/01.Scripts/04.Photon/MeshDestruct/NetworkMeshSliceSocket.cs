@@ -47,7 +47,7 @@ namespace Photon.MeshDestruct
             if(!HasStateAuthority || !targetObject) return new List<GameObject>(){targetObject};
             if(targetObject.TryGetComponent(out NetworkMeshSliceObject meshSliceObject) == false || meshSliceObject.isHasMesh == false) return new List<GameObject>(){targetObject};
             
-            var sliceObjects = MeshSlicing.Slice(targetObject, sliceNormal, slicePoint, false);
+            var sliceObjects = MeshSlicing.Slice(targetObject, sliceNormal, slicePoint, null, false);
 
             if (sliceObjects.Count == 1)
                 return new List<GameObject>(){targetObject};
@@ -175,7 +175,7 @@ namespace Photon.MeshDestruct
                 yield return null;
             
             var targetObject = Runner.FindObject(sliceInfo.TargetId).gameObject;
-            var sliceObjects = MeshSlicing.Slice(targetObject, sliceInfo.SliceNormal, sliceInfo.SlicePoint, false);
+            var sliceObjects = MeshSlicing.Slice(targetObject, sliceInfo.SliceNormal, sliceInfo.SlicePoint, null, false);
             
             GameObject[] networkObjects = new GameObject[2];
             while (true)

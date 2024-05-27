@@ -175,6 +175,10 @@ void CSMeshSlice(uint3 id : SV_DispatchThreadID)
 float3 uvForward;
 float3 uvLeft;
 StructuredBuffer<DotData> newDotCenter;
+RWStructuredBuffer<PolygonData> capPolygonData0;
+RWStructuredBuffer<PolygonData> capPolygonData1;
+RWStructuredBuffer<int> capPolygonCount0;
+RWStructuredBuffer<int> capPolygonCount1;
 
 [numthreads(32,1,1)]
 void CSMakeCap(uint3 id : SV_DispatchThreadID)
@@ -183,44 +187,44 @@ void CSMakeCap(uint3 id : SV_DispatchThreadID)
     if (idx >= newDotCount[0])
         return;
 
-    uint sliceIndex0;
-    uint sliceIndex1;
-    InterlockedAdd(sliceCount0[0], 1, sliceIndex0);
-    InterlockedAdd(sliceCount1[0], 1, sliceIndex1);
+    uint capIndex0;
+    uint capIndex1;
+    InterlockedAdd(capPolygonCount0[0], 1, capIndex0);
+    InterlockedAdd(capPolygonCount1[0], 1, capIndex1);
     
     // Vertex & Triangle
     const float face = dot(sliceNormal, cross(newDotData[idx].Vertex - newDotCenter[0].Vertex, newDotData[idx + 1].Vertex - newDotData[idx].Vertex));
     const int faceIndex0 = face < 0 ? idx + 1 : idx;
     const int faceIndex1 = face < 0 ? idx : idx + 1;
-    sliceData0[sliceIndex0].Dot0 = newDotCenter[0];
-    sliceData0[sliceIndex0].Dot1 = newDotData[faceIndex0];
-    sliceData0[sliceIndex0].Dot2 = newDotData[faceIndex1];
+    capPolygonData0[capIndex0].Dot0 = newDotCenter[0];
+    capPolygonData0[capIndex0].Dot1 = newDotData[faceIndex0];
+    capPolygonData0[capIndex0].Dot2 = newDotData[faceIndex1];
 
-    sliceData1[sliceIndex1].Dot0 = newDotCenter[0];
-    sliceData1[sliceIndex1].Dot1 = newDotData[faceIndex1];
-    sliceData1[sliceIndex1].Dot2 = newDotData[faceIndex0];
+    capPolygonData1[capIndex1].Dot0 = newDotCenter[0];
+    capPolygonData1[capIndex1].Dot1 = newDotData[faceIndex1];
+    capPolygonData1[capIndex1].Dot2 = newDotData[faceIndex0];
 
     // Normal
-    sliceData0[sliceIndex0].Dot0.Normal = sliceNormal;
-    sliceData0[sliceIndex0].Dot1.Normal = sliceNormal;
-    sliceData0[sliceIndex0].Dot2.Normal = sliceNormal;
+    capPolygonData0[capIndex0].Dot0.Normal = sliceNormal;
+    capPolygonData0[capIndex0].Dot1.Normal = sliceNormal;
+    capPolygonData0[capIndex0].Dot2.Normal = sliceNormal;
 
-    sliceData1[sliceIndex1].Dot0.Normal = -sliceNormal;
-    sliceData1[sliceIndex1].Dot1.Normal = -sliceNormal;
-    sliceData1[sliceIndex1].Dot2.Normal = -sliceNormal;
+    capPolygonData1[capIndex1].Dot0.Normal = -sliceNormal;
+    capPolygonData1[capIndex1].Dot1.Normal = -sliceNormal;
+    capPolygonData1[capIndex1].Dot2.Normal = -sliceNormal;
 
     // UV
     const float3 dir0 = newDotData[idx].Vertex - newDotCenter[0].Vertex;
     const float3 dir1 = newDotData[idx + 1].Vertex - newDotCenter[0].Vertex;
-    sliceData0[sliceIndex0].Dot1.UV.x = 0.5f + dot(dir0, uvLeft);
-    sliceData0[sliceIndex0].Dot1.UV.y = 0.5f + dot(dir0, uvForward);
-    sliceData0[sliceIndex0].Dot2.UV.x = 0.5f + dot(dir1, uvLeft);
-    sliceData0[sliceIndex0].Dot2.UV.y = 0.5f + dot(dir1, uvForward);
+    capPolygonData0[capIndex0].Dot1.UV.x = 0.5f + dot(dir0, uvLeft);
+    capPolygonData0[capIndex0].Dot1.UV.y = 0.5f + dot(dir0, uvForward);
+    capPolygonData0[capIndex0].Dot2.UV.x = 0.5f + dot(dir1, uvLeft);
+    capPolygonData0[capIndex0].Dot2.UV.y = 0.5f + dot(dir1, uvForward);
 
-    sliceData1[sliceIndex1].Dot1.UV.x = 0.5f + dot(dir0, uvLeft);
-    sliceData1[sliceIndex1].Dot1.UV.y = 0.5f + dot(dir0, uvForward);
-    sliceData1[sliceIndex1].Dot2.UV.x = 0.5f + dot(dir1, uvLeft);
-    sliceData1[sliceIndex1].Dot2.UV.y = 0.5f + dot(dir1, uvForward);
+    capPolygonData1[capIndex1].Dot1.UV.x = 0.5f + dot(dir0, uvLeft);
+    capPolygonData1[capIndex1].Dot1.UV.y = 0.5f + dot(dir0, uvForward);
+    capPolygonData1[capIndex1].Dot2.UV.x = 0.5f + dot(dir1, uvLeft);
+    capPolygonData1[capIndex1].Dot2.UV.y = 0.5f + dot(dir1, uvForward);
 }
 
 // Slice된 Polygon은 triangle의 index가 기존 Mesh의 순서대로 되있어 이를 다시 정리해주어야함.

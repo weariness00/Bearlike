@@ -27,7 +27,7 @@ namespace Player
         public Camera weaponCamera;
         public Camera uiCamera;
         public Camera skillCamera;
-        public Camera noVolumeCamera;
+        public Camera fullScreenCamera;
         public Vector3 firstOffset;
         public Vector3 thirdOffset;
 
@@ -53,9 +53,9 @@ namespace Player
             targetCamera.tag = "MainCamera";
 
             SetOwnerCamera();
-            TargetCameraAddOverlay(noVolumeCamera);//
             TargetCameraAddOverlay(weaponCamera);
             TargetCameraAddOverlay(skillCamera);            
+            TargetCameraAddOverlay(fullScreenCamera);
         }
 
         public void ChangeCameraMode(CameraMode mode)
@@ -107,6 +107,12 @@ namespace Player
         {
             var cameraData = targetCamera.GetComponent<UniversalAdditionalCameraData>();
             cameraData.cameraStack.Add(overlayCamera);
+        }
+        
+        public void TargetCameraAddOverlay(int index, Camera overlayCamera)
+        {
+            var cameraData = targetCamera.GetComponent<UniversalAdditionalCameraData>();
+            cameraData.cameraStack.Insert(index, overlayCamera);
         }
         
         private Tween _shakePositionTween;

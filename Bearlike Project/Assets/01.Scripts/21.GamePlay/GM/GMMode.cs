@@ -134,6 +134,8 @@ namespace GamePlay.GM
                 foreach (var monster in monsters)
                     monster.status.PlayerApplyDamage(99999, monster.Object.Id);
             }
+            else if (Input.GetKeyDown(KeyCode.F9))
+                NavMeshRebuildSystem.ReBuildRPC();
         }
     }
 }

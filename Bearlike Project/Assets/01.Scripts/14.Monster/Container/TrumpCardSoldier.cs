@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using BehaviorTree.Base;
+using DG.Tweening.Core.Enums;
 using Fusion;
 using Manager;
 using Status;
@@ -20,7 +21,8 @@ namespace Monster.Container
         [SerializeField] private GameObject dieEffectObject;
         public VisualEffect prickVFX; // 찌르는 VFX
 
-        [Header("Animation Clip")]
+        [Header("Animation Clip")] 
+        public TrumpCardSoldierAnimator animatorInfo;
         public AnimationClip idleClip;
         public AnimationClip walkClip;
         public AnimationClip attackClip;
@@ -160,13 +162,8 @@ namespace Monster.Container
 
         private INode.NodeState Move()
         {
-            if (CheckNavMeshDis(status.attackRange.Current - 0.2f))
-            {
-                networkAnimator.Animator.SetFloat(AniMove, 0);
-                _isInitAnimation = false;
-                if(navMeshAgent.isActiveAndEnabled) navMeshAgent.isStopped = true;
-                return INode.NodeState.Success;
-            }
+            if (navMeshAgent.isOnNavMesh == false || navMeshAgent.isActiveAndEnabled == false)
+                return INode.NodeState.Failure;
             
             if (!_isInitAnimation)
             {
@@ -174,18 +171,17 @@ namespace Monster.Container
                 
                 networkAnimator.Animator.SetFloat(AniMove, 1);
                 
-                _randomDir = Random.onUnitSphere * 2f;
+                _randomDir = Random.onUnitSphere * walkClip.length;
                 _randomDir.y = 0;
 
-                if(navMeshAgent.isActiveAndEnabled) navMeshAgent.isStopped = false;
                 AniWalkTimer = TickTimer.CreateFromSeconds(Runner, walkClip.length);
-            }
-
-            if (AniWalkTimer.Expired(Runner) == false && navMeshAgent.isOnNavMesh)
-            {
+                navMeshAgent.isStopped = !navMeshAgent.isActiveAndEnabled;
                 if (targetPlayer)
                 {
-                    navMeshAgent.stoppingDistance = status.attackRange.Current - 0.2f;
+                    if (IsIncludeLink(targetPlayer.transform.position))
+                        navMeshAgent.stoppingDistance = 0;
+                    else
+                        navMeshAgent.stoppingDistance = status.attackRange.Current - 0.2f;
                     navMeshAgent.SetDestination(targetPlayer.transform.position);
                 }
                 else
@@ -193,6 +189,10 @@ namespace Monster.Container
                     navMeshAgent.stoppingDistance = 0;
                     navMeshAgent.SetDestination(transform.position + _randomDir);
                 }
+            }
+
+            if (AniWalkTimer.Expired(Runner) == false)
+            {
                 return INode.NodeState.Running;
             }
 
@@ -202,8 +202,26 @@ namespace Monster.Container
             return INode.NodeState.Success;
         }
 
+        private INode.NodeState Jump()
+        {
+            if (!_isInitAnimation)
+            {
+                animatorInfo.PlayJump();
+            }
+            
+            if(animatorInfo.JumpTimerExpired == false)
+            {
+                return INode.NodeState.Running;
+            }
+            
+            return INode.NodeState.Success;
+        }
+
         private INode.NodeState Attack()
         {
+            if (navMeshAgent.isOnNavMesh == false || navMeshAgent.isActiveAndEnabled == false)
+                return INode.NodeState.Failure;
+            
             if (!_isInitAnimation)
             {
                 _isInitAnimation = true;

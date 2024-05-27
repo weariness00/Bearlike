@@ -63,13 +63,13 @@ namespace Weapon.Gun.Continer
                                     Random.Range(-bulletRadian, bulletRadian), Random.Range(-bulletRadian, bulletRadian));
 
                                 var b = o.GetComponent<BulletBase>();
-                                b.status.AddAdditionalStatus(status);
-                                b.ownerId = OwnerId;
-                                b.hitEffect = this;
-                                b.knockBack = nuckBack;
-                                b.status.attackRange.Max = status.attackRange.Max;
-                                b.status.attackRange.Current = status.attackRange.Current;
+                                b.OwnerId = OwnerId;
+                                b.HitEffectId = Object.Id;
+                                b.KnockBack = nuckBack;
+                                // b.status.attackRange.Max = status.attackRange.Max;
+                                // b.status.attackRange.Current = status.attackRange.Current;
                                 b.destination = fireTransform.position + (dst * status.attackRange) + randomVector3;
+                                BeforeShootAction?.Invoke(b);
                             });
                     }
                 }

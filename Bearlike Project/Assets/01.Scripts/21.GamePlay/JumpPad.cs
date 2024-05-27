@@ -1,39 +1,67 @@
 ﻿using System;
-using System.Collections.Generic;
-using Fusion;
 using Manager;
+using Monster;
 using Photon;
 using Player;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace GamePlay
 {
+    [RequireComponent(typeof(Rigidbody))]
     public class JumpPad : NetworkBehaviourEx
     {
-        public float jumpPower = 1f;
+        public float jumpPower = 1f; // 점프에 얼마만큼에 힘을 줄지
+        public float jumpDirectionPower = 1f; // 점프 전에 움직이고 있다면 해당 방향으로는 얼마만큼에 힘을 줄지
 
         private bool _isServer;
 
-        private void OnTriggerEnter(Collider other)
+        private void Awake()
         {
-            if (_isServer)
+            if(TryGetComponent(out Collider c))
+                c.isTrigger = true;
+
+            if (TryGetComponent(out Rigidbody rb))
             {
-                Rigidbody rb = other.attachedRigidbody;
-                if (other.TryGetComponent(out ColliderStatus cs))
-                    rb = cs.originalStatus.GetComponent<Rigidbody>();
-                else if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
-                {
-                    var pc = other.transform.root.GetComponent<PlayerController>();
-                    pc.simpleKcc.Move(Vector3.zero, jumpPower * Vector3.up);
-                }
-                
-                if(rb) rb.AddForce(jumpPower * Vector3.up);
+                rb.useGravity = false;
+                rb.isKinematic = true;
             }
         }
-        
-        public override void Spawned()
+
+        private void OnTriggerEnter(Collider other)
         {
-            _isServer = Runner.IsServer;
+            if (other.CompareTag("Player"))
+            {
+                PlayerController pc;
+                if (other.TryGetComponent(out pc) || other.transform.parent.TryGetComponent(out pc))
+                {
+                    pc.simpleKcc.Move(default, Vector3.up * jumpPower);
+                }
+            }
+            else
+            {
+                var monster = other.GetComponentInParent<MonsterBase>();
+                if (monster)
+                {
+                    Vector3 dir = Vector3.zero;
+                    if (monster.navMeshAgent)
+                    {
+                        dir = monster.navMeshAgent.velocity.normalized;
+                        monster.DisableNavMeshAgent();
+                        monster.EnableNavMeshAgent(0.5f);
+                    }
+                    else if(monster.rigidbody)
+                    {
+                        dir = monster.rigidbody.velocity;
+                        dir.y = 0;
+                        dir = dir.normalized;
+                    }
+
+                    var force = jumpPower * monster.rigidbody.mass * Vector3.up  + dir * jumpDirectionPower;
+                    monster.rigidbody.AddForce(force);
+                    return;
+                }
+            }
         }
     }
 }

@@ -156,11 +156,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d613f08f173d4dd895bb07b3230baa9, type: 3}
   m_Name: URP Out Line Block
   m_EditorClassIdentifier: 
-  m_Active: 1
+  m_Active: 0
   passMaterial: {fileID: 2100000, guid: cfa9ada5731304045bfd9ceeeacd901e, type: 2}
   injectionPoint: 450
   requirements: 6
-  passIndex: 0
+  passIndex: 1
 --- !u!114 &-204685052934254283
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -259,7 +259,7 @@ MonoBehaviour:
     m_Bits: 1143307029
   m_TransparentLayerMask:
     serializedVersion: 2
-    m_Bits: 32
+    m_Bits: 2
   m_DefaultStencilState:
     overrideStencilState: 0
     stencilReference: 0
@@ -369,13 +369,13 @@ MonoBehaviour:
       RenderQueueType: 1
       LayerMask:
         serializedVersion: 2
-        m_Bits: 0
+        m_Bits: 34
       PassNames: []
     overrideMaterial: {fileID: 0}
     overrideMaterialPassIndex: 0
     overrideShader: {fileID: 0}
     overrideShaderPassIndex: 0
-    overrideMode: 1
+    overrideMode: 0
     overrideDepthState: 0
     depthCompareFunction: 3
     enableWrite: 0

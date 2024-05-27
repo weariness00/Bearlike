@@ -14,7 +14,9 @@ namespace Script.Manager.Editor
         private SerializedProperty IsLog;
         private SerializedProperty IsLogWaring;
         private SerializedProperty IsLogError;
+        
         private SerializedProperty IsToDo;
+        private SerializedProperty IsToDoError;
         
         private SerializedProperty IsDrawRay;
         private SerializedProperty IsDrawBoxRay;
@@ -27,7 +29,9 @@ namespace Script.Manager.Editor
             IsLog = serializedObject.FindProperty("log");
             IsLogWaring = serializedObject.FindProperty("logWaring");
             IsLogError = serializedObject.FindProperty("logError");
+            
             IsToDo = serializedObject.FindProperty("isToDo");
+            IsToDoError = serializedObject.FindProperty("isToDoError");
             
             IsDrawRay = serializedObject.FindProperty("drawRay");
             IsDrawBoxRay = serializedObject.FindProperty("drawBoxRay");
@@ -46,6 +50,7 @@ namespace Script.Manager.Editor
                 EditorGUILayout.Space();
                 
                 EditorGUILayout.PropertyField(IsToDo);
+                EditorGUILayout.PropertyField(IsToDoError);
                 EditorGUILayout.Space();
 
                 EditorGUILayout.PropertyField(IsDrawRay);
