@@ -18,25 +18,19 @@ namespace Weapon.Bullet
     [RequireComponent(typeof(StatusBase))]
     public class BulletBase : NetworkBehaviourEx
     {
+        #region Member Variable
+        
         [Networked] public NetworkId OwnerId { get; set; } // 이 총을 쏜 주인의 ID
         public StatusBase status;
-        public int penetrateCount = 0; // 관통 가능 횟수
 
-        #region 속성
-
-        public Vector3 destination = Vector3.zero;
         [Networked] public NetworkId HitEffectId { get; set; }
         private IWeaponHitEffect _hitEffect;
+        private IWeaponHitSound _hitSound;
 
         private Vector3 direction;
+        public Vector3 destination = Vector3.zero;
+        public int penetrateCount = 0; // 관통 가능 횟수
         [Networked] public int KnockBack { get; set; }
-
-        #endregion
-
-        #region 사정거리
-
-        private Vector3 _oldPosition;
-        // public float maxMoveDistance;   // 최대 사정거리 // 이거 대신 status.attackRange 씀
 
         #endregion
 
@@ -50,7 +44,6 @@ namespace Weapon.Bullet
         protected void Start()
         {
             direction = (destination - transform.position).normalized;
-            // transform.rotation = Quaternion.LookRotation(destination);
 
             DebugManager.ToDo("Json으로 moveSpeed받아오도록 수정");
             status.moveSpeed.Max = 50;
@@ -59,20 +52,20 @@ namespace Weapon.Bullet
 
         public override void Spawned()
         {
-            _oldPosition = transform.position;
             Destroy(gameObject, 30f);
 
             var ownerObj = Runner.FindObject(OwnerId);
-            if(ownerObj && ownerObj.TryGetComponent(out StatusBase s)) status.AddAdditionalStatus(s); 
+            if (ownerObj)
+            {
+                _hitSound = ownerObj.GetComponent<IWeaponHitSound>();
+                if(ownerObj.TryGetComponent(out StatusBase s)) status.AddAdditionalStatus(s); 
+            }
             Runner.FindObject(HitEffectId)?.TryGetComponent(out _hitEffect);
         }
 
         public override void FixedUpdateNetwork()
         {
             transform.position += direction * Runner.DeltaTime * status.moveSpeed;
-
-            // if (FastDistance(transform.position, _oldPosition) >= maxMoveDistance) Destroy(gameObject);
-            // if (FastDistance(transform.position, _oldPosition) >= status.attackRange.Current) Destroy(gameObject);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -87,28 +80,18 @@ namespace Weapon.Bullet
                 otherStatus.ApplyDamageRPC(status.CalDamage(), OwnerId);
                 otherStatus.RemoveAdditionalStatus(colliderStatus.status);
                 _hitEffect?.OnWeaponHitEffect(transform.position);
+                _hitSound?.PlayWeaponHit();
                 
                 if (KnockBack > 0)
                 {
-                    // Rigidbody _enemyRb = other.transform.parent.gameObject.GetComponent<Rigidbody>();
-                    // if (_enemyRb != null)
-                    // {
-                        // navagent를 멈춰주는 코드는 해당 객체에 둬야하나?
-                        // RPC화 해야함
+                    var parent = otherStatus.gameObject;
                         
-                        var parent = otherStatus.gameObject;
-                        
-                        Vector3 knockbackDirection = parent.transform.position - transform.position;
-                        knockbackDirection.y = 0;
-                        knockbackDirection.Normalize();
+                    Vector3 knockbackDirection = parent.transform.position - transform.position;
+                    knockbackDirection.y = 0;
+                    knockbackDirection.Normalize();
 
-                        otherStatus.KnockBackRPC(knockbackDirection, KnockBack);
-                        // }
+                    otherStatus.KnockBackRPC(knockbackDirection, KnockBack);
                 }
-
-                // var hitEffectObject = Instantiate(hitEffect.gameObject, transform.position, Quaternion.identity);
-                // hitEffectObject.transform.LookAt(gun.transform.position);
-                // Destroy(hitEffectObject, 5f);
             }
             else if (other.transform.root.gameObject.TryGetComponent(out PlayerStatus playerStatus))
             {

@@ -346,12 +346,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2982127159651175259}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.00047521316, y: -0.0019560643, z: -0.7071066, w: 0.7071041}
-  m_LocalPosition: {x: 0.061, y: -0.008, z: 0.095}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4178817022005290950}
+  m_Father: {fileID: 8709944740331726679}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &7198553607401874559
 AudioSource:
@@ -553,12 +553,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4074112475266530763}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.00047521316, y: -0.0019560643, z: -0.7071066, w: 0.7071041}
-  m_LocalPosition: {x: 0.061, y: -0.008, z: 0.095}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4178817022005290950}
+  m_Father: {fileID: 8709944740331726679}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1046444510010820628
 AudioSource:
@@ -690,12 +690,10 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4088133847983671152}
-  - {fileID: 776583591902336023}
-  - {fileID: 6193602735134741836}
-  - {fileID: 4268763955597265697}
   - {fileID: 7254945419374529108}
   - {fileID: 7545871670962195290}
   - {fileID: 320176895774765441}
+  - {fileID: 8709944740331726679}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2569949494085307128
@@ -936,12 +934,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6976500308117628720}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.00047521316, y: -0.0019560643, z: -0.7071066, w: 0.7071041}
-  m_LocalPosition: {x: 0.061, y: -0.008, z: 0.095}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4178817022005290950}
+  m_Father: {fileID: 8709944740331726679}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &7320537936138231556
 AudioSource:
@@ -1191,6 +1189,40 @@ Transform:
   m_Children:
   - {fileID: 3339427484749664521}
   m_Father: {fileID: 4088133847983671152}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8455068479657428060
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8709944740331726679}
+  m_Layer: 0
+  m_Name: Sounds
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8709944740331726679
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8455068479657428060}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 776583591902336023}
+  - {fileID: 6193602735134741836}
+  - {fileID: 4268763955597265697}
+  m_Father: {fileID: 4178817022005290950}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8911821017906808231
 GameObject:

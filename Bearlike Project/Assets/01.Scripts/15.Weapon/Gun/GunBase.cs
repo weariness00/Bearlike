@@ -169,8 +169,6 @@ namespace Weapon.Gun
                         (runner, o) =>
                         {
                             var b = o.GetComponent<BulletBase>();
-                            b.status.AddAdditionalStatus(status);
-
                             b.OwnerId = OwnerId;
                             b.HitEffectId = Object.Id;
                             b.KnockBack = nuckBack;

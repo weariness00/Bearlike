@@ -1,16 +1,19 @@
 ﻿using System;
 using Status;
 using Fusion;
-using Manager;
 using Player;
 using UnityEngine;
-using UnityEngine.VFX;
 
 namespace Weapon
 {
     public interface IWeaponHitEffect
     {
         public void OnWeaponHitEffect(Vector3 hitPosition);
+    }
+
+    public interface IWeaponHitSound
+    {
+        public void PlayWeaponHit();
     }
     
     public interface IEquipment
