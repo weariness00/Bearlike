@@ -64,7 +64,7 @@ namespace Weapon.Gun.Continer
 
                                 var b = o.GetComponent<BulletBase>();
                                 b.OwnerId = OwnerId;
-                                b.HitEffectId = Object.Id;
+                                b.OwnerGunId = Object.Id;
                                 b.KnockBack = nuckBack;
                                 // b.status.attackRange.Max = status.attackRange.Max;
                                 // b.status.attackRange.Current = status.attackRange.Current;

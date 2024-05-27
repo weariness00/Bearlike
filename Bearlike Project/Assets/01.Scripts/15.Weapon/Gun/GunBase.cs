@@ -170,7 +170,7 @@ namespace Weapon.Gun
                         {
                             var b = o.GetComponent<BulletBase>();
                             b.OwnerId = OwnerId;
-                            b.HitEffectId = Object.Id;
+                            b.OwnerGunId = Object.Id;
                             b.KnockBack = nuckBack;
                             b.destination = fireTransform.position + (dst * status.attackRange);
 

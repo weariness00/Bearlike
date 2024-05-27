@@ -49,7 +49,7 @@ namespace Skill.Container
                         var b = o.GetComponent<BulletBase>();
 
                         b.OwnerId = gun.OwnerId;
-                        b.HitEffectId = Object.Id;
+                        b.OwnerGunId = Object.Id;
                         b.KnockBack = nuckBack;;
                         b.destination = gun.fireTransform.position + (dst * gun.status.attackRange);
 

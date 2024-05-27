@@ -21,9 +21,9 @@ namespace Weapon.Bullet
         #region Member Variable
         
         [Networked] public NetworkId OwnerId { get; set; } // 이 총을 쏜 주인의 ID
+        [Networked] public NetworkId OwnerGunId { get; set; }
         public StatusBase status;
 
-        [Networked] public NetworkId HitEffectId { get; set; }
         private IWeaponHitEffect _hitEffect;
         private IWeaponHitSound _hitSound;
 
@@ -58,9 +58,14 @@ namespace Weapon.Bullet
             if (ownerObj)
             {
                 _hitSound = ownerObj.GetComponent<IWeaponHitSound>();
-                if(ownerObj.TryGetComponent(out StatusBase s)) status.AddAdditionalStatus(s); 
             }
-            Runner.FindObject(HitEffectId)?.TryGetComponent(out _hitEffect);
+
+            var ownerGunObj = Runner.FindObject(OwnerGunId);
+            if (ownerGunObj)
+            {
+                if(ownerGunObj.TryGetComponent(out StatusBase s)) status.AddAdditionalStatus(s); 
+                ownerGunObj.TryGetComponent(out _hitEffect);
+            }
         }
 
         public override void FixedUpdateNetwork()
@@ -77,7 +82,7 @@ namespace Weapon.Bullet
                 StatusBase otherStatus = colliderStatus.originalStatus;
                 otherStatus.AddAdditionalStatus(colliderStatus.status);
                 
-                otherStatus.ApplyDamageRPC(status.CalDamage(), OwnerId);
+                otherStatus.ApplyDamageRPC(status.CalDamage(), OwnerId);//
                 otherStatus.RemoveAdditionalStatus(colliderStatus.status);
                 _hitEffect?.OnWeaponHitEffect(transform.position);
                 _hitSound?.PlayWeaponHit();
