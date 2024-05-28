@@ -52,8 +52,8 @@ namespace Player
         [Tooltip("마우스 움직임에 따라 회전할 오브젝트")] public GameObject mouseRotateObject;
 
         public Action<GameObject> MonsterKillAction;
-        
-        [Networked] public float W { get; set; }
+
+        [Networked] public float W { get; set; } = 1f;
         private TickTimer _uiKeyDownTimer;
         
         #region Animation Parametar
@@ -143,15 +143,17 @@ namespace Player
             
             if(!GameManager.Instance.isControl)
                 return;
-            
-            if (transform.position.y <= -1)
-                UserData.SetTeleportPosition(Runner.LocalPlayer, Vector3.up);
-            
-            var spawnPosition = UserData.Instance.UserDictionary[Runner.LocalPlayer].TeleportPosition;
-            if (spawnPosition.Count != 0)
+
+            if (HasStateAuthority)
             {
-                simpleKcc.SetPosition(spawnPosition[0]);
-                UserData.SetTeleportPosition(Runner.LocalPlayer, null);
+                if (transform.position.y <= -1)
+                    UserData.SetTeleportPosition(Object.InputAuthority, Vector3.up);
+            
+                if (UserData.HasTeleportPosition(Object.InputAuthority))
+                {
+                    simpleKcc.SetPosition(UserData.GetTeleportPosition(Object.InputAuthority));
+                    UserData.SetTeleportPosition(Object.InputAuthority, null);
+                }
             }
             
             if(status.isRevive)

@@ -52,6 +52,18 @@ namespace Data
                 datas[i++] = value;
             return datas;
         }
+
+        public static bool HasTeleportPosition(PlayerRef key)
+        {
+            var data = Instance.UserDictionary.Get(key);
+            return data.TeleportPosition.Count != 0;
+        }
+
+        public static Vector3 GetTeleportPosition(PlayerRef key)
+        {
+            var data = Instance.UserDictionary.Get(key);
+            return data.TeleportPosition[0];
+        }
         
         public static void SetTeleportPosition(PlayerRef key, Vector3? value)
         {
