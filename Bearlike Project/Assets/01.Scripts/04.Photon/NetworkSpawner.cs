@@ -144,6 +144,8 @@ namespace Script.Photon
                 CurrentSpawnInterval = TickTimer.CreateFromSeconds(Runner, 1f);
                 return;
             }
+
+            float interval = 0;
             
             if (isRandomInterval)
                 _spawnIntervalCount =  Random.Range(0, spawnIntervals.Length);
@@ -151,7 +153,11 @@ namespace Script.Photon
                 _spawnIntervalCount++;
 
             if (_spawnIntervalCount >= spawnIntervals.Length) _spawnIntervalCount = 0;
-            CurrentSpawnInterval = TickTimer.CreateFromSeconds(Runner, spawnIntervals[_spawnIntervalCount]);
+            
+            if (spawnIntervals.Length == 0) interval = 0;
+            else interval = spawnIntervals[_spawnIntervalCount];
+            
+            CurrentSpawnInterval = TickTimer.CreateFromSeconds(Runner, interval);
         }
         
         /// <summary>
