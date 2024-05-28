@@ -36,7 +36,7 @@ namespace Item.Looting
         }
 
         // 드랍해야될 아이템을 스폰
-        public void SpawnDropItem()
+        public void SpawnDropItem(Vector3 spawnPosition = default)
         {
             isDrop = true;
             
@@ -58,8 +58,8 @@ namespace Item.Looting
 
                     for (int i = 0; i < dropItem.Amount; i++)
                     {
-                        var item = Instantiate(dropObjectPrefab.gameObject).GetComponent<ItemBase>();
-                        item.transform.position = gameObject.transform.position;
+                        spawnPosition = spawnPosition == default ? gameObject.transform.position : spawnPosition;
+                        Instantiate(dropObjectPrefab.gameObject, spawnPosition , default).GetComponent<ItemBase>();
                     }
                 }
             }
