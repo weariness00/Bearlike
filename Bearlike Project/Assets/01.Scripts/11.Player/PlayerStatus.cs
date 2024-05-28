@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using Fusion;
 using Manager;
 using Status;
+using UI.Status;
 using Unity.Mathematics;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Player
 {
@@ -184,6 +186,19 @@ namespace Player
             level.Current++;
             if(HasInputAuthority)
                 playerController.skillSelectUI.SpawnSkillBlocks(3);
+        }
+
+        public override void HealingText(int realHealAmount)
+        {
+            base.HealingText(realHealAmount);
+
+            var randomDir = Random.insideUnitSphere;
+            var dir = transform.forward;
+            dir.x += Mathf.Abs(randomDir.x) * (dir.x >= 0 ? 1 : -1);
+            dir.y += Mathf.Abs(randomDir.y) * (dir.y >= 0 ? 1 : -1);
+            dir.z += Mathf.Abs(randomDir.z) * (dir.z >= 0 ? 1 : -1);
+            dir = dir.normalized * 2f;
+            DamageTextCanvas.SpawnDamageText(transform.position + dir, realHealAmount, DamageTextType.Heal);
         }
 
         // DeBug Function

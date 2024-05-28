@@ -79,7 +79,7 @@ namespace UI.Status
             }
             
             // Damage Text 생성
-            var dtObj = Instantiate(GetDamageText(type).gameObject, transform);
+            var dtObj = Instantiate(GetDamageText(type).gameObject, position, default, transform);
             var dt = dtObj.GetComponent<TMP_Text>();
             dtObj.SetActive(true);
             dt.text = type == DamageTextType.Heal ? "+" + damage : damage.ToString();

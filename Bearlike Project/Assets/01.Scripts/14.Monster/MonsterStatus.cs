@@ -55,7 +55,7 @@ namespace Status
         {
             var randomDir = Random.insideUnitSphere;
             randomDir.y = Mathf.Abs(randomDir.y);
-            DamageTextCanvas.SpawnDamageText(monsterBase.pivot.position + Random.insideUnitSphere, realDamage);
+            DamageTextCanvas.SpawnDamageText(monsterBase.pivot.position + randomDir, realDamage);
         }
 
         #endregion

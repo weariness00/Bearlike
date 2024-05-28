@@ -238,12 +238,26 @@ namespace Status
             }
         }
 
+        public virtual void ApplyHeal(int applyHeal, NetworkId ownerId, CrowdControl cc = CrowdControl.Normality)
+        {
+            if (hp.isMax)
+                return;
+
+            hp.Current += applyHeal;
+            HealingText(applyHeal);
+            
+            DebugManager.Log(
+                $"{gameObject.name}에게 {applyHeal}만큼 체력 회복\n" +
+                $"남은 hp : {hp.Current}");
+        }
+
         public void KnockBack()
         {
             
         }
         
         public virtual void DamageText(int realDamage){}
+        public virtual void HealingText(int realHealAmount) {}
 
         public virtual void ShowInfo()
         {
@@ -398,6 +412,12 @@ namespace Status
         public void ApplyDamageRPC(int damage, NetworkId id, CrowdControl enemyProperty = CrowdControl.Normality, RpcInfo info = default)
         {
             ApplyDamage(damage, id, enemyProperty);
+        }
+        
+        [Rpc(RpcSources.All, RpcTargets.All, Channel = RpcChannel.Reliable)]
+        public void ApplyHealRPC(int heal, NetworkId id, CrowdControl enemyProperty = CrowdControl.Normality, RpcInfo info = default)
+        {
+            ApplyHeal(heal, id, enemyProperty);
         }
 
         [Rpc(RpcSources.All, RpcTargets.All, Channel = RpcChannel.Reliable)]

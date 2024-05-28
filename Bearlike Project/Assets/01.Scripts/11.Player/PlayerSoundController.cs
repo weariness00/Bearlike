@@ -13,7 +13,7 @@ namespace Player
         [Header("Item")]
         [SerializeField] private AudioSource earn;
 
-        public void PlayItemEarn() => earn.Play();
+        [SerializeField] private AudioSource heal;
 
         public void PlayWeaponHit()
         {
@@ -21,5 +21,13 @@ namespace Player
             var sound = Instantiate(monsterHit.gameObject);
             monsterHit.playOnAwake = false;
         }
+        
+        public void PlayItemEarn() => earn.Play();
+
+        public void PlayItemHeal()
+        {
+            if(heal) heal.Play();
+        }
+
     }
 }

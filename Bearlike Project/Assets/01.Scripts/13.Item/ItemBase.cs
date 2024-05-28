@@ -84,6 +84,20 @@ namespace Item
         }
 
         #endregion
+
+        public bool CheckPlayer(GameObject obj, out PlayerController pc)
+        {
+            pc = null;
+            if (obj.CompareTag("Player") && obj.transform.parent.TryGetComponent(out pc))
+            {
+                if (pc.HasInputAuthority)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
         
         // 처음 드랍할때 솟아오르는 동작
         private void RiseUp()
