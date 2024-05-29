@@ -418,9 +418,9 @@ MonoBehaviour:
   playerCameraController: {fileID: 0}
   id: 0
   explain: 
-  shootEffect: {fileID: 0}
+  shootEffect: {fileID: 6398042660322630052}
   shotsmoke: {fileID: 0}
-  shotOverHeating: {fileID: 2100000, guid: 7da4bb2f266be5949bec10823b5ac81c, type: 2}
+  shotOverHeating: {fileID: 2100000, guid: 6d9473d7960e7de4bab4709a5c99c493, type: 2}
   hitEffectPrefab:
     RawGuidValue: 8ec31fcb5aff43949af9992aeb7147e6
   shootSound: {fileID: 8007958893475479431}
@@ -842,7 +842,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f10975bead156e44b82eb80ad4f91cd5, type: 2}
+  - {fileID: 2100000, guid: 6d9473d7960e7de4bab4709a5c99c493, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1388,6 +1388,12 @@ PrefabInstance:
 --- !u!4 &3811454197270665286 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7634912066636466383, guid: 892fecd515ddeb74ca3618fad85412ac,
+    type: 3}
+  m_PrefabInstance: {fileID: 6706327638879277193}
+  m_PrefabAsset: {fileID: 0}
+--- !u!2083052967 &6398042660322630052 stripped
+VisualEffect:
+  m_CorrespondingSourceObject: {fileID: 422142723598567725, guid: 892fecd515ddeb74ca3618fad85412ac,
     type: 3}
   m_PrefabInstance: {fileID: 6706327638879277193}
   m_PrefabAsset: {fileID: 0}

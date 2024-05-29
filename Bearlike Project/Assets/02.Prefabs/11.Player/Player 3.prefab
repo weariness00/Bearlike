@@ -5114,7 +5114,7 @@ GameObject:
   - component: {fileID: 1812758714330219959}
   - component: {fileID: 6120328737084483131}
   - component: {fileID: 5776007155186001465}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: ShotGun Smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5154,10 +5154,10 @@ VisualEffect:
   m_PropertySheet:
     m_Float:
       m_Array:
-      - m_Value: 0.01
+      - m_Value: 0.05
         m_Name: MinSize
         m_Overridden: 1
-      - m_Value: 0.05
+      - m_Value: 0.1
         m_Name: MaxSize
         m_Overridden: 1
     m_Vector2f:
@@ -5368,7 +5368,7 @@ GameObject:
   - component: {fileID: 1077062478366934297}
   - component: {fileID: 1255476793299921261}
   - component: {fileID: 3523994050864446218}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: SniperSmoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7908,8 +7908,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 98862bab2904715479cd110034a6a908, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -10290,8 +10290,14 @@ PrefabInstance:
       propertyPath: shotsmoke
       value: 
       objectReference: {fileID: 1255476793299921261}
+    - target: {fileID: 7054352895572623144, guid: 0f1b1844c83e1944e9eded47132bc861,
+        type: 3}
+      propertyPath: shootEffect
+      value: 
+      objectReference: {fileID: 6775361009710144341}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 1441661947008527769, guid: 0f1b1844c83e1944e9eded47132bc861, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0f1b1844c83e1944e9eded47132bc861, type: 3}
@@ -10313,6 +10319,12 @@ MonoBehaviour:
   m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!2083052967 &6775361009710144341 stripped
+VisualEffect:
+  m_CorrespondingSourceObject: {fileID: 7425612371362171943, guid: 0f1b1844c83e1944e9eded47132bc861,
+    type: 3}
+  m_PrefabInstance: {fileID: 4110653872920844146}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &7093958912352303388 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6591360967261449838, guid: 0f1b1844c83e1944e9eded47132bc861,
@@ -10770,6 +10782,11 @@ PrefabInstance:
       propertyPath: shotsmoke
       value: 
       objectReference: {fileID: 5477908845917059417}
+    - target: {fileID: 4879660233733431077, guid: 708d555e024d01a4c8169812e29e27f5,
+        type: 3}
+      propertyPath: shootEffect
+      value: 
+      objectReference: {fileID: 1684978189287520375}
     - target: {fileID: 7187653998392947337, guid: 708d555e024d01a4c8169812e29e27f5,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -10830,6 +10847,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 708d555e024d01a4c8169812e29e27f5, type: 3}
+--- !u!2083052967 &1684978189287520375 stripped
+VisualEffect:
+  m_CorrespondingSourceObject: {fileID: 6398042660322630052, guid: 708d555e024d01a4c8169812e29e27f5,
+    type: 3}
+  m_PrefabInstance: {fileID: 5739933772909912531}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3177283353131914074 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7187653998392947337, guid: 708d555e024d01a4c8169812e29e27f5,
@@ -10996,6 +11019,11 @@ PrefabInstance:
       propertyPath: shotsmoke
       value: 
       objectReference: {fileID: 6120328737084483131}
+    - target: {fileID: 4303053860246033292, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: shootEffect
+      value: 
+      objectReference: {fileID: 3522600936483437232}
     - target: {fileID: 4743372364268393535, guid: fb0375b9d4667184885fa46e6c1de475,
         type: 3}
       propertyPath: m_Name
@@ -11006,6 +11034,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fb0375b9d4667184885fa46e6c1de475, type: 3}
+--- !u!2083052967 &3522600936483437232 stripped
+VisualEffect:
+  m_CorrespondingSourceObject: {fileID: 7520474472476782691, guid: fb0375b9d4667184885fa46e6c1de475,
+    type: 3}
+  m_PrefabInstance: {fileID: 6394228921169251027}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &6653982448794407285 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 354496408801352614, guid: fb0375b9d4667184885fa46e6c1de475,
@@ -11480,7 +11514,7 @@ PrefabInstance:
     - target: {fileID: 8499346563676933405, guid: 87e73c929ac63b14a85194db11dcb2f7,
         type: 3}
       propertyPath: m_Layer
-      value: 11
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8499346563676933405, guid: 87e73c929ac63b14a85194db11dcb2f7,
         type: 3}
