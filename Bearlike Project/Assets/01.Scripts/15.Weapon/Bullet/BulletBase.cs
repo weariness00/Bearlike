@@ -110,7 +110,7 @@ namespace Weapon.Bullet
             else if (other.CompareTag("Destruction"))
             {
                 var networkObj = other.GetComponent<NetworkObject>();
-                NetworkMeshSliceSystem.Instance.SliceRPC(networkObj.Id, Random.onUnitSphere, transform.position, 100f);
+                NetworkMeshSliceSystem.Instance.SliceRPC(networkObj.Id, Random.onUnitSphere, transform.position, 0f);
             }
 
             if (penetrateCount-- == 0)
