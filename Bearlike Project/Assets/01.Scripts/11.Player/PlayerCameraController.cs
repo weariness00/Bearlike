@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Linq;
 using DG.Tweening;
+using DG.Tweening.Core;
+using DG.Tweening.Plugins.Options;
 using Fusion;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -56,6 +58,8 @@ namespace Player
             TargetCameraAddOverlay(weaponCamera);
             TargetCameraAddOverlay(skillCamera);            
             TargetCameraAddOverlay(fullScreenCamera);
+
+            StartCoroutine(WeaponCameraShake());
         }
 
         public void ChangeCameraMode(CameraMode mode)
@@ -351,7 +355,7 @@ namespace Player
         
         #endregion
 
-
+        
         private IEnumerator ReboundCameraBackCoroutine()
         {
             var movement = 0.0f;
@@ -380,6 +384,39 @@ namespace Player
                 {
                     yield break;
                 }
+            }
+        }
+
+        private TweenerCore<Vector3, Vector3, VectorOptions> weaponMove;
+        private TweenerCore<Quaternion, Vector3, QuaternionOptions> weaponRotate;
+    
+        [SerializeField] private float movement = 0.01f;
+        [SerializeField] private float rotationAngle = 1;
+        [SerializeField] private float time = 0.4f;
+        
+        private IEnumerator WeaponCameraShake()
+        {
+            var weaponCameraPosition = weaponCamera.transform.position;
+            var weaponCameraRotation = weaponCamera.transform.rotation;
+            //Ease.InOutCubic
+            weaponMove = weaponCamera.transform.DOLocalMoveY(weaponCameraPosition.y + movement, time / 2).SetEase(Ease.Linear);
+            weaponRotate = weaponCamera.transform.DOLocalRotate(weaponCameraRotation.eulerAngles + new Vector3(rotationAngle, 0, 0), time / 2);
+            yield return new WaitForSeconds((time / 2) * 0.9f);
+            while (true)
+            {
+                weaponMove?.Kill();
+                weaponRotate?.Kill();
+            
+                weaponMove = weaponCamera.transform.DOLocalMoveY(weaponCameraPosition.y - movement, time).SetEase(Ease.Linear);
+                weaponRotate = weaponCamera.transform.DOLocalRotate(weaponCameraRotation.eulerAngles + new Vector3(-rotationAngle, 0, 0), time);
+                yield return new WaitForSeconds(time);
+            
+                weaponMove?.Kill();
+                weaponRotate?.Kill();
+            
+                weaponMove = weaponCamera.transform.DOLocalMoveY(weaponCameraPosition.y + movement, time).SetEase(Ease.Linear);
+                weaponRotate = weaponCamera.transform.DOLocalRotate(weaponCameraRotation.eulerAngles + new Vector3(rotationAngle, 0, 0), time);
+                yield return new WaitForSeconds(time);
             }
         }
     }
