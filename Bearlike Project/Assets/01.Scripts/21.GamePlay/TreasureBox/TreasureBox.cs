@@ -26,6 +26,7 @@ namespace GamePlay
         public int id;
         public string explain;
         public bool isActive; // 상자가 활성화 되어 열 수 있는 상태인지
+        public bool isUse; // 상자가 사용되었는지
         
         [Header("Component")]
         [SerializeField] private Transform itemDropPosition;
@@ -62,10 +63,10 @@ namespace GamePlay
         
         public void OnBox()
         {
-            if(isActive == false) return;
-            
+            if(isActive == false || isUse) return;
+
             if (openSound) openSound.Play();
-            if (animation) animation.Play();
+            if (animation) animation.Play(); 
             StartCoroutine(AfterOpenBoxCoroutine());
         }
 
@@ -108,6 +109,7 @@ namespace GamePlay
         [JsonProperty("Open Condition Type")]public TreasureBoxOpenConditionType ConditionType;
         [JsonProperty("Target ID")]public int TargetID;
         [JsonProperty("Amount")]public float Amount;
+        [JsonProperty("Open Condition Explain")] public string Explain;
     }
     
     public struct TreasureBoxJsonData

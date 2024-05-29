@@ -194,7 +194,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 100
   m_TargetDisplay: 0
 --- !u!114 &3148438450427903155
 MonoBehaviour:
@@ -2322,7 +2322,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_TargetDisplay: 0
 --- !u!114 &921313946040469480
 MonoBehaviour:
@@ -2584,7 +2584,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 100
   m_TargetDisplay: 0
 --- !u!114 &7465347995363173657
 MonoBehaviour:
@@ -5606,6 +5606,7 @@ MonoBehaviour:
   hit: {fileID: 2284425175922807741}
   monsterHit: {fileID: 2463671884357568143}
   earn: {fileID: 2036026081812690951}
+  heal: {fileID: 0}
 --- !u!114 &3591252219797454216
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6238,7 +6239,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_TargetDisplay: 0
 --- !u!114 &3423252178060223164
 MonoBehaviour:
@@ -8011,7 +8012,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_TargetDisplay: 0
 --- !u!114 &3115291679920837817
 MonoBehaviour:
@@ -9609,7 +9610,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 100
   m_TargetDisplay: 0
 --- !u!114 &6327620018272344711
 MonoBehaviour:
@@ -10636,6 +10637,11 @@ PrefabInstance:
       propertyPath: m_RenderMode
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7591821543876279416, guid: 7a68dec2cbfce0e4ca5e52ca2616376d,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 7926795522561297113, guid: 7a68dec2cbfce0e4ca5e52ca2616376d,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -11103,6 +11109,21 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 4384581159391793847}
+    - target: {fileID: 3223929226563402317, guid: e2bd8815c8e56094a9a4fb2d3b2d388c,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 3284216052248679964, guid: e2bd8815c8e56094a9a4fb2d3b2d388c,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 5009993582098015471, guid: e2bd8815c8e56094a9a4fb2d3b2d388c,
+        type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5663808322493869097, guid: e2bd8815c8e56094a9a4fb2d3b2d388c,
         type: 3}
       propertyPath: m_Name

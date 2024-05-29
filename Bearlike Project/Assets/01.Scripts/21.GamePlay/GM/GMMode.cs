@@ -1,4 +1,5 @@
-﻿using Data;
+﻿using System.Linq;
+using Data;
 using Monster;
 using Player;
 using UnityEngine;
@@ -53,8 +54,10 @@ namespace GamePlay.GM
         // F3 : 몬스터 생성 Canvas
         // F4 : 아이템 생성 Canvas
         // F5 : 모든 몬스터에게 99999 대미지
+        // F9 : 네비 메쉬 리빌드
         
         // CapsLock + 1~3 : 1~3 번 플레이어 100 데미지
+        // CapsLock + 8 : 플레이어 레벨업
         // CapsLock + 9 : 스킬 쿨타임 초기화
         // CapsLock + 0 : 모든 플레이어 총알 100개씩 지급
         // ALT + 1~3 : 1~3번 플레이 부상에서 회복
@@ -76,6 +79,11 @@ namespace GamePlay.GM
                 {
                     players[2].status.PlayerApplyDamage(100, players[2].Object.Id);
                     if(players[2].status.isInjury) players[0].status.GoReviveRPC();
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha8))
+                {
+                    var p = players.First(p => p.HasInputAuthority);
+                    p.status.LevelUpRPC();
                 }
                 else if (Input.GetKeyDown(KeyCode.Alpha9))
                 {
