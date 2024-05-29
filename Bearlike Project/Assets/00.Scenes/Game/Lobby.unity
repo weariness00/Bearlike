@@ -1594,8 +1594,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 241, y: -350}
-  m_SizeDelta: {x: 250, y: 250}
+  m_AnchoredPosition: {x: 241, y: -386.93}
+  m_SizeDelta: {x: 500, y: 500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &747966615
 MonoBehaviour:
@@ -1666,14 +1666,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.2924528, g: 0.2341988, b: 0.17519578, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: fc5cd1bd5b2279447855c7000490b95a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 84f0e1cd957b19f49ba542024f528f7e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1727,8 +1727,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -327, y: -352}
-  m_SizeDelta: {x: 300, y: 300}
+  m_AnchoredPosition: {x: -327, y: -386.93}
+  m_SizeDelta: {x: 500, y: 500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &888788972
 MonoBehaviour:
@@ -1799,14 +1799,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.2830189, g: 0.22412576, b: 0.16153437, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 35af073f4a630bd45938df9820c180e7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6834a68d7a5c6374f98edeb1bee6a3ed, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2273,7 +2273,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1123466352
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3398,6 +3398,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 636156403a87dc94ca1ea62dd8d4ce0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rendererPipline: {fileID: 11400000, guid: 11a01a466b41b8042a77eef3d36465b6, type: 2}
   _rendererFeaturesEffectNames:
   - HitEffect
   - FireEffect
@@ -3629,7 +3630,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2024750400
 RectTransform:
   m_ObjectHideFlags: 0

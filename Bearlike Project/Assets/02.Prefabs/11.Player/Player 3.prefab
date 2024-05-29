@@ -4787,7 +4787,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4633371919823006878}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Smokes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5002,7 +5002,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 100, y: -10}
+  m_AnchoredPosition: {x: 100, y: -20}
   m_SizeDelta: {x: -220, y: 50}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &5081029339704823653
@@ -5114,7 +5114,7 @@ GameObject:
   - component: {fileID: 1812758714330219959}
   - component: {fileID: 6120328737084483131}
   - component: {fileID: 5776007155186001465}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: ShotGun Smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5130,7 +5130,7 @@ Transform:
   m_GameObject: {fileID: 4530770258830762298}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.089, y: 0.0819, z: 0.313}
+  m_LocalPosition: {x: 0.008, y: 0.061, z: 0.565}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5154,10 +5154,10 @@ VisualEffect:
   m_PropertySheet:
     m_Float:
       m_Array:
-      - m_Value: 0.05
+      - m_Value: 0.01
         m_Name: MinSize
         m_Overridden: 1
-      - m_Value: 0.1
+      - m_Value: 0.05
         m_Name: MaxSize
         m_Overridden: 1
     m_Vector2f:
@@ -5368,7 +5368,7 @@ GameObject:
   - component: {fileID: 1077062478366934297}
   - component: {fileID: 1255476793299921261}
   - component: {fileID: 3523994050864446218}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SniperSmoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5384,7 +5384,7 @@ Transform:
   m_GameObject: {fileID: 4759161086113581921}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.074, y: 0.067, z: 0.286}
+  m_LocalPosition: {x: -0.007, y: 0.111, z: 0.593}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5592,6 +5592,7 @@ MonoBehaviour:
   firstOffset: {x: 0, y: 0, z: 0.27}
   thirdOffset: {x: 0, y: 0, z: -2}
   movement: 0.01
+  rotationAngle: 1
   time: 1
 --- !u!114 &7752046874624119763
 MonoBehaviour:
@@ -6025,15 +6026,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.4532307, g: 0.5147546, b: 0.990566, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 21300000, guid: 98862bab2904715479cd110034a6a908, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -6071,10 +6072,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 21300000, guid: a7e452ee33eea0f4bbc71ff44b9cca1d,
+    m_HighlightedSprite: {fileID: 21300000, guid: 1aa384298c8246a48a95dcf708f7873a,
       type: 3}
-    m_PressedSprite: {fileID: 21300000, guid: 7aee6fc642d581f49b9decf1673526b6, type: 3}
-    m_SelectedSprite: {fileID: 21300000, guid: a884712bb989f4f4b8e9195e8beb388b, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 1aa384298c8246a48a95dcf708f7873a, type: 3}
+    m_SelectedSprite: {fileID: 21300000, guid: 58b04cc026d8b01499b1f649b430cd03, type: 3}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
@@ -10282,6 +10283,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Hunter Sniper
       objectReference: {fileID: 0}
+    - target: {fileID: 4255660035849117030, guid: 0f1b1844c83e1944e9eded47132bc861,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6591360967261449838, guid: 0f1b1844c83e1944e9eded47132bc861,
         type: 3}
       propertyPath: SortKey
@@ -10779,6 +10785,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Revolver
       objectReference: {fileID: 0}
+    - target: {fileID: 920462104727415898, guid: 708d555e024d01a4c8169812e29e27f5,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4879660233733431077, guid: 708d555e024d01a4c8169812e29e27f5,
         type: 3}
       propertyPath: shotsmoke
@@ -10966,6 +10977,11 @@ PrefabInstance:
       propertyPath: SortKey
       value: 2888086079
       objectReference: {fileID: 0}
+    - target: {fileID: 2813304304395061658, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
     - target: {fileID: 4178817022005290950, guid: fb0375b9d4667184885fa46e6c1de475,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -11030,6 +11046,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Mega Shotgun
+      objectReference: {fileID: 0}
+    - target: {fileID: 4743372364268393535, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -11451,17 +11472,17 @@ PrefabInstance:
     - target: {fileID: 6656038087446097000, guid: 87e73c929ac63b14a85194db11dcb2f7,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.08
+      value: 0.005
       objectReference: {fileID: 0}
     - target: {fileID: 6656038087446097000, guid: 87e73c929ac63b14a85194db11dcb2f7,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.023
+      value: 0.046
       objectReference: {fileID: 0}
     - target: {fileID: 6656038087446097000, guid: 87e73c929ac63b14a85194db11dcb2f7,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.187
+      value: 0.336
       objectReference: {fileID: 0}
     - target: {fileID: 6656038087446097000, guid: 87e73c929ac63b14a85194db11dcb2f7,
         type: 3}
@@ -11516,7 +11537,7 @@ PrefabInstance:
     - target: {fileID: 8499346563676933405, guid: 87e73c929ac63b14a85194db11dcb2f7,
         type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 8499346563676933405, guid: 87e73c929ac63b14a85194db11dcb2f7,
         type: 3}
