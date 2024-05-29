@@ -4,13 +4,15 @@ using System.Collections.Generic;
 using Data;
 using Item.Looting;
 using Newtonsoft.Json;
+using UI;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Util;
 
 namespace GamePlay
 {
     [RequireComponent(typeof(LootingTable))]
-    public class TreasureBox : MonoBehaviour, IJsonData<TreasureBoxJsonData>
+    public class TreasureBox : MonoBehaviour, IInteract, IJsonData<TreasureBoxJsonData>
     {
         #region Static
 
@@ -26,6 +28,7 @@ namespace GamePlay
         public int id;
         public string explain;
         public bool isActive; // 상자가 활성화 되어 열 수 있는 상태인지
+        public bool isOpen; // 상자가 열려있는 상태인지
         public bool isUse; // 상자가 사용되었는지
         
         [Header("Component")]
@@ -33,48 +36,62 @@ namespace GamePlay
         [SerializeField] private LootingTable lootingTable;
 
         [Header("Animation")]
-        [SerializeField] private new Animation animation;
+        [SerializeField] private Animator animator;
         [SerializeField] private AnimationClip openClip;
 
         [Header("Sound")]
         [SerializeField] private AudioSource openSound;
-        
+
+        private static readonly int AniBoxOpen = Animator.StringToHash("t Open");
+
         private void Start()
         {
             lootingTable = GetComponent<LootingTable>();
-            animation = GetComponent<Animation>();
-
-            openClip = animation.GetClip("Box Open");
             
             SetJsonData(GetTreasureBoxData(id));
+
+            BoxEnable();
+            InteractInit();
         }
 
         #region Member Function
 
         public void BoxEnable()
         {
-            isActive = true;
+            isActive = IsInteract = true;
         }
 
         public void BoxDisable()
         {
-            isActive = false;
+            isActive = IsInteract = false;
         }
         
         public void OnBox()
         {
             if(isActive == false || isUse) return;
 
-            if (openSound) openSound.Play();
-            if (animation) animation.Play(); 
-            StartCoroutine(AfterOpenBoxCoroutine());
+            if (isOpen && _afterOpenBoxCoroutine == null)
+            {
+                TreasureBoxCanvas.Instance.InitConditionBlock(this);
+            }
+            else
+            {
+                if (openSound) openSound.Play();
+                if (animator) animator.SetTrigger(AniBoxOpen);
+                _afterOpenBoxCoroutine = StartCoroutine(AfterOpenBoxCoroutine());
+                isOpen = true;
+            }
         }
 
+        private Coroutine _afterOpenBoxCoroutine;
         private IEnumerator AfterOpenBoxCoroutine()
         {
             yield return new WaitForSeconds(openClip.length);
             
+            TreasureBoxCanvas.Instance.InitConditionBlock(this);
             lootingTable.SpawnDropItem(itemDropPosition.position);
+
+            _afterOpenBoxCoroutine = null;
         }
         
         #endregion
@@ -95,6 +112,32 @@ namespace GamePlay
         
         #endregion
 
+        #region Interact Interface
+        
+        public void InteractInit()
+        {
+            InteractEnterAction += SetInteractUI;
+            InteractKeyDownAction += BoxInteractKeyDown;
+        }
+
+        public bool IsInteract { get; set; }
+        public Action<GameObject> InteractEnterAction { get; set; }
+        public Action<GameObject> InteractExitAction { get; set; }
+        public Action<GameObject> InteractKeyDownAction { get; set; }
+        public Action<GameObject> InteractKeyUpAction { get; set; }
+
+        void SetInteractUI(GameObject targetObject)
+        {
+            InteractUI.SetKeyActive(true);
+            InteractUI.KeyCodeText.text = "F";
+        }
+        
+        private void BoxInteractKeyDown(GameObject targetObject)
+        {
+            OnBox();
+        }
+        
+        #endregion
     }
 
     // 상자 개방 조건중에 사용되는 타입은 무엇인지
@@ -107,9 +150,17 @@ namespace GamePlay
     public struct TreasureBoxOpenCondition
     {
         [JsonProperty("Open Condition Type")]public TreasureBoxOpenConditionType ConditionType;
-        [JsonProperty("Target ID")]public int TargetID;
-        [JsonProperty("Amount")]public float Amount;
+        [JsonProperty("Item ID")]public int ItemID;
+        [JsonProperty("Money Amount")]public int MoneyAmount;
         [JsonProperty("Open Condition Explain")] public string Explain;
+
+        public string GetExplain()
+        {
+            if (Explain.Contains("(Money)"))
+                Explain = Explain.Replace("(Money)", $"{MoneyAmount}");
+            
+            return StringExtension.Replace(Explain);
+        }
     }
     
     public struct TreasureBoxJsonData
@@ -117,6 +168,6 @@ namespace GamePlay
         [JsonProperty("ID")] public int ID;
         [JsonProperty("Explain")] public string Explain;
         [JsonProperty("LootingTable")] public LootingItem[] LootingItems;
-        [JsonProperty("Open Condition")] public TreasureBoxOpenCondition[] OpenConditions;
+        [JsonProperty("Condition")] public TreasureBoxOpenCondition[] OpenConditions;
     }
 }

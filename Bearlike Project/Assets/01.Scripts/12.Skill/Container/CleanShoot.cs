@@ -9,6 +9,7 @@ using Photon;
 using Player;
 using UnityEngine;
 using UnityEngine.VFX;
+using Util;
 
 namespace Skill.Container
 {
@@ -156,7 +157,7 @@ namespace Skill.Container
             if (explain.Contains("(Level)"))
                 explain = explain.Replace("(Level)", $"{level.Current}");
             
-            explain = Regex.Replace(explain, pattern, ComputeAndReplace);
+            explain = StringExtension.Replace(explain);
         }
         
         #endregion

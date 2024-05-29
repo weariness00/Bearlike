@@ -279,7 +279,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6668503177420377973}
-  - component: {fileID: 6678414276768010161}
+  - component: {fileID: 4226126766324416242}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -306,23 +306,27 @@ Transform:
   - {fileID: 5191289295573566052}
   m_Father: {fileID: 6746997070841278505}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!111 &6678414276768010161
-Animation:
+--- !u!95 &4226126766324416242
+Animator:
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6969230346275936984}
   m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: -4674560619913218200, guid: 3066d081fd4d2224499eccb64bfe3d43,
-    type: 3}
-  m_Animations:
-  - {fileID: -4674560619913218200, guid: 3066d081fd4d2224499eccb64bfe3d43, type: 3}
-  m_WrapMode: 0
-  m_PlayAutomatically: 0
-  m_AnimatePhysics: 0
-  m_CullingType: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 6a3c6c906b96de544a29fa74f2ef31b1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &7550779700103684274
 GameObject:
   m_ObjectHideFlags: 0
@@ -334,6 +338,7 @@ GameObject:
   - component: {fileID: 6746997070841278505}
   - component: {fileID: 1938365613725071903}
   - component: {fileID: 3941830286527071749}
+  - component: {fileID: 6647683439914513836}
   m_Layer: 0
   m_Name: Tresure Box
   m_TagString: Untagged
@@ -386,12 +391,36 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   explain: 
+  isActive: 0
+  isOpen: 0
+  isUse: 0
   itemDropPosition: {fileID: 4954659495443347940}
   lootingTable: {fileID: 0}
-  animation: {fileID: 6678414276768010161}
+  animator: {fileID: 4226126766324416242}
   openClip: {fileID: -4674560619913218200, guid: 3066d081fd4d2224499eccb64bfe3d43,
     type: 3}
   openSound: {fileID: 0}
+--- !u!65 &6647683439914513836
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7550779700103684274}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 8192
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.27965, y: 0.9282363, z: 0.7956649}
+  m_Center: {x: 0, y: 0.46382532, z: -0.00000008940697}
 --- !u!1 &8032933117906541755
 GameObject:
   m_ObjectHideFlags: 0

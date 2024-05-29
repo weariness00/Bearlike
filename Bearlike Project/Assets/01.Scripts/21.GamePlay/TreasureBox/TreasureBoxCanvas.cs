@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using TMPro;
+using UI;
 using UnityEngine;
 using UnityEngine.UI;
 using Util;
@@ -16,16 +17,19 @@ namespace GamePlay
 
         private readonly List<GameObject> _instanceBlockList = new List<GameObject>();
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             blockObject.SetActive(false);
             gameObject.SetActive(false);
         }
 
         public void InitConditionBlock(TreasureBox treasureBox)
         {
+            if(gameObject.activeSelf) return;
+            
             gameObject.SetActive(true);
-
+            
             foreach (var obj in _instanceBlockList)
                 Destroy(obj);
             
@@ -33,7 +37,7 @@ namespace GamePlay
             var treasureBoxData = TreasureBox.GetTreasureBoxData(treasureBox.id);
             foreach (var condition in treasureBoxData.OpenConditions)
             {
-                blockExplainText.text = condition.Explain;
+                blockExplainText.text = condition.GetExplain();
                 blockButton.onClick.AddListener(() =>
                 {
                     treasureBox.isUse = true;
@@ -45,6 +49,8 @@ namespace GamePlay
                 blockButton.onClick.RemoveAllListeners();
             }
             blockObject.SetActive(false);
+            
+            GameUIManager.AddActiveUI(gameObject);
         }
     }
 }

@@ -84,7 +84,7 @@ namespace Player
                             interact.InteractKeyDownAction?.Invoke(gameObject);
                         }
                         // 상호작용 키를 누르고 떗는지
-                        else if(_isInteractKeyPress)
+                        else if(!data.Interact && _isInteractKeyPress)
                         {
                             _isInteractKeyPress = false;
                             interact.InteractKeyUpAction?.Invoke(gameObject);

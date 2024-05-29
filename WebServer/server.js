@@ -5,6 +5,7 @@ import * as Item from './Item.js';
 import * as Monster from './Monster.js';
 import * as Stage from './Stage.js';
 import * as Weapon from './Weapon.js';
+import * as TreasureBox from './TreasureBox.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -26,3 +27,5 @@ Monster.MakeData(app);
 Stage.MakeData(app);
 
 Weapon.MakeData(app);
+
+TreasureBox.MakeData(app);

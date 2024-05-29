@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using GamePlay;
 using GamePlay.Stage;
 using Item;
 using Item.Looting;
@@ -177,6 +178,19 @@ namespace ProjectUpdate
                     GunBase.AddStatusData(statusJsonData.ID, statusJsonData);
                 }
                 LoadingManager.EndWait("총 정보 (Status) 불러오기 성공");
+            }, true, true);
+            
+            // Treasure Box 업데이트
+            TreasureBox.ClearTreasureBoxData();
+            WebRequestJson("TreasureBox", "TreasureBox", json =>
+            {
+                var data = JsonConvert.DeserializeObject<TreasureBoxJsonData[]>(json);
+                foreach (var treasureBoxJsonData in data)
+                {
+                    TreasureBox.AddTreasureBoxData(treasureBoxJsonData.ID, treasureBoxJsonData);
+                }
+                
+                LoadingManager.EndWait("보물 상자 정보 불러오기 성공");
             }, true, true);
             
             // Stage 업데이트
