@@ -990,8 +990,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1011999827}
-  - {fileID: 479312017}
   - {fileID: 3644331}
+  - {fileID: 479312017}
   - {fileID: 2107939355}
   - {fileID: 444458758}
   - {fileID: 2139681208}
@@ -1352,7 +1352,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.0184803, b: 1, a: 0.3882353}
+  m_Color: {r: 0.9811321, g: 0.24719413, b: 0.17956562, a: 0.3882353}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1865,7 +1865,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.030172348, b: 1, a: 0.49803922}
+  m_Color: {r: 0, g: 0.030172348, b: 1, a: 0.3137255}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2981,6 +2981,7 @@ GameObject:
   - component: {fileID: 901279270}
   - component: {fileID: 901279271}
   - component: {fileID: 901279272}
+  - component: {fileID: 901279273}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -3046,6 +3047,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &901279273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 901279269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ShowMaskGraphic: 1
 --- !u!1 &951226439
 GameObject:
   m_ObjectHideFlags: 0
@@ -3616,7 +3630,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.990566, g: 0.71488965, b: 0.71488965, a: 0.5176471}
+  m_Color: {r: 0.990566, g: 0.71488965, b: 0.71488965, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
