@@ -33,7 +33,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Sniper_Fire
+      name: Hunter_Sniper_Fire
       takeName: "\uC544\uB9C8\uD29C\uC5B4|Fire"
       internalID: 3517674759459233963
       firstFrame: 0
@@ -56,27 +56,13 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events:
-      - time: 0.33623892
-        functionName: BulletHide
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
-      - time: 0.47486848
-        functionName: BulletVisible
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
+      events: []
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Sniper_Modeling
+      name: Hunter_Sniper_Modeling
       takeName: "\uC544\uB9C8\uD29C\uC5B4|Modeling"
       internalID: 8888898270278308969
       firstFrame: 0
@@ -105,7 +91,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Sniper_Reload
+      name: Hunter_Sniper_Reload
       takeName: "\uC544\uB9C8\uD29C\uC5B4|Reload"
       internalID: 2836575029470524319
       firstFrame: 0
@@ -128,13 +114,27 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.2344883
+        functionName: BulletHide
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.39476597
+        functionName: BulletVisible
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Sniper_Reload_Magic
+      name: Hunter_Sniper_Reload_Magic
       takeName: "\uC544\uB9C8\uD29C\uC5B4|Reload_Magic"
       internalID: -944824829623363901
       firstFrame: 0

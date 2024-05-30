@@ -100,11 +100,11 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
-    - _EdgeDiffuse: 0
-    - _EdgeDistanceAttenuation: 0
-    - _EdgeRim: 1
-    - _EdgeShadowAttenuation: 0
-    - _EdgeSpecular: 0
+    - _EdgeDiffuse: 0.001
+    - _EdgeDistanceAttenuation: 0.001
+    - _EdgeRim: 0.001
+    - _EdgeShadowAttenuation: 1
+    - _EdgeSpecular: 0.001
     - _EnvironmentReflections: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.7
@@ -129,7 +129,7 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - _AmbientColor: {r: 0, g: 0, b: 0, a: 1}
+    - _AmbientColor: {r: 0, g: 0, b: 0, a: 0}
     - _BaseColor: {r: 0.9063317, g: 0, b: 0.06469537, a: 1}
     - _Color: {r: 0.9063317, g: 0, b: 0.06469534, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

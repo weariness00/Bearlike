@@ -4,33 +4,33 @@
     "PeerMode": 0,
     "LagCompensation": {
         "Enabled": false,
-        "HitboxBufferLengthInMs": 200,
-        "HitboxDefaultCapacity": 512,
-        "CachedStaticCollidersSize": 64
+        "HitboxBufferLengthInMs": 30,
+        "HitboxDefaultCapacity": 16,
+        "CachedStaticCollidersSize": 2
     },
-    "EnqueueIncompleteSynchronousSpawns": false,
+    "EnqueueIncompleteSynchronousSpawns": true,
     "InvokeRenderInBatchMode": true,
     "NetworkIdIsObjectName": false,
     "HideNetworkObjectInactivityGuard": false,
     "Simulation": {
         "InputDataWordCount": 0,
-        "ReplicationFeatures": 0,
+        "ReplicationFeatures": 1,
         "InputTransferMode": 0,
-        "PlayerCount": 10,
+        "PlayerCount": 3,
         "TickRateSelection": {
-            "Client": 64,
+            "Client": 128,
             "ServerIndex": 0,
-            "ClientSendIndex": 1,
-            "ServerSendIndex": 1
+            "ClientSendIndex": 0,
+            "ServerSendIndex": 0
         }
     },
     "Network": {
-        "ConnectionTimeout": 10.0,
-        "ConnectionShutdownTime": 1.0,
+        "ConnectionTimeout": 60.0,
+        "ConnectionShutdownTime": 60.0,
         "ReliableDataTransferModes": 3
     },
     "HostMigration": {
-        "EnableAutoUpdate": false,
+        "EnableAutoUpdate": true,
         "UpdateDelay": 10
     },
     "NetworkConditions": {
@@ -49,8 +49,8 @@
         "AdditionalLoss": 0.0
     },
     "Heap": {
-        "PageShift": 15,
-        "PageCount": 256,
+        "PageShift": 18,
+        "PageCount": 128,
         "GlobalsSize": 0
     },
     "AssembliesToWeave": [

@@ -1,7 +1,13 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using Data;
+using DG.Tweening;
 using Fusion;
+using Manager;
+using UI.Status;
 using Unity.Mathematics;
+using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
@@ -22,7 +28,7 @@ namespace Status
     /// <summary>
     /// 기본 능력치를 나타내는 Class
     /// </summary>
-    public class StatusBase : NetworkBehaviour
+    public class StatusBase : NetworkBehaviour, IJsonData<StatusJsonData>
     {
         #region Member Variable
 
@@ -32,13 +38,15 @@ namespace Status
         
         public StatusValue<int> hp = new StatusValue<int>(){Max = 99999};                  // 체력        
         public StatusValue<int> damage = new StatusValue<int>(){Max = 99999};  // 공격력
-        public float damageMultiple = 1; // 공격력 배율
-        public float criticalHitMultiple = 1; // 치명타 배율
+        public float damageMultiple = 1f; // 공격력 배율
         public StatusValue<float> criticalHitChance = new StatusValue<float>(){Max = 1, isOverMax = true}; // 치명타 확률 0~1 값 1 이상이 될수도 있다.
+        public float criticalHitMultiple = 1f; // 치명타 배율
         public StatusValue<int> defence = new StatusValue<int>(){Max = 99999};             // 방어력
         public StatusValue<float> avoid = new StatusValue<float>(){Min = 0, Max = 1, isOverMax = true, isOverMin = true};           // 회피율 0 ~ 1 사이값
+        public float avoidMultiple = 1f;
         public StatusValue<float> moveSpeed = new StatusValue<float>(){Max = 99999f};           // 이동 속도
         public StatusValue<float> attackSpeed = new StatusValue<float>(){Max = 99999f};     // 초당 공격 속도
+        public float attackSpeedMultiple = 1f;   // 공격 속도 배율
         [Networked] public TickTimer AttackLateTimer { get; set; }
         public StatusValue<float> attackRange = new StatusValue<float>(){Max = 99999f};
         
@@ -47,6 +55,8 @@ namespace Status
         public int burnDamage;
         public int poisonDamage;
 
+        public int knockBack = 0;    // 넉백 속성
+        
         public bool IsDie => hp.isMin;
         
         #endregion
@@ -71,7 +81,7 @@ namespace Status
         public void ClearAdditionalStatus() => _additionalStatusList.Clear();
         public void AddAdditionalStatus(StatusBase otherStatus) => _additionalStatusList.Add(otherStatus);
         public void RemoveAdditionalStatus(StatusBase otherStatus) => _additionalStatusList.Remove(otherStatus);
-
+    
         public virtual int CalDamage(int additionalDamage = 0, float additionalDamageMultiple = 0f, float additionalCriticalHitMultiple = 0f)
         {
             var d = AddAllDamage() + additionalDamage;
@@ -80,8 +90,16 @@ namespace Status
 
             return (int)Math.Round(chm * dm * d);
         }
+        
+        public virtual int CalAttackSpeed(int additionalAttackSpeed = 0, float additionalAttackSpeedMultiple = 0f)
+        {
+            var ats = AddAllAttackSpeed() + additionalAttackSpeed;
+            var atsm = AddAllAttackSpeedMultiple() + 1 + additionalAttackSpeedMultiple;
 
-        public float CalCriticalHit()
+            return (int)Math.Round(atsm * ats);
+        }
+
+        private float CalCriticalHit()
         {
             float chm = AddAllCriticalHitMultiple();
             float chc = AddAllCriticalHitChance();
@@ -135,6 +153,31 @@ namespace Status
 
             return chm;
         }
+
+        private float AddAllAttackSpeed()
+        {
+            var value = attackSpeed.Current;
+            foreach (var statusBase in _additionalStatusList)
+            {
+                value += statusBase.AddAllAttackSpeed();
+            }
+            return value;
+        }
+        
+        private float AddAllAttackSpeedMultiple()
+        {
+            float asm = attackSpeedMultiple - 1;
+            
+            // TODO : asm의 값을 체크해주는 방법 생각
+            if (asm < 0)
+                asm = 0;
+            foreach (var statusBase in _additionalStatusList)
+            {
+                asm += statusBase.AddAllAttackSpeedMultiple();
+            }
+
+            return asm;
+        }
         
         private float AddAllCriticalHitChance()
         {
@@ -146,6 +189,19 @@ namespace Status
             return chc;
         }
 
+        public int GetAllNuckBack()
+        {
+            int nb = knockBack;
+            foreach (var statusBase in _additionalStatusList)
+            {
+                var value = statusBase.GetAllNuckBack();
+                if (nb < value)
+                    nb = value;
+            }
+
+            return nb;
+        }
+
         public virtual void ApplyDamage(int applyDamage, NetworkId ownerId, CrowdControl cc)
         {
             if (hp.isMin)
@@ -155,6 +211,7 @@ namespace Status
 
             if (Random.Range(0f, 1f) < avoid.Current)
             {
+                DebugManager.Log($"{name} 회피 성공");
                 return;
             }
 
@@ -162,25 +219,49 @@ namespace Status
             {
                 AddCondition(cc); // Monster의 속성을 Player상태에 적용
 
-                var damageRate = 1f;
-
+                var damageRate = math.clamp(math.log10((applyDamage / (float)(defence * 2)) * 10), 0.0f, 1.0f);
+                
+                damageRate = 1f;
+                
                 if (ConditionWeakIsOn())
                 {
                     damageRate *= 1.5f;
                 }
 
-                hp.Current -= (int)(damageRate * applyDamage);
+                var realDamage = (int)(damageRate * applyDamage);
+                hp.Current -= realDamage;
+                DamageText(realDamage);
+                
+                DebugManager.Log(
+                    $"{gameObject.name}에게 {damageRate * applyDamage}만큼 데미지\n" +
+                    $"남은 hp : {hp.Current}");
             }
         }
 
-        // 상태이상 적용
-        public void ApplyCrowdControl()
+        public virtual void ApplyHeal(int applyHeal, NetworkId ownerId, CrowdControl cc = CrowdControl.Normality)
+        {
+            if (hp.isMax)
+                return;
+
+            hp.Current += applyHeal;
+            HealingText(applyHeal);
+            
+            DebugManager.Log(
+                $"{gameObject.name}에게 {applyHeal}만큼 체력 회복\n" +
+                $"남은 hp : {hp.Current}");
+        }
+
+        public void KnockBack()
         {
             
         }
+        
+        public virtual void DamageText(int realDamage){}
+        public virtual void HealingText(int realHealAmount) {}
 
         public virtual void ShowInfo()
         {
+            DebugManager.Log($"{gameObject.name} - 체력 : " +  hp.Current + $" 공격력 : " + damage.Current + $" 공격 속도 : " + attackSpeed.Current + $" 상태 : " + (CrowdControl)condition);    // condition이 2개 이상인 경우에는 어떻게 출력?
         }
 
         #endregion
@@ -320,10 +401,44 @@ namespace Status
         /// <param name="id">대미지를 준 대상의 Network ID</param>
         /// <param name="enemyProperty"></param>
         /// <param name="info"></param>
-        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void PlayerApplyDamage(int damage, NetworkId id, CrowdControl enemyProperty = CrowdControl.Normality, RpcInfo info = default)
+        {
+            URPRendererFeaturesManager.Instance.StartEffect("HitEffect");
+            ApplyDamageRPC(damage, id, enemyProperty);
+        }
+        
+        
+        [Rpc(RpcSources.All, RpcTargets.All, Channel = RpcChannel.Reliable)]
         public void ApplyDamageRPC(int damage, NetworkId id, CrowdControl enemyProperty = CrowdControl.Normality, RpcInfo info = default)
         {
             ApplyDamage(damage, id, enemyProperty);
+        }
+        
+        [Rpc(RpcSources.All, RpcTargets.All, Channel = RpcChannel.Reliable)]
+        public void ApplyHealRPC(int heal, NetworkId id, CrowdControl enemyProperty = CrowdControl.Normality, RpcInfo info = default)
+        {
+            ApplyHeal(heal, id, enemyProperty);
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All, Channel = RpcChannel.Reliable)]
+        public void KnockBackRPC(Vector3 direction, int amount)
+        {
+            KnockBack();
+                        
+            UnityEngine.AI.NavMeshAgent _enemynav = gameObject.GetComponent<UnityEngine.AI.NavMeshAgent>();
+            
+            if(_enemynav != null) _enemynav.enabled = false;
+
+            transform.DOMove(transform.position + direction * amount * 10, 0.5f)
+                .SetEase(Ease.OutCirc);
+                        
+            StartCoroutine(RestartNavAgentCorutine(_enemynav));
+        }
+        
+        IEnumerator RestartNavAgentCorutine(UnityEngine.AI.NavMeshAgent _nav)
+        {
+            yield return new WaitForSeconds(0.5f);
+            if(_nav != null) _nav.enabled = true;
         }
 
         #endregion
