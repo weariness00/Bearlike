@@ -189,6 +189,18 @@ Transform:
   - {fileID: 1798153318}
   m_Father: {fileID: 2885051411784432137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &228529695 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3040077180531720026, guid: b843c6f547b283847b736fb09f48e586,
+    type: 3}
+  m_PrefabInstance: {fileID: 655891457}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1186871027}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &485359499
 GameObject:
   m_ObjectHideFlags: 0
@@ -259,26 +271,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7630067077364074783}
     m_Modifications:
-    - target: {fileID: 997909651248560168, guid: b843c6f547b283847b736fb09f48e586,
-        type: 3}
-      propertyPath: Flags
-      value: 262145
-      objectReference: {fileID: 0}
-    - target: {fileID: 997909651248560168, guid: b843c6f547b283847b736fb09f48e586,
-        type: 3}
-      propertyPath: SortKey
-      value: 79247585
-      objectReference: {fileID: 0}
-    - target: {fileID: 997909651248560168, guid: b843c6f547b283847b736fb09f48e586,
-        type: 3}
-      propertyPath: NetworkedBehaviours.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 997909651248560168, guid: b843c6f547b283847b736fb09f48e586,
-        type: 3}
-      propertyPath: NetworkedBehaviours.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 1069901329509329927, guid: b843c6f547b283847b736fb09f48e586,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -329,30 +321,15 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2390488767103949301, guid: b843c6f547b283847b736fb09f48e586,
+    - target: {fileID: 3040077180531720026, guid: b843c6f547b283847b736fb09f48e586,
         type: 3}
       propertyPath: Flags
       value: 262145
       objectReference: {fileID: 0}
-    - target: {fileID: 2390488767103949301, guid: b843c6f547b283847b736fb09f48e586,
+    - target: {fileID: 3040077180531720026, guid: b843c6f547b283847b736fb09f48e586,
         type: 3}
       propertyPath: SortKey
-      value: 926326915
-      objectReference: {fileID: 0}
-    - target: {fileID: 2390488767103949301, guid: b843c6f547b283847b736fb09f48e586,
-        type: 3}
-      propertyPath: NetworkedBehaviours.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2390488767103949301, guid: b843c6f547b283847b736fb09f48e586,
-        type: 3}
-      propertyPath: NetworkedBehaviours.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3223609005498812431, guid: b843c6f547b283847b736fb09f48e586,
-        type: 3}
-      propertyPath: jumpPower
-      value: 2000
+      value: 776978741
       objectReference: {fileID: 0}
     - target: {fileID: 5740508828295799852, guid: b843c6f547b283847b736fb09f48e586,
         type: 3}
@@ -418,11 +395,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Child_Room_Shell
-      objectReference: {fileID: 0}
-    - target: {fileID: 9118053751648147273, guid: b843c6f547b283847b736fb09f48e586,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2795,6 +2767,7 @@ MonoBehaviour:
   ObjectInterest: 1
   Flags: 262145
   NestedObjects:
+  - {fileID: 228529695}
   - {fileID: 655891465}
   - {fileID: 655891464}
   - {fileID: 655891459}
