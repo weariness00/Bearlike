@@ -16,6 +16,8 @@ namespace Util
         }
         private static T _instance = null;
 
+        public static bool HasInstance() => _instance;
+
         protected virtual void Awake()
         {
             if (_instance != null)
