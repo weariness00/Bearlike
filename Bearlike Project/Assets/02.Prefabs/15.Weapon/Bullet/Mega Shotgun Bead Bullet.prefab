@@ -78,6 +78,21 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -2603254795101954670, guid: 3082942e7cd6985479d37f169a13a663,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 6a8aee203faa64d4c8e3212eebae86f5, type: 2}
+    - target: {fileID: -2603254795101954670, guid: 3082942e7cd6985479d37f169a13a663,
+        type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 20bc8c9feaff3bf49b31624c7f92b8aa, type: 2}
+    - target: {fileID: 822895457929123213, guid: 3082942e7cd6985479d37f169a13a663,
+        type: 3}
+      propertyPath: m_Layer
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 3082942e7cd6985479d37f169a13a663,
         type: 3}
       propertyPath: m_Name
@@ -97,7 +112,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 47abbac6a496e8a4096bf8d1a1d437c5, type: 2}
+      objectReference: {fileID: 2100000, guid: 57a07037c57ec5a4087b43d48cb5b069, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -162,7 +177,6 @@ MonoBehaviour:
     isMin: 1
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -171,6 +185,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 99999
@@ -187,6 +202,7 @@ MonoBehaviour:
     isOverMin: 1
     isMin: 1
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 99999
@@ -203,6 +219,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 99999
@@ -215,6 +232,7 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0
 --- !u!114 &7891119201918742999
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -230,13 +248,14 @@ MonoBehaviour:
   _IsAsyncClient: []
   _IsSpawnSuccess:
     _value: 0
-  ownerId:
+  _OwnerId:
+    Raw: 0
+  _OwnerGunId:
     Raw: 0
   status: {fileID: 0}
-  penetrateCount: 0
   destination: {x: 0, y: 0, z: 0}
-  hitEffect: {fileID: 0}
-  bknock: 0
+  penetrateCount: 0
+  _KnockBack: 0
 --- !u!65 &450886478733690220
 BoxCollider:
   m_ObjectHideFlags: 0
