@@ -122,7 +122,7 @@ Material:
     - _DstBlendAlpha: 0
     - _EdgeDiffuse: 0
     - _EdgeDistanceAttenuation: 0
-    - _EdgeRim: 0
+    - _EdgeRim: 1
     - _EdgeRimOffset: 0
     - _EdgeShadowAttenuation: 0
     - _EdgeSpecular: 0
@@ -140,11 +140,11 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _RimAmount: 0.25
-    - _RimStrength: 1
-    - _RimThreshold: 0
+    - _RimAmount: 0
+    - _RimStrength: 0
+    - _RimThreshold: 0.01
     - _SHADOWS_SOFT: 0
-    - _Smoothness: 0.4472136
+    - _Smoothness: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -154,7 +154,7 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - _AmbientColor: {r: 1, g: 1, b: 1, a: 1}
+    - _AmbientColor: {r: 0, g: 0, b: 0, a: 1}
     - _BaseColor: {r: 0.95468706, g: 0.5969513, b: 0.5969513, a: 1}
     - _Base_Color: {r: 0.9529412, g: 0.59607846, b: 0.59607846, a: 1}
     - _Color: {r: 0.95468706, g: 0.5969513, b: 0.5969513, a: 1}

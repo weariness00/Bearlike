@@ -79,11 +79,12 @@ MonoBehaviour:
       RenderQueueType: 0
       LayerMask:
         serializedVersion: 2
-        m_Bits: 1678080021
+        m_Bits: 1678080023
       PassNames: []
-    overrideMaterial: {fileID: 0}
+    overrideMaterial: {fileID: 2100000, guid: dcfab8c6f361b624e8717cec8c1de2ba, type: 2}
     overrideMaterialPassIndex: 0
-    overrideShader: {fileID: 0}
+    overrideShader: {fileID: -6465566751694194690, guid: 811462f4049011c42a0e8212dd78bb2b,
+      type: 3}
     overrideShaderPassIndex: 0
     overrideMode: 0
     overrideDepthState: 0
@@ -155,11 +156,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d613f08f173d4dd895bb07b3230baa9, type: 3}
   m_Name: URP Out Line Block
   m_EditorClassIdentifier: 
-  m_Active: 1
+  m_Active: 0
   passMaterial: {fileID: 2100000, guid: cfa9ada5731304045bfd9ceeeacd901e, type: 2}
   injectionPoint: 450
   requirements: 6
-  passIndex: 0
+  passIndex: 1
 --- !u!114 &-204685052934254283
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -226,11 +227,11 @@ MonoBehaviour:
   - {fileID: -750016054505805799}
   - {fileID: -7793712465561295658}
   - {fileID: 3206498586299177521}
-  - {fileID: 8489799012820474545}
   - {fileID: 3709480993334547765}
   - {fileID: 4317835149573838619}
   - {fileID: -7128864590172124411}
-  m_RendererFeatureMap: 19043654daf5a5cbba6b8f5f7906aaf8b67f7cb6edaf2d603591056107d028fd196857475f6897f5d664af30ce2bd793319a27b979c57f2cb15aa0a538d3d17535d5c44c4fb97a331b570b113108ec3b050beef26c2f119d
+  - {fileID: 6735815876756013893}
+  m_RendererFeatureMap: 19043654daf5a5cbba6b8f5f7906aaf8b67f7cb6edaf2d603591056107d028fd196857475f6897f5d664af30ce2bd793319a27b979c57f2c35d5c44c4fb97a331b570b113108ec3b050beef26c2f119d45837a1eda6c7a5d
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
@@ -256,10 +257,10 @@ MonoBehaviour:
   m_AssetVersion: 2
   m_OpaqueLayerMask:
     serializedVersion: 2
-    m_Bits: 1143307063
+    m_Bits: 1143307031
   m_TransparentLayerMask:
     serializedVersion: 2
-    m_Bits: 34
+    m_Bits: 2
   m_DefaultStencilState:
     overrideStencilState: 0
     stencilReference: 0
@@ -349,6 +350,23 @@ MonoBehaviour:
   injectionPoint: 600
   requirements: 4
   passIndex: 0
+--- !u!114 &6735815876756013893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d613f08f173d4dd895bb07b3230baa9, type: 3}
+  m_Name: FullScreenPassRendererFeature
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  passMaterial: {fileID: 2100000, guid: 37040dbaa1578a04dbb68ab0037a8b90, type: 2}
+  injectionPoint: 600
+  requirements: 4
+  passIndex: 0
 --- !u!114 &6930388837096783798
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -375,52 +393,10 @@ MonoBehaviour:
     overrideMaterialPassIndex: 0
     overrideShader: {fileID: 0}
     overrideShaderPassIndex: 0
-    overrideMode: 1
+    overrideMode: 0
     overrideDepthState: 0
-    depthCompareFunction: 4
-    enableWrite: 1
-    stencilSettings:
-      overrideStencilState: 0
-      stencilReference: 0
-      stencilCompareFunction: 8
-      passOperation: 0
-      failOperation: 0
-      zFailOperation: 0
-    cameraSettings:
-      overrideCamera: 0
-      restoreCamera: 1
-      offset: {x: 0, y: 0, z: 0, w: 0}
-      cameraFieldOfView: 60
---- !u!114 &8489799012820474545
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b3d386ba5cd94485973aee1479b272e, type: 3}
-  m_Name: RenderObjects
-  m_EditorClassIdentifier: 
-  m_Active: 1
-  settings:
-    passTag: RenderObjects
-    Event: 450
-    filterSettings:
-      RenderQueueType: 1
-      LayerMask:
-        serializedVersion: 2
-        m_Bits: 1678080789
-      PassNames: []
-    overrideMaterial: {fileID: 0}
-    overrideMaterialPassIndex: 0
-    overrideShader: {fileID: 0}
-    overrideShaderPassIndex: 0
-    overrideMode: 1
-    overrideDepthState: 0
-    depthCompareFunction: 4
-    enableWrite: 1
+    depthCompareFunction: 3
+    enableWrite: 0
     stencilSettings:
       overrideStencilState: 0
       stencilReference: 0
