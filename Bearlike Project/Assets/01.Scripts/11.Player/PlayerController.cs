@@ -247,9 +247,8 @@ namespace Player
             if(_uiKeyDownTimer.Expired(Runner) == false)
                 return;
 
-            if (data.StageSelect)
+            void UIActive(GameObject uiObj)
             {
-                var uiObj = _stageSelectUI.gameObject;
                 var isActive = uiObj.activeSelf;
                 GameUIManager.ActiveUIAllDisable();
                 if (!isActive)
@@ -258,33 +257,24 @@ namespace Player
                     GameUIManager.AddActiveUI(uiObj);
                 }
                 
-                _uiKeyDownTimer = TickTimer.CreateFromTicks(Runner, 2);
-            }
-                
-            if (data.ItemInventory)
-            {
-                var uiObj = itemInventory.canvas.gameObject;
-                var isActive = uiObj.activeSelf;
-                GameUIManager.ActiveUIAllDisable();
-                if (!isActive)
-                {
-                    uiObj.SetActive(true);
-                    GameUIManager.AddActiveUI(uiObj);
-                }
                 _uiKeyDownTimer = TickTimer.CreateFromTicks(Runner, 2);
             }
 
-            if (data.SkillInventory)
+            if (data.StageSelect)
             {
-                var uiObj = skillInventory.canvas.gameObject;
-                var isActive = uiObj.activeSelf;
-                GameUIManager.ActiveUIAllDisable();
-                if (!isActive)
-                {
-                    uiObj.SetActive(true);
-                    GameUIManager.AddActiveUI(uiObj);
-                }
-                _uiKeyDownTimer = TickTimer.CreateFromTicks(Runner, 2);
+                UIActive(_stageSelectUI.gameObject);
+            }
+            else if (data.ItemInventory)
+            {
+                UIActive(itemInventory.canvas.gameObject);
+            }
+            else if (data.SkillInventory)
+            {
+                UIActive(skillInventory.canvas.gameObject);
+            }
+            else if (data.SkillSelect)
+            {
+                UIActive(skillSelectUI.canvas.gameObject);
             }
         }
         

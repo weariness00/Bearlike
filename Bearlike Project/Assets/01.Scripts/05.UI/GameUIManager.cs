@@ -12,6 +12,7 @@ namespace UI
 
         private UniqueQueue<GameObject> _ActiveUIQueue;
         public static void AddActiveUI(GameObject uiObject) => Instance._ActiveUIQueue.Enqueue(uiObject);
+        public static bool HasActiveUI() => Instance._ActiveUIQueue.IsEmpty();
 
         #endregion
 
@@ -45,11 +46,14 @@ namespace UI
             {
                 if (_ActiveUIQueue.IsEmpty())
                 {
+                    Cursor.lockState = CursorLockMode.None;
                     settingCanvas.gameObject.SetActive(true);
                     _ActiveUIQueue.Enqueue(settingCanvas.gameObject);
                 }
                 else
                 {
+                    Cursor.lockState = CursorLockMode.Locked;
+
                     var queue = _ActiveUIQueue.Dequeue();
                     queue.SetActive(false);
                 }

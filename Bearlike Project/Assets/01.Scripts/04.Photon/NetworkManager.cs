@@ -10,6 +10,7 @@ using Fusion.Photon.Realtime;
 using Fusion.Sockets;
 using Loading;
 using Manager;
+using UI;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -316,24 +317,24 @@ namespace Photon
                 }
                 if (KeyManager.InputAction(KeyToAction.Esc))
                 {
-                    switch (Cursor.lockState)
-                    {
-                        case CursorLockMode.None:
-                            Cursor.lockState = CursorLockMode.Locked;
-                            isCursor = true;
-                            playerInputData.Escape = false;
-                            break;
-                        case CursorLockMode.Locked:
-                            Cursor.lockState = CursorLockMode.None;
-                            isCursor = false;
-                            playerInputData.Escape = true;
-                            break;
-                    }
+                    playerInputData.Escape = true;
+
+                    // switch (Cursor.lockState)
+                    // {
+                    //     case CursorLockMode.None:
+                    //         if(GameUIManager.HasInstance() && GameUIManager.HasActiveUI() == false) isCursor = true;
+                    //         playerInputData.Escape = false;
+                    //         break;
+                    //     case CursorLockMode.Locked:
+                    //         Cursor.lockState = CursorLockMode.None;
+                    //         isCursor = false;
+                    //         break;
+                    // }
                     
                     _keyDownTimer = TickTimer.CreateFromTicks(runner, 2);
                 }
             }
-            if (isCursor)
+            if (Cursor.lockState == CursorLockMode.None)
             {
                 playerInputData.Cursor = trueValue;
                 input.Set(playerInputData);
@@ -380,6 +381,8 @@ namespace Photon
                 playerInputData.ItemInventory = trueValue;
             if (KeyManager.InputActionDown(KeyToAction.SkillInventory))
                 playerInputData.SkillInventory = trueValue;
+            if (KeyManager.InputActionDown(KeyToAction.SkillSelect))
+                playerInputData.SkillSelect = trueValue;
             if (KeyManager.InputAction(KeyToAction.Interact) || KeyManager.InputActionDown(KeyToAction.Interact))
                 playerInputData.Interact = trueValue;
             
