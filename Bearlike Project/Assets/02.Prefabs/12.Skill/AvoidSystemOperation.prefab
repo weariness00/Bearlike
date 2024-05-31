@@ -54,7 +54,7 @@ MonoBehaviour:
   skillName: 
   explain: 
   type: 0
-  icon: {fileID: 21300000, guid: bcf868b05e666a04eacf9e2fb5f05ed0, type: 3}
+  icon: {fileID: 21300000, guid: eb2fb1bb791370648ac42b61dc636dae, type: 3}
   coolTime: 0
   isInvoke: 0
   status: {fileID: 0}
@@ -66,8 +66,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
-  playerStatus: {fileID: 0}
-  duration: 10
+  effectVFX: {fileID: 0}
 --- !u!114 &7087066790294729455
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97,7 +96,6 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -106,6 +104,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 99999
@@ -122,6 +121,7 @@ MonoBehaviour:
     isOverMin: 1
     isMin: 0
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 99999
@@ -138,6 +138,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 99999
@@ -150,6 +151,7 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0
 --- !u!114 &-7539734144509090585
 MonoBehaviour:
   m_ObjectHideFlags: 0

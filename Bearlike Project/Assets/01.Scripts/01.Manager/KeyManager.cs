@@ -21,6 +21,7 @@ namespace Manager
         StageSelect,
         ItemInventory,
         SkillInventory,
+        SkillSelect,
         Interact,
         
         Attack,

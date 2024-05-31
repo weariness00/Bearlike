@@ -40,7 +40,7 @@ namespace Player.Container
 
         void SkillInit()
         {
-            FlippingCoin = skillSystem.GetSkillFromName("KnockbackShot");
+            FlippingCoin = skillSystem.GetSkillFromName("FlippingCoin");
             tmpSkill = skillSystem.GetSkillFromName("SniperContinuousMode");
             ultimateSkill = skillSystem.GetSkillFromName("Clean Shoot");
 

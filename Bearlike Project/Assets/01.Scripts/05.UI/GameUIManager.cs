@@ -12,10 +12,12 @@ namespace UI
 
         private UniqueQueue<GameObject> _ActiveUIQueue;
         public static void AddActiveUI(GameObject uiObject) => Instance._ActiveUIQueue.Enqueue(uiObject);
+        public static bool HasActiveUI() => Instance._ActiveUIQueue.IsEmpty();
 
         #endregion
 
         public Canvas settingCanvas;
+        [SerializeField] private GameObject parentObject;
         public Button goLobbyButton;
         public Button quitGameButton;
 
@@ -36,7 +38,7 @@ namespace UI
 #else
             quitGameButton.onClick.AddListener(Application.Quit);
 #endif
-            settingCanvas.gameObject.SetActive(false);
+            parentObject.SetActive(false);
         }
 
         public void Update()
@@ -45,11 +47,14 @@ namespace UI
             {
                 if (_ActiveUIQueue.IsEmpty())
                 {
-                    settingCanvas.gameObject.SetActive(true);
-                    _ActiveUIQueue.Enqueue(settingCanvas.gameObject);
+                    Cursor.lockState = CursorLockMode.None;
+                    parentObject.SetActive(true);
+                    _ActiveUIQueue.Enqueue(parentObject);
                 }
                 else
                 {
+                    Cursor.lockState = CursorLockMode.Locked;
+
                     var queue = _ActiveUIQueue.Dequeue();
                     queue.SetActive(false);
                 }

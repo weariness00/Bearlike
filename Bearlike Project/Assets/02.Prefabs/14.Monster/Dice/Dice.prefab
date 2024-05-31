@@ -196,7 +196,6 @@ MonoBehaviour:
     isMin: 1
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -205,6 +204,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 99999
@@ -221,6 +221,7 @@ MonoBehaviour:
     isOverMin: 1
     isMin: 1
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 99999
@@ -237,6 +238,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 99999
@@ -249,6 +251,7 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0
 --- !u!95 &2786087794774556420
 Animator:
   serializedVersion: 5
@@ -363,6 +366,7 @@ MonoBehaviour:
   status: {fileID: 0}
   lootingTable: {fileID: 0}
   pivot: {fileID: 0}
+  navMeshAgent: {fileID: 0}
   id: 0
   explain: 
   type: 
@@ -402,7 +406,6 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -411,6 +414,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 0
@@ -427,6 +431,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 1
     _max: 1
@@ -443,6 +448,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 0
@@ -455,6 +461,8 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0
+  monsterBase: {fileID: 0}
 --- !u!114 &6314795265027266568
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -598,8 +606,8 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -3733038172860952831, guid: 06b73b76c5896db4b9c9fffc851e2576, type: 3}
-  - {fileID: 1592301611325306912, guid: 06b73b76c5896db4b9c9fffc851e2576, type: 3}
+  - {fileID: 2100000, guid: 5844b73842983f845924c72e5b5daf7c, type: 2}
+  - {fileID: 2100000, guid: 845499d31a2af454ca5dc358b7297578, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

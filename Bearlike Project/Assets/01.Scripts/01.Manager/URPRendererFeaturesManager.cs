@@ -9,6 +9,7 @@ namespace Manager
 {
     public class URPRendererFeaturesManager : Singleton<URPRendererFeaturesManager>
     {
+        [SerializeField] private UniversalRendererData rendererPipline;
         private Dictionary<string, FullScreenPassRendererFeature> _rendererFeaturesEffectDictionary = new Dictionary<string, FullScreenPassRendererFeature>();
         [SerializeField] private List<string> _rendererFeaturesEffectNames = new List<string>();
         
@@ -25,7 +26,9 @@ namespace Manager
 
             if (featuresField != null)
             {
-                var features = featuresField.GetValue(renderer) as List<ScriptableRendererFeature>;
+                
+                // var features = featuresField.GetValue(rendererPipline) as List<ScriptableRendererFeature>;
+                var features = rendererPipline.rendererFeatures;
                 if (features != null)
                 {
                     foreach (var feature in features)
