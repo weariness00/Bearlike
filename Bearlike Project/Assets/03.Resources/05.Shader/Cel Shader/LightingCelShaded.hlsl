@@ -1,6 +1,12 @@
 ﻿#ifndef LIGHTING_CEL_SHADED_INCLUDED
 #define LIGHTING_CEL_SHADED_INCLUDED
 
+#pragma multi_compile _MAIN_LIGHT_SHADOWS
+#pragma multi_compile _MAIN_LIGHT_SHADOWS_CASCADE
+#pragma multi_compile _SHADOWS_SOFT
+#pragma multi_compile _ADDITIONAL_LIGHTS
+#pragma multi_compile _ADDITIONAL_LIGHT_SHADOWS
+
 #ifndef SHADERGRAPH_PREVIEW
 struct EdgeConstants
 {
