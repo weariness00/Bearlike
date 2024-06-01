@@ -35,7 +35,7 @@ namespace GamePlay
                 PlayerController pc;
                 if (other.TryGetComponent(out pc) || other.transform.parent.TryGetComponent(out pc))
                 {
-                    pc.simpleKcc.Move(default, Vector3.up * jumpPower);
+                    pc.simpleKcc.Move(default, jumpPower * 100f * Vector3.up);
                 }
             }
             else
@@ -57,7 +57,7 @@ namespace GamePlay
                         dir = dir.normalized;
                     }
 
-                    var force = jumpPower * monster.rigidbody.mass * Vector3.up  + dir * jumpDirectionPower;
+                    var force = jumpPower * 100f * monster.rigidbody.mass * Vector3.up  + dir * jumpDirectionPower;
                     monster.rigidbody.AddForce(force);
                     return;
                 }

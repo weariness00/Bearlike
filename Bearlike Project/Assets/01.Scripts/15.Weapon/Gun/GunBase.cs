@@ -9,6 +9,7 @@ using Player;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.VFX;
+using Util;
 using Weapon.Bullet;
 
 namespace Weapon.Gun
@@ -35,6 +36,7 @@ namespace Weapon.Gun
         #endregion
         
         private Camera _camera;
+        private MeshRenderer _meshRenderer;
 
         [Header("총 정보")] 
         public int id;
@@ -43,7 +45,7 @@ namespace Weapon.Gun
         [Header("총 이펙트")] 
         public VisualEffect shootEffect; // 발사 이펙트
         public VisualEffect shotsmoke;      // 총구 연기
-        public Material shotOverHeating;    // 총열 과열
+        [SerializeField] private MaterialPropertyBlockExtension shotOverHeatingPropertyBlock;
         public NetworkPrefabRef hitEffectPrefab;
         
         [Header("사운드")]
@@ -80,7 +82,7 @@ namespace Weapon.Gun
         public override void Awake()
         {
             base.Awake();
-            
+
             // Json Data 가져오기
             SetJsonData(GetInfoData(id));
             var statusData = GetStatusData(id);
@@ -245,7 +247,8 @@ namespace Weapon.Gun
 
         private void SetVFX(GameObject gameObject)
         {
-            shotOverHeating.SetFloat(Value, 0.0f);
+            shotOverHeatingPropertyBlock.Block.SetFloat(Value, 0.0f);
+            shotOverHeatingPropertyBlock.SetBlock();
             // shotsmoke.gameObject.SetActive(false);
             
             DebugManager.ToDo("Muzzle Layer 설정 변경해야함");
@@ -272,7 +275,9 @@ namespace Weapon.Gun
             {
                 elapsedTime += Time.deltaTime;
                 value = Mathf.Lerp(0, 0.8f, elapsedTime / duration);
-                shotOverHeating.SetFloat(Value, value);
+                shotOverHeatingPropertyBlock.Block.SetFloat(Value, value);
+                shotOverHeatingPropertyBlock.SetBlock();
+                // shotOverHeating.SetFloat(Value, value);
                 yield return null;
             }
         
@@ -280,7 +285,9 @@ namespace Weapon.Gun
             {
                 elapsedTime -= Time.deltaTime;
                 value = Mathf.Lerp(0, 0.8f, elapsedTime / duration);
-                shotOverHeating.SetFloat(Value, value);
+                shotOverHeatingPropertyBlock.Block.SetFloat(Value, value);
+                shotOverHeatingPropertyBlock.SetBlock();
+                // shotOverHeating.SetFloat(Value, value);
                 yield return null;
             }
             // if(shotOverHeating != null)

@@ -461,6 +461,7 @@ GameObject:
   - component: {fileID: 4088133847983671152}
   - component: {fileID: 304262703137092177}
   - component: {fileID: 1115696106776451374}
+  - component: {fileID: 1014441373764548724}
   m_Layer: 0
   m_Name: MegaShotgun_Animation
   m_TagString: Untagged
@@ -528,6 +529,20 @@ MonoBehaviour:
     type: 3}
   reloadEndClip: {fileID: -8275408507710269598, guid: 0466371a07b79c24a8d0e403016174e5,
     type: 3}
+--- !u!114 &1014441373764548724
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3742536094133067210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4d437f99e9dd8044b1aab8f4e671568, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  renderer: {fileID: 6412772750012387843}
+  material: {fileID: 2100000, guid: fd35e4291c9720545818dad5cf4b0cd5, type: 2}
 --- !u!1 &4074112475266530763
 GameObject:
   m_ObjectHideFlags: 0
@@ -804,7 +819,7 @@ MonoBehaviour:
   explain: 
   shootEffect: {fileID: 7520474472476782691}
   shotsmoke: {fileID: 0}
-  shotOverHeating: {fileID: 2100000, guid: fd35e4291c9720545818dad5cf4b0cd5, type: 2}
+  shotOverHeatingPropertyBlock: {fileID: 1014441373764548724}
   hitEffectPrefab:
     RawGuidValue: 8ec31fcb5aff43949af9992aeb7147e6
   shootSound: {fileID: 7320537936138231556}

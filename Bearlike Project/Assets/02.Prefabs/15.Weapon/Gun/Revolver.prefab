@@ -420,7 +420,7 @@ MonoBehaviour:
   explain: 
   shootEffect: {fileID: 6398042660322630052}
   shotsmoke: {fileID: 0}
-  shotOverHeating: {fileID: 2100000, guid: 6d9473d7960e7de4bab4709a5c99c493, type: 2}
+  shotOverHeatingPropertyBlock: {fileID: 6225581246960943490}
   hitEffectPrefab:
     RawGuidValue: 8ec31fcb5aff43949af9992aeb7147e6
   shootSound: {fileID: 8007958893475479431}
@@ -533,6 +533,7 @@ GameObject:
   - component: {fileID: 1248532960851937333}
   - component: {fileID: 6614411342460793615}
   - component: {fileID: 2780017416090225427}
+  - component: {fileID: 6225581246960943490}
   m_Layer: 0
   m_Name: Revolver_Animation
   m_TagString: Untagged
@@ -597,6 +598,20 @@ MonoBehaviour:
     type: 3}
   reloadClip: {fileID: 2836575029470524319, guid: 261410ee6e6445f429ceafebe2a3d64d,
     type: 3}
+--- !u!114 &6225581246960943490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1880392140941562511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4d437f99e9dd8044b1aab8f4e671568, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  renderer: {fileID: 1454768812003796612}
+  material: {fileID: 2100000, guid: 6d9473d7960e7de4bab4709a5c99c493, type: 2}
 --- !u!1 &2207564883125672405
 GameObject:
   m_ObjectHideFlags: 0

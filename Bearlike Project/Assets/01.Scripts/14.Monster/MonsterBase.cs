@@ -182,6 +182,10 @@ namespace Monster
             var dis = 0f;
             if (NavMesh.CalculatePath(transform.position, targetPosition, NavMesh.AllAreas, path))
             {
+                // Target이 NavMesh가 없는 곳에 있을때는 직선거리로 판단한다.
+                if (path.corners.Length == 0)
+                    dis = StraightDistanceFromTarget(targetPosition);
+                
                 for (int i = 0; i < path.corners.Length - 1; i++)
                 {
                     dis += Vector3.Distance(path.corners[i], path.corners[i + 1]);
