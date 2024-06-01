@@ -67,7 +67,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -7142254355124643169, guid: 6d736c84dcaadfb4bb5e732797191bce, type: 3}
+  - {fileID: 2100000, guid: b60592c2b66dd064880117f1cd6d5bfe, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -191,11 +191,11 @@ MonoBehaviour:
     _value: 0
   _OwnerId:
     Raw: 0
-  status: {fileID: 0}
-  penetrateCount: 0
-  destination: {x: 0, y: 0, z: 0}
-  _HitEffectId:
+  _OwnerGunId:
     Raw: 0
+  status: {fileID: 0}
+  destination: {x: 0, y: 0, z: 0}
+  penetrateCount: 0
   _KnockBack: 0
 --- !u!65 &1786848380861622294
 BoxCollider:

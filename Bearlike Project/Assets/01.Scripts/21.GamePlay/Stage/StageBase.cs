@@ -219,10 +219,19 @@ namespace GamePlay.Stage
         {
             var childEventSystem = stageGameObject.GetComponentInChildren<EventSystem>();
             var childCamera = stageGameObject.GetComponentInChildren<Camera>();
+            var lihgts = stageGameObject.GetComponentsInChildren<Light>();
             if (childEventSystem != null)
                 Destroy(childEventSystem.gameObject);
             if (childCamera != null)
                 Destroy(childCamera.gameObject);
+            foreach (var lihgt in lihgts)
+            {
+                if (lihgt.type == LightType.Directional)//  
+                {
+                    Destroy(lihgt.gameObject);
+                    break;
+                }
+            }
 
             var pos = new Vector3(0,(FindObjectsOfType<StageBase>().Length - 1) * 100,0);
             transform.position = pos;

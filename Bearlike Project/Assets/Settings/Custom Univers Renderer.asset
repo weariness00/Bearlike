@@ -42,23 +42,6 @@ MonoBehaviour:
       restoreCamera: 1
       offset: {x: 0, y: 0, z: 0, w: 0}
       cameraFieldOfView: 60
---- !u!114 &-7128864590172124411
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d613f08f173d4dd895bb07b3230baa9, type: 3}
-  m_Name: HitEffect
-  m_EditorClassIdentifier: 
-  m_Active: 0
-  passMaterial: {fileID: 2100000, guid: 95a0b7a265cce3e4d99134f0f73cd90b, type: 2}
-  injectionPoint: 600
-  requirements: 4
-  passIndex: 0
 --- !u!114 &-3772338794788420583
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,23 +127,6 @@ MonoBehaviour:
       restoreCamera: 1
       offset: {x: 0, y: 0, z: 0, w: 0}
       cameraFieldOfView: 60
---- !u!114 &-528602887898567750
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d613f08f173d4dd895bb07b3230baa9, type: 3}
-  m_Name: URP Out Line Block
-  m_EditorClassIdentifier: 
-  m_Active: 0
-  passMaterial: {fileID: 2100000, guid: cfa9ada5731304045bfd9ceeeacd901e, type: 2}
-  injectionPoint: 450
-  requirements: 6
-  passIndex: 1
 --- !u!114 &-204685052934254283
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -221,17 +187,13 @@ MonoBehaviour:
     hdrDebugViewPS: {fileID: 4800000, guid: 573620ae32aec764abd4d728906d2587, type: 3}
   m_RendererFeatures:
   - {fileID: -3772338794788420583}
-  - {fileID: -528602887898567750}
   - {fileID: 6930388837096783798}
   - {fileID: -204685052934254283}
   - {fileID: -750016054505805799}
   - {fileID: -7793712465561295658}
   - {fileID: 3206498586299177521}
-  - {fileID: 3709480993334547765}
-  - {fileID: 4317835149573838619}
-  - {fileID: -7128864590172124411}
   - {fileID: 6735815876756013893}
-  m_RendererFeatureMap: 19043654daf5a5cbba6b8f5f7906aaf8b67f7cb6edaf2d603591056107d028fd196857475f6897f5d664af30ce2bd793319a27b979c57f2c35d5c44c4fb97a331b570b113108ec3b050beef26c2f119d45837a1eda6c7a5d
+  m_RendererFeatureMap: 19043654daf5a5cbb67f7cb6edaf2d603591056107d028fd196857475f6897f5d664af30ce2bd793319a27b979c57f2c45837a1eda6c7a5d
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
@@ -316,40 +278,6 @@ MonoBehaviour:
       restoreCamera: 1
       offset: {x: 0, y: 0, z: 0, w: 0}
       cameraFieldOfView: 60
---- !u!114 &3709480993334547765
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d613f08f173d4dd895bb07b3230baa9, type: 3}
-  m_Name: FireEffect
-  m_EditorClassIdentifier: 
-  m_Active: 0
-  passMaterial: {fileID: 2100000, guid: 698815bde597ead4eb0d2b126670c6df, type: 2}
-  injectionPoint: 600
-  requirements: 4
-  passIndex: 0
---- !u!114 &4317835149573838619
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d613f08f173d4dd895bb07b3230baa9, type: 3}
-  m_Name: SieldEffect
-  m_EditorClassIdentifier: 
-  m_Active: 0
-  passMaterial: {fileID: 2100000, guid: 2e00e13f5ca34bf48b0ed2890d54ea6a, type: 2}
-  injectionPoint: 600
-  requirements: 4
-  passIndex: 0
 --- !u!114 &6735815876756013893
 MonoBehaviour:
   m_ObjectHideFlags: 0

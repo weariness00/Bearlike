@@ -17,6 +17,7 @@ namespace UI
         #endregion
 
         public Canvas settingCanvas;
+        [SerializeField] private GameObject parentObject;
         public Button goLobbyButton;
         public Button quitGameButton;
 
@@ -37,7 +38,7 @@ namespace UI
 #else
             quitGameButton.onClick.AddListener(Application.Quit);
 #endif
-            settingCanvas.gameObject.SetActive(false);
+            parentObject.SetActive(false);
         }
 
         public void Update()
@@ -47,8 +48,8 @@ namespace UI
                 if (_ActiveUIQueue.IsEmpty())
                 {
                     Cursor.lockState = CursorLockMode.None;
-                    settingCanvas.gameObject.SetActive(true);
-                    _ActiveUIQueue.Enqueue(settingCanvas.gameObject);
+                    parentObject.SetActive(true);
+                    _ActiveUIQueue.Enqueue(parentObject);
                 }
                 else
                 {
