@@ -13,6 +13,8 @@ namespace UI.Weapon
         public Camera mainCamera;
         public Light mainLight;
 
+        public GameObject[] weapons;
+
         void Start()
         {
             mainCamera.gameObject.SetActive(false);
@@ -35,6 +37,17 @@ namespace UI.Weapon
                     player.cameraController.TargetCameraAddOverlay(3, overlayCamera);
                     break;
                 }
+            }
+        }
+
+        public void ChangeWeapon(int type)
+        {
+            for (int i = 0; i < 3; ++i)
+            {
+                if(i == type)
+                    weapons[i].SetActive(true);
+                else
+                    weapons[i].SetActive(false);
             }
         }
     }

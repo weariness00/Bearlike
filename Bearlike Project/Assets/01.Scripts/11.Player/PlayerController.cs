@@ -11,6 +11,7 @@ using Status;
 using UI;
 using UI.Skill;
 using UI.Status;
+using UI.Weapon;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
@@ -356,9 +357,32 @@ namespace Player
 
             if (HasInputAuthority)
             {
-                if (data.ChangeWeapon0) ChangeWeaponRPC(0);
-                else if (data.ChangeWeapon1) ChangeWeaponRPC(1);
-                else if (data.ChangeWeapon2) ChangeWeaponRPC(2);
+                var overlayCameraSetups = FindObjectsOfType<OverlayCameraSetup>();
+                
+                if (data.ChangeWeapon0)
+                {
+                    foreach (var overlayCameraSetup in overlayCameraSetups)
+                    {
+                        overlayCameraSetup.ChangeWeapon(0);
+                    }
+                    ChangeWeaponRPC(0);
+                }
+                else if (data.ChangeWeapon1)
+                {
+                    foreach (var overlayCameraSetup in overlayCameraSetups)
+                    {
+                        overlayCameraSetup.ChangeWeapon(1);
+                    }
+                    ChangeWeaponRPC(1);
+                }
+                else if (data.ChangeWeapon2)
+                {
+                    foreach (var overlayCameraSetup in overlayCameraSetups)
+                    {
+                        overlayCameraSetup.ChangeWeapon(2);
+                    }
+                    ChangeWeaponRPC(2);
+                }
             }
             
 
