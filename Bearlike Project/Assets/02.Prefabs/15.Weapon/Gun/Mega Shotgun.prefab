@@ -535,7 +535,7 @@ MonoBehaviour:
   fireLateSecond: 0
   reloadLateSecond: 0
   fireTransform: {fileID: 7545871670962195290}
-  animatorInfo: {fileID: 0}
+  animatorInfo: {fileID: 2028941841022532551}
   bulletRadian: 3
 --- !u!114 &354496408801352614
 MonoBehaviour:
@@ -829,7 +829,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0466371a07b79c24a8d0e403016174e5,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2757095714226185171}
+      addedObject: {fileID: 2028941841022532551}
   m_SourcePrefab: {fileID: 100100000, guid: 0466371a07b79c24a8d0e403016174e5, type: 3}
 --- !u!1 &1719167956842247718 stripped
 GameObject:
@@ -858,7 +858,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2757095714226185171
+--- !u!114 &2028941841022532551
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -867,13 +867,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 1719167956842247718}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 994be4d41ef191148bcb5d00c163e708, type: 3}
+  m_Script: {fileID: 11500000, guid: 8f61f01a5ee04ef5889aa2b2c6309fba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hideBulletObject: {fileID: 0}
+  animator: {fileID: 0}
+  hideBulletObject: {fileID: 3751625859226181269}
+  reloadStartClip: {fileID: 807892290872512025, guid: 0466371a07b79c24a8d0e403016174e5,
+    type: 3}
+  reloadRunningClip: {fileID: -4438317979281157655, guid: 0466371a07b79c24a8d0e403016174e5,
+    type: 3}
+  reloadEndClip: {fileID: -8275408507710269598, guid: 0466371a07b79c24a8d0e403016174e5,
+    type: 3}
 --- !u!4 &2058257770089589916 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 0466371a07b79c24a8d0e403016174e5,
+    type: 3}
+  m_PrefabInstance: {fileID: 1953119627833625463}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &3751625859226181269 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -5833661098405571102, guid: 0466371a07b79c24a8d0e403016174e5,
     type: 3}
   m_PrefabInstance: {fileID: 1953119627833625463}
   m_PrefabAsset: {fileID: 0}
