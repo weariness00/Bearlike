@@ -70,13 +70,13 @@ namespace UI.Inventory
             DebugManager.Log($"[{name}] Inventory에 {item.name}을 추가");
         }
 
-        public virtual void UseItem(Item item)
+        public virtual void UseItem(Item useItem)
         {
-            if (itemHashSet.TryGetValue(item, out var hashItem))
+            if (itemHashSet.TryGetValue(useItem, out var hashItem))
             {
-                if (item.TryGetComponent(out IInventoryItemUse itemInterface))
+                if (hashItem.TryGetComponent(out IInventoryItemUse itemInterface))
                 {
-                    itemInterface.UseItem(hashItem, out var isDestroy);
+                    itemInterface.UseItem(useItem, out var isDestroy);
                     DebugManager.Log($"[{name}] Inventory에 {hashItem.name}을 사용");
                     var handle = uiHandleDictionary[hashItem];
                     if (handle.TryGetComponent(out IInventoryUIUpdate handleUpdateInterface))

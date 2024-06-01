@@ -29,6 +29,27 @@ namespace Item.Container
         }
 
         #endregion
+
+        #region Inventory Interface
+
+        public override ItemBase UseItem<UseItem>(UseItem useItem, out bool isDestroy)
+        {
+            isDestroy = false;
+            if (useItem is ItemBase item)
+            {
+                Amount.Current -= item.Amount.Current;
+
+                if (Amount.isMin)
+                {
+                    Destroy(gameObject);
+                    isDestroy = true;
+                }
+            }
+
+            return this;
+        }
+
+        #endregion
     }
 }
 

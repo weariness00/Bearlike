@@ -1,4 +1,6 @@
-﻿namespace UI.Inventory
+﻿using Item;
+
+namespace UI.Inventory
 {
     public interface IInventoryItemAdd
     {
@@ -11,7 +13,7 @@
 
     public interface IInventoryItemUse
     {
-        public UseItem UseItem<UseItem>(UseItem useItem, out bool isDestroy);
+        public ItemBase UseItem<UseItem>(UseItem useItem, out bool isDestroy);
     }
 
     public interface IInventoryUIUpdate

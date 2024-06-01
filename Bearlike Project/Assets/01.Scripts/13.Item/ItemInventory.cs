@@ -11,6 +11,13 @@ namespace Item
             var targetItem = itemHashSet.FirstOrDefault(item => item.Id == itemId);
             return targetItem != null;
         }
+
+        public bool TryGetItem(int itemId, out ItemBase item)
+        {
+            var targetItem = itemHashSet.FirstOrDefault(item => item.Id == itemId);
+            item = targetItem;
+            return targetItem != null;
+        }
         
         #region Rpc Function
 
