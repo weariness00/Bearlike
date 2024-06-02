@@ -333,7 +333,7 @@ namespace Player
 
             var dirY = simpleKcc.RealVelocity.y;
             if ( 0 < dirY && dirY < 0.2f)
-                jumpImpulse = -Vector3.up * 100f;
+                jumpImpulse = -Vector3.up * 100f;   
             simpleKcc.Move(dir, jumpImpulse);
         }
 
