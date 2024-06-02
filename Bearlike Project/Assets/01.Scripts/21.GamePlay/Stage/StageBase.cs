@@ -234,7 +234,7 @@ namespace GamePlay.Stage
                 }
             }
 
-            var pos = new Vector3(0,(FindObjectsOfType<StageBase>().Length - 1) * 100,0);
+            var pos = new Vector3(0,0,(FindObjectsOfType<StageBase>().Length - 1) * 100);
             transform.position = pos;
             stageGameObject.transform.position = pos;
             
