@@ -125,6 +125,9 @@ namespace Weapon.Gun
             };
             FireLateTimer = TickTimer.CreateFromSeconds(Runner, 0);
             ReloadLateTimer = TickTimer.CreateFromSeconds(Runner, 0);
+            
+            if(HasInputAuthority)
+                shootEffect.gameObject.layer = LayerMask.NameToLayer("Weapon");
             OverHeatCal();
         }
 
