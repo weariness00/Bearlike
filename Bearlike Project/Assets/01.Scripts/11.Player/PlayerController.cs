@@ -289,7 +289,7 @@ namespace Player
             }
             
             Vector3 dir = Vector3.zero;
-            Vector3 jumpImpulse = default;
+            Vector3 jumpImpulse = Vector3.zero;
             bool isMoveX = false, isMoveY = false;
             if (data.MoveFront)
             {
@@ -331,6 +331,9 @@ namespace Player
                 }
             }
 
+            var dirY = simpleKcc.RealVelocity.y;
+            if ( 0 < dirY && dirY < 0.2f)
+                jumpImpulse = -Vector3.up * 100f;
             simpleKcc.Move(dir, jumpImpulse);
         }
 
