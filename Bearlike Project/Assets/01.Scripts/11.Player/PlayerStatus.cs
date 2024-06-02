@@ -177,6 +177,7 @@ namespace Player
                     return;
                 }
                 
+                // 여기서 
                 experience.Current -= experience.Max;
                 experience.Max = (int)(1.5f * experience.Max);
                 LevelUpRPC();

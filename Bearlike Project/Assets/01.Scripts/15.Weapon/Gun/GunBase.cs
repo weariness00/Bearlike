@@ -125,6 +125,7 @@ namespace Weapon.Gun
             };
             FireLateTimer = TickTimer.CreateFromSeconds(Runner, 0);
             ReloadLateTimer = TickTimer.CreateFromSeconds(Runner, 0);
+            OverHeatCal();
         }
 
         #endregion
