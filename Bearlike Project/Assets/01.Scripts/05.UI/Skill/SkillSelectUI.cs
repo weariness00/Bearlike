@@ -106,8 +106,7 @@ namespace UI.Skill
             var handle = activeToggle.GetComponent<SkillSelectBlockHandle>();
             if (!playerController.skillSystem.TryGetSkillFromID(handle.id, out var skill))
             {
-                var skillObj = await NetworkManager.Runner.SpawnAsync(SkillObjectList.GetFromID(handle.id).gameObject, Vector3.zero, Quaternion.identity, playerController.Object.InputAuthority);
-                InitSpawnSkillRPC(skillObj.Id);
+                SpawnSkillRPC(handle.id);
             }
             else
             {
@@ -129,6 +128,13 @@ namespace UI.Skill
         #endregion
 
         #region RPC Function
+
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public async void SpawnSkillRPC(int skillId)
+        {
+            var skillObj = await NetworkManager.Runner.SpawnAsync(SkillObjectList.GetFromID(skillId).gameObject, Vector3.zero, Quaternion.identity, playerController.Object.InputAuthority);
+            InitSpawnSkillRPC(skillObj.Id);
+        }
 
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void InitSpawnSkillRPC(NetworkId skillID)
