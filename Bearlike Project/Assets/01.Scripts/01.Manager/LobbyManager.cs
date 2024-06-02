@@ -1,7 +1,9 @@
-﻿using Loading;
+﻿using System;
+using Loading;
 using Photon;
 using Script.Data;
 using TMPro;
+using UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -24,6 +26,14 @@ namespace Manager
             NetworkManager.Instance.LobbyConnect();
             LoadingManager.StartAction += () => SceneManager.LoadScene(lobbyLoading, LoadSceneMode.Additive);
             LoadingManager.EndAction += () => SceneManager.UnloadSceneAsync(lobbyLoading);
+        }
+
+        private void Update()
+        {
+            if (KeyManager.InputActionDown(KeyToAction.Esc))
+            {
+                SettingCanvas.SetActive(SettingCanvasType.Setting);
+            }
         }
     }
 }

@@ -20,6 +20,7 @@ namespace UI
         [SerializeField] private GameObject parentObject;
         public Button goLobbyButton;
         public Button quitGameButton;
+        [SerializeField] private Button settingButton;
 
         private bool childrenActiveSelf;
 
@@ -38,6 +39,12 @@ namespace UI
 #else
             quitGameButton.onClick.AddListener(Application.Quit);
 #endif
+            settingButton.onClick.AddListener(() =>
+            {
+                SettingCanvas.SetActive(SettingCanvasType.Setting);
+                _ActiveUIQueue.Enqueue(SettingCanvas.Instance.gameObject);
+            });
+            
             parentObject.SetActive(false);
         }
 

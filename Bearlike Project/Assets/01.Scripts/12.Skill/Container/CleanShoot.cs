@@ -240,10 +240,11 @@ namespace Skill.Container
                     {
                         var monsterPosition = monster.pivot.position;
                         var dir = (monsterPosition - runPosition);
+                        float distance = Vector3.Distance(monsterPosition, runPosition);
 
                         // ray를 발사해 앞에 장애물이 있는지 확인
                         DebugManager.DrawRay(monsterPosition, dir, Color.blue, 3f);
-                        if (Physics.Raycast(monsterPosition, dir, out var hit, _layerMask) == false)
+                        if (Runner.LagCompensation.Raycast(monsterPosition, dir.normalized, distance, Runner.LocalPlayer, out var hit, _layerMask) == false)
                         {
                             _monsterList.Add(monster);
                             if (_aimDictionary.ContainsKey(monster.gameObject) == false)
