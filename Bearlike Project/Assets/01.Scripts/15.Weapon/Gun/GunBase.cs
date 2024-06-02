@@ -93,6 +93,7 @@ namespace Weapon.Gun
             magazine.Current = magazine.Max;
 
             EquipAction += SetCamera;
+            EquipAction += OverHeatCal;
             // EquipAction += SetVFX;
             ReleaseEquipAction += (obj) =>
             {

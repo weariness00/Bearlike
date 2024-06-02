@@ -64,8 +64,7 @@ namespace Skill.Container
             if (DurationTimeTimer.Expired(Runner) && true == isInvoke)
             {
                 isInvoke = false;
-                // SetSkillCoolTimerRPC(coolTime);
-                SetSkillCoolTimerRPC(1);
+                SetSkillCoolTimerRPC(coolTime);
 
                 if (_type == 0)
                 {
@@ -99,8 +98,7 @@ namespace Skill.Container
                     status.damageMultiple += 0.2f;
                 }
                 
-                // DurationTimeTimer = TickTimer.CreateFromSeconds(Runner, _durationTime);
-                DurationTimeTimer = TickTimer.CreateFromSeconds(Runner, 1);
+                DurationTimeTimer = TickTimer.CreateFromSeconds(Runner, _durationTime);
             }
         }
 
