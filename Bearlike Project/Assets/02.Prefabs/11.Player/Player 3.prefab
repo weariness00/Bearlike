@@ -4878,7 +4878,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4633371919823006878}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Smokes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5206,7 +5206,7 @@ GameObject:
   - component: {fileID: 1812758714330219959}
   - component: {fileID: 6120328737084483131}
   - component: {fileID: 5776007155186001465}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: ShotGun Smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5589,7 +5589,7 @@ GameObject:
   - component: {fileID: 1077062478366934297}
   - component: {fileID: 1255476793299921261}
   - component: {fileID: 3523994050864446218}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: SniperSmoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8004,6 +8004,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponList:
   - {fileID: 7136896975907330399}
+  smokeObject: {fileID: 4164660928457458490}
 --- !u!114 &7215816512459971780
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12208,7 +12209,7 @@ PrefabInstance:
     - target: {fileID: 8499346563676933405, guid: 87e73c929ac63b14a85194db11dcb2f7,
         type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8499346563676933405, guid: 87e73c929ac63b14a85194db11dcb2f7,
         type: 3}
