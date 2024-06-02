@@ -398,6 +398,8 @@ namespace Player
         {
             var weaponCameraPosition = weaponCamera.transform.position;
             var weaponCameraRotation = weaponCamera.transform.rotation;
+            DebugManager.Log($"{weaponCameraPosition}");
+            
             //Ease.InOutCubic
             weaponMove = weaponCamera.transform.DOLocalMoveY(weaponCameraPosition.y + movement, time / 2).SetEase(Ease.Linear);
             weaponRotate = weaponCamera.transform.DOLocalRotate(weaponCameraRotation.eulerAngles + new Vector3(rotationAngle, 0, 0), time / 2);
