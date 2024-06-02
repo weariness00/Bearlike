@@ -8,6 +8,7 @@ using Monster;
 using Photon;
 using Player;
 using Status;
+using UI.Status;
 using UnityEngine;
 using UnityEngine.VFX;
 using Random = UnityEngine.Random;
@@ -161,7 +162,7 @@ namespace Skill.Support
             {
                 if (!monster) continue;
                 monster.EnableNavMeshAgent();
-                monster.status.ApplyDamageRPC(status.CalDamage(), Object.Id);
+                monster.status.ApplyDamageRPC(status.CalDamage(out var isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, Object.Id);
             }
         }
 

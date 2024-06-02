@@ -37,9 +37,9 @@ namespace Status
             hp.Current -= value;
         }
 
-        public override void ApplyDamage(int applyDamage, NetworkId ownerId, CrowdControl cc)
+        public override void ApplyDamage(int applyDamage, DamageTextType damageType, NetworkId ownerId, CrowdControl cc)
         {
-            base.ApplyDamage(applyDamage, ownerId, cc);
+            base.ApplyDamage(applyDamage, damageType, ownerId, cc);
             if (IsDie)
             {
                 var obj = Runner.FindObject(ownerId);
@@ -51,11 +51,11 @@ namespace Status
             }
         }
 
-        public override void DamageText(int realDamage)
+        public override void DamageText(int realDamage, DamageTextType type)
         {
             var randomDir = Random.insideUnitSphere;
             randomDir.y = Mathf.Abs(randomDir.y);
-            DamageTextCanvas.SpawnDamageText(monsterBase.pivot.position + randomDir, realDamage);
+            DamageTextCanvas.SpawnDamageText(monsterBase.pivot.position + randomDir, realDamage, type);
         }
 
         #endregion

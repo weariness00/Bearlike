@@ -82,12 +82,14 @@ namespace Status
         public void AddAdditionalStatus(StatusBase otherStatus) => _additionalStatusList.Add(otherStatus);
         public void RemoveAdditionalStatus(StatusBase otherStatus) => _additionalStatusList.Remove(otherStatus);
     
-        public virtual int CalDamage(int additionalDamage = 0, float additionalDamageMultiple = 0f, float additionalCriticalHitMultiple = 0f)
+        public virtual int CalDamage(out bool isCritical, int additionalDamage = 0, float additionalDamageMultiple = 0f, float additionalCriticalHitMultiple = 0f)
         {
             var d = AddAllDamage() + additionalDamage;
             var dm = AddAllDamageMagnification() + 1 + additionalDamageMultiple;
             var chm = CalCriticalHit() + additionalCriticalHitMultiple;
 
+            isCritical = !chm.Equals(1f);
+            
             return (int)Math.Round(chm * dm * d);
         }
         
@@ -202,7 +204,7 @@ namespace Status
             return nb;
         }
 
-        public virtual void ApplyDamage(int applyDamage, NetworkId ownerId, CrowdControl cc)
+        public virtual void ApplyDamage(int applyDamage, DamageTextType damageType, NetworkId ownerId, CrowdControl cc)
         {
             if (hp.isMin)
             {
@@ -230,7 +232,7 @@ namespace Status
 
                 var realDamage = (int)(damageRate * applyDamage);
                 hp.Current -= realDamage;
-                DamageText(realDamage);
+                DamageText(realDamage, damageType);
                 
                 DebugManager.Log(
                     $"{gameObject.name}에게 {damageRate * applyDamage}만큼 데미지\n" +
@@ -256,7 +258,7 @@ namespace Status
             
         }
         
-        public virtual void DamageText(int realDamage){}
+        public virtual void DamageText(int realDamage, DamageTextType type){}
         public virtual void HealingText(int realHealAmount) {}
 
         public virtual void ShowInfo()
@@ -394,24 +396,10 @@ namespace Status
             AttackLateTimer = TickTimer.CreateFromSeconds(Runner, 1f / attackSpeed.Current);
         }
         
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="damage"></param>
-        /// <param name="id">대미지를 준 대상의 Network ID</param>
-        /// <param name="enemyProperty"></param>
-        /// <param name="info"></param>
-        public void PlayerApplyDamage(int damage, NetworkId id, CrowdControl enemyProperty = CrowdControl.Normality, RpcInfo info = default)
-        {
-            URPRendererFeaturesManager.Instance.StartEffect("HitEffect");
-            ApplyDamageRPC(damage, id, enemyProperty);
-        }
-        
-        
         [Rpc(RpcSources.All, RpcTargets.All, Channel = RpcChannel.Reliable)]
-        public void ApplyDamageRPC(int damage, NetworkId id, CrowdControl enemyProperty = CrowdControl.Normality, RpcInfo info = default)
+        public void ApplyDamageRPC(int applyDamage, DamageTextType damageType, NetworkId id, CrowdControl enemyProperty = CrowdControl.Normality, RpcInfo info = default)
         {
-            ApplyDamage(damage, id, enemyProperty);
+            ApplyDamage(applyDamage, damageType, id, enemyProperty);
         }
         
         [Rpc(RpcSources.All, RpcTargets.All, Channel = RpcChannel.Reliable)]

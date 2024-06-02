@@ -4,6 +4,7 @@ using DG.Tweening.Core.Enums;
 using Fusion;
 using Manager;
 using Status;
+using UI.Status;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -100,7 +101,7 @@ namespace Monster.Container
                     if (hit.GameObject.TryGetComponent(out targetStatus) || hit.GameObject.transform.root.TryGetComponent(out targetStatus))
                     {
                         DebugManager.Log($"{hit.GameObject.name}");
-                        targetStatus.PlayerApplyDamage(status.CalDamage(), Object.Id, crowdControlType);
+                        targetStatus.ApplyDamageRPC(status.CalDamage(out var isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, Object.Id, crowdControlType);
                     }
                 }
             }

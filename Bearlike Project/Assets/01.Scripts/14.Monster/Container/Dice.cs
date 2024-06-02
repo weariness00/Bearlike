@@ -9,6 +9,7 @@ using GamePlay.DeadBodyObstacle;
 using Manager;
 using Photon.MeshDestruct;
 using Player;
+using UI.Status;
 using UnityEngine;
 using UnityEngine.AI;
 using Util;
@@ -77,7 +78,7 @@ namespace Monster.Container
                     {
                         if (hit.GameObject.TryGetComponent(out targetStatus) || hit.GameObject.transform.root.TryGetComponent(out targetStatus))
                         {
-                            targetStatus.PlayerApplyDamage(status.CalDamage(), Object.Id,CrowdControl.Normality);
+                            targetStatus.ApplyDamageRPC(status.CalDamage(out var isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, Object.Id,CrowdControl.Normality);
                         }
                     }
                 }
@@ -226,7 +227,7 @@ namespace Monster.Container
                 StatusBase playerStatus;
                 if (hit.transform.TryGetComponent(out playerStatus) || hit.transform.parent.TryGetComponent(out playerStatus))
                 {
-                    playerStatus.PlayerApplyDamage(status.CalDamage(), Object.Id, CrowdControl.Normality);
+                    playerStatus.ApplyDamageRPC(status.CalDamage(out var isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, Object.Id, CrowdControl.Normality);
                 }
             }
             return INode.NodeState.Failure;

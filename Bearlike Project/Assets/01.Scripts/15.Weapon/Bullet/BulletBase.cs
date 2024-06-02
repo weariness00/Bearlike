@@ -6,6 +6,7 @@ using Photon;
 using Photon.MeshDestruct;
 using Player;
 using Status;
+using UI.Status;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
@@ -80,10 +81,10 @@ namespace Weapon.Bullet
             if (other.TryGetComponent(out ColliderStatus colliderStatus))
             {
                 StatusBase otherStatus = colliderStatus.originalStatus;
-                otherStatus.AddAdditionalStatus(colliderStatus.status);
+                status.AddAdditionalStatus(colliderStatus.status);
                 
-                otherStatus.ApplyDamageRPC(status.CalDamage(), OwnerId);//
-                otherStatus.RemoveAdditionalStatus(colliderStatus.status);
+                otherStatus.ApplyDamageRPC(status.CalDamage(out bool isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, OwnerId);//
+                status.RemoveAdditionalStatus(colliderStatus.status);
                 _hitEffect?.OnWeaponHitEffect(transform.position);
                 _hitSound?.PlayWeaponHit();
                 
@@ -100,11 +101,11 @@ namespace Weapon.Bullet
             }
             else if (other.transform.root.gameObject.TryGetComponent(out PlayerStatus playerStatus))
             {
-                playerStatus.ApplyDamageRPC(status.CalDamage(), OwnerId);
+                playerStatus.ApplyDamageRPC(status.CalDamage(out var isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, OwnerId);
             }
             else if (other.TryGetComponent(out StatusBase otherStatus))
             {
-                otherStatus.ApplyDamageRPC(status.CalDamage(), OwnerId);
+                otherStatus.ApplyDamageRPC(status.CalDamage(out var isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, OwnerId);
             }
             // 메쉬 붕괴 객체와 충돌 시
             else if (other.CompareTag("Destruction"))

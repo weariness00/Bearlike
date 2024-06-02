@@ -117,15 +117,17 @@ namespace Player
         public void BePoisoned(int value)
         {
             hp.Current -= value;
-            
         }
         
-        public override void ApplyDamage(int applyDamage, NetworkId ownerId, CrowdControl cc) // MonsterRef instigator,
+        public override void ApplyDamage(int applyDamage, DamageTextType damageType, NetworkId ownerId, CrowdControl cc) // MonsterRef instigator,
         {
-            base.ApplyDamage(applyDamage, ownerId, cc);
+            base.ApplyDamage(applyDamage, damageType, ownerId, cc);
 
-            // _playerCameraController.ScreenHitImpact(1,1);
-            // URPRendererFeaturesManager.Instance.StartEffect("HitEffect");
+            if (HasInputAuthority)
+            {
+                playerController.cameraController.ScreenHitImpact(1,1);
+                URPRendererFeaturesManager.Instance.StartEffect("HitEffect");
+            }
             
             HpControlRPC();
         }

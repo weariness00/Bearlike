@@ -12,6 +12,7 @@ using Photon;
 using Photon.MeshDestruct;
 using Script.Photon;
 using Status;
+using UI.Status;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -285,7 +286,7 @@ namespace GamePlay.Stage
             {
                 var monsters = FindObjectsOfType<MonsterBase>();
                 foreach (var monster in monsters)
-                    monster.status.ApplyDamageRPC(999999, monster.Object.Id);
+                    monster.status.ApplyDamageRPC(999999, DamageTextType.Critical, monster.Object.Id);
             }
             
             prevStagePortal.IsConnect = true;

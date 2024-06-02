@@ -90,7 +90,7 @@ namespace Skill.Container
                     gf.gravityFieldDuration = gravityFieldDuration;
                     
                     gf.status.damage.Max = status.damage.Max;
-                    gf.status.damage.Current = status.CalDamage();
+                    gf.status.damage.Current = status.CalDamage(out bool isCritical);
                 });
                 
                 DebugManager.Log($"{targetObject.name}에 중력장 소환");

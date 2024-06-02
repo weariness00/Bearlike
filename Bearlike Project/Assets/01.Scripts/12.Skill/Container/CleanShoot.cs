@@ -7,6 +7,7 @@ using Manager;
 using Monster;
 using Photon;
 using Player;
+using UI.Status;
 using UnityEngine;
 using UnityEngine.VFX;
 using Util;
@@ -153,7 +154,7 @@ namespace Skill.Container
         {
             base.ExplainUpdate();
             if (explain.Contains("(현재 공격력)"))
-                explain = explain.Replace("(현재 공격력)", $"({status.CalDamage()})");
+                explain = explain.Replace("(현재 공격력)", $"({status.CalDamage(out bool isCritical)})");
             if (explain.Contains("(Level)"))
                 explain = explain.Replace("(Level)", $"{level.Current}");
             
@@ -187,7 +188,7 @@ namespace Skill.Container
                         foreach (var monster in _monsterList)
                         {
                             var targetStatus = monster.GetComponent<MonsterStatus>();
-                            targetStatus.PlayerApplyDamage(status.CalDamage(), ownerPlayer.Object.Id, CrowdControl.Normality);
+                            targetStatus.ApplyDamageRPC(status.CalDamage(out var isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, ownerPlayer.Object.Id, CrowdControl.Normality);
 
                             // 총알 궤적 VFX 생성
                             var monsterNetworkId = monster.GetComponent<NetworkObject>().Id;
