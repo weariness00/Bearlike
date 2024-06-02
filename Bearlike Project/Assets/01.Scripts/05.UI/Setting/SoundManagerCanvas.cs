@@ -27,8 +27,16 @@ namespace UI
             bgmSlider.maxValue = 100;
             bgmSlider.value = PlayerPrefs.GetFloat(PlayerPrefBGMVolume);
             bgmSlider.onValueChanged.AddListener(SetBGMVolume);
-            bgmUpButton.onClick.AddListener(()=>SetBGMVolume(bgmSlider.value + 0.1f));
-            bgmDownButton.onClick.AddListener(()=>SetBGMVolume(bgmSlider.value - 0.1f));
+            bgmUpButton.onClick.AddListener(()=>
+            {
+                bgmSlider.value += 1f;
+                SetBGMVolume(bgmSlider.value);
+            });
+            bgmDownButton.onClick.AddListener(()=>
+            {
+                bgmSlider.value -= 1f;
+                SetBGMVolume(bgmSlider.value);
+            });
             SetBGMVolume(bgmSlider.value);
             
             // Effect
@@ -36,8 +44,16 @@ namespace UI
             effectSlider.maxValue = 100;
             effectSlider.value = PlayerPrefs.GetFloat(PlayerPrefEffectVolume);
             effectSlider.onValueChanged.AddListener(SetEffectVolume);
-            effectUpButton.onClick.AddListener(()=>SetEffectVolume(bgmSlider.value + 0.1f));
-            effectDownButton.onClick.AddListener(()=>SetEffectVolume(bgmSlider.value - 0.1f));
+            effectUpButton.onClick.AddListener(()=>
+            {
+                bgmSlider.value += 1f;
+                SetEffectVolume(bgmSlider.value);
+            });
+            effectDownButton.onClick.AddListener(()=>
+            {
+                bgmSlider.value -= 1f;
+                SetEffectVolume(bgmSlider.value);
+            });
             SetEffectVolume(bgmSlider.value);
         }
 
