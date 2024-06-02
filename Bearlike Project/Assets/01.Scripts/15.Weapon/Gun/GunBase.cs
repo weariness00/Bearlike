@@ -93,7 +93,6 @@ namespace Weapon.Gun
             magazine.Current = magazine.Max;
 
             EquipAction += SetCamera;
-            EquipAction += OverHeatCal;
             // EquipAction += SetVFX;
             ReleaseEquipAction += (obj) =>
             {
@@ -299,7 +298,7 @@ namespace Weapon.Gun
             //     shotsmoke.gameObject.SetActive(false);
         }
         
-        void OverHeatCal()
+        public void OverHeatCal()
         {
             float bulletCount = 1 - (float)magazine.Current / magazine.Max;
             
