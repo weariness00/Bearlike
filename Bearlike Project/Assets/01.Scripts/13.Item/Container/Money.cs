@@ -1,4 +1,6 @@
-﻿using Player;
+﻿using Manager;
+using Player;
+using UI;
 using UnityEngine;
 
 namespace Item.Container
@@ -32,12 +34,24 @@ namespace Item.Container
 
         #region Inventory Interface
 
+        public override AddItem AddItem<AddItem>(AddItem addItem)
+        {
+            base.AddItem(addItem);
+
+            var goodsCanvas = FindObjectOfType<GoodsCanvas>();
+            goodsCanvas.CoinUpdate(Amount.Current);
+            
+            return addItem;
+        }
+
         public override ItemBase UseItem<UseItem>(UseItem useItem, out bool isDestroy)
         {
             isDestroy = false;
             if (useItem is ItemBase item)
             {
                 Amount.Current -= item.Amount.Current;
+                var goodsCanvas = FindObjectOfType<GoodsCanvas>();
+                goodsCanvas.CoinUpdate(Amount.Current);
 
                 if (Amount.isMin)
                 {

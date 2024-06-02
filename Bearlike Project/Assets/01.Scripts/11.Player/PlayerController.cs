@@ -39,6 +39,7 @@ namespace Player
         public SkillSelectUI skillSelectUI;
         public SkillCanvas skillCanvas;
         public PlayerLevelCanvas levelCanvas;
+        public GoodsCanvas goodsCanvas;
         
         public Animator animator;
         [HideInInspector] public SimpleKCC simpleKcc;
@@ -128,6 +129,7 @@ namespace Player
                 gunUI.gameObject.SetActive(true);
                 hpUI.gameObject.SetActive(true);
                 levelCanvas.gameObject.SetActive(true);
+                goodsCanvas.gameObject.SetActive(true);
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
             }
             else
