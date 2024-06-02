@@ -131,12 +131,6 @@ namespace Player
             
             HpControlRPC();
         }
-        
-        public override void PlayerApplyDamage(int damage, NetworkId id, CrowdControl enemyProperty = CrowdControl.Normality, RpcInfo info = default)
-        {
-            base.PlayerApplyDamage(damage, id, enemyProperty, info);
-            
-        }
 
         /// <summary>
         /// 체력이 0이면 부상

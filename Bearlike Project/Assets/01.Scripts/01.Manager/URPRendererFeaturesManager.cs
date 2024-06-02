@@ -16,6 +16,8 @@ namespace Manager
         private static readonly int Alpha = Shader.PropertyToID("_Alpha");
         private static readonly int FullScreenIntensity = Shader.PropertyToID("_FullScreenIntensity");
 
+        #region Unity Evnet Function
+        
         void Start()
         {
             var cameraData = Camera.main.GetComponent<UniversalAdditionalCameraData>();
@@ -49,6 +51,8 @@ namespace Manager
                 }
             }
         }
+        
+        #endregion
 
         public void StartEffect(string name)
         {

@@ -302,7 +302,7 @@ namespace Weapon.Gun
         {
             float bulletCount = 1 - (float)magazine.Current / magazine.Max;
             
-            StartCoroutine(OverHitTimer(shotOverHeating.GetFloat(Value), bulletCount));
+            StartCoroutine(OverHitTimer(shotOverHeatingPropertyBlock.Block.GetFloat(Value), bulletCount));
         }
 
         IEnumerator OverHitTimer(float LValue, float RValue)
@@ -316,7 +316,8 @@ namespace Weapon.Gun
             {
                 elapsedTime += Time.deltaTime;
                 amount = Mathf.Lerp(LValue, RValue, elapsedTime / duration);
-                shotOverHeating.SetFloat(Value, amount);
+                shotOverHeatingPropertyBlock.Block.SetFloat(Value, amount);
+                shotOverHeatingPropertyBlock.SetBlock();
                 DebugManager.Log($"{amount}");
                 yield return null;
             }

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7254945419374529108}
   - component: {fileID: 1790844729464940925}
   - component: {fileID: 2191453430125662381}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: hitEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121,7 +121,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6193602735134741836}
   - component: {fileID: 7198553607401874559}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Reload Sound
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -250,7 +250,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4268763955597265697}
   - component: {fileID: 1046444510010820628}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Empty Ammo Sound
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -381,7 +381,7 @@ GameObject:
   - component: {fileID: 2569949494085307128}
   - component: {fileID: 4303053860246033292}
   - component: {fileID: 354496408801352614}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Mega Shotgun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -516,7 +516,7 @@ MonoBehaviour:
   explain: 
   shootEffect: {fileID: 7520474472476782691}
   shotsmoke: {fileID: 0}
-  shotOverHeating: {fileID: 2100000, guid: fd35e4291c9720545818dad5cf4b0cd5, type: 2}
+  shotOverHeatingPropertyBlock: {fileID: 7179987372642495269}
   hitEffectPrefab:
     RawGuidValue: 8ec31fcb5aff43949af9992aeb7147e6
   shootSound: {fileID: 7320537936138231556}
@@ -566,7 +566,7 @@ GameObject:
   m_Component:
   - component: {fileID: 776583591902336023}
   - component: {fileID: 7320537936138231556}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Shoot Sound
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -694,7 +694,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7545871670962195290}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Fire Transform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -725,7 +725,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8709944740331726679}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Sounds
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -808,15 +808,65 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7092149685913970834, guid: 0466371a07b79c24a8d0e403016174e5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -5833661098405571102, guid: 0466371a07b79c24a8d0e403016174e5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -2932737294204214082, guid: 0466371a07b79c24a8d0e403016174e5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -2036953694356272187, guid: 0466371a07b79c24a8d0e403016174e5,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: fd35e4291c9720545818dad5cf4b0cd5, type: 2}
+    - target: {fileID: -619022818724575055, guid: 0466371a07b79c24a8d0e403016174e5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 0466371a07b79c24a8d0e403016174e5,
         type: 3}
       propertyPath: m_Name
       value: MegaShotgun_Animation
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0466371a07b79c24a8d0e403016174e5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3009448186599398596, guid: 0466371a07b79c24a8d0e403016174e5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4943937068903310652, guid: 0466371a07b79c24a8d0e403016174e5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5618405258754474897, guid: 0466371a07b79c24a8d0e403016174e5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7598419493678936200, guid: 0466371a07b79c24a8d0e403016174e5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7845581801822482699, guid: 0466371a07b79c24a8d0e403016174e5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -830,6 +880,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 2028941841022532551}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0466371a07b79c24a8d0e403016174e5,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7179987372642495269}
   m_SourcePrefab: {fileID: 100100000, guid: 0466371a07b79c24a8d0e403016174e5, type: 3}
 --- !u!1 &1719167956842247718 stripped
 GameObject:
@@ -878,6 +932,20 @@ MonoBehaviour:
     type: 3}
   reloadEndClip: {fileID: -8275408507710269598, guid: 0466371a07b79c24a8d0e403016174e5,
     type: 3}
+--- !u!114 &7179987372642495269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1719167956842247718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4d437f99e9dd8044b1aab8f4e671568, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  renderer: {fileID: 8692394353284628658}
+  material: {fileID: 2100000, guid: fd35e4291c9720545818dad5cf4b0cd5, type: 2}
 --- !u!4 &2058257770089589916 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 0466371a07b79c24a8d0e403016174e5,
@@ -887,6 +955,12 @@ Transform:
 --- !u!1 &3751625859226181269 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -5833661098405571102, guid: 0466371a07b79c24a8d0e403016174e5,
+    type: 3}
+  m_PrefabInstance: {fileID: 1953119627833625463}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &8692394353284628658 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -2036953694356272187, guid: 0466371a07b79c24a8d0e403016174e5,
     type: 3}
   m_PrefabInstance: {fileID: 1953119627833625463}
   m_PrefabAsset: {fileID: 0}
@@ -911,7 +985,7 @@ PrefabInstance:
     - target: {fileID: 5372524399348904148, guid: 892fecd515ddeb74ca3618fad85412ac,
         type: 3}
       propertyPath: m_Layer
-      value: 11
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5372524399348904148, guid: 892fecd515ddeb74ca3618fad85412ac,
         type: 3}
