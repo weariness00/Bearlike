@@ -396,8 +396,8 @@ namespace Player
         
         private IEnumerator WeaponCameraShake()
         {
-            var weaponCameraPosition = weaponCamera.transform.position;
-            var weaponCameraRotation = weaponCamera.transform.rotation;
+            var weaponCameraPosition = weaponCamera.transform.localPosition;
+            var weaponCameraRotation = weaponCamera.transform.localRotation;
             DebugManager.Log($"{weaponCameraPosition}");
             
             //Ease.InOutCubic
