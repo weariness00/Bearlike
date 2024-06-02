@@ -132,6 +132,16 @@ namespace Player
             HpControlRPC();
         }
 
+        public override void ApplyHeal(int applyHeal, NetworkId ownerId, CrowdControl cc = CrowdControl.Normality)
+        {
+            base.ApplyHeal(applyHeal, ownerId, cc);
+            
+            if (HasInputAuthority)
+            {
+                URPRendererFeaturesManager.Instance.StartEffect("HealEffect");
+            }
+        }
+        
         /// <summary>
         /// 체력이 0이면 부상
         /// 부상에서 일정 시간이 지나면 죽음으로 바뀌게 하는 로직
