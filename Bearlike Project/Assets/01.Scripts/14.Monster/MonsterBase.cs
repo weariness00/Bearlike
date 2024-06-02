@@ -14,7 +14,6 @@ using Status;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace Monster
@@ -47,6 +46,7 @@ namespace Monster
         #endregion
         
         [HideInInspector] public Rigidbody rigidbody;
+        [HideInInspector] public Collider collider;
         [HideInInspector] public NetworkMecanimAnimator networkAnimator;
         [HideInInspector] public MonsterStatus status;
         [HideInInspector] public LootingTable lootingTable;
@@ -71,6 +71,8 @@ namespace Monster
         public void Awake()
         {
             rigidbody = GetComponent<Rigidbody>();
+            collider = GetComponent<Collider>();
+            if (collider) collider.enabled = false;
             networkAnimator = GetComponent<NetworkMecanimAnimator>();
             _deadBody = GetComponent<DeadBodyObstacleObject>();
             if (pivot == null) pivot = transform;
@@ -191,6 +193,8 @@ namespace Monster
                     dis += Vector3.Distance(path.corners[i], path.corners[i + 1]);
                 }
             }
+            else
+                dis = StraightDistanceFromTarget(targetPosition);
 
             return dis;
         }
@@ -207,7 +211,6 @@ namespace Monster
         /// <summary>
         /// 경로에 Nav Mesh Link가 포함되어있는지 확인
         /// </summary>
-        /// <param name="agent"></param>
         /// <param name="targetPosition"></param>
         /// <returns></returns>
         public bool IsIncludeLink(Vector3 targetPosition)
@@ -262,16 +265,21 @@ namespace Monster
             return dis < checkDis;
         }
 
-        public void DisableNavMeshAgent()
+        public void DisableNavMeshAgent(bool isIncludeCollider = true, bool isGravity = true)
         {
             if (!navMeshAgent)
                 return;
-
-            navMeshAgent.isStopped = true;
-
+            
             navMeshAgent.enabled = false;
-            rigidbody.useGravity = true;
+            if(isGravity) rigidbody.useGravity = true;
             rigidbody.isKinematic = false;
+
+            if (isIncludeCollider)
+            {
+                collider.includeLayers = 1 << LayerMask.NameToLayer("Default");
+                collider.excludeLayers = 1 << LayerMask.NameToLayer("Ignore Nav Mesh");
+                collider.enabled = true;
+            }
         }
         
         /// <summary>
@@ -292,15 +300,20 @@ namespace Monster
 
             if (duration != 0)
                 yield return new WaitForSeconds(duration);
-
-            navMeshAgent.enabled = true;
+            
+            LayerMask mask = 1 << LayerMask.NameToLayer("Default");
+            var originPivot = new Vector3(0, 0.1f, 0);
             while (true)
             {
                 yield return null;
-                if (navMeshAgent.isOnNavMesh)
+                DebugManager.DrawRay(transform.position + originPivot, -transform.up * 0.3f, Color.blue, 1f);
+                if (Runner.LagCompensation.Raycast(transform.position + originPivot, -transform.up, 0.3f, Runner.LocalPlayer, out var hit) || 
+                    Physics.Raycast(transform.position + originPivot, -transform.up, out var phit, 0.3f))
                 {
                     navMeshAgent.enabled = true;
+                    rigidbody.useGravity = false;
                     rigidbody.isKinematic = true;
+                    collider.enabled = false;
                     break;
                 }
             }

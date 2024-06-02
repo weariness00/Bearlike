@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Fusion;
 using GamePlay;
+using Manager;
 using Monster;
 using Photon;
 using Player;
@@ -31,8 +33,8 @@ namespace Skill.Support
 
         private bool _isUpdate;
         
-        private List<RigidBodyOriginInfo> _targetRigidBodyList = new List<RigidBodyOriginInfo>();
-        private List<MonsterBase> _monsterList = new List<MonsterBase>();
+        private HashSet<RigidBodyOriginInfo> _targetRigidBodyList = new HashSet<RigidBodyOriginInfo>(new RigidBodyOriginInfoComparer());
+        private HashSet<MonsterBase> _monsterList = new HashSet<MonsterBase>();
         private TickTimer _durationTimer; // 지속시간 타이머
 
         private PlayerCameraController _playerCameraController; // 플레이어가 진입시 카메라 떨림 효과 넣어주기 위해
@@ -52,11 +54,7 @@ namespace Skill.Support
                 return;
             }
             
-            Rigidbody rb;
-            if (other.TryGetComponent(out ColliderStatus cs))
-                rb = cs.originalStatus.GetComponent<Rigidbody>();
-            else
-                rb = other.attachedRigidbody;
+            Rigidbody rb = other.GetComponentsInParent<Rigidbody>().Last();
             
             if (rb && rb.mass < gravityPower)
             {
@@ -66,11 +64,14 @@ namespace Skill.Support
                     useGravity = rb.useGravity,
                     isKinematic = rb.isKinematic
                 };
-                
+
                 rb.isKinematic = false;
-                
-                if(rb.TryGetComponent(out MonsterBase monster)) _monsterList.Add(monster);
-                // if(rb.TryGetComponent(out NavMeshAgent navMeshAgent)) _navMeshAgentList.Add(navMeshAgent);
+
+                if (rb.TryGetComponent(out MonsterBase monster))
+                {
+                    monster.DisableNavMeshAgent(false, false);
+                    _monsterList.Add(monster);
+                }
                 _targetRigidBodyList.Add(rbInfo);
             }
         }
@@ -93,16 +94,7 @@ namespace Skill.Support
             if (rb && rb.mass < gravityPower)
             {
                 if(rb.TryGetComponent(out MonsterBase monster)) _monsterList.Remove(monster);
-                // if(rb.TryGetComponent(out NavMeshAgent navMeshAgent)) _navMeshAgentList.Add(navMeshAgent);
-                for (var i = 0; i < _targetRigidBodyList.Count; i++)
-                {
-                    var rbInfo = _targetRigidBodyList[i];
-                    if (rbInfo.rigidbody == rb)
-                    {
-                        _targetRigidBodyList.RemoveAt(i);
-                        break;
-                    }
-                }
+                _targetRigidBodyList.Remove(new RigidBodyOriginInfo(){rigidbody = rb});
             }
         }
 
@@ -121,7 +113,6 @@ namespace Skill.Support
             {
                 _isUpdate = false;
                 OnExplodeVFXRPC();
-                
             }
             else
             {
@@ -132,15 +123,10 @@ namespace Skill.Support
         // 중력장에 의해 끌려오는 로직
         private void PullTarget()
         {
-            for (var i = 0; i < _targetRigidBodyList.Count; i++)
+            foreach (var rbInfo in _targetRigidBodyList)
             {
-                var rbInfo = _targetRigidBodyList[i];
                 var rb = rbInfo.rigidbody;
-                if (!rb)
-                {
-                    _targetRigidBodyList.RemoveAt(i);
-                    continue;
-                }
+                if (!rb) continue;
 
                 Vector3 dir = transform.position - rb.transform.position;
                 Vector3 force = positionStrength * dir.normalized;
@@ -196,11 +182,29 @@ namespace Skill.Support
             StartCoroutine(ExplodeCoroutine());
         }
         
-        private struct RigidBodyOriginInfo
+        public struct RigidBodyOriginInfo
         {
             public Rigidbody rigidbody;
             public bool useGravity;
             public bool isKinematic;
+        }
+        public class RigidBodyOriginInfoComparer : IEqualityComparer<RigidBodyOriginInfo>
+        {
+            // Equals 메서드에서 원하는 비교 로직을 구현
+            public bool Equals(RigidBodyOriginInfo x, RigidBodyOriginInfo y)
+            {
+                // Id와 Name 모두 동일해야 같은 것으로 간주
+                return x.rigidbody == y.rigidbody;
+            }
+
+            // GetHashCode 메서드에서 고유한 해시 코드를 반환
+            public int GetHashCode(RigidBodyOriginInfo obj)
+            {
+                // 간단한 해시 코드 계산 (다른 방법으로 해시 코드를 생성할 수도 있음)
+                int hash = 17;
+                hash = hash * 31 + obj.rigidbody.GetHashCode();
+                return hash;
+            }
         }
     }
 }

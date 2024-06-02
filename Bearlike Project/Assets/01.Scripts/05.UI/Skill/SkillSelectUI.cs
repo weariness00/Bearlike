@@ -21,7 +21,7 @@ namespace UI.Skill
         [Header("Player")]
         public PlayerController playerController;
 
-        public int selectCount = 0; // 횟수가 남아있다면 스킬을 선택후 다시 스킬 선택창 리롤
+        private int selectCount = 0; // 횟수가 남아있다면 스킬을 선택후 다시 스킬 선택창 리롤
         
         #region Unity Event Function
 
@@ -43,6 +43,7 @@ namespace UI.Skill
 
         #region Member Funtion
 
+        public int GetSelectCount() => selectCount;
         public void AddSelectCount() => ++selectCount;
         public void RemoveSelectCount() => --selectCount;
         
@@ -50,8 +51,7 @@ namespace UI.Skill
         public void SpawnSkillBlocks(int count)
         {
             gameObject.SetActive(true);
-            
-            if(selectCount > 0) return;
+            GameUIManager.AddActiveUI(gameObject);
             
             // 이미 있는 스킬들 삭제
             var handles = toggleGroup.GetComponentsInChildren<SkillSelectBlockHandle>().ToList();
@@ -118,7 +118,12 @@ namespace UI.Skill
             if (selectCount > 0)
                 SpawnSkillBlocks(3);
             else
+            {
+                var handles = toggleGroup.GetComponentsInChildren<SkillSelectBlockHandle>().ToList();
+                foreach (var h in handles)
+                    Destroy(h.gameObject); 
                 gameObject.SetActive(false);
+            }
         }
         
         #endregion

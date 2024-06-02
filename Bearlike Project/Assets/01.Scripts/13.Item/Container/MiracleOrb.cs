@@ -34,7 +34,8 @@ namespace Item.Container
             PlayerController pc;
             if (targetObject.TryGetComponent(out pc) || targetObject.transform.root.TryGetComponent(out pc))
             {
-                pc.skillSelectUI.SpawnSkillBlocks(_skillBlockSpawnCount);
+                if(pc.skillSelectUI.GetSelectCount() <= 0)
+                    pc.skillSelectUI.SpawnSkillBlocks(_skillBlockSpawnCount);
                 pc.skillSelectUI.AddSelectCount();
                 Destroy(gameObject);   
             }

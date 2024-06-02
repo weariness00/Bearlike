@@ -1,5 +1,18 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-1040228569305632752
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 7
 --- !u!21 &2100000
 Material:
   serializedVersion: 8
@@ -7,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: FullScreen_Damage
-  m_Shader: {fileID: -6465566751694194690, guid: 778c1728f652dab489026021a88a0b22,
+  m_Name: Portal Room Wall Shell
+  m_Shader: {fileID: -6465566751694194690, guid: 02e7482d0d04c424f8e9b5382feabcf1,
     type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -49,7 +62,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 0f12f635f61ef9c4cac6022163ca512f, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -64,8 +77,8 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _SampleTexture2D_a066974ab1a74814bbf0c9332cd32c06_Texture_1_Texture2D:
-        m_Texture: {fileID: 2800000, guid: cd138400580160546a9579d5da936d13, type: 3}
+    - _SmoothnessMap:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
@@ -86,9 +99,9 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Alpha: 0.49999988
     - _AlphaClip: 0
     - _AlphaToMask: 0
+    - _AmbientEnvironmentMultiplier: 1
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
@@ -100,47 +113,36 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
+    - _EdgeDiffuse: 0
+    - _EdgeDistanceAttenuation: 0
+    - _EdgeRim: 0.001
+    - _EdgeShadowAttenuation: 1
+    - _EdgeSpecular: 0.001
     - _EnvironmentReflections: 1
-    - _FullScreenIntensity: 0.03
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _Mask_Contrast: 0.4
-    - _Mask_Size: 0.7
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005
+    - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Smoothness: 0.5
+    - _RimAmount: 0.271
+    - _RimStrength: 1
+    - _RimThreshold: 0.079
+    - _Smoothness: 0.366
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
-    - _VignetteIntensity: 0.271
-    - _VignetteRadiusPower: 7.5
-    - _VoromoiSpeed: 10
-    - _VoronoiPower: 2
-    - _VoronoiScale: 5
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 2.9960785, g: 0.082110435, b: 0, a: 0}
+    - _AmbientColor: {r: 0.2264151, g: 0.2264151, b: 0.2264151, a: 0}
+    - _BaseColor: {r: 0.3773585, g: 0.3773585, b: 0.3773585, a: 1}
+    - _Color: {r: 0.37735847, g: 0.37735847, b: 0.37735847, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
---- !u!114 &2323184286200912483
-MonoBehaviour:
-  m_ObjectHideFlags: 11
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 7

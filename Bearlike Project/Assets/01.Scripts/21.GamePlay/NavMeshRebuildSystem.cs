@@ -12,21 +12,21 @@ namespace GamePlay
     {
         public static void ReBuild() => Instance.ReBuildNavMesh();
         public static void ReBuildRPC() => Instance.ReBuildNavMeshRPC();
+
+        public static void SetSurface(NavMeshSurface s) => Instance.surface = s;
         
         public float reBuildTime = 1f;
 
         private Coroutine _reBuildCoroutine;
+        [SerializeField] private NavMeshSurface surface;
 
         public void ReBuildNavMesh()
         {
             if (Runner.IsServer)
             {
-                StageBase stage = GameManager.Instance.currentStage;
-                if (stage && stage.navMeshSurface)
+                if (surface)
                 {
-                    NavMeshSurface stageSurface = stage.navMeshSurface;
-                    if (_reBuildCoroutine == null)
-                        _reBuildCoroutine = StartCoroutine(ReBuildCoroutine(stageSurface));
+                    _reBuildCoroutine = StartCoroutine(ReBuildCoroutine(surface));
                 }
             }
         }

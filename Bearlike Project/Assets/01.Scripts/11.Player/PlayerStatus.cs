@@ -184,8 +184,12 @@ namespace Player
         public void LevelUp()
         {
             level.Current++;
-            if(HasInputAuthority)
-                playerController.skillSelectUI.SpawnSkillBlocks(3);
+            if (HasInputAuthority)
+            {
+                if(playerController.skillSelectUI.GetSelectCount() <= 0)
+                    playerController.skillSelectUI.SpawnSkillBlocks(3);
+                playerController.skillSelectUI.AddSelectCount();
+            }
         }
 
         public override void HealingText(int realHealAmount)

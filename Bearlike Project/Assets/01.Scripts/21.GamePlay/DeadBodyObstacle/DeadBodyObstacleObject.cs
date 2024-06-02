@@ -113,8 +113,6 @@ namespace GamePlay.DeadBodyObstacle
             {
                 rb.useGravity = value;
                 rb.constraints = value ? RigidbodyConstraints.None : RigidbodyConstraints.FreezeAll;
-                if (value)
-                    rb.constraints = 0;
             }
 
             if(_networkAnimator) _networkAnimator.Animator.enabled = !value;

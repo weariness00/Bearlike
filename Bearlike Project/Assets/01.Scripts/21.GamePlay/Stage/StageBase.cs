@@ -226,7 +226,7 @@ namespace GamePlay.Stage
                 Destroy(childCamera.gameObject);
             foreach (var lihgt in lihgts)
             {
-                if (lihgt.type == LightType.Directional)//  
+                if (lihgt.type == LightType.Directional)
                 {
                     Destroy(lihgt.gameObject);
                     break;
@@ -249,6 +249,7 @@ namespace GamePlay.Stage
                 portal.IsConnect = true; // 현재 진행중인 스테이지의 포탙 개방
             }
             GameManager.Instance.currentStage = this;
+            NavMeshRebuildSystem.SetSurface(navMeshSurface);
 
             StageInitAction?.Invoke();
             

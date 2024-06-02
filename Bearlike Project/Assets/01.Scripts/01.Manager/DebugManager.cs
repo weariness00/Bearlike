@@ -114,54 +114,52 @@ namespace Manager
         }
 
         #endregion
+    }
 
-        #region Debug Extension
-
-        [InitializeOnLoad]
-        public static class DebugLogExtension
+#if UNITY_EDITOR
+    [InitializeOnLoad]
+    public static class DebugLogExtension
+    {
+        static DebugLogExtension()
         {
-            static DebugLogExtension()
-            {
-                Application.logMessageReceived += HandleLog;
-            }
+            Application.logMessageReceived += HandleLog;
+        }
 
-            private static void HandleLog(string logString, string stackTrace, LogType type)
+        private static void HandleLog(string logString, string stackTrace, LogType type)
+        {
+            if (type == LogType.Log)
             {
-                if (type == LogType.Log)
+                if (TryGetInstanceIDFromLog(logString, out int instanceID))
                 {
-                    if (TryGetInstanceIDFromLog(logString, out int instanceID))
+                    EditorApplication.delayCall += () =>
                     {
-                        EditorApplication.delayCall += () =>
+                        Object contextObject = EditorUtility.InstanceIDToObject(instanceID);
+                        if (contextObject != null)
                         {
-                            Object contextObject = EditorUtility.InstanceIDToObject(instanceID);
-                            if (contextObject != null)
-                            {
-                                Selection.activeObject = contextObject;
-                                EditorGUIUtility.PingObject(contextObject);
-                            }
-                        };
-                    }
+                            Selection.activeObject = contextObject;
+                            EditorGUIUtility.PingObject(contextObject);
+                        }
+                    };
                 }
-            }
-
-            private static bool TryGetInstanceIDFromLog(string logString, out int instanceID)
-            {
-                instanceID = -1;
-                const string contextPrefix = "[Object : ";
-                int contextIndex = logString.LastIndexOf(contextPrefix);
-                if (contextIndex != -1)
-                {
-                    int endIndex = logString.IndexOf(']', contextIndex);
-                    if (endIndex != -1)
-                    {
-                        string idString = logString.Substring(contextIndex + contextPrefix.Length, endIndex - contextIndex - contextPrefix.Length);
-                        return int.TryParse(idString, out instanceID);
-                    }
-                }
-                return false;
             }
         }
 
-        #endregion
+        private static bool TryGetInstanceIDFromLog(string logString, out int instanceID)
+        {
+            instanceID = -1;
+            const string contextPrefix = "[Object : ";
+            int contextIndex = logString.LastIndexOf(contextPrefix);
+            if (contextIndex != -1)
+            {
+                int endIndex = logString.IndexOf(']', contextIndex);
+                if (endIndex != -1)
+                {
+                    string idString = logString.Substring(contextIndex + contextPrefix.Length, endIndex - contextIndex - contextPrefix.Length);
+                    return int.TryParse(idString, out instanceID);
+                }
+            }
+            return false;
+        }
     }
+#endif
 }
