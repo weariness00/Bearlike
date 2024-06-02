@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Fusion;
 using UnityEngine;
+using Weapon.Gun;
 
 namespace Weapon
 {
@@ -54,7 +55,9 @@ namespace Weapon
             
             // 변경한 장비를 착용
             equipment.EquipAction?.Invoke(equipTargetObject);
-
+            if (equipment.IsGun && equipment is GunBase gun)
+                gun.OverHeatCal();
+            
             return true;
         }
     }

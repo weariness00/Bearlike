@@ -39,7 +39,7 @@ namespace Player
         public SkillInventory skillInventory;
         public SkillSelectUI skillSelectUI;
         public SkillCanvas skillCanvas;
-        public PlayerLevelCanvas levelCanvas;
+        public PlayerEXP levelCanvas;
         public GoodsCanvas goodsCanvas;
         
         public Animator animator;

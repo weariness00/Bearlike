@@ -125,6 +125,7 @@ namespace Weapon.Gun
             };
             FireLateTimer = TickTimer.CreateFromSeconds(Runner, 0);
             ReloadLateTimer = TickTimer.CreateFromSeconds(Runner, 0);
+            OverHeatCal();
         }
 
         #endregion
@@ -298,7 +299,7 @@ namespace Weapon.Gun
             //     shotsmoke.gameObject.SetActive(false);
         }
         
-        void OverHeatCal()
+        public void OverHeatCal()
         {
             float bulletCount = 1 - (float)magazine.Current / magazine.Max;
             
