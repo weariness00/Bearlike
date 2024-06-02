@@ -72,9 +72,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6831913940448254236}
+  - component: {fileID: 1326746115929638593}
   - component: {fileID: 3173287629988651953}
   - component: {fileID: 4854486632741455185}
-  - component: {fileID: 1326746115929638593}
   - component: {fileID: 4502984420150019297}
   - component: {fileID: 2967954220686134632}
   - component: {fileID: 8016756961604045440}
@@ -109,6 +109,43 @@ Transform:
   - {fileID: 4850788655454677753}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1326746115929638593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6303898161483548060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 229bb55798ef33648afbeca6e10b2fb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
+  rigidbody: {fileID: 0}
+  collider: {fileID: 0}
+  networkAnimator: {fileID: 0}
+  status: {fileID: 0}
+  lootingTable: {fileID: 0}
+  pivot: {fileID: 4103758611438689336}
+  navMeshAgent: {fileID: 0}
+  id: 1
+  explain: 
+  type: 
+  targetPlayer: {fileID: 0}
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 4096
+  gun: {fileID: 1802220238903691281}
+  dieEffectObject: {fileID: 1428562674735892464}
+  idleClip: {fileID: 6502710776952731769, guid: 1b41998b475852b4b87c7c182731e594,
+    type: 3}
+  moveClip: {fileID: -6089626556859248405, guid: 1b41998b475852b4b87c7c182731e594,
+    type: 3}
+  longAttackClip: {fileID: 9005879863974645250, guid: 1b41998b475852b4b87c7c182731e594,
+    type: 3}
 --- !u!114 &3173287629988651953
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,43 +246,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isDrop: 0
   _dropItems: []
---- !u!114 &1326746115929638593
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6303898161483548060}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 229bb55798ef33648afbeca6e10b2fb1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _IsAsyncClient: []
-  _IsSpawnSuccess:
-    _value: 0
-  rigidbody: {fileID: 0}
-  collider: {fileID: 0}
-  networkAnimator: {fileID: 0}
-  status: {fileID: 0}
-  lootingTable: {fileID: 0}
-  pivot: {fileID: 4103758611438689336}
-  navMeshAgent: {fileID: 0}
-  id: 1
-  explain: 
-  type: 
-  targetPlayer: {fileID: 0}
-  targetMask:
-    serializedVersion: 2
-    m_Bits: 4096
-  gun: {fileID: 1802220238903691281}
-  dieEffectObject: {fileID: 1428562674735892464}
-  idleClip: {fileID: 6502710776952731769, guid: 1b41998b475852b4b87c7c182731e594,
-    type: 3}
-  moveClip: {fileID: -6089626556859248405, guid: 1b41998b475852b4b87c7c182731e594,
-    type: 3}
-  longAttackClip: {fileID: 9005879863974645250, guid: 1b41998b475852b4b87c7c182731e594,
-    type: 3}
 --- !u!114 &4502984420150019297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -264,8 +264,8 @@ MonoBehaviour:
   NestedObjects:
   - {fileID: 284067326382795728}
   NetworkedBehaviours:
-  - {fileID: 3173287629988651953}
   - {fileID: 1326746115929638593}
+  - {fileID: 3173287629988651953}
   - {fileID: 2967954220686134632}
   - {fileID: 8016756961604045440}
   - {fileID: 4385394217357682011}

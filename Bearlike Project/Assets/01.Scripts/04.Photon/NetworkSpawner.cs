@@ -165,15 +165,22 @@ namespace Script.Photon
         /// </summary>
         async Task SpawnTask()
         {
-            var obj = await Runner.SpawnAsync(_currentSpawnObjectOrder, _currentSpawnPlace.position, _currentSpawnPlace.rotation);
-            SetParentRPC(obj.Id);
-            SpawnSuccessAction?.Invoke(obj.gameObject);
-            NextObject();
-            NextPlace();
-            NextInterval();
+            try
+            {
+                var obj = await Runner.SpawnAsync(_currentSpawnObjectOrder, _currentSpawnPlace.position, _currentSpawnPlace.rotation);
+                SetParentRPC(obj.Id);
+                SpawnSuccessAction?.Invoke(obj.gameObject);
+                NextObject();
+                NextPlace();
+                NextInterval();
             
-            DebugManager.Log("네트워크 객체 소환\n" +
-                             $"이름 : {obj.name}");
+                DebugManager.Log("네트워크 객체 소환\n" +
+                                 $"이름 : {obj.name}");
+            }
+            catch (Exception e)
+            {
+                DebugManager.LogError(e);
+            }
         }
 
         [Rpc(RpcSources.All, RpcTargets.All)]

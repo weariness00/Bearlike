@@ -304,6 +304,8 @@ namespace Weapon.Gun
         
         public void OverHeatCal()
         {
+            if(!shotOverHeatingPropertyBlock) return;
+            
             float bulletCount = 1 - (float)magazine.Current / magazine.Max;
             
             StartCoroutine(OverHitTimer(shotOverHeatingPropertyBlock.Block.GetFloat(Value), bulletCount));

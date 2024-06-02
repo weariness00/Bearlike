@@ -32,7 +32,7 @@ namespace Skill.Support
         public VisualEffect blackHoleVFX;
         public GameObject explodeVFXObject;
 
-        private bool _isUpdate;
+        private bool _isExplode;
         
         private HashSet<RigidBodyOriginInfo> _targetRigidBodyList = new HashSet<RigidBodyOriginInfo>(new RigidBodyOriginInfoComparer());
         private HashSet<MonsterBase> _monsterList = new HashSet<MonsterBase>();
@@ -102,23 +102,18 @@ namespace Skill.Support
         public override void Spawned()
         {
             base.Spawned();
-            _isUpdate = true;
+            _isExplode = false;
             _durationTimer = TickTimer.CreateFromSeconds(Runner, gravityFieldDuration);
         }
 
         public override void FixedUpdateNetwork()
         {
-            if(_isUpdate == false) return;
-            
-            if (_durationTimer.Expired(Runner))
+            if (!_isExplode && _durationTimer.Expired(Runner))
             {
-                _isUpdate = false;
+                _isExplode = true;
                 OnExplodeVFXRPC();
             }
-            else
-            {
-                PullTarget();
-            }
+            PullTarget();
         }
 
         // 중력장에 의해 끌려오는 로직

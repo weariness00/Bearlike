@@ -40,11 +40,11 @@ namespace Monster.Container
                 dieEffectObject.SetActive(true);
             };
 
-            navMeshAgent = GetComponent<NavMeshAgent>();
-            navMeshAgent.enabled = false;
-            if (NavMesh.SamplePosition(transform.position, out var hit, 10.0f, NavMesh.AllAreas))
-                transform.position = hit.position; // NavMesh 위치로 이동
-            navMeshAgent.enabled = true;
+            // navMeshAgent = GetComponent<NavMeshAgent>();
+            // navMeshAgent.enabled = false;
+            // if (NavMesh.SamplePosition(transform.position, out var hit, 10.0f, NavMesh.AllAreas))
+            //     transform.position = hit.position; // NavMesh 위치로 이동
+            // navMeshAgent.enabled = true;
             
             gun.BeforeShootAction += BeforeShoot;
         }
