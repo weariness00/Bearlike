@@ -217,6 +217,7 @@ namespace Weapon.Gun
                 ammo.Current -= needChargingAmmoCount;
             magazine.Current += needChargingAmmoCount;
                 
+            OverHeatCal();
             AfterReloadAction?.Invoke();
             DebugManager.Log($"탄약 충전 : {magazine.Current} + {needChargingAmmoCount}");
         }
@@ -264,6 +265,7 @@ namespace Weapon.Gun
         }
         
         // weaponSystem에서 작동해여 코루틴이 끝까지 작동함
+        // TODO : 로직 수정으로 인해서 잠시 사용 중단
         IEnumerator OverHeatCoroutine()
         {
             float value;
@@ -296,6 +298,30 @@ namespace Weapon.Gun
             //     shotsmoke.gameObject.SetActive(false);
         }
         
+        void OverHeatCal()
+        {
+            float bulletCount = 1 - (float)magazine.Current / magazine.Max;
+            
+            StartCoroutine(OverHitTimer(shotOverHeating.GetFloat(Value), bulletCount));
+        }
+
+        IEnumerator OverHitTimer(float LValue, float RValue)
+        {            
+            float amount;
+            
+            float elapsedTime = 0f;
+            float duration = 0.6f; // 보간에 걸리는 시간
+            
+            while (elapsedTime < duration)
+            {
+                elapsedTime += Time.deltaTime;
+                amount = Mathf.Lerp(LValue, RValue, elapsedTime / duration);
+                shotOverHeating.SetFloat(Value, amount);
+                DebugManager.Log($"{amount}");
+                yield return null;
+            }
+        }
+
         #endregion
 
         #region Weapon Interface
@@ -335,7 +361,11 @@ namespace Weapon.Gun
         }
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public void FireBulletRPC() => FireBullet();
+        public void FireBulletRPC()
+        {
+            FireBullet();
+            OverHeatCal();
+        }
 
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void ReloadBulletRPC(int needChargingAmmoCount) => ReLoadBullet(needChargingAmmoCount);
@@ -354,7 +384,7 @@ namespace Weapon.Gun
             if (false == shotsmoke.gameObject.activeSelf)
                 shotsmoke.gameObject.SetActive(true);
             shotsmoke.SendEvent("OnPlay");
-            StartCoroutine(OverHeatCoroutine());
+            // StartCoroutine(OverHeatCoroutine());
         }
         
         #endregion

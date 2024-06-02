@@ -11,6 +11,7 @@ namespace Weapon
         public IEquipment equipment; // 현재 장착 중인 무기
 
         public List<WeaponBase> weaponList;
+        public GameObject smokeObject;
 
         private void Awake()
         {
@@ -24,6 +25,20 @@ namespace Weapon
             foreach (var weapon in weaponList)
                 weapon.gameObject.SetActive(false);
             ((WeaponBase)equipment).gameObject.SetActive(true);
+            
+            if (HasInputAuthority)
+            {
+                Transform[] children = new Transform[smokeObject.transform.childCount];
+                for (int i = 0; i < smokeObject.transform.childCount; i++)
+                {
+                    children[i] = smokeObject.transform.GetChild(i);
+                }
+
+                foreach (var child in children)
+                {
+                    child.gameObject.layer = LayerMask.NameToLayer("Weapon");
+                }
+            }
         }
 
         public bool ChangeEquipment(int index, GameObject equipTargetObject)
