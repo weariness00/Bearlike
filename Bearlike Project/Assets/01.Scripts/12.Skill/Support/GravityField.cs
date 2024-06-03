@@ -66,12 +66,14 @@ namespace Skill.Support
                     isKinematic = rb.isKinematic
                 };
 
-                rb.isKinematic = false;
-
                 if (rb.TryGetComponent(out MonsterBase monster))
                 {
                     monster.DisableNavMeshAgent(false, false);
                     _monsterList.Add(monster);
+                }
+                else
+                {
+                    rb.isKinematic = false;
                 }
                 _targetRigidBodyList.Add(rbInfo);
             }

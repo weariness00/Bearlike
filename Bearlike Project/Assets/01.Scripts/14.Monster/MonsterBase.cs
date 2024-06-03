@@ -271,7 +271,7 @@ namespace Monster
                 return;
             
             navMeshAgent.enabled = false;
-            if(isGravity) rigidbody.useGravity = true;
+            rigidbody.useGravity = isGravity;
             rigidbody.isKinematic = false;
 
             if (isIncludeCollider)
