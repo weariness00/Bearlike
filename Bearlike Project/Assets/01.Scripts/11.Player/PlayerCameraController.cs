@@ -30,6 +30,7 @@ namespace Player
         public Camera uiCamera;
         public Camera skillCamera;
         public Camera fullScreenCamera;
+        public Camera outlineCamera;
         public Vector3 firstOffset;
         public Vector3 thirdOffset;
 
@@ -54,10 +55,22 @@ namespace Player
 
             targetCamera.tag = "MainCamera";
 
+            // 카메라 순서
+            // 해당 순서는 포스트 프로세싱효과와 여러 작용에 의해 결정된 사항임
+            // 1. SKill Effect
+            // 2. Weapon
+            // 3. Full Screen
+            // 4. Out line
+            // 5. UI
+            // 6. Model UI
+            
+            
             SetOwnerCamera();
-            TargetCameraAddOverlay(weaponCamera);
-            TargetCameraAddOverlay(skillCamera);            
-            TargetCameraAddOverlay(fullScreenCamera);
+            TargetCameraAddOverlay(0, skillCamera);            
+            TargetCameraAddOverlay(1,weaponCamera);
+            TargetCameraAddOverlay(2,fullScreenCamera);
+            TargetCameraAddOverlay(3,outlineCamera);
+            TargetCameraAddOverlay(4,uiCamera);
 
             StartCoroutine(WeaponCameraShake());
         }

@@ -34,7 +34,7 @@ namespace UI.Weapon
             {
                 if (player.HasInputAuthority)
                 {
-                    player.cameraController.TargetCameraAddOverlay(3, overlayCamera);
+                    player.cameraController.TargetCameraAddOverlay(overlayCamera);
                     break;
                 }
             }

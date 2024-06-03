@@ -1337,9 +1337,7 @@ MonoBehaviour:
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
-  m_Cameras:
-  - {fileID: 4384581159391793847}
-  - {fileID: 6380551318245523335}
+  m_Cameras: []
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2
@@ -3083,7 +3081,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 1
+  m_RenderPostProcessing: 0
   m_Antialiasing: 1
   m_AntialiasingQuality: 2
   m_StopNaN: 1
@@ -6769,6 +6767,7 @@ MonoBehaviour:
   uiCamera: {fileID: 4384581159391793847}
   skillCamera: {fileID: 3009489927179751103}
   fullScreenCamera: {fileID: 2954221740060699749}
+  outlineCamera: {fileID: 6380551318245523335}
   firstOffset: {x: 0, y: 0, z: 0.27}
   thirdOffset: {x: 0, y: 0, z: -2}
   movement: 0.01
