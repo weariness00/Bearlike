@@ -73,7 +73,7 @@ namespace Skill.Container
                 _trajectoryVFXDestroyTime = 3f;
             }
 
-            _layerMask = LayerMask.GetMask("Default");
+            _layerMask = 1 << LayerMask.GetMask("Default");
 
             _findTime = new WaitForSeconds(0.2f);
         }
@@ -240,11 +240,11 @@ namespace Skill.Container
                     {
                         var monsterPosition = monster.pivot.position;
                         var dir = (monsterPosition - runPosition);
-                        float distance = Vector3.Distance(monsterPosition, runPosition);
 
                         // ray를 발사해 앞에 장애물이 있는지 확인
-                        DebugManager.DrawRay(monsterPosition, dir, Color.blue, 3f);
-                        if (Runner.LagCompensation.Raycast(monsterPosition, dir.normalized, distance, Runner.LocalPlayer, out var hit, _layerMask) == false)
+                        DebugManager.DrawRay(runPosition, dir, Color.blue, 3f);
+                        // if(Physics.Raycast(runPosition, dir.normalized, out var hit, dir.magnitude) == false)
+                        if (Runner.LagCompensation.Raycast(runPosition, dir.normalized, dir.magnitude, Runner.LocalPlayer, out var hit) == false)
                         {
                             _monsterList.Add(monster);
                             if (_aimDictionary.ContainsKey(monster.gameObject) == false)

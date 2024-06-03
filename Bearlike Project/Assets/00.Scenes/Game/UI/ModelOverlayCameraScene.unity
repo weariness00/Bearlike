@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -699,7 +699,7 @@ MonoBehaviour:
   m_CameraType: 0
   m_Cameras:
   - {fileID: 436480936}
-  m_RendererIndex: -1
+  m_RendererIndex: 2
   m_VolumeLayerMask:
     serializedVersion: 2
     m_Bits: 1
@@ -1144,6 +1144,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_RendererIndex
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 804774530743987252, guid: f79e771619b343d4cb3aa42947cb7016,
+        type: 3}
+      propertyPath: m_VolumeLayerMask.m_Bits
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5104888520753331206, guid: f79e771619b343d4cb3aa42947cb7016,
         type: 3}
