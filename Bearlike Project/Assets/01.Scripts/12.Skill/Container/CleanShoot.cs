@@ -231,7 +231,7 @@ namespace Skill.Container
                 var runPosition = Camera.main.transform.position;
                 foreach (var monster in monsters)
                 {
-                    Vector3 monsterViewportPosition = Camera.main.WorldToViewportPoint(monster.transform.position);
+                    Vector3 monsterViewportPosition = Camera.main.WorldToViewportPoint(monster.pivot.position);
 
                     // monsterViewportPosition의 값이 areaMin, areaMax 값 사이에 있으면 객체가 UI 영역 내에 있다고 판단할 수 있습니다.
                     if (monsterViewportPosition.x >= areaMin.x && monsterViewportPosition.x <= areaMax.x &&
@@ -247,10 +247,14 @@ namespace Skill.Container
                         if (Runner.LagCompensation.Raycast(runPosition, dir.normalized, dir.magnitude, Runner.LocalPlayer, out var hit) == false)
                         {
                             _monsterList.Add(monster);
-                            if (_aimDictionary.ContainsKey(monster.gameObject) == false)
+                            if (_aimDictionary.ContainsKey(monster.pivot.gameObject) == false)
                             {
-                                StartCoroutine(AimSetting(runObject, monster.gameObject));
+                                StartCoroutine(AimSetting(runObject, monster.pivot.gameObject));
                             }
+                        }
+                        else
+                        {
+                            DebugManager.LogWarning("충돌 안함");
                         }
                     }
                 }
