@@ -50,8 +50,6 @@ namespace Player
         private Rig _headRig;
         private StageSelectUI _stageSelectUI;
 
-        public StatusValue<int> ammo = new StatusValue<int>();
-
         [Tooltip("마우스 움직임에 따라 회전할 오브젝트")] public GameObject mouseRotateObject;
 
         public Action<GameObject> MonsterKillAction;
