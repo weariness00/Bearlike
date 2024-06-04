@@ -22,24 +22,6 @@ namespace UI.Skill
         public PlayerController playerController;
 
         private int selectCount = 0; // 횟수가 남아있다면 스킬을 선택후 다시 스킬 선택창 리롤
-        
-        #region Unity Event Function
-
-        private void Awake()
-        {
-            selectUIBlockObject.GetComponent<SkillSelectBlockHandle>().DoubleClickEvent += SelectSkill;
-        }
-
-        private void Update()
-        {
-            // 해당 스킬을 업그레이드
-            if (Input.GetKeyDown(KeyCode.Return))
-            {
-                SelectSkill();
-            }
-        }
-
-        #endregion
 
         #region Member Funtion
 
@@ -102,16 +84,15 @@ namespace UI.Skill
                 var handle = obj.GetComponent<SkillSelectBlockHandle>();
                 obj.SetActive(true);
                 handle.SettingBlock(skill);
+                handle.button.onClick.AddListener(() => SelectSkill(skill.id));
             }
         }
 
-        private async void SelectSkill()
+        private async void SelectSkill(int id)
         {
-            var activeToggle = toggleGroup.GetFirstActiveToggle();
-            var handle = activeToggle.GetComponent<SkillSelectBlockHandle>();
-            if (!playerController.skillSystem.TryGetSkillFromID(handle.id, out var skill))
+            if (!playerController.skillSystem.TryGetSkillFromID(id, out var skill))
             {
-                SpawnSkillRPC(handle.id);
+                SpawnSkillRPC(id);
             }
             else
             {

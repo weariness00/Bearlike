@@ -7075,14 +7075,6 @@ MonoBehaviour:
   animator: {fileID: 0}
   simpleKcc: {fileID: 0}
   rigBuilder: {fileID: 0}
-  ammo:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
   mouseRotateObject: {fileID: 8897159019937030371}
   _W: 0
   rotateSpeed: 500
@@ -7568,8 +7560,8 @@ GameObject:
   - component: {fileID: 6766412550077955515}
   - component: {fileID: 4874733539139329386}
   - component: {fileID: 4899803140653841495}
-  - component: {fileID: 6628086400618420647}
   - component: {fileID: 7301728654835605856}
+  - component: {fileID: 8802190127393934169}
   m_Layer: 5
   m_Name: Skill UI Block
   m_TagString: Untagged
@@ -7637,7 +7629,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6628086400618420647
+--- !u!114 &7301728654835605856
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -7646,7 +7638,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 5488935404202188932}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+  m_Script: {fileID: 11500000, guid: cb2b65af5b3240df992cc799c40a658c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 8802190127393934169}
+  icon: {fileID: 7930335886822156463}
+  titleText: {fileID: 3740679719612704690}
+  explainText: {fileID: 7057398801068481904}
+  id: 0
+--- !u!114 &8802190127393934169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5488935404202188932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -7666,9 +7675,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 21300000, guid: 58b04cc026d8b01499b1f649b430cd03,
+      type: 3}
     m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 21300000, guid: 58b04cc026d8b01499b1f649b430cd03, type: 3}
+    m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
@@ -7678,30 +7688,9 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 4899803140653841495}
-  toggleTransition: 1
-  graphic: {fileID: 0}
-  m_Group: {fileID: 3705485876531476922}
-  onValueChanged:
+  m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  m_IsOn: 0
---- !u!114 &7301728654835605856
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5488935404202188932}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb2b65af5b3240df992cc799c40a658c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  toggle: {fileID: 6628086400618420647}
-  icon: {fileID: 7930335886822156463}
-  titleText: {fileID: 3740679719612704690}
-  explainText: {fileID: 7057398801068481904}
-  id: 0
 --- !u!1 &5627709479634358189
 GameObject:
   m_ObjectHideFlags: 0
