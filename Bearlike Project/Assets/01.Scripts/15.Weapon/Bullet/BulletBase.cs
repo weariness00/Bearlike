@@ -71,7 +71,7 @@ namespace Weapon.Bullet
 
         public override void FixedUpdateNetwork()
         {
-            transform.position += direction * Runner.DeltaTime * status.moveSpeed;
+            transform.position += direction * Runner.DeltaTime * status.GetMoveSpeed();
         }
 
         private void OnTriggerEnter(Collider other)

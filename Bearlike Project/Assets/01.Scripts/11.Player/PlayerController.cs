@@ -40,6 +40,7 @@ namespace Player
         public SkillSelectUI skillSelectUI;
         public SkillCanvas skillCanvas;
         public PlayerEXP levelCanvas;
+        public BuffCanvas buffCanvas;
         public GoodsCanvas goodsCanvas;
         
         public Animator animator;
@@ -130,6 +131,7 @@ namespace Player
                 gunUI.gameObject.SetActive(true);
                 hpUI.gameObject.SetActive(true);
                 levelCanvas.gameObject.SetActive(true);
+                buffCanvas.gameObject.SetActive(true);
                 goodsCanvas.gameObject.SetActive(true);
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
             }
@@ -318,7 +320,7 @@ namespace Player
             animator.SetFloat(AniFrontMove, isMoveX ? 1 : 0);
             animator.SetFloat(AniSideMove, isMoveY ? 1 : 0);
             
-            dir *= Runner.DeltaTime * status.moveSpeed * 110f;
+            dir *= Runner.DeltaTime * status.GetMoveSpeed() * 110f;
 
             if (data.Jump)
             {

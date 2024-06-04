@@ -45,6 +45,7 @@ namespace Status
         public StatusValue<float> avoid = new StatusValue<float>(){Min = 0, Max = 1, isOverMax = true, isOverMin = true};           // 회피율 0 ~ 1 사이값
         public float avoidMultiple = 1f;
         public StatusValue<float> moveSpeed = new StatusValue<float>(){Max = 99999f};           // 이동 속도
+        public float moveSpeedMultiple = 1f;
         public StatusValue<float> attackSpeed = new StatusValue<float>(){Max = 99999f};     // 초당 공격 속도
         public float attackSpeedMultiple = 1f;   // 공격 속도 배율
         [Networked] public TickTimer AttackLateTimer { get; set; }
@@ -81,7 +82,9 @@ namespace Status
         public void ClearAdditionalStatus() => _additionalStatusList.Clear();
         public void AddAdditionalStatus(StatusBase otherStatus) => _additionalStatusList.Add(otherStatus);
         public void RemoveAdditionalStatus(StatusBase otherStatus) => _additionalStatusList.Remove(otherStatus);
-    
+
+        #region Damage
+
         public virtual int CalDamage(out bool isCritical, int additionalDamage = 0, float additionalDamageMultiple = 0f, float additionalCriticalHitMultiple = 0f)
         {
             var d = AddAllDamage() + additionalDamage;
@@ -91,14 +94,6 @@ namespace Status
             isCritical = !chm.Equals(1f);
             
             return (int)Math.Round(chm * dm * d);
-        }
-        
-        public virtual int CalAttackSpeed(int additionalAttackSpeed = 0, float additionalAttackSpeedMultiple = 0f)
-        {
-            var ats = AddAllAttackSpeed() + additionalAttackSpeed;
-            var atsm = AddAllAttackSpeedMultiple() + 1 + additionalAttackSpeedMultiple;
-
-            return (int)Math.Round(atsm * ats);
         }
 
         private float CalCriticalHit()
@@ -155,6 +150,30 @@ namespace Status
 
             return chm;
         }
+        
+        private float AddAllCriticalHitChance()
+        {
+            float chc = criticalHitChance;
+            foreach (var statusBase in _additionalStatusList)
+            {
+                chc += statusBase.AddAllCriticalHitChance();
+            }
+            return chc;
+        }
+        
+        #endregion
+
+        #region Attack Speed
+        
+        public virtual int CalAttackSpeed(int additionalAttackSpeed = 0, float additionalAttackSpeedMultiple = 0f)
+        {
+            var ats = AddAllAttackSpeed() + additionalAttackSpeed;
+            var atsm = AddAllAttackSpeedMultiple() + 1 + additionalAttackSpeedMultiple;
+
+            return (int)Math.Round(atsm * ats);
+        }
+
+
 
         private float AddAllAttackSpeed()
         {
@@ -181,15 +200,37 @@ namespace Status
             return asm;
         }
         
-        private float AddAllCriticalHitChance()
+        #endregion
+
+        #region Move Speed
+        
+        public virtual float GetMoveSpeed()
         {
-            float chc = criticalHitChance;
-            foreach (var statusBase in _additionalStatusList)
-            {
-                chc += statusBase.AddAllCriticalHitChance();
-            }
-            return chc;
+            var ms = AddAllMoveSpeed();
+            var msm = AddAllMoveSpeedMultiple() + 1;
+
+            return ms * msm;
         }
+
+        private float AddAllMoveSpeed()
+        {
+            var ms = moveSpeed.Current;
+            foreach (var statusBase in _additionalStatusList)
+                ms += statusBase.AddAllMoveSpeed();
+
+            return ms;
+        }
+
+        private float AddAllMoveSpeedMultiple()
+        {
+            float msm = moveSpeedMultiple - 1;
+            foreach (var statusBase in _additionalStatusList)
+                msm += statusBase.AddAllMoveSpeedMultiple();
+
+            return msm;
+        }
+        
+        #endregion
 
         public int GetAllNuckBack()
         {

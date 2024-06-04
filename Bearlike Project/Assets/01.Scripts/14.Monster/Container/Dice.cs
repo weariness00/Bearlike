@@ -48,7 +48,7 @@ namespace Monster.Container
             AttackTimer = TickTimer.CreateFromSeconds(Runner, 0);
             
             _behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
-            _moveDelay = 1f / status.moveSpeed;
+            _moveDelay = 1f / status.GetMoveSpeed();
 
             DieAction += DeadSlice;
         }
@@ -190,7 +190,7 @@ namespace Monster.Container
                     }
                 }
 
-                dir = 300f * rigidbody.mass * status.moveSpeed * dir;
+                dir = 300f * rigidbody.mass * status.GetMoveSpeed() * dir;
                 rigidbody.AddTorque(dir);
 
                 return INode.NodeState.Success; 

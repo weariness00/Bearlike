@@ -324,7 +324,6 @@ namespace Weapon.Gun
                 amount = Mathf.Lerp(LValue, RValue, elapsedTime / duration);
                 shotOverHeatingPropertyBlock.Block.SetFloat(Value, amount);
                 shotOverHeatingPropertyBlock.SetBlock();
-                DebugManager.Log($"{amount}");
                 yield return null;
             }
         }

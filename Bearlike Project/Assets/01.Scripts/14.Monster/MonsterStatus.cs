@@ -13,6 +13,8 @@ namespace Status
     public class MonsterStatus : StatusBase
     {
         [HideInInspector] public MonsterBase monsterBase;
+
+        private bool isInvokeKillAction = false;
         
         private void Start()
         {
@@ -44,8 +46,9 @@ namespace Status
             {
                 var obj = Runner.FindObject(ownerId);
                 if(obj == null) return;
-                if (obj.TryGetComponent(out PlayerController pc))
+                if (!isInvokeKillAction && obj.TryGetComponent(out PlayerController pc))
                 {
+                    isInvokeKillAction = true;
                     pc.MonsterKillAction?.Invoke(gameObject);
                 }
             }
