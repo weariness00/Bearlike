@@ -35,10 +35,8 @@ namespace GamePlay
         {
             yield return new WaitForSeconds(reBuildTime);
             
-            DebugManager.ToDoError("원인 모를 이유로 인해 Physice Collider모드일때 베이크가 제대로 안된다. 고쳐야한다.");
-            // Physics.SyncTransforms();
-            // stageSurface.RemoveData();
-            // stageSurface.BuildNavMesh();
+            stageSurface.RemoveData();
+            stageSurface.BuildNavMesh();
             
             _reBuildCoroutine = null;
         }

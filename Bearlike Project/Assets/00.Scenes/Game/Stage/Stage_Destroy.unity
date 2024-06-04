@@ -354,18 +354,6 @@ MonoBehaviour:
   m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &655891463 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 142675540342241458, guid: b843c6f547b283847b736fb09f48e586,
-    type: 3}
-  m_PrefabInstance: {fileID: 655891457}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &655891464 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5740508828295799852, guid: b843c6f547b283847b736fb09f48e586,
@@ -2312,6 +2300,7 @@ GameObject:
   - component: {fileID: 2885051411784432137}
   - component: {fileID: 178985232841662690}
   - component: {fileID: 2885051411784432138}
+  - component: {fileID: 2885051411784432139}
   m_Layer: 0
   m_Name: Destroy Stage
   m_TagString: Untagged
@@ -2511,6 +2500,37 @@ MonoBehaviour:
   - {fileID: 2062957788}
   - {fileID: 1531068356}
   - {fileID: 1798153317}
+--- !u!114 &2885051411784432139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2216216100159288197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AgentTypeID: 0
+  m_CollectObjects: 2
+  m_Size: {x: 65, y: 45, z: 65}
+  m_Center: {x: 0, y: 20, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 1074003969
+  m_UseGeometry: 1
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.083333336
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: 475b360ff129c59459a4ccc036d1ac85, type: 2}
+  m_BuildHeightMesh: 0
 --- !u!1 &2936806334289561663
 GameObject:
   m_ObjectHideFlags: 0
@@ -3236,7 +3256,7 @@ MonoBehaviour:
   lootingTable: {fileID: 0}
   stageGameObject: {fileID: 2216216100159288197}
   destructObject: {fileID: 1186871027}
-  navMeshSurface: {fileID: 655891463}
+  navMeshSurface: {fileID: 2885051411784432139}
   prevStagePortal: {fileID: 6400242058382401759}
   nextStagePortal: {fileID: 708792376}
   monsterSpawnerList:
