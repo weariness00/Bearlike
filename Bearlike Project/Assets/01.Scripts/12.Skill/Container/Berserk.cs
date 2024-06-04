@@ -20,9 +20,9 @@ namespace Skill.Container
 
         #region Unity Event Function
 
-        public override void Start()
+        public override void Awake()
         {
-            base.Start();
+            base.Awake();
             var statusData = GetStatusData(id);
 
             _amount = statusData.GetFloat("Amount");

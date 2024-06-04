@@ -111,11 +111,11 @@ namespace Skill
         /// <summary>
         /// 레벨업 (스킬 강화) 할시 동작하는 함수
         /// </summary>
-        public virtual void LevelUp()
+        public virtual void LevelUp(int upAmount = 1, bool isAddInventory = true)
         {
-            level.Current += 1;
-            ownerPlayer.skillInventory.AddItem(this);
-            explain = _originExplain;
+            level.Current += upAmount;
+            if(isAddInventory) ownerPlayer.skillInventory.AddItem(this);
+            ExplainUpdate();
         }
 
         public virtual void ExplainUpdate()

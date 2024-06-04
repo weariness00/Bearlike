@@ -91,7 +91,12 @@ namespace UI.Skill
                 }
                 
                 if (playerController.skillSystem.TryGetSkillFromID(skill.id, out var hasSkill)) skill = hasSkill;
-                else skill.SetJsonData(SkillBase.GetInfoData(skill.id));
+                else
+                {   
+                    skill.SetJsonData(SkillBase.GetInfoData(skill.id));
+                    skill.status = skill.GetComponent<StatusBase>();
+                    skill.Awake();
+                }
                 
                 var obj = Instantiate(selectUIBlockObject, toggleGroup.transform);
                 var handle = obj.GetComponent<SkillSelectBlockHandle>();

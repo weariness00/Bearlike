@@ -1,5 +1,6 @@
 ﻿using Player;
 using UnityEngine;
+using Util;
 using Weapon.Bullet;
 using Weapon.Gun;
 
@@ -23,12 +24,16 @@ namespace Skill.Container
             }
         }
 
-        public override void MainLoop()
-        {
-        }
+        public override void MainLoop(){}
+        public override void Run(){}
 
-        public override void Run()
+        public override void ExplainUpdate()
         {
+            base.ExplainUpdate();
+            if (explain.Contains("(Level)"))
+                explain = explain.Replace("(Level)", $"{level.Current}");
+            
+            explain = StringExtension.Replace(explain);
         }
 
         /// <summary>

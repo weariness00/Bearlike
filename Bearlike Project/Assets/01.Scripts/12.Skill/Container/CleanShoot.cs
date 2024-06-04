@@ -140,13 +140,6 @@ namespace Skill.Container
             }
         }
 
-        public override void LevelUp()
-        {
-            base.LevelUp();
-
-            ExplainUpdate();
-        }
-
         public override void ExplainUpdate()
         {
             base.ExplainUpdate();

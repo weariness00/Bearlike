@@ -20,10 +20,14 @@ namespace UI.Skill
 
         public void SettingBlock(SkillBase skill)
         {
+            skill.LevelUp(1, false);
+            
             if(skill.icon) icon.texture = skill.icon.texture;
             titleText.text = skill.skillName;
             explainText.text = skill.explain;
-
+            
+            skill.LevelUp(-1, false);
+            
             id = skill.id;
         }
 

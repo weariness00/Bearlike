@@ -11,8 +11,9 @@ namespace Skill.Container
 
         #region Unity Event Function
 
-        public override void Start()
+        public override void Awake()
         {
+            base.Awake();
             var statusData = GetStatusData(id);
             _damageMultiplePerLevel = statusData.GetFloat("Damage Multiple Per Level");
         }
@@ -40,9 +41,9 @@ namespace Skill.Container
         {
         }
 
-        public override void LevelUp()
+        public override void LevelUp(int upAmount = 1, bool isAddInventory = true)
         {
-            base.LevelUp();
+            base.LevelUp(upAmount, isAddInventory);
             
             status.criticalHitMultiple = 1f + _damageMultiplePerLevel * level.Current;
         }

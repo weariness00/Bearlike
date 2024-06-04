@@ -32,9 +32,9 @@ namespace Skill.Container
         
         #endregion
 
-        public override void Start()
+        public override void Awake()
         {
-            base.Start();
+            base.Awake();
             var statusData = GetStatusData(id);
             _durationTime = statusData.GetFloat("Duration Time");
             
