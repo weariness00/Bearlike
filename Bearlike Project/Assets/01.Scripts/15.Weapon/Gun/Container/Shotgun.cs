@@ -66,10 +66,8 @@ namespace Weapon.Gun.Continer
                                 b.OwnerId = OwnerId;
                                 b.OwnerGunId = Object.Id;
                                 b.KnockBack = nuckBack;
-                                // b.status.attackRange.Max = status.attackRange.Max;
-                                // b.status.attackRange.Current = status.attackRange.Current;
                                 b.destination = fireTransform.position + (dst * status.attackRange) + randomVector3;
-                                BeforeShootAction?.Invoke(b);
+                                b.PenetrateCount = penetrateCount;
                             });
                     }
                 }

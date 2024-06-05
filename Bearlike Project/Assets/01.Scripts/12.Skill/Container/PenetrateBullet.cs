@@ -19,7 +19,7 @@ namespace Skill.Container
                 if (pc.weaponSystem.equipment.IsGun)
                 {
                     var gun = pc.weaponSystem.equipment as GunBase;
-                    gun.BeforeShootAction += ReinforceBullet;
+                    gun.penetrateCount = level;
                 }
             }
         }
@@ -34,14 +34,6 @@ namespace Skill.Container
                 explain = explain.Replace("(Level)", $"{level.Current}");
             
             explain = StringExtension.Replace(explain);
-        }
-
-        /// <summary>
-        /// 총알이 관통이 되도록 하는 함수
-        /// </summary>
-        public void ReinforceBullet(BulletBase bullet)
-        {
-            bullet.penetrateCount = level;
         }
     }
 }

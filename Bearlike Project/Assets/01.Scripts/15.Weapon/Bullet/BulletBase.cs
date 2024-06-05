@@ -4,14 +4,12 @@ using GamePlay;
 using Manager;
 using Photon;
 using Photon.MeshDestruct;
-using Player;
 using Status;
 using UI.Status;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace Weapon.Bullet
@@ -27,10 +25,11 @@ namespace Weapon.Bullet
 
         private IWeaponHitEffect _hitEffect;
         private IWeaponHitSound _hitSound;
+        private IWeaponHit _hitInterface;
 
         private Vector3 direction;
         public Vector3 destination = Vector3.zero;
-        public int penetrateCount = 0; // 관통 가능 횟수
+        [Networked] public int PenetrateCount { get; set; } // 관통 가능 횟수
         [Networked] public int KnockBack { get; set; }
 
         #endregion
@@ -66,6 +65,7 @@ namespace Weapon.Bullet
             {
                 if(ownerGunObj.TryGetComponent(out StatusBase s)) status.AddAdditionalStatus(s); 
                 ownerGunObj.TryGetComponent(out _hitEffect);
+                ownerGunObj.TryGetComponent(out _hitInterface);
             }
         }
 
@@ -82,8 +82,9 @@ namespace Weapon.Bullet
             {
                 StatusBase otherStatus = colliderStatus.originalStatus;
                 status.AddAdditionalStatus(colliderStatus.status);
+                _hitInterface?.BeforeHitAction?.Invoke(gameObject, otherStatus.gameObject);
                 
-                otherStatus.ApplyDamageRPC(status.CalDamage(out bool isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, OwnerId);//
+                otherStatus.ApplyDamageRPC(status.CalDamage(out bool isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, OwnerId);
                 status.RemoveAdditionalStatus(colliderStatus.status);
                 _hitEffect?.OnWeaponHitEffect(transform.position);
                 _hitSound?.PlayWeaponHit();
@@ -98,10 +99,8 @@ namespace Weapon.Bullet
 
                     otherStatus.KnockBackRPC(knockbackDirection, KnockBack);
                 }
-            }
-            else if (other.transform.root.gameObject.TryGetComponent(out PlayerStatus playerStatus))
-            {
-                playerStatus.ApplyDamageRPC(status.CalDamage(out var isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, OwnerId);
+                
+                _hitInterface?.AfterHitAction?.Invoke(gameObject, otherStatus.gameObject);
             }
             else if (other.TryGetComponent(out StatusBase otherStatus))
             {
@@ -114,7 +113,7 @@ namespace Weapon.Bullet
                 NetworkMeshSliceSystem.Instance.SliceRPC(networkObj.Id, Random.onUnitSphere, transform.position, 0f);
             }
 
-            if (penetrateCount-- == 0)
+            if (PenetrateCount-- == 0)
             {
                 Destroy(gameObject);
             }

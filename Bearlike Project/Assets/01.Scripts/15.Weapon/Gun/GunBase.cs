@@ -14,7 +14,7 @@ using Weapon.Bullet;
 
 namespace Weapon.Gun
 {
-    public class GunBase : WeaponBase, IJsonData<GunJsonData>, IWeaponHitEffect
+    public class GunBase : WeaponBase, IJsonData<GunJsonData>, IWeaponHitEffect, IWeaponHit
     {
         #region Static
 
@@ -57,7 +57,8 @@ namespace Weapon.Gun
         public BulletBase bullet;
         public static StatusValue<int> ammo = new StatusValue<int>(){Max = 100, Current = int.MaxValue};
         public StatusValue<int> magazine = new StatusValue<int>() {Max = 10, Current = 10}; // max 최대 탄약, current 현재 장정된 탄약
-
+        public int penetrateCount = 0;
+        
         public float bulletFirePerMinute; // 분당 총알 발사량
         public float BulletFirePerSecond => bulletFirePerMinute / 60f;
         [Networked] public TickTimer FireLateTimer { get; set; }
@@ -65,10 +66,6 @@ namespace Weapon.Gun
         public float fireLateSecond;
         public float reloadLateSecond;
         public Transform fireTransform;
-
-        // 총을 쏘면 Bullet을 스폰하는데 스폰하기 전에 bullet에 적용할 메서드
-        // 해당 메서드는 총의 장착을 해제하면 null로 함
-        public Action<BulletBase> BeforeShootAction;
 
         /// <summary>
         /// 총을 쏘고 난 뒤에 동작하게 할 Action
@@ -97,7 +94,6 @@ namespace Weapon.Gun
             ReleaseEquipAction += (obj) =>
             {
                 AfterFireAction = null;  
-                BeforeShootAction = null;
                 status.ClearAdditionalStatus();
             };
             
@@ -179,8 +175,7 @@ namespace Weapon.Gun
                             b.OwnerGunId = Object.Id;
                             b.KnockBack = nuckBack;
                             b.destination = fireTransform.position + (dst * status.attackRange);
-
-                            BeforeShootAction?.Invoke(b);
+                            b.PenetrateCount = penetrateCount;
                         });
                 }
 
@@ -336,6 +331,8 @@ namespace Weapon.Gun
         {
             Runner.SpawnAsync(hitEffectPrefab, hitPosition);
         }
+        public Action<GameObject, GameObject> BeforeHitAction { get; set; }
+        public Action<GameObject, GameObject> AfterHitAction { get; set; }
 
         #endregion
 

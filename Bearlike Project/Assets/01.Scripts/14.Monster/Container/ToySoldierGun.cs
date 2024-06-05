@@ -46,7 +46,7 @@ namespace Monster.Container
             //     transform.position = hit.position; // NavMesh 위치로 이동
             // navMeshAgent.enabled = true;
             
-            gun.BeforeShootAction += BeforeShoot;
+            // gun.BeforeHitAction += BeforeShoot;
         }
 
         public override void Spawned()
@@ -65,15 +65,15 @@ namespace Monster.Container
 
         #region Member Function
 
-        private void BeforeShoot(BulletBase bullet)
-        {
-            bullet.status.damage.Current = status.damage.Current + gun.status.damage.Current;
-            
-            bullet.status.attackRange.Max = gun.status.attackRange.Max;
-            bullet.status.attackRange.Current = gun.status.attackRange.Current;
-
-            bullet.status.moveSpeed.Current = gun.status.moveSpeed.Current;
-        }
+        // private void BeforeShoot(BulletBase bullet)
+        // {
+        //     bullet.status.damage.Current = status.damage.Current + gun.status.damage.Current;
+        //     
+        //     bullet.status.attackRange.Max = gun.status.attackRange.Max;
+        //     bullet.status.attackRange.Current = gun.status.attackRange.Current;
+        //
+        //     bullet.status.moveSpeed.Current = gun.status.moveSpeed.Current;
+        // }
 
         #endregion
         

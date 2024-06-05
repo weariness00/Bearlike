@@ -6,6 +6,8 @@ using UnityEngine;
 
 namespace Weapon
 {
+    #region Weapon Interfaec
+    
     public interface IWeaponHitEffect
     {
         public void OnWeaponHitEffect(Vector3 hitPosition);
@@ -15,6 +17,18 @@ namespace Weapon
     {
         public void PlayWeaponHit();
     }
+
+    public interface IWeaponHit
+    {
+        /// <summary>
+        /// 자신을 첫번째 인자인 GameObject로
+        /// 맟춘 대상을 두번째 인자 GameObject로
+        /// </summary>
+        public Action<GameObject, GameObject> BeforeHitAction { get; set; } 
+        public Action<GameObject, GameObject> AfterHitAction { get; set; } 
+    }
+    
+    #endregion
     
     public interface IEquipment
     {

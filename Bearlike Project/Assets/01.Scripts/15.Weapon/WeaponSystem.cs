@@ -42,6 +42,17 @@ namespace Weapon
             }
         }
 
+        public bool TryGetEquipGun(out GunBase gun)
+        {
+            gun = null;
+            if (equipment.IsGun)
+            {
+                gun = equipment as GunBase;
+                return true;
+            }
+            return false;
+        }
+
         public bool ChangeEquipment(int index, GameObject equipTargetObject)
         {
             if(weaponList.Count < index)  return false;

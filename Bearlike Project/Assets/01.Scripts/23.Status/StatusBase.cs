@@ -93,6 +93,7 @@ namespace Status
 
             isCritical = !chm.Equals(1f);
             
+            if (dm < 0) return 0; // 대미지 배율이 -이면 대미지는 0이다.
             return (int)Math.Round(chm * dm * d);
         }
 

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
 using Data;
 using Fusion;
 using Photon;
@@ -9,7 +6,6 @@ using Player;
 using Status;
 using UI.Inventory;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.VFX;
 
 namespace Skill
