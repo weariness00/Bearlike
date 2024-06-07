@@ -9,6 +9,7 @@ using Photon;
 using Player;
 using Status;
 using UI.Status;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.VFX;
 using Random = UnityEngine.Random;
@@ -93,11 +94,16 @@ namespace Skill.Support
                 rb = cs.originalStatus.GetComponent<Rigidbody>();
             else
                 rb = other.attachedRigidbody;
+
+            var rbInfo = new RigidBodyOriginInfo() { rigidbody = rb };
             
-            if (rb && rb.mass < gravityPower)
+            if (_targetRigidBodyList.TryGetValue(rbInfo, out var currentRBInfo))
             {
                 if(rb.TryGetComponent(out MonsterBase monster)) _monsterList.Remove(monster);
-                _targetRigidBodyList.Remove(new RigidBodyOriginInfo(){rigidbody = rb});
+                _targetRigidBodyList.Remove(currentRBInfo);
+                
+                currentRBInfo.rigidbody.useGravity = currentRBInfo.useGravity;
+                currentRBInfo.rigidbody.isKinematic = currentRBInfo.isKinematic;
             }
         }
 

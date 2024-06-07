@@ -145,14 +145,14 @@ namespace Monster.Container
             {
                 networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 0f);
                 _isInitAnimation = false;
-                if(navMeshAgent.isActiveAndEnabled) navMeshAgent.isStopped = true;
+                if(navMeshAgent.isActiveAndEnabled && navMeshAgent.isOnNavMesh) navMeshAgent.isStopped = true;
                 return INode.NodeState.Success;
             }
             
             if (_isInitAnimation == false)
             {
                 _isInitAnimation = true;
-                if(navMeshAgent.isActiveAndEnabled) navMeshAgent.isStopped = false;
+                if(navMeshAgent.isActiveAndEnabled && navMeshAgent.isOnNavMesh) navMeshAgent.isStopped = false;
                 AniMoveTimer = TickTimer.CreateFromSeconds(Runner, moveClip.length);
                 networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 1f);
                 randomDir = Random.onUnitSphere * 2f;
@@ -179,7 +179,7 @@ namespace Monster.Container
             
             networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 0f);
             _isInitAnimation = false;
-            if(navMeshAgent.isActiveAndEnabled) navMeshAgent.isStopped = true;
+            if(navMeshAgent.isActiveAndEnabled && navMeshAgent.isOnNavMesh) navMeshAgent.isStopped = true;
             return INode.NodeState.Success;
         }
 

@@ -77,10 +77,11 @@ namespace Weapon.Bullet
         private void OnTriggerEnter(Collider other)
         {
             if (!HasStateAuthority) return;
-            
+
+            StatusBase otherStatus = null;
             if (other.TryGetComponent(out ColliderStatus colliderStatus))
             {
-                StatusBase otherStatus = colliderStatus.originalStatus;
+                otherStatus = colliderStatus.originalStatus;
                 status.AddAdditionalStatus(colliderStatus.status);
                 _hitInterface?.BeforeHitAction?.Invoke(gameObject, otherStatus.gameObject);
                 
@@ -102,7 +103,7 @@ namespace Weapon.Bullet
                 
                 _hitInterface?.AfterHitAction?.Invoke(gameObject, otherStatus.gameObject);
             }
-            else if (other.TryGetComponent(out StatusBase otherStatus))
+            else if (other.TryGetComponent(out otherStatus) || other.transform.root.gameObject.TryGetComponent(out otherStatus))
             {
                 otherStatus.ApplyDamageRPC(status.CalDamage(out var isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, OwnerId);
             }

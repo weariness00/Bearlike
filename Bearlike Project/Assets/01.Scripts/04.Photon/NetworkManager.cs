@@ -318,28 +318,11 @@ namespace Photon
                 if (KeyManager.InputAction(KeyToAction.Esc))
                 {
                     playerInputData.Escape = true;
-
-                    // switch (Cursor.lockState)
-                    // {
-                    //     case CursorLockMode.None:
-                    //         if(GameUIManager.HasInstance() && GameUIManager.HasActiveUI() == false) isCursor = true;
-                    //         playerInputData.Escape = false;
-                    //         break;
-                    //     case CursorLockMode.Locked:
-                    //         Cursor.lockState = CursorLockMode.None;
-                    //         isCursor = false;
-                    //         break;
-                    // }
-                    
                     _keyDownTimer = TickTimer.CreateFromTicks(runner, 2);
                 }
             }
             if (Cursor.lockState == CursorLockMode.None)
-            {
                 playerInputData.Cursor = trueValue;
-                input.Set(playerInputData);
-                return;
-            }
 
             if (KeyManager.InputAction(KeyToAction.MoveFront))
                 playerInputData.MoveFront = trueValue;
