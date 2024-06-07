@@ -22,7 +22,6 @@ namespace Skill
     /// 레벨업 & 다운은 가능하다 버리기는 불가능
     /// </summary>
     [System.Serializable]
-    [RequireComponent(typeof(StatusBase))]
     public abstract class SkillBase : NetworkBehaviourEx, IJsonData<SkillJsonData>, IInventoryItemAdd
     {
         #region Static
@@ -53,8 +52,9 @@ namespace Skill
         public string explain; // 텍스트로 보여줄 설명
         public SKillType type;
         public Sprite icon;
-        public float coolTime;
-
+        [SerializeField] private float coolTime;
+        [SerializeField] private float coolTimeReductionRate = 0; // 쿨타임 감소율
+        
         public bool isInvoke; // 현재 스킬이 발동 중인지
 
         public StatusBase status;
@@ -71,11 +71,10 @@ namespace Skill
 
         public virtual void Awake()
         {
-            status = GetComponent<StatusBase>();
-            
             SetJsonData(GetInfoData(id));
             var statusData = GetStatusData(id);
-            status.SetJsonData(statusData);
+            
+            if (TryGetComponent(out status)) status.SetJsonData(statusData);
             if(statusData.HasInt("Level Max")) level.Max = statusData.GetInt("Level Max");
             if(effectVFX) effectVFX.gameObject.SetActive(false);
         }
@@ -92,6 +91,12 @@ namespace Skill
         #endregion
 
         #region Member Function
+
+        public void SetCoolTime(float value) => coolTime = value;
+        public float GetCoolTime() => coolTime * (1f - coolTimeReductionRate);
+        
+        public void SetCoolTimeReductionRate(float rate) => coolTimeReductionRate = rate;
+        public float GetCoolTimeReductionRate() => coolTimeReductionRate;
 
         /// <summary>
         /// 스킬을 습득 했을때 발동하도록 하는 함수
@@ -118,7 +123,7 @@ namespace Skill
         {
             explain = _originExplain;
         }
-        
+ 
         #endregion
         
         #region Inventory Interface
@@ -165,6 +170,9 @@ namespace Skill
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void SetSkillCoolTimerRPC(float time) => CoolTimeTimer = TickTimer.CreateFromSeconds(Runner, time);
 
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void SetCoolTimeReductionRateRPC(float rate) => coolTimeReductionRate = rate;
+        
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void SetIsInvokeRPC(NetworkBool value) => isInvoke = value;
 

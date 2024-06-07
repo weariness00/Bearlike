@@ -52,7 +52,7 @@ namespace Skill.Container
             {
                 StopVFXRPC();
                 isInvoke = false;
-                SetSkillCoolTimerRPC(coolTime);
+                SetSkillCoolTimerRPC(GetCoolTime());
                 
                 status.attackSpeedMultiple -= 1.0f;
             }

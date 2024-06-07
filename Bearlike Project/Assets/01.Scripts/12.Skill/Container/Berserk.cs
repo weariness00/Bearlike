@@ -35,19 +35,6 @@ namespace Skill.Container
             durationTimer = TickTimer.CreateFromSeconds(Runner,0);
         }
 
-        public override void ExplainUpdate()
-        {
-            base.ExplainUpdate();
-            if (explain.Contains("(Amount)"))
-                explain = explain.Replace("(Amount)", $"({_amount * 100f})");
-            if (explain.Contains("(Level)"))
-                explain = explain.Replace("(Level)", $"{level.Current}");
-            if (explain.Contains("(Duration)"))
-                explain = explain.Replace("(Duration)", $"{_duration}");
-            
-            explain = StringExtension.Replace(explain);
-        }
-
         #endregion
 
         public override void Earn(GameObject earnTargetObject)
@@ -74,6 +61,19 @@ namespace Skill.Container
         }
 
         public override void Run(){}
+        
+        public override void ExplainUpdate()
+        {
+            base.ExplainUpdate();
+            if (explain.Contains("(Amount)"))
+                explain = explain.Replace("(Amount)", $"({_amount * 100f})");
+            if (explain.Contains("(Level)"))
+                explain = explain.Replace("(Level)", $"{level.Current}");
+            if (explain.Contains("(Duration)"))
+                explain = explain.Replace("(Duration)", $"{_duration}");
+            
+            explain = StringExtension.Replace(explain);
+        }
 
         // Monster를 처치시 발동
         public void MonsterKill(GameObject targetMonster)

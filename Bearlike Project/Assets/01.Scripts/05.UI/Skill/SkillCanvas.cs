@@ -84,13 +84,14 @@ namespace UI.Skill
             }   
             block.useImage.gameObject.SetActive(false);
             
-            float timer = skill.coolTime;
+            float timer = skill.GetCoolTime();
+            float realCoolTime = timer;
             block.coolTimeImage.fillAmount = 1;
             block.timerText.gameObject.SetActive(true);
             while (true)
             {
                 timer -= Time.deltaTime;
-                block.coolTimeImage.fillAmount = timer / skill.coolTime;
+                block.coolTimeImage.fillAmount = timer / realCoolTime;
                 block.timerText.text = ((int)timer).ToString(CultureInfo.InvariantCulture);
                 yield return null;
                 

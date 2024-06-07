@@ -64,7 +64,7 @@ namespace Skill.Container
             if (DurationTimeTimer.Expired(Runner) && true == isInvoke)
             {
                 isInvoke = false;
-                SetSkillCoolTimerRPC(coolTime);
+                SetSkillCoolTimerRPC(GetCoolTime());
 
                 if (_type == 0)
                 {

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &9143825923765031029
+--- !u!1 &1212466817261325088
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,80 +8,81 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6835531890653758571}
-  - component: {fileID: 6582496449349687417}
-  - component: {fileID: 4973092893459209289}
+  - component: {fileID: 7070346049890194582}
+  - component: {fileID: 4411774398296852581}
+  - component: {fileID: 4713498293002615929}
   m_Layer: 0
-  m_Name: Penetrate Bullet
+  m_Name: More Quick Skill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6835531890653758571
+--- !u!4 &7070346049890194582
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9143825923765031029}
+  m_GameObject: {fileID: 1212466817261325088}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 17.587833, y: 100.502884, z: 13.8981905}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6582496449349687417
+--- !u!114 &4411774398296852581
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9143825923765031029}
+  m_GameObject: {fileID: 1212466817261325088}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92ad855b2fa449b8888ed9722e805390, type: 3}
+  m_Script: {fileID: 11500000, guid: bdbba7fbe6adff34284b9cf4b63ab061, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _IsAsyncClient: []
   _IsSpawnSuccess:
     _value: 0
   ownerPlayer: {fileID: 0}
-  id: 100
-  skillName: Penetrate Bullet
-  explain: "\uCD1D\uC54C\uC774 0\uBC88 \uAD00\uD1B5\uB9CC\uD07C \uAD00\uD1B5\uD569\uB2C8\uB2E4."
+  id: 106
+  skillName: More Quick Skill
+  explain: "\uC2A4\uD0AC \uCFE8\uD0C0\uC784\uC744 10\uB9CC\uD07C \uAC10\uC18C\uD569\uB2C8\uB2E4."
   type: 1
-  icon: {fileID: 21300000, guid: e72c8e26a868f9c41b0b6e41ed31c89f, type: 3}
+  icon: {fileID: 21300000, guid: 66b177c2f67118b4c85c787902aaa79e, type: 3}
   coolTime: 0
   coolTimeReductionRate: 0
   isInvoke: 0
   status: {fileID: 0}
   level:
     _min: 0
-    _max: 3
+    _max: 5
     _current: 0
     isOverMax: 0
     isOverMin: 0
-    isMin: 1
+    isMin: 0
     isMax: 0
   effectVFX: {fileID: 0}
---- !u!114 &4973092893459209289
+  reductionRate: 0.1
+--- !u!114 &4713498293002615929
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9143825923765031029}
+  m_GameObject: {fileID: 1212466817261325088}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SortKey: 2700818192
+  SortKey: 4079747203
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 6582496449349687417}
+  - {fileID: 4411774398296852581}

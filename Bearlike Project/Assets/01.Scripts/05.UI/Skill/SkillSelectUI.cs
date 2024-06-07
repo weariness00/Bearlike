@@ -127,9 +127,8 @@ namespace UI.Skill
         {
             var skill = Runner.FindObject(skillID).GetComponent<SkillBase>();
             skill.gameObject.transform.SetParent(playerController.skillSystem.transform);
-            skill.ownerPlayer = playerController;
-            skill.LevelUp();
             skill.Earn(playerController.gameObject);
+            skill.LevelUp();
             playerController.skillSystem.AddSkill(skill);
         }
         

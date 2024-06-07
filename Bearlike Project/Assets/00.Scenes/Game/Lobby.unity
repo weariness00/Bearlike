@@ -2523,8 +2523,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 676428789}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.1459858, y: -1.382618, z: -0.082567334}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2542,12 +2542,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfe31bd1d54b41c9bead9668c965dec2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isDebug: 0
-  log: 1
+  isDebug: 1
+  log: 0
   logWaring: 0
   logError: 0
-  isToDo: 0
-  isToDoError: 0
+  isToDo: 1
+  isToDoError: 1
   drawRay: 0
   drawBoxRay: 0
 --- !u!1 &747966613
@@ -6206,6 +6206,7 @@ MonoBehaviour:
   - {fileID: 9214968381015799913, guid: 08d601a4a5a38a04ab26efede8c71ad7, type: 3}
   - {fileID: 4075162357074122885, guid: 2960be89ce4b6b7418626c046fa49faf, type: 3}
   - {fileID: 6016579880466552673, guid: 2e367ffe1c14ba14796531dc6471ebd0, type: 3}
+  - {fileID: 4411774398296852581, guid: e57349f348e6f0044aeff5a99bcdb0ba, type: 3}
   - {fileID: 6582496449349687417, guid: 901441c38fe9a964a9c5af764c375fe9, type: 3}
   - {fileID: 7856296637238042012, guid: cc580b57f8a4fcd4abaecfda0b38bc64, type: 3}
   - {fileID: 1032011881215830993, guid: d03d570d349f257409d19f03da54ced7, type: 3}

@@ -163,7 +163,7 @@ namespace Skill.Container
                 {
                     // 스킬을 사용했으면 초기화 해야됨
                     isInvoke = false;
-                    SetSkillCoolTimerRPC(coolTime);
+                    SetSkillCoolTimerRPC(GetCoolTime());
                     cleanShootCanvas.gameObject.SetActive(false);
                     aimCanvas.gameObject.SetActive(false);
 

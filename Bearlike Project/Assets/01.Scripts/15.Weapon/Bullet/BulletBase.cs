@@ -105,7 +105,11 @@ namespace Weapon.Bullet
             }
             else if (other.TryGetComponent(out otherStatus) || other.transform.root.gameObject.TryGetComponent(out otherStatus))
             {
+                _hitInterface?.BeforeHitAction?.Invoke(gameObject, otherStatus.gameObject);
+
                 otherStatus.ApplyDamageRPC(status.CalDamage(out var isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, OwnerId);
+                
+                _hitInterface?.AfterHitAction?.Invoke(gameObject, otherStatus.gameObject);
             }
             // 메쉬 붕괴 객체와 충돌 시
             else if (other.CompareTag("Destruction"))
