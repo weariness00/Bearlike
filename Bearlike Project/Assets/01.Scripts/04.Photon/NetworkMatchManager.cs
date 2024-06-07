@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Data;
 using Fusion;
+using GamePlay;
 using Player;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -39,6 +40,8 @@ namespace Photon
             gameObject.SetActive(false);
             Runner.SessionInfo.IsVisible = false;
             Runner.SessionInfo.IsOpen = false;
+            Difficult.InitDifficult(roomUserUI.GetDifficult());
+            
             await NetworkManager.LoadScene(SceneType.Game, LoadSceneMode.Single, LocalPhysicsMode.Physics3D);
         }
 

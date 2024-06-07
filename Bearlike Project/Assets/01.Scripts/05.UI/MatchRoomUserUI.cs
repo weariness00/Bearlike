@@ -13,9 +13,19 @@ public class MatchRoomUserUI : NetworkBehaviour
     public Button startButton;
     public Button exitButton;
 
+    [SerializeField] private TMP_Dropdown difficultDropdown;
+
+    #region Unity Event Function
+    
     private void Awake()
     {
         exitButton.onClick.AddListener(OnExit);
+        difficultDropdown.onValueChanged.AddListener((value) =>
+        {
+            PlayerPrefs.SetInt("Difficult", value);
+            if (HasStateAuthority)
+                SetDifficultRPC(value);
+        });
     }
 
     private void Start()
@@ -41,12 +51,20 @@ public class MatchRoomUserUI : NetworkBehaviour
     public override void Spawned()
     {
         DataUpdate();
-
-        if (HasStateAuthority == false)
+        
+        if (HasStateAuthority)
+        {
+            difficultDropdown.interactable = true;
+            difficultDropdown.value = PlayerPrefs.GetInt("Difficult");
+        }
+        else
         {
             startButton.gameObject.SetActive(false);
+            difficultDropdown.interactable = false;
         }
     }
+    
+    #endregion
 
     // UserData의 Action들에 넣고 뺼 용으로 사용하는 함수
     private void UserActionToDataUpdate(PlayerRef playerRef) => DataUpdateRPC();
@@ -82,4 +100,13 @@ public class MatchRoomUserUI : NetworkBehaviour
     {
         NetworkManager.Runner.Shutdown();
     }
+
+    public string GetDifficult()
+    {
+        var option = difficultDropdown.options[difficultDropdown.value];
+        return option.text;
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void SetDifficultRPC(int value) => difficultDropdown.value = value;
 }

@@ -176,6 +176,23 @@ namespace GamePlay.Stage
 
         #region Defualt Function
 
+        /// <summary>
+        /// 난이도를 설정하는 함수
+        /// Rate 즉 비율로 관리한다.
+        /// 예를 들면 보통을 사용자가 설정한 기본 난이도이면 어려움은 기본 난이도에 200%만큼 몬스터가 더 나오는 것이다.
+        /// </summary>
+        /// <param name="difficultName"></param>
+        public virtual void SetDifficult()
+        {
+            foreach (var spawner in monsterSpawnerList)
+            {
+                spawner.spawnCount.Max = (int)(spawner.spawnCount.Max * Difficult.MonsterSpawnCountRate);
+            }
+
+            aliveMonsterCount.Max = (int)(aliveMonsterCount.Max * Difficult.AliveMonsterCountRate);
+            monsterKillCount.Max = (int)(monsterKillCount.Max * Difficult.MonsterKillCountRate);
+        }
+
         // 스테이지에 들어서면 정보에 맞춰 해당 스테이지를 셋팅 해준다.
         public void StartMonsterSpawn()
         {
@@ -190,8 +207,6 @@ namespace GamePlay.Stage
                 SetAliveMonsterCountRPC(StatusValueType.Current, monsterSpawner.spawnCount.Max);
                 monsterSpawner.SpawnSuccessAction += (obj) =>
                 {
-                    // obj.transform.SetParent(monsterParentTransform);
-
                     var monster = obj.GetComponent<MonsterBase>();
                     monster.DieAction += () =>
                     {
@@ -218,6 +233,8 @@ namespace GamePlay.Stage
 
         public virtual void StageInit()
         {
+            SetDifficult();
+            
             var childEventSystem = stageGameObject.GetComponentInChildren<EventSystem>();
             var childCamera = stageGameObject.GetComponentInChildren<Camera>();
             var lihgts = stageGameObject.GetComponentsInChildren<Light>();

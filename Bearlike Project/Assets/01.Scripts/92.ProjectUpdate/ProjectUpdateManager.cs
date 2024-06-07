@@ -80,6 +80,19 @@ namespace ProjectUpdate
             
             WebManager.DownloadJson("KeySetting/Default", "DefaultKeyData", null, true, true);
                   
+            // Difficult 업데이트
+            Difficult.ClearSDifficultData();
+            WebRequestJson("Difficult", "Difficult", json =>
+            {
+                var data = JsonConvert.DeserializeObject<StatusJsonData[]>(json);
+                foreach (var difficultData in data)
+                {
+                    Difficult.AddDifficultData(difficultData.Name.ToLower(), difficultData);
+                }
+                
+                LoadingManager.EndWait("난이도 불러오기 성공");
+            }, true, true);
+            
             // Skill 업데이트
             SkillBase.ClearInfosData();
             SkillBase.ClearStatusData();

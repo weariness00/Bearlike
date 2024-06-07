@@ -6,6 +6,7 @@ import * as Monster from './Monster.js';
 import * as Stage from './Stage.js';
 import * as Weapon from './Weapon.js';
 import * as TreasureBox from './TreasureBox.js';
+import * as Difficult from './Difficult.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,6 +16,9 @@ app.listen(PORT, '0.0.0.0',() => {
 });
 
 Key.MakeDefaultKeyData(app);
+
+// 난이도
+Difficult.MakeData(app);
 
 Skill.MakeData(app);
 

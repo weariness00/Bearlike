@@ -5,6 +5,7 @@ using System.Linq;
 using BehaviorTree.Base;
 using Data;
 using Fusion;
+using GamePlay;
 using GamePlay.DeadBodyObstacle;
 using Item.Looting;
 using Manager;
@@ -117,6 +118,8 @@ namespace Monster
             var statusData = GetStatusData(id);
             status.SetJsonData(statusData);
             if (statusData.HasFloat("Rigidbody Mass")) rigidbody.mass = statusData.GetFloat("Rigidbody Mass");
+
+            SetDifficultStatus();
         }
 
         private void OnDestroy()
@@ -143,6 +146,12 @@ namespace Monster
         #endregion
 
         #region Member Function
+
+        private void SetDifficultStatus()
+        {
+            status.hp.Max = (int)(status.hp.Max * Difficult.MonsterHpRate);
+            status.damage.Current = (int)(status.hp.Current * Difficult.MonsterHpRate);
+        }
 
         public void RotateTarget()
         {
