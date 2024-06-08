@@ -50,17 +50,19 @@ public class MatchRoomUserUI : NetworkBehaviour
 
     public override void Spawned()
     {
+        base.Spawned();
         DataUpdate();
         
         if (HasStateAuthority)
         {
             difficultDropdown.interactable = true;
-            SetDifficultRPC(PlayerPrefs.GetInt("Difficult"));
+            difficultDropdown.value  = PlayerPrefs.GetInt("Difficult");
         }
         else
         {
             startButton.gameObject.SetActive(false);
             difficultDropdown.interactable = false;
+            RequestSetDifficultRPC();
         }
     }
     
@@ -109,4 +111,7 @@ public class MatchRoomUserUI : NetworkBehaviour
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void SetDifficultRPC(int value) => difficultDropdown.value = value;
+
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RequestSetDifficultRPC() => SetDifficultRPC(difficultDropdown.value);
 }
