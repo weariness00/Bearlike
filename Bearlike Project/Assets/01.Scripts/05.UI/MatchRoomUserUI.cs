@@ -55,7 +55,7 @@ public class MatchRoomUserUI : NetworkBehaviour
         if (HasStateAuthority)
         {
             difficultDropdown.interactable = true;
-            difficultDropdown.value = PlayerPrefs.GetInt("Difficult");
+            SetDifficultRPC(PlayerPrefs.GetInt("Difficult"));
         }
         else
         {

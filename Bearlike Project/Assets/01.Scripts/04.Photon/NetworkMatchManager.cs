@@ -49,7 +49,7 @@ namespace Photon
             gameObject.SetActive(false);
             Runner.SessionInfo.IsVisible = false;
             Runner.SessionInfo.IsOpen = false;
-            Difficult.InitDifficult(roomUserUI.GetDifficult());
+            SetDifficultRPC(roomUserUI.GetDifficult());
             
             await NetworkManager.LoadScene(SceneType.Game, LoadSceneMode.Single, LocalPhysicsMode.Physics3D);
         }
@@ -93,6 +93,9 @@ namespace Photon
                 targetPlayerModels.transform.GetChild(i).gameObject.SetActive(false);
             targetPlayerModels.transform.GetChild((int)type).gameObject.SetActive(true);
         }
+        
+        [Rpc(RpcSources.All,RpcTargets.All)]
+        public void SetDifficultRPC(string diffName) => Difficult.InitDifficult(diffName);
 
         #endregion
     }
