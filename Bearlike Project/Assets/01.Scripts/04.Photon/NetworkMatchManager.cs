@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Data;
 using Fusion;
 using GamePlay;
+using Loading;
 using Player;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -14,11 +15,19 @@ namespace Photon
     public class NetworkMatchManager : NetworkBehaviour
     {
         public MatchRoomUserUI roomUserUI;
+        public SceneReference playerJoinLoadingScene;
 
         public List<NetworkPrefabRef> PlayerPrefabRefs;
 
         public PlayerCharacterType currenPlayerCharacterType = PlayerCharacterType.FirstBear;
         public GameObject[] playerModels;
+
+        public void Awake()
+        {
+            LoadingManager.Initialize();
+            LoadingManager.StartAction += ()=> SceneManager.LoadScene(playerJoinLoadingScene, LoadSceneMode.Additive);
+            LoadingManager.EndAction += () => StartCoroutine(LoadingUnload());
+        }
 
         public override void Spawned()
         {
@@ -56,6 +65,21 @@ namespace Photon
             foreach (var data in datas)
             {
                 ChangeCharacterRPC(data.ClientNumber, data.PlayerCharacterType);
+            }
+        }
+        
+        private IEnumerator LoadingUnload()
+        {
+            while (true)
+            {
+                Scene s = SceneManager.GetSceneByPath(playerJoinLoadingScene);
+                if (s.isLoaded)
+                {
+                    SceneManager.UnloadSceneAsync(playerJoinLoadingScene);
+                    break;
+                }
+
+                yield return null;
             }
         }
 

@@ -10,7 +10,6 @@ using Fusion.Photon.Realtime;
 using Fusion.Sockets;
 using Loading;
 using Manager;
-using UI;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,6 +17,14 @@ using Random = System.Random;
 
 namespace Photon
 {
+    [Serializable]
+    public enum NetworkState
+    {
+        None,
+        JoinReady,
+        JoinSuccess,
+    }
+    
     public class NetworkManager : Util.Singleton<NetworkManager>, INetworkRunnerCallbacks
     {
         public static NetworkRunner Runner => Instance._runner;
@@ -254,6 +261,9 @@ namespace Photon
 
         public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
+            if(runner.IsServer)
+                LoadingManager.AddWait();
+            
             var data = new UserDataStruct
             {
                 PlayerRef = player,

@@ -10,8 +10,8 @@ namespace Loading
     public class LoadingManager : Singleton<LoadingManager>
     {
         [HideInInspector] public StatusValue<int> refValue;
-        private int _waitCount; // 현재 로딩되어야 할 카운트
-        private StatusValue<int> _downByte = new StatusValue<int>(); // 로딩에 필요한게 용량 부분인지
+        [SerializeField] private int _waitCount; // 현재 로딩되어야 할 카운트
+        [SerializeField] private StatusValue<int> _downByte = new StatusValue<int>(); // 로딩에 필요한게 용량 부분인지
 
         // 로딩 시작시 호출
         // _waitCount = 0에서 1로 바뀌면 호출됨

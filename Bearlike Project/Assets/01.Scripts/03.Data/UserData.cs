@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ExitGames.Client.Photon.StructWrapping;
 using Fusion;
+using Loading;
 using Manager;
 using Photon;
 using Player;
@@ -22,7 +23,7 @@ namespace Data
         public int ClientNumber;
         [Networked, Capacity(1)] public NetworkLinkedList<Vector3> TeleportPosition { get; }
     }
-
+    
     public class UserData : NetworkSingleton<UserData>
     {
         [Networked, Capacity(3)] public NetworkDictionary<PlayerRef, UserDataStruct> UserDictionary { get; }
@@ -114,6 +115,7 @@ namespace Data
                 UserDictionary.Add(playerRef, userData);
                 UserJoinAction?.Invoke(playerRef);
                 DebugManager.Log($"Add Player Data : {userData.Name}");
+                LoadingManager.EndWait($"{userData.Name} 접속완료");
             }
             catch (Exception e)
             {
