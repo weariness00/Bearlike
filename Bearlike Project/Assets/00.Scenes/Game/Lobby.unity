@@ -2543,9 +2543,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDebug: 1
-  log: 0
-  logWaring: 0
-  logError: 0
+  log: 1
+  logWaring: 1
+  logError: 1
   isToDo: 1
   isToDoError: 1
   drawRay: 0
@@ -5103,6 +5103,15 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  _waitCount: 0
+  _downByte:
+    _min: 0
+    _max: 0
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 0
+    isMax: 0
 --- !u!1 &1710904307
 GameObject:
   m_ObjectHideFlags: 0
@@ -6219,7 +6228,7 @@ Transform:
   m_GameObject: {fileID: 2129275855}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 990.73865, y: 756.231, z: -107.01138}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

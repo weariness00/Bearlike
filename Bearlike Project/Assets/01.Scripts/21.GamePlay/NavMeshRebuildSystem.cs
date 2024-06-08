@@ -1,7 +1,5 @@
 ﻿using System.Collections;
 using Fusion;
-using GamePlay.Stage;
-using Manager;
 using Photon;
 using Unity.AI.Navigation;
 using UnityEngine;
@@ -22,12 +20,9 @@ namespace GamePlay
 
         public void ReBuildNavMesh()
         {
-            if (Runner.IsServer)
+            if (Runner.IsServer && surface)
             {
-                if (surface)
-                {
-                    _reBuildCoroutine = StartCoroutine(ReBuildCoroutine(surface));
-                }
+                _reBuildCoroutine ??= StartCoroutine(ReBuildCoroutine(surface));
             }
         }
 

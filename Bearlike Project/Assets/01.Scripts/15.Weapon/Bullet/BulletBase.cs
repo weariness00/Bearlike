@@ -66,6 +66,7 @@ namespace Weapon.Bullet
                 if(ownerGunObj.TryGetComponent(out StatusBase s)) status.AddAdditionalStatus(s); 
                 ownerGunObj.TryGetComponent(out _hitEffect);
                 ownerGunObj.TryGetComponent(out _hitInterface);
+                if (ownerGunObj.TryGetComponent(out IWeaponHitSound hs)) _hitSound = hs;
             }
         }
 
