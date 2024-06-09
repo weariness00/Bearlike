@@ -23,6 +23,21 @@ namespace Player
     [RequireComponent(typeof(PlayerCameraController), typeof(PlayerStatus))]
     public class PlayerController : NetworkBehaviourEx
     {
+        #region Static
+
+        public static bool CheckPlayer(GameObject obj, out PlayerController pc)
+        {
+            pc = null;
+            if (obj.CompareTag("Player") && obj.transform.parent.TryGetComponent(out pc))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        #endregion
+        
         public PlayerRef PlayerRef => Object.InputAuthority;
         public PlayerCharacterType playerType;
         
@@ -89,7 +104,20 @@ namespace Player
             rigBuilder = GetComponentInChildren<RigBuilder>();
             _headRig = rigBuilder.layers.Find(rig => rig.name == "Head Rig").rig;
         }
-        
+
+        private void Start()
+        {
+            status.LevelUpAction += () =>
+            {
+                if (HasInputAuthority)
+                {
+                    if (skillSelectUI.GetSelectCount() <= 0)
+                        skillSelectUI.SpawnSkillBlocks(3);
+                    skillSelectUI.AddSelectCount();
+                }
+            };
+        }
+
         public override void Spawned()
         {
             DebugManager.LogWarning("headRig를 Update에서 계속 바꿔주고 있는거고치기");

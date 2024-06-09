@@ -21,6 +21,13 @@ namespace Player
         public StatusValue<int> level = new StatusValue<int>();               // 레벨
         public StatusValue<int> experience = new StatusValue<int>();                 // 경험치
         public List<int> experienceAmountList = new List<int>();  // 레벨별 경험치량
+
+        public Action LevelUpAction
+        {
+            get;
+            set;
+        }
+        
         public float immortalDurationAfterSpawn = 2f;           // 무적 시간
 
         public StatusValue<float> jumpPower = new StatusValue<float>();
@@ -197,12 +204,7 @@ namespace Player
         public void LevelUp()
         {
             level.Current++;
-            if (HasInputAuthority)
-            {
-                if(playerController.skillSelectUI.GetSelectCount() <= 0)
-                    playerController.skillSelectUI.SpawnSkillBlocks(3);
-                playerController.skillSelectUI.AddSelectCount();
-            }
+            LevelUpAction?.Invoke();
         }
 
         public override void HealingText(int realHealAmount)

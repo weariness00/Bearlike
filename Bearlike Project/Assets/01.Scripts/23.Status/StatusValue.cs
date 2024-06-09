@@ -86,6 +86,11 @@ namespace Status
             }
         }
 
+        // Current의 값을 Min 변경
+        public void SetMin() => Current = Min;
+        // Current의 값을 Max로 변경
+        public void SetMax() => Current = Max;
+
         public float MinMaxRandom()
         {
             if (this is StatusValue<int> value)

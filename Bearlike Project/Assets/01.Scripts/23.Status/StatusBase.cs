@@ -174,8 +174,6 @@ namespace Status
             return (int)Math.Round(atsm * ats);
         }
 
-
-
         private float AddAllAttackSpeed()
         {
             var value = attackSpeed.Current;
@@ -380,6 +378,7 @@ namespace Status
             
             attackSpeed.Max = json.GetFloat("AttackSpeed Max");
             attackSpeed.Current = json.GetFloat("AttackSpeed Current");
+            if(json.HasFloat("AttackSpeed Multiple")) attackSpeedMultiple = json.GetFloat("AttackSpeed Multiple");
             
             attackRange.Max = json.GetFloat("AttackRange Max");
             attackRange.Current = json.GetFloat("AttackRange Current");

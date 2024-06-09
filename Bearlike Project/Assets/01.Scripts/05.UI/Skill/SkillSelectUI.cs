@@ -21,13 +21,13 @@ namespace UI.Skill
         [Header("Player")]
         public PlayerController playerController;
 
-        private int selectCount = 0; // 횟수가 남아있다면 스킬을 선택후 다시 스킬 선택창 리롤
+        private int _selectCount = 0; // 횟수가 남아있다면 스킬을 선택후 다시 스킬 선택창 리롤
 
         #region Member Funtion
 
-        public int GetSelectCount() => selectCount;
-        public void AddSelectCount() => ++selectCount;
-        public void RemoveSelectCount() => --selectCount;
+        public int GetSelectCount() => _selectCount;
+        public void AddSelectCount() => ++_selectCount;
+        public void RemoveSelectCount() => --_selectCount;
         
         // Select UI를 초반 셋팅 해주는 함수
         public void SpawnSkillBlocks(int count)
@@ -41,6 +41,7 @@ namespace UI.Skill
                 Destroy(handle.gameObject);
 
             // 스킬 UI 생성
+            bool isSuccessSelectSkillSpawn = false;
             UniqueRandom random = new UniqueRandom(0, SkillObjectList.SkillCount);
             for (int i = 0; i < count; i++)
             {
@@ -53,7 +54,7 @@ namespace UI.Skill
                     // 모든 스킬들이 만렙이면 더이상 Block을 만들지 않는다.
                     if (randomInt == -1)
                     {
-                        gameObject.SetActive(false);
+                        if(!isSuccessSelectSkillSpawn) gameObject.SetActive(false);
                         return;
                     }
                     
@@ -71,6 +72,8 @@ namespace UI.Skill
                     if (skill)
                         break;
                 }
+
+                isSuccessSelectSkillSpawn = true;
                 
                 if (playerController.skillSystem.TryGetSkillFromID(skill.id, out var hasSkill)) skill = hasSkill;
                 else
@@ -100,7 +103,7 @@ namespace UI.Skill
             }
 
             RemoveSelectCount();
-            if (selectCount > 0)
+            if (_selectCount > 0)
                 SpawnSkillBlocks(3);
             else
             {

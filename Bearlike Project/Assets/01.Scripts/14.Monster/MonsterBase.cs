@@ -150,7 +150,8 @@ namespace Monster
         private void SetDifficultStatus()
         {
             status.hp.Max = (int)(status.hp.Max * Difficult.MonsterHpRate);
-            status.damage.Current = (int)(status.hp.Current * Difficult.MonsterHpRate);
+            status.hp.SetMax();
+            status.damage.Current = (int)(status.damage.Current * Difficult.MonsterHpRate);
         }
 
         public void RotateTarget()
