@@ -51,7 +51,7 @@ namespace Skill.Container
             if (explain.Contains("(Damage Multiple)"))
                 explain = explain.Replace("(Damage Multiple)", $"{(1 - status.damageMultiple) * 100f}");
             
-            explain = StringExtension.Replace(explain);
+            explain = StringExtension.CalculateNumber(explain);
         }
 
         private void BulletExplode(GameObject bulletObject, GameObject hitObject)

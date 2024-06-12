@@ -72,7 +72,7 @@ namespace Skill.Container
             if (explain.Contains("(Duration)"))
                 explain = explain.Replace("(Duration)", $"{_duration}");
             
-            explain = StringExtension.Replace(explain);
+            explain = StringExtension.CalculateNumber(explain);
         }
 
         // Monster를 처치시 발동

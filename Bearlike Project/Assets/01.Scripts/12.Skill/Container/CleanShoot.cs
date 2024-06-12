@@ -148,7 +148,7 @@ namespace Skill.Container
             if (explain.Contains("(Level)"))
                 explain = explain.Replace("(Level)", $"{level.Current}");
             
-            explain = StringExtension.Replace(explain);
+            explain = StringExtension.CalculateNumber(explain);
         }
         
         #endregion

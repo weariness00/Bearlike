@@ -64,7 +64,7 @@ namespace Skill.Container
             if (explain.Contains("(Level)"))
                 explain = explain.Replace("(Level)", $"{level.Current}");
             
-            explain = Regex.Replace(explain, StringExtension.Pattern, StringExtension.ComputeAndReplace);
+            explain =StringExtension.CalculateNumber(explain);
         }
 
         #endregion

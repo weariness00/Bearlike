@@ -73,9 +73,10 @@ namespace Weapon.Gun.Continer
                 }
 
                 --magazine.Current;
-                // if (HasStateAuthority)
-                //     SetMagazineRPC(StatusValueType.Current, magazine.Current);
                 SoundManager.Play(shootSound);
+                
+                AfterFireAction?.Invoke();
+                
                 DebugManager.Log($"{name}에서 총알을 발사");
             }
             else

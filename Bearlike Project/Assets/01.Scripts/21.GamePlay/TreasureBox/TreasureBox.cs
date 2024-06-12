@@ -182,7 +182,7 @@ namespace GamePlay
             if (Explain.Contains("(Money)"))
                 Explain = Explain.Replace("(Money)", $"{MoneyAmount}");
             
-            return StringExtension.Replace(Explain);
+            return StringExtension.CalculateNumber(Explain);
         }
     }
     
