@@ -29,7 +29,6 @@ namespace Player
         public Camera weaponCamera;
         public Camera uiCamera;
         public Camera fullScreenCamera;
-        public Camera outlineCamera;
         public Vector3 firstOffset;
         public Vector3 thirdOffset;
 
@@ -58,16 +57,14 @@ namespace Player
             // 0. 기본 카메라
             // 1. Weapon
             // 2. Full Screen
-            // 3. Out line
-            // 4. UI ( PP 사용 )
-            // 5. Model UI
+            // 3. UI ( PP 사용 )
+            // 4. Model UI
             
             
             SetOwnerCamera();
             TargetCameraAddOverlay(0,weaponCamera);
             TargetCameraAddOverlay(1,fullScreenCamera);
-            TargetCameraAddOverlay(2,outlineCamera);
-            TargetCameraAddOverlay(3,uiCamera);
+            TargetCameraAddOverlay(2,uiCamera);
 
             StartCoroutine(WeaponCameraShake());
         }
