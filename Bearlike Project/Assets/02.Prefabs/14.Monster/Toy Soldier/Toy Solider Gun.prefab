@@ -28,8 +28,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 1.24, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1428562674735892431}
+  m_Children: []
   m_Father: {fileID: 6831913940448254236}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6245958607451884763
@@ -77,7 +76,6 @@ GameObject:
   - component: {fileID: 4854486632741455185}
   - component: {fileID: 4502984420150019297}
   - component: {fileID: 2967954220686134632}
-  - component: {fileID: 8016756961604045440}
   - component: {fileID: 4385394217357682011}
   - component: {fileID: 6882891109429115379}
   - component: {fileID: -3147515602916452630}
@@ -134,18 +132,15 @@ MonoBehaviour:
   id: 1
   explain: 
   type: 
+  crowdControlType: 0
   targetPlayer: {fileID: 0}
   targetMask:
     serializedVersion: 2
     m_Bits: 4096
+  dieEffectRef:
+    RawGuidValue: f14573c9eef1b524a9ec2d47dcdd0255
+  animator: {fileID: 0}
   gun: {fileID: 1802220238903691281}
-  dieEffectObject: {fileID: 1428562674735892464}
-  idleClip: {fileID: 6502710776952731769, guid: 1b41998b475852b4b87c7c182731e594,
-    type: 3}
-  moveClip: {fileID: -6089626556859248405, guid: 1b41998b475852b4b87c7c182731e594,
-    type: 3}
-  longAttackClip: {fileID: 9005879863974645250, guid: 1b41998b475852b4b87c7c182731e594,
-    type: 3}
 --- !u!114 &3173287629988651953
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,6 +204,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 1
@@ -267,8 +263,9 @@ MonoBehaviour:
   - {fileID: 1326746115929638593}
   - {fileID: 3173287629988651953}
   - {fileID: 2967954220686134632}
-  - {fileID: 8016756961604045440}
   - {fileID: 4385394217357682011}
+  - {fileID: 2491048554948592125}
+  - {fileID: 5857592473708217245}
   - {fileID: 3146400053095861577}
   - {fileID: 8843202848999039648}
   - {fileID: 1212572703291115159}
@@ -298,24 +295,6 @@ MonoBehaviour:
   SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0
---- !u!114 &8016756961604045440
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6303898161483548060}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 506319458, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Animator: {fileID: 1920184020649438091}
-  TotalWords: 2
-  ApplyTiming: 2
-  SyncSettings: 79
-  StateHashes: 0000000034dc94fa9b5cb369dec6440e53f43b20326c2b5dd9afa3a0
-  TriggerHashes: 00000000e8a2e574
 --- !u!114 &4385394217357682011
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -539,101 +518,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1001 &1502036205995429010
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 4103758611438689336}
-    m_Modifications:
-    - target: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 507512403959860066, guid: f14573c9eef1b524a9ec2d47dcdd0255,
-        type: 3}
-      propertyPath: m_Name
-      value: Die Effect Smoke
-      objectReference: {fileID: 0}
-    - target: {fileID: 507512403959860066, guid: f14573c9eef1b524a9ec2d47dcdd0255,
-        type: 3}
-      propertyPath: m_Layer
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 507512403959860066, guid: f14573c9eef1b524a9ec2d47dcdd0255,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8522078527465317234, guid: f14573c9eef1b524a9ec2d47dcdd0255,
-        type: 3}
-      propertyPath: m_Layer
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: f14573c9eef1b524a9ec2d47dcdd0255, type: 3}
---- !u!4 &1428562674735892431 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
-    type: 3}
-  m_PrefabInstance: {fileID: 1502036205995429010}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1428562674735892464 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 507512403959860066, guid: f14573c9eef1b524a9ec2d47dcdd0255,
-    type: 3}
-  m_PrefabInstance: {fileID: 1502036205995429010}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3783443060632113221
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1049,6 +933,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 6009750085454674299}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2491048554948592125}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1b41998b475852b4b87c7c182731e594,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5857592473708217245}
     - targetCorrespondingSourceObject: {fileID: -4732242431634960039, guid: 1b41998b475852b4b87c7c182731e594,
         type: 3}
       insertIndex: -1
@@ -1451,6 +1343,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -1604,6 +1497,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -1805,6 +1699,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -2006,6 +1901,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -2207,6 +2103,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -2298,6 +2195,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 10000
@@ -2358,6 +2256,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 1
+  penetrateCount: 0
   bulletFirePerMinute: 0
   fireLateSecond: 0
   reloadLateSecond: 0
@@ -2547,6 +2446,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -2748,6 +2648,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -2813,6 +2714,46 @@ MonoBehaviour:
   - m_Rig: {fileID: 0}
     m_Active: 1
   m_Effectors: []
+--- !u!114 &2491048554948592125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4053262457704672532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c3e46720ed3ecd42abc997e1ccb8ec1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
+  networkAnimator: {fileID: 0}
+  idleClip: {fileID: 6502710776952731769, guid: 1b41998b475852b4b87c7c182731e594,
+    type: 3}
+  moveClip: {fileID: -6089626556859248405, guid: 1b41998b475852b4b87c7c182731e594,
+    type: 3}
+  longAttackClip: {fileID: 9005879863974645250, guid: 1b41998b475852b4b87c7c182731e594,
+    type: 3}
+--- !u!114 &5857592473708217245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4053262457704672532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 506319458, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Animator: {fileID: 1920184020649438091}
+  TotalWords: 2
+  ApplyTiming: 2
+  SyncSettings: 79
+  StateHashes: 0000000034dc94fa9b5cb369dec6440e53f43b20326c2b5dd9afa3a0
+  TriggerHashes: 00000000e8a2e574
 --- !u!1 &4228168808534470461 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -8202176104871379080, guid: 1b41998b475852b4b87c7c182731e594,
@@ -2992,6 +2933,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -3193,6 +3135,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -3394,6 +3337,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -3595,6 +3539,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999

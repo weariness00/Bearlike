@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using BehaviorTree.Base;
-using DG.Tweening.Core.Enums;
 using Fusion;
 using Manager;
 using Status;
@@ -12,14 +11,10 @@ namespace Monster.Container
 {
     public class TrumpCardSoldier : MonsterBase
     {
-        private BehaviorTreeRunner _behaviorTreeRunner;
-        private NetworkObject[] _playerObjects;
-
         public Transform weaponTransform;
         public CrowdControl crowdControlType;
 
         [Header("VFX")] 
-        [SerializeField] private GameObject dieEffectObject;
         public VisualEffect prickVFX; // 찌르는 VFX
 
         [Header("Animation Clip")] 
@@ -41,11 +36,6 @@ namespace Monster.Container
         {
             base.Start();
 
-            DieAction += () =>
-            {
-                dieEffectObject.SetActive(true);
-            };
-            
             DebugManager.ToDo("CC 타입 별로 기본 스텟에서 차별을 두기");
             // Spade => 취약
             // Hart => 화상
@@ -69,19 +59,6 @@ namespace Monster.Container
             }
         }
 
-        public override void Spawned()
-        {
-            base.Spawned();
-            _behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
-        }
-
-        public override void FixedUpdateNetwork()
-        {
-            base.FixedUpdateNetwork();
-
-            _behaviorTreeRunner.Operator();
-        }
-        
         #region Animation Event Function
 
         public void AniAttackRayEvent()
@@ -111,7 +88,7 @@ namespace Monster.Container
 
         #region BT Function
 
-        private INode InitBT()
+        public override INode InitBT()
         {
             var findTarget = new ActionNode(FindTarget);
             var idle = new ActionNode(Idle);

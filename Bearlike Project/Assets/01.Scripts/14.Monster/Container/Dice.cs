@@ -22,7 +22,6 @@ namespace Monster.Container
         public DiceAnimator animatorInfo;
         public NetworkPrefabRef diePrefab;
         
-        private BehaviorTreeRunner _behaviorTreeRunner;
         private bool _isCollide = true; // 현재 충돌 중인지
         private float _moveDelay; // 몇초에 한번씩 움직일지 1번의 움직임이 1m움직임이라 가정( 자연스러운 움직임 구현을 위해 사용 )
         [Networked] private TickTimer MoveDelayTimer { get; set; }
@@ -47,18 +46,11 @@ namespace Monster.Container
             MoveDelayTimer = TickTimer.CreateFromSeconds(Runner, 0);
             AttackTimer = TickTimer.CreateFromSeconds(Runner, 0);
             
-            _behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
             _moveDelay = 1f / status.GetMoveSpeed();
 
             DieAction += DeadSlice;
         }
 
-        public override void FixedUpdateNetwork()
-        {
-            base.FixedUpdateNetwork();
-             _behaviorTreeRunner.Operator();
-        }
-        
         #endregion
 
         #region Member Function
@@ -132,7 +124,7 @@ namespace Monster.Container
 
         #region BT Function
 
-        private INode InitBT()
+        public override INode InitBT()
         {
             var findTarget = new ActionNode(FindTarget);
             var move = new ActionNode(Move);

@@ -25,7 +25,6 @@ namespace Monster.Container
     {
         #region Component
         
-        private BehaviorTreeRunner _btRunner;
         private VisualEffect _visualEffect;
         private NavMeshAgent _navMeshAgent;
 
@@ -91,10 +90,9 @@ namespace Monster.Container
 
         #endregion
 
-        private void Awake()
+        public override void Awake()
         {
             base.Awake();
-            _btRunner = new BehaviorTreeRunner(SettingBT());
             _visualEffect = GetComponentInChildren<VisualEffect>();
             _navMeshAgent = GetComponent<NavMeshAgent>();
 
@@ -130,14 +128,6 @@ namespace Monster.Container
             _players = playerObjects.ToArray();
         }
 
-        public override void FixedUpdateNetwork()
-        {
-            base.FixedUpdateNetwork();
-            
-            if (!isDead)
-                _btRunner.Operator();
-        }
-
         private void OnTriggerEnter(Collider other)
         {
             if (other.transform.root.TryGetComponent(out StatusBase otherStatus))
@@ -150,7 +140,7 @@ namespace Monster.Container
         
         #region BT
 
-        INode SettingBT()
+        public override INode InitBT()
         {
             return new SequenceNode // selector로 변경 가능
             (

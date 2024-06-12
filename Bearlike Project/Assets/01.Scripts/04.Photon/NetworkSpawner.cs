@@ -43,6 +43,11 @@ namespace Script.Photon
         public Action<GameObject> SpawnSuccessAction; // 스폰 되면 실행하는 이벤트
         private Coroutine _currentSpawnCoroutine = null; // 스폰 코루틴
 
+        void OnDestroy()
+        {
+            CurrentSpawnInterval = TickTimer.None;
+        }
+        
         public override void Spawned()
         {
             if (isStartSpawn)

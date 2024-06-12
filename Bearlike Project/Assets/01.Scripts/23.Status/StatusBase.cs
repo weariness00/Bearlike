@@ -16,6 +16,7 @@ namespace Status
     /// <summary>
     /// Object의 상태를 나타내는 열거형
     /// </summary>
+    [Serializable]
     public enum CrowdControl
     {
         Normality = 0b_0000_0000,           // 정상

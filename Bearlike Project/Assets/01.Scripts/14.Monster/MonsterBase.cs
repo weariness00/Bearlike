@@ -20,7 +20,7 @@ using Random = UnityEngine.Random;
 namespace Monster
 {
     [RequireComponent(typeof(MonsterStatus), typeof(LootingTable))]
-    public class MonsterBase : NetworkBehaviourEx, IJsonData<MonsterJsonData>
+    public abstract class MonsterBase : NetworkBehaviourEx, IJsonData<MonsterJsonData>
     {
         #region Static
 
@@ -55,6 +55,7 @@ namespace Monster
         public Transform pivot; // Pivot이 메쉬 가운데가 아닌 다리에 위치할 떄가 있다. 그때 진짜 pivot으로 사용할 변수
         [HideInInspector] public NavMeshAgent navMeshAgent;
         
+        protected BehaviorTreeRunner behaviorTreeRunner;
         protected PlayerController[] players;
         
         [Header("Monster 정보")]
@@ -62,14 +63,18 @@ namespace Monster
         public string explain;
         public string type;
         
+        public CrowdControl crowdControlType;
         public PlayerController targetPlayer; // 나중에 어그로 시스템 생기면 바꾸기
         public LayerMask targetMask;
         
         public Action DieAction;
+        
+        [Header("기본 Effect")]
+        [SerializeField] protected NetworkPrefabRef dieEffectRef;
 
         #region Unity Evenet Function
 
-        public void Awake()
+        public virtual void Awake()
         {
             rigidbody = GetComponent<Rigidbody>();
             collider = GetComponent<Collider>();
@@ -108,12 +113,7 @@ namespace Monster
             }
 
             lootingTable.CalLootingItem(GetLootingData(id).LootingItems);
-            DieAction += () =>
-            {
-                if (_deadBody) _deadBody.OnDeadBodyRPC();
-                lootingTable.SpawnDropItem();
-                Destroy(this);
-            };
+            DieAction += OnDieAction;
 
             var statusData = GetStatusData(id);
             status.SetJsonData(statusData);
@@ -121,7 +121,7 @@ namespace Monster
 
             SetDifficultStatus();
         }
-
+        
         private void OnDestroy()
         {
             Destroy(lootingTable);
@@ -129,11 +129,13 @@ namespace Monster
 
         public override void Spawned()
         {
+            behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
             players = FindObjectsOfType<PlayerController>(); // 접속한 플레이어들 저장
         }
 
         public override void FixedUpdateNetwork()
         {
+            behaviorTreeRunner.Operator();
             if (HasStateAuthority)
             {
                 if (status.IsDie)
@@ -152,6 +154,20 @@ namespace Monster
             status.hp.Max = (int)(status.hp.Max * Difficult.MonsterHpRate);
             status.hp.SetMax();
             status.damage.Current = (int)(status.damage.Current * Difficult.MonsterHpRate);
+        }
+        
+        private async void OnDieAction()
+        {
+            if (_deadBody) _deadBody.OnDeadBodyRPC();
+            lootingTable.SpawnDropItem();
+            Destroy(this);
+
+            // Effect
+            if (dieEffectRef != NetworkPrefabRef.Empty)
+            {
+                var obj = await Runner.SpawnAsync(dieEffectRef, pivot.position, pivot.rotation);
+                Destroy(obj.gameObject, 2f);
+            }
         }
 
         public void RotateTarget()
@@ -332,6 +348,8 @@ namespace Monster
         #endregion
 
         #region Default BT Function
+
+        public abstract INode InitBT();
 
         protected INode.NodeState FindTarget()
         {

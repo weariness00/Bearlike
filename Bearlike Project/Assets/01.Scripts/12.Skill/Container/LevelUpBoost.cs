@@ -16,17 +16,11 @@ namespace Skill.Container
         [SerializeField] private int healAmount; // 체력 회복량
         [SerializeField] private float healTime; // 체력회복에 걸리는 시간
 
-        private StatusBase status;
-        
         public override void Awake()
         {
             base.Awake();
 
-            status = GetComponent<StatusBase>();
-
             var statusData = GetStatusData(id);
-            status.SetJsonData(statusData);
-            
             healAmount = statusData.GetInt("Heal Amount");
             
             boostRange = statusData.GetFloat("Boost Range");

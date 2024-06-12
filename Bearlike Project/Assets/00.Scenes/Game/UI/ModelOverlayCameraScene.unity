@@ -1142,12 +1142,22 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 804774530743987252, guid: f79e771619b343d4cb3aa42947cb7016,
         type: 3}
+      propertyPath: m_ClearDepth
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 804774530743987252, guid: f79e771619b343d4cb3aa42947cb7016,
+        type: 3}
       propertyPath: m_RendererIndex
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 804774530743987252, guid: f79e771619b343d4cb3aa42947cb7016,
         type: 3}
       propertyPath: m_VolumeLayerMask.m_Bits
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 804774530743987252, guid: f79e771619b343d4cb3aa42947cb7016,
+        type: 3}
+      propertyPath: m_RequiresDepthTextureOption
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5104888520753331206, guid: f79e771619b343d4cb3aa42947cb7016,
@@ -1224,6 +1234,11 @@ PrefabInstance:
         type: 3}
       propertyPath: far clip plane
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8355917673136792622, guid: f79e771619b343d4cb3aa42947cb7016,
+        type: 3}
+      propertyPath: m_OcclusionCulling
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
