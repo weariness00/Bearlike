@@ -111,8 +111,8 @@ namespace Monster.Container
                 findTarget,
                 new SelectorNode(
                     false,
-                    new Detector(() => targetPlayer, onTarget),
-                    new Detector(() => !targetPlayer, offTarget)
+                    new Detector(() => aggroController.HasTarget(), onTarget),
+                    new Detector(() => !aggroController.HasTarget(), offTarget)
                     )
                 );
             return loop;
@@ -154,13 +154,14 @@ namespace Monster.Container
 
                 AniWalkTimer = TickTimer.CreateFromSeconds(Runner, walkClip.length);
                 navMeshAgent.isStopped = !navMeshAgent.isActiveAndEnabled;
-                if (targetPlayer)
+                if (aggroController.HasTarget())
                 {
-                    if (IsIncludeLink(targetPlayer.transform.position))
+                    var target = aggroController.GetTarget();
+                    if (IsIncludeLink(target.transform.position))
                         navMeshAgent.stoppingDistance = 0;
                     else
                         navMeshAgent.stoppingDistance = status.attackRange.Current - 0.2f;
-                    navMeshAgent.SetDestination(targetPlayer.transform.position);
+                    navMeshAgent.SetDestination(target.transform.position);
                 }
                 else
                 {
@@ -211,7 +212,7 @@ namespace Monster.Container
 
             if (AniAttackTimer.Expired(Runner) == false)
             {
-                RotateTarget();
+                RotateToTarget();
                 return INode.NodeState.Running;
             }
 

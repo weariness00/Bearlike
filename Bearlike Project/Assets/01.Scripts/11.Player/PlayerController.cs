@@ -1,4 +1,5 @@
 using System;
+using Aggro;
 using Data;
 using Fusion;
 using Fusion.Addons.SimpleKCC;
@@ -57,6 +58,7 @@ namespace Player
         public PlayerEXP levelCanvas;
         public BuffCanvas buffCanvas;
         public GoodsCanvas goodsCanvas;
+        public AggroTarget aggroTarget;
         
         public Animator animator;
         [HideInInspector] public SimpleKCC simpleKcc;
@@ -97,6 +99,7 @@ namespace Player
             soundController = GetComponent<PlayerSoundController>();
             weaponSystem = gameObject.GetComponentInChildren<WeaponSystem>();
             animator = GetComponentInChildren<Animator>();
+            aggroTarget = GetComponent<AggroTarget>();
 
             _stageSelectUI = FindObjectOfType<StageSelectUI>();
 
@@ -116,6 +119,8 @@ namespace Player
                     skillSelectUI.AddSelectCount();
                 }
             };
+                
+            aggroTarget.AddCondition(AggroCondition);
         }
 
         public override void Spawned()
@@ -435,6 +440,22 @@ namespace Player
                 gun.ReloadBullet();
             }
         }
+
+        #region Aggro
+
+        private bool AggroCondition()
+        {
+            if (status.isInjury ||
+                status.isRevive ||
+                status.IsDie)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        #endregion
         
         #endregion
         

@@ -48,8 +48,8 @@ namespace Monster.Container
                 findTarget,
                 new SelectorNode(
                     false,
-                    new Detector(() => targetPlayer == null, offTarget),
-                    new Detector(() => targetPlayer != null, onTarget)
+                    new Detector(() => !aggroController.HasTarget(), offTarget),
+                    new Detector(() =>  aggroController.HasTarget(), onTarget)
                 )
             );
             return loop;
@@ -104,10 +104,10 @@ namespace Monster.Container
             if (animator.MoveTimerExpired == false && navMeshAgent.isOnNavMesh)
             {
                 // 타겟 한테 이동
-                if (targetPlayer)
+                if ( aggroController.HasTarget())
                 {
                     navMeshAgent.stoppingDistance = status.attackRange.Current - 1.0f;
-                    navMeshAgent.SetDestination(targetPlayer.transform.position);
+                    navMeshAgent.SetDestination( aggroController.GetTarget().transform.position);
                 }
                 else
                 {
@@ -139,7 +139,7 @@ namespace Monster.Container
             // 공격 딜레이가 남아있으면 실패, 총을 쏠 수 있는 상태가 아니면 실패
             if (status.AttackLateTimer.Expired(Runner) == false)
             {
-                Vector3 dir = (targetPlayer.transform.position - transform.position).normalized;
+                Vector3 dir = (aggroController.GetTarget().transform.position - transform.position).normalized;
                 dir.y = 0;
                 Quaternion lookRotation = Quaternion.LookRotation(dir);
                 transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Runner.DeltaTime);

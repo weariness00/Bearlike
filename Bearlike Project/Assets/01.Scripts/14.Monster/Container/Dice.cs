@@ -158,18 +158,19 @@ namespace Monster.Container
                 Vector3 dir = Vector3.zero;
                 MoveDelayTimer = TickTimer.CreateFromSeconds(Runner, _moveDelay);
 
-                if (targetPlayer == null)
+                if (!aggroController.HasTarget())
                 {
                     // 타겟이 없으면 자유로운 방향으로 이동하게 하기
                     var randomCircle = Random.insideUnitCircle;
                     dir = SetRotateDir(transform.position + new Vector3(randomCircle.x, 0, randomCircle.y));
                 }
-                else 
+                else
                 {
+                    var target = aggroController.GetTarget();
                     var path = new NavMeshPath();
                     NavMeshQueryFilter filter = new NavMeshQueryFilter();
                     filter.areaMask = 1 << NavMesh.GetAreaFromName("Walkable");
-                    if (NavMesh.CalculatePath(transform.position, targetPlayer.transform.position, NavMesh.AllAreas, path))
+                    if (NavMesh.CalculatePath(transform.position, target.transform.position, NavMesh.AllAreas, path))
                     {
                         if (path.corners.Length > 1)
                         {
@@ -178,7 +179,7 @@ namespace Monster.Container
                     }
                     else
                     {
-                        dir = SetRotateDir(targetPlayer.transform.position);
+                        dir = SetRotateDir(target.transform.position);
                     }
                 }
 

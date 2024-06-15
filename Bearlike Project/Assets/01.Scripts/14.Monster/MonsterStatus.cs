@@ -1,9 +1,9 @@
-﻿using Fusion;
+﻿using Aggro;
+using Fusion;
 using Monster;
 using Player;
 using UI.Status;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Status
 {
@@ -45,11 +45,25 @@ namespace Status
             if (IsDie)
             {
                 var obj = Runner.FindObject(ownerId);
-                if(obj == null) return;
+                if(!obj.gameObject) return;
+                
                 if (!isInvokeKillAction && obj.TryGetComponent(out PlayerController pc))
                 {
                     isInvokeKillAction = true;
                     pc.MonsterKillAction?.Invoke(gameObject);
+                }
+            }
+            else
+            {
+                // 어그로 대상이 없는 상태에서 공격을 받으면 해당 대상이 어그로로 잡힘
+                if (!monsterBase.aggroController.HasTarget())
+                {
+                    var obj = Runner.FindObject(ownerId);
+                    if(!obj.gameObject) return;
+                    if (obj.TryGetComponent(out AggroTarget target))
+                    {
+                        monsterBase.aggroController.ChangeAggroTarget(target);
+                    }
                 }
             }
         }

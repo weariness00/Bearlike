@@ -6877,6 +6877,7 @@ GameObject:
   - component: {fileID: 7507528767881361376}
   - component: {fileID: 3630061050747534706}
   - component: {fileID: -4627320855333868288}
+  - component: {fileID: 2797582080792961854}
   m_Layer: 12
   m_Name: Player 3
   m_TagString: Player
@@ -6944,6 +6945,7 @@ MonoBehaviour:
   levelCanvas: {fileID: 5701010320007351445}
   buffCanvas: {fileID: 974907059657362916}
   goodsCanvas: {fileID: 691724107899881938}
+  aggroTarget: {fileID: 0}
   animator: {fileID: 0}
   simpleKcc: {fileID: 0}
   rigBuilder: {fileID: 0}
@@ -6968,7 +6970,6 @@ MonoBehaviour:
   weaponCamera: {fileID: 4931533912480079503}
   uiCamera: {fileID: 4384581159391793847}
   fullScreenCamera: {fileID: 2954221740060699749}
-  outlineCamera: {fileID: 0}
   firstOffset: {x: 0, y: 0, z: 0.27}
   thirdOffset: {x: 0, y: 0, z: -2}
   movement: 0.01
@@ -7248,6 +7249,18 @@ MonoBehaviour:
   GizmosColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   Hitboxes:
   - {fileID: 8540670239261050294}
+--- !u!114 &2797582080792961854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4910098564648988719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 442f5d13a652fcb42bf34b8b09a8b5b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5293648659765142871
 GameObject:
   m_ObjectHideFlags: 0
