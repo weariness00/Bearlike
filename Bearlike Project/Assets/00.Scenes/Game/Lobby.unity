@@ -6963,6 +6963,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skillList:
+  - {fileID: 8096593934240028760, guid: 17d2236a8d98eeb4ab93f503149a107e, type: 3}
   - {fileID: 734012965739966661, guid: 75919a1078d2e3f439fabba75a6d6402, type: 3}
   - {fileID: 7780756067211251678, guid: 5553005d709bc0540a12f8ed6655c9c1, type: 3}
   - {fileID: 4511174809402674164, guid: 5064e4500e3b17f4e84f422177b4de11, type: 3}
@@ -7007,6 +7008,7 @@ GameObject:
   - component: {fileID: 6411705889065315946}
   - component: {fileID: 6411705889065315950}
   - component: {fileID: 6411705889065315951}
+  - component: {fileID: 6411705889065315952}
   m_Layer: 0
   m_Name: ToySolider Sword
   m_TagString: Untagged
@@ -7874,12 +7876,12 @@ MonoBehaviour:
   status: {fileID: 0}
   lootingTable: {fileID: 0}
   pivot: {fileID: 0}
+  aggroController: {fileID: 0}
   navMeshAgent: {fileID: 0}
   id: 4
   explain: 
   type: 
   crowdControlType: 0
-  targetPlayer: {fileID: 0}
   targetMask:
     serializedVersion: 2
     m_Bits: 4096
@@ -8020,6 +8022,21 @@ MonoBehaviour:
   _IsSpawnSuccess:
     _value: 0
   isOnStart: 1
+--- !u!114 &6411705889065315952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 50075205667043684}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6ca09b699fa07047ac0ec6c26b43509, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  targetScore: 0
+  aggroRange: 0
 --- !u!65 &6871969748776932881
 BoxCollider:
   m_ObjectHideFlags: 0

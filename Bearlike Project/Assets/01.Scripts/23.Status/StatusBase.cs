@@ -60,7 +60,9 @@ namespace Status
         public int knockBack = 0;    // 넉백 속성
         
         public bool IsDie => hp.isMin;
-        
+
+        private Func<int, int> _beforeApplyDamage; // 대미지 적용 직전 이벤트
+
         #endregion
 
         #region Unity Evenet Function
@@ -84,6 +86,42 @@ namespace Status
         public void AddAdditionalStatus(StatusBase otherStatus) => _additionalStatusList.Add(otherStatus);
         public void RemoveAdditionalStatus(StatusBase otherStatus) => _additionalStatusList.Remove(otherStatus);
 
+        /// <summary>
+        /// 대미지를 적용하기 직전에 동작하는 이벤트를 추가
+        /// 반환형 : int, 인자 int ApplyDamage
+        /// </summary>
+        /// <param name="func"></param>
+        /// <param name="isPermitDuplication">이벤트 추가할때 중복된 이벤트가 있어도 추가할지에 대한 여부</param>
+        public void AddBeforeApplyDamageEvent(Func<int, int> func, bool isPermitDuplication = true)
+        {
+            if (isPermitDuplication == false)
+            {
+                if (_beforeApplyDamage != null)
+                {
+                    bool isIncluded = false;
+                    foreach (var @delegate in _beforeApplyDamage.GetInvocationList())
+                    {
+                        var includeFunc = (Func<int, int>)@delegate;
+                        if (includeFunc.Method == func.Method)
+                        {
+                            isIncluded = true;
+                            break;
+                        }
+                    }
+
+                    if (isIncluded == false)
+                    {
+                        _beforeApplyDamage += func;
+                    }
+                }
+            }
+            else
+            {
+                _beforeApplyDamage += func;
+            }
+        }
+        public void RemoveBeforeApplyDamageEvent(Func<int, int> func) => _beforeApplyDamage -= func;
+        
         #region Damage
 
         public virtual int CalDamage(out bool isCritical, int additionalDamage = 0, float additionalDamageMultiple = 0f, float additionalCriticalHitMultiple = 0f)
@@ -260,6 +298,15 @@ namespace Status
 
             if (!ConditionDamageIgnoreIsOn())
             {
+                if (_beforeApplyDamage != null)
+                {
+                    foreach (var @delegate in _beforeApplyDamage.GetInvocationList())
+                    {
+                        var func = (Func<int, int>)@delegate;
+                        applyDamage = func(applyDamage);
+                    }
+                }
+                
                 AddCondition(cc); // Monster의 속성을 Player상태에 적용
 
                 var damageRate = math.clamp(math.log10((applyDamage / (float)(defence * 2)) * 10), 0.0f, 1.0f);

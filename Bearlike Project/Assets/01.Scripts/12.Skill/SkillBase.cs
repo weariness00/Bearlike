@@ -98,6 +98,8 @@ namespace Skill
         public void SetCoolTimeReductionRate(float rate) => coolTimeReductionRate = rate;
         public float GetCoolTimeReductionRate() => coolTimeReductionRate;
 
+        public void StartCoolTimer(float time) => CoolTimeTimer = TickTimer.CreateFromSeconds(Runner, time);
+
         /// <summary>
         /// 스킬을 습득 했을때 발동하도록 하는 함수
         /// </summary>
