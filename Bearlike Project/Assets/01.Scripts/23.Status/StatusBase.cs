@@ -158,7 +158,7 @@ namespace Status
             return resultCHM;
         }
         
-        private int AddAllDamage()
+        public int AddAllDamage()
         {
             var d = damage.Current;
             foreach (var statusBase in _additionalStatusList)
