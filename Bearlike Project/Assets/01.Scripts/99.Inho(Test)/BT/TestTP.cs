@@ -14,7 +14,6 @@ public class TestTP : MonoBehaviour
     {
         yield return new WaitForSeconds(1.2f);
         StartCoroutine(StartVFXCoroutine());
-
     }
     
     IEnumerator StartVFXCoroutine()
