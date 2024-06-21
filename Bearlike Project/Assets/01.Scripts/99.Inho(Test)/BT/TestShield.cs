@@ -6,7 +6,6 @@ namespace Inho_Test_.BT
 {
     public class TestShield : MonoBehaviour
     {
-
         public VisualEffect shieldEffect;
         
         void Start()
