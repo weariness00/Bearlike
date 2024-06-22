@@ -17,14 +17,24 @@ namespace Skill.Support
     {
         [Networked] public NetworkId SkillId { get; set; }
 
-        [SerializeField] private GameObject damageDominoObject;
+        [SerializeField] private GameObject damageDominoObject; 
         [SerializeField] private GameObject collisionEffectObject;
+        private Animator _animator;
+        [SerializeField] private AnimationClip downClip;
 
         private readonly HashSet<GameObject> _damageMonsterSet = new HashSet<GameObject>(); // 이미 대미지를 입은 대상은 대미지를 다시 입으면 안됨으로 사용
         
         private StatusBase _status;
 
         private Vector3 _destinationPosition; // 도미노가 닿을 목적지
+
+        private void Awake()
+        {
+            damageDominoObject.SetActive(false);
+            collisionEffectObject.SetActive(false);
+            _animator = GetComponent<Animator>();
+            _animator.enabled = false;
+        }
 
         private void OnTriggerEnter(Collider other)
         {
@@ -43,8 +53,13 @@ namespace Skill.Support
 
         private void OnDestroy()
         {
-            if (TryGetComponent(out NetworkTransform nt)) Destroy(nt);
-            if (TryGetComponent(out NetworkObject no)) Destroy(no);
+            foreach (var component in GetComponents<Component>())
+            {
+                Destroy(component);
+            }
+            
+            Destroy(collisionEffectObject, 2f);
+            Destroy(damageDominoObject);
         }
 
         public override void Spawned()
@@ -54,11 +69,23 @@ namespace Skill.Support
             if (skill && 
                 skill.TryGetComponent(out _status))
             {
+                StartCoroutine(UpdateCoroutine());
             }
             else
             {
                 Destroy(gameObject);
             }
+        }
+
+        private IEnumerator UpdateCoroutine()
+        {
+            yield return new WaitForSeconds(downClip.length);
+            _animator.enabled = true;
+
+            collisionEffectObject.SetActive(true);
+            damageDominoObject.SetActive(true);
+            
+            Destroy(this);
         }
     }
 }

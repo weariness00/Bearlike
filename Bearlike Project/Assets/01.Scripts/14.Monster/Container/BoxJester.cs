@@ -17,6 +17,11 @@ namespace Monster.Container
             
         }
 
+        public override INode InitBT()
+        {
+            throw new System.NotImplementedException();
+        }
+
         #endregion
 
         #region Member Function
