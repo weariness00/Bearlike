@@ -13,6 +13,13 @@ GameObject:
   - component: {fileID: 2430180980873190032}
   - component: {fileID: 6858513737835027594}
   - component: {fileID: 8861736745504795787}
+  - component: {fileID: 3950356254066584260}
+  - component: {fileID: 5282045509776856263}
+  - component: {fileID: 8945742259451894778}
+  - component: {fileID: 2305757693255670067}
+  - component: {fileID: 8369101472100827538}
+  - component: {fileID: 6159267201163480657}
+  - component: {fileID: 6430590144718798744}
   m_Layer: 1
   m_Name: BoxJester
   m_TagString: Untagged
@@ -106,11 +113,217 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2169112673862639238}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a8e7d0ed9d8c3614d9ef10d71e1990f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3950356254066584260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2169112673862639238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51a6b82460884d7593d784a347512478, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damage:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damageMultiple: 1
+  criticalHitChance:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  criticalHitMultiple: 1
+  defence:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  avoid:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 1
+    isMin: 1
+    isMax: 0
+  avoidMultiple: 1
+  moveSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  moveSpeedMultiple: 1
+  attackSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackSpeedMultiple: 1
+  attackRange:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  condition: 0
+  property: 0
+  burnDamage: 0
+  poisonDamage: 0
+  knockBack: 0
+  monsterBase: {fileID: 0}
+--- !u!114 &5282045509776856263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2169112673862639238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb38a8d7b1dd4c17a11def9cd7d7a7a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isDrop: 0
+  _dropItems: []
+--- !u!114 &8945742259451894778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2169112673862639238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6ca09b699fa07047ac0ec6c26b43509, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  targetScore: 0
+  aggroRange: 0
+--- !u!114 &2305757693255670067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2169112673862639238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b97fdc25d3b4408692156eba6547fa43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
+  rigidbody: {fileID: 0}
+  collider: {fileID: 0}
+  networkAnimator: {fileID: 0}
+  status: {fileID: 0}
+  lootingTable: {fileID: 0}
+  pivot: {fileID: 0}
+  aggroController: {fileID: 0}
+  navMeshAgent: {fileID: 0}
+  id: 0
+  explain: 
+  type: 
+  crowdControlType: 0
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 0
+  dieEffectRef:
+    RawGuidValue: 00000000000000000000000000000000
+  animator: {fileID: 0}
+  tpPlaces: []
+  tpEffect: {fileID: 0}
+--- !u!114 &8369101472100827538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2169112673862639238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 3807973009
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 3950356254066584260}
+  - {fileID: 2305757693255670067}
+  - {fileID: 6159267201163480657}
+  - {fileID: 6430590144718798744}
+--- !u!114 &6159267201163480657
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2169112673862639238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0
+--- !u!114 &6430590144718798744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2169112673862639238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 506319458, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Animator: {fileID: 0}
+  TotalWords: -1
+  ApplyTiming: 2
+  SyncSettings: 79
+  StateHashes: 
+  TriggerHashes: 
 --- !u!1 &2915606249845561228
 GameObject:
   m_ObjectHideFlags: 0
