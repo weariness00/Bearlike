@@ -79,13 +79,58 @@ namespace Monster.Container
                 new ActionNode(TeleportCharge),
                 new ActionNode(TeleportAction)
                 );
-        
+
+            #region Hide
+
+            var ChangeMask = new SelectorNode(
+                true,
+                new ActionNode(ChangeSmile),
+                new ActionNode(ChangeCry),
+                new ActionNode(ChangeAngry)
+            );
+            
+            var HideSelect = new SelectorNode(
+                true, 
+                new ActionNode(SmokeAttack),
+                ChangeMask
+            );
+            
+            var Hide = new SequenceNode(
+                new ActionNode(HideOnBox),
+                HideSelect,
+                new ActionNode(AppearInBox)
+            );
+
+            #endregion
+
+            #region Attack
+
+            #region Smile
+
+            
+
+            #endregion
+
+            #region Cry
+
+            
+
+            #endregion
+            
+            #region Angry
+            
+
+            
+
+            #endregion
+            
+            #endregion
 
             var AttackPattern = new SelectorNode(
                 true, 
-                TP      
+                TP,
+                Hide
             );
-        
         
             var loop = new SequenceNode(
                 Idle,
@@ -94,7 +139,9 @@ namespace Monster.Container
 
             return loop;
         }
-        
+
+        #region Idle
+
         private INode.NodeState IdleNode()
         {
             if (false == animationing)
@@ -109,7 +156,11 @@ namespace Monster.Container
             animationing = false;
             return INode.NodeState.Success;
         }
-        
+
+        #endregion
+
+        #region TP
+
         private INode.NodeState TeleportCharge()
         {
             if (false == animationing)
@@ -132,6 +183,62 @@ namespace Monster.Container
             
             return INode.NodeState.Success;
         }
+
+        #endregion
+
+        #region Hide
+
+        private INode.NodeState HideOnBox()
+        {
+            // 상자에 숨는 애니메이션 실행
+            return INode.NodeState.Success;
+        }
+        
+        private INode.NodeState SmokeAttack()
+        {
+            // VFX실행 및 범위 탐색으로 공격 실행
+            return INode.NodeState.Success;
+        }
+
+        #region Change Mask
+
+        private INode.NodeState ChangeSmile()
+        {
+            // 가면 Change ==> 속성 파라미터 변경, 모델 변경(API만들어서)
+            return INode.NodeState.Success;
+        }
+        
+        private INode.NodeState ChangeCry()
+        {
+            // 가면 Change ==> 속성 파라미터 변경, 모델 변경(API만들어서)
+            return INode.NodeState.Success;
+        }
+        
+        private INode.NodeState ChangeAngry()
+        {
+            // 가면 Change ==> 속성 파라미터 변경, 모델 변경(API만들어서)
+            return INode.NodeState.Success;
+        }
+
+        #endregion
+        
+        private INode.NodeState AppearInBox()
+        {
+            // 상자에서 나오는 애니메이션 실행
+            return INode.NodeState.Success;
+        }
+        
+        #endregion
+        
+        #region Attack Pattern
+
+        private INode.NodeState a()
+        {
+            // 상자에 숨는 애니메이션 실행
+            return INode.NodeState.Success;
+        }
+
+        #endregion
         
         #endregion
 
