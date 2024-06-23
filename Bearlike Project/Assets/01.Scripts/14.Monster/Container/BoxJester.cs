@@ -105,31 +105,70 @@ namespace Monster.Container
 
             #region Attack
 
+            
             #region Smile
 
-            
+            var SmilePattern = new SelectorNode(
+                    true,
+                    new ActionNode(Punching),
+                    new ActionNode(FakePunching),
+                    new ActionNode(ClonePattern)
+                );
 
+            var Smile = new SequenceNode(
+                    new ActionNode(ISSmile),
+                    SmilePattern
+                );
+            
             #endregion
 
             #region Cry
 
-            
+            var CryPattern = new SelectorNode(
+                    true,
+                    new ActionNode(CryingShield),
+                    new ActionNode(ReverseCryingShield),
+                    new ActionNode(BreakHat),
+                    new ActionNode(NonBreakHat)
+                );
 
+            var AnCrygry = new SequenceNode(
+                    new ActionNode(ISCry),
+                    CryPattern
+                );
+            
             #endregion
             
             #region Angry
             
+            var AngryPattern = new SelectorNode(
+                    true,
+                    new ActionNode(HandLazer),
+                    new ActionNode(ThrowBoom),
+                    new ActionNode(slapAttack)
+                );
 
+            var Angry = new SequenceNode(
+                    new ActionNode(ISAngry),
+                    AngryPattern
+                );
             
-
             #endregion
+
+            var Attack = new SelectorNode(
+                    false,
+                    Smile,
+                    CryPattern,
+                    Angry
+                );
             
             #endregion
 
             var AttackPattern = new SelectorNode(
                 true, 
                 TP,
-                Hide
+                Hide,
+                Attack
             );
         
             var loop = new SequenceNode(
@@ -232,12 +271,96 @@ namespace Monster.Container
         
         #region Attack Pattern
 
-        private INode.NodeState a()
+        #region Smile
+
+        private INode.NodeState Punching()
         {
-            // 상자에 숨는 애니메이션 실행
+            // 주먹질 애니메이션 실행
+            return INode.NodeState.Success;
+        }
+        
+        private INode.NodeState FakePunching()
+        {
+            // 주먹질 애니메이션 실행
             return INode.NodeState.Success;
         }
 
+        private INode.NodeState ClonePattern()
+        {
+            // 주먹질 애니메이션 실행
+            return INode.NodeState.Success;
+        }
+
+        #endregion
+        
+        #region Cry
+
+        private INode.NodeState CryingShield()
+        {
+            // 주먹질 애니메이션 실행
+            return INode.NodeState.Success;
+        }
+        
+        private INode.NodeState ReverseCryingShield()
+        {
+            // 주먹질 애니메이션 실행
+            return INode.NodeState.Success;
+        }
+
+        private INode.NodeState BreakHat()
+        {
+            // 주먹질 애니메이션 실행
+            return INode.NodeState.Success;
+        }
+        
+        private INode.NodeState NonBreakHat()
+        {
+            // 주먹질 애니메이션 실행
+            return INode.NodeState.Success;
+        }
+
+        #endregion
+        
+        #region Angry
+
+        private INode.NodeState HandLazer()
+        {
+            // 주먹질 애니메이션 실행
+            return INode.NodeState.Success;
+        }
+        
+        private INode.NodeState ThrowBoom()
+        {
+            // 주먹질 애니메이션 실행
+            return INode.NodeState.Success;
+        }
+
+        private INode.NodeState slapAttack()
+        {
+            // 주먹질 애니메이션 실행
+            return INode.NodeState.Success;
+        }
+
+        #endregion
+        
+        private INode.NodeState ISSmile()
+        {
+
+            return INode.NodeState.Success;
+        }
+        
+        private INode.NodeState ISCry()
+        {
+
+            return INode.NodeState.Success;
+        }
+        
+        private INode.NodeState ISAngry()
+        {
+
+            return INode.NodeState.Success;
+        }
+        
         #endregion
         
         #endregion
