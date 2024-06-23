@@ -21,10 +21,18 @@ namespace Monster.Container
         [SerializeField] private BoxJesterAnimator animator;
         
         [Header("Teleport Properties")]
-        public Transform[] tpPlaces;
-        public VisualEffect tpEffect;
+        [SerializeField] private Transform[] tpPlaces;
+        [SerializeField] private VisualEffect tpEffect;
     
         private int _tpPlaceIndex = 0;
+
+        enum MaskType
+        {
+            Smile,
+            Cry,
+            Angry
+        }
+        private MaskType _maskType = MaskType.Smile;
         
         #endregion
 
@@ -116,7 +124,7 @@ namespace Monster.Container
                 );
 
             var Smile = new SequenceNode(
-                    new ActionNode(ISSmile),
+                    new ActionNode(IsSmile),
                     SmilePattern
                 );
             
@@ -133,7 +141,7 @@ namespace Monster.Container
                 );
 
             var AnCrygry = new SequenceNode(
-                    new ActionNode(ISCry),
+                    new ActionNode(IsCry),
                     CryPattern
                 );
             
@@ -149,7 +157,7 @@ namespace Monster.Container
                 );
 
             var Angry = new SequenceNode(
-                    new ActionNode(ISAngry),
+                    new ActionNode(IsAngry),
                     AngryPattern
                 );
             
@@ -244,18 +252,24 @@ namespace Monster.Container
         private INode.NodeState ChangeSmile()
         {
             // 가면 Change ==> 속성 파라미터 변경, 모델 변경(API만들어서)
+            ChangeMaskRPC(MaskType.Smile);
+            
             return INode.NodeState.Success;
         }
         
         private INode.NodeState ChangeCry()
         {
             // 가면 Change ==> 속성 파라미터 변경, 모델 변경(API만들어서)
+            ChangeMaskRPC(MaskType.Cry);
+            
             return INode.NodeState.Success;
         }
         
         private INode.NodeState ChangeAngry()
         {
             // 가면 Change ==> 속성 파라미터 변경, 모델 변경(API만들어서)
+            ChangeMaskRPC(MaskType.Angry);
+            
             return INode.NodeState.Success;
         }
 
@@ -276,18 +290,21 @@ namespace Monster.Container
         private INode.NodeState Punching()
         {
             // 주먹질 애니메이션 실행
+            // dotween으로 주먹 이동 및 충돌 처리
             return INode.NodeState.Success;
         }
         
         private INode.NodeState FakePunching()
         {
             // 주먹질 애니메이션 실행
+            // dotween으로 주먹 절반 이동 및 다른 방향으로 다시 이동 및 충돌 처리
             return INode.NodeState.Success;
         }
 
         private INode.NodeState ClonePattern()
         {
-            // 주먹질 애니메이션 실행
+            // Clone 애니메이션 실행
+            // 객체 소환
             return INode.NodeState.Success;
         }
 
@@ -296,26 +313,28 @@ namespace Monster.Container
         #region Cry
 
         private INode.NodeState CryingShield()
-        {
-            // 주먹질 애니메이션 실행
+        {            
+            // 애니메이션 실행
+            // shield 파라미터 수정 후 속성값 대입
             return INode.NodeState.Success;
         }
         
         private INode.NodeState ReverseCryingShield()
         {
-            // 주먹질 애니메이션 실행
+            // 애니메이션 실행
+            // shield 파라미터 수정 후 속성값 대입
             return INode.NodeState.Success;
         }
 
         private INode.NodeState BreakHat()
         {
-            // 주먹질 애니메이션 실행
+            // 모자 소환 후 모자를 정속성으로 생성
             return INode.NodeState.Success;
         }
         
         private INode.NodeState NonBreakHat()
-        {
-            // 주먹질 애니메이션 실행
+        {            
+            // 모자 소환 후 모자를 역속성으로 생성
             return INode.NodeState.Success;
         }
 
@@ -325,40 +344,66 @@ namespace Monster.Container
 
         private INode.NodeState HandLazer()
         {
-            // 주먹질 애니메이션 실행
+            // 손 내미는 에니메이션 실행
+            // running
+            
+            // VFX실행
+            // 데미지 판정
             return INode.NodeState.Success;
         }
         
         private INode.NodeState ThrowBoom()
         {
-            // 주먹질 애니메이션 실행
+            // 폭탄 던지는 애니메이션 실행
+            // Running
+            
+            // 폭탄 소환 ==> 폭탄은 충돌되면 폭발 ( VFX, Damage, Script )
             return INode.NodeState.Success;
         }
 
         private INode.NodeState slapAttack()
         {
-            // 주먹질 애니메이션 실행
+            // 싸다구 애니메이션 실행
+            // 충돌처리
             return INode.NodeState.Success;
         }
 
         #endregion
         
-        private INode.NodeState ISSmile()
+        private INode.NodeState IsSmile()
         {
+            if(_maskType == MaskType.Smile)
+                return INode.NodeState.Success;
+            
+            // Timer 1초 대기
 
-            return INode.NodeState.Success;
+            // 나타나는 애니메이션 있으면 좋을듯
+            
+            return INode.NodeState.Failure;
         }
         
-        private INode.NodeState ISCry()
+        private INode.NodeState IsCry()
         {
-
-            return INode.NodeState.Success;
+            if(_maskType == MaskType.Cry)
+                return INode.NodeState.Success;
+            
+            // Timer 1초 대기
+            
+            // 나타나는 애니메이션 있으면 좋을듯
+            
+            return INode.NodeState.Failure;
         }
         
-        private INode.NodeState ISAngry()
+        private INode.NodeState IsAngry()
         {
-
-            return INode.NodeState.Success;
+            if(_maskType == MaskType.Angry)
+                return INode.NodeState.Success;
+            
+            // Timer 1초 대기
+            
+            // 나타나는 애니메이션 있으면 좋을듯
+            
+            return INode.NodeState.Failure;
         }
         
         #endregion
@@ -382,6 +427,12 @@ namespace Monster.Container
             transform.position = tpPlaces[_tpPlaceIndex].position;
         }
 
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void ChangeMaskRPC(MaskType Type)
+        {
+            _maskType = Type;
+        }
+        
         #endregion
     }
 }
