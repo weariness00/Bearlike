@@ -47,6 +47,24 @@ namespace Monster.Container
         {
             base.Spawned();
             tpEffect.SendEvent("StopPlay");
+
+            // Transform rootTrans = transform.root.Find("TPPosition"); // pool에 들어가는 경우
+            Transform rootTrans = GameObject.Find("Boss Stage").transform.Find("TPPosition"); // 안들어가는 경우
+
+            if (rootTrans != null)
+            {
+                tpPlaces = new Transform[rootTrans.childCount];
+
+                for (int i = 0; i < rootTrans.childCount; ++i)
+                {
+                    DebugManager.Log($"tpPlaces[i] : {tpPlaces[i]}, rootTrans.GetChild(i) : {rootTrans.GetChild(i)}");
+                    tpPlaces[i] = rootTrans.GetChild(i);
+                }
+            }
+            else
+            {
+                DebugManager.LogError($"BoxJester의 TPPosition이 NULL입니다.");
+            }
         }
 
         #endregion

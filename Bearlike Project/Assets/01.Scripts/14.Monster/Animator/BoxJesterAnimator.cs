@@ -31,13 +31,15 @@ namespace Monster.Container
         
         public void PlayIdle()
         {
-            IdleTimer = TickTimer.CreateFromSeconds(Runner, idleClip.length);
+            IdleTimer = TickTimer.CreateFromSeconds(Runner, 3);
+            // IdleTimer = TickTimer.CreateFromSeconds(Runner, idleClip.length);
         }
 
         public void PlayTeleport()
         {
-            TeleportTimer = TickTimer.CreateFromSeconds(Runner, tptClip.length);
-            networkAnimator.SetTrigger(Teleport);
+            TeleportTimer = TickTimer.CreateFromSeconds(Runner, 3);
+            // TeleportTimer = TickTimer.CreateFromSeconds(Runner, tptClip.length);
+            // networkAnimator.SetTrigger(Teleport);
         }
     }
 }
