@@ -22,8 +22,12 @@ namespace Monster.Container
         
         [Header("Teleport Properties")]
         [SerializeField] private Transform[] tpPlaces;
+        
+        [Header("VFX Properties")]
         [SerializeField] private VisualEffect tpEffect;
-    
+        [SerializeField] private VisualEffect darknessAttackEffect;
+        
+        
         private int _tpPlaceIndex = 0;
 
         enum MaskType
@@ -90,12 +94,15 @@ namespace Monster.Container
 
             #region Hide
 
-            var ChangeMask = new SelectorNode(
-                true,
-                new ActionNode(ChangeSmile),
-                new ActionNode(ChangeCry),
-                new ActionNode(ChangeAngry)
-            );
+            var ChangeMask = new SequenceNode(
+                    new ActionNode(ChangeAnimation),    
+                    new SelectorNode(
+                        true,
+                        new ActionNode(ChangeSmile),
+                        new ActionNode(ChangeCry),
+                        new ActionNode(ChangeAngry)
+                        )
+                    );
             
             var HideSelect = new SelectorNode(
                 true, 
@@ -104,7 +111,7 @@ namespace Monster.Container
             );
             
             var Hide = new SequenceNode(
-                new ActionNode(HideOnBox),
+                new ActionNode(HideInBox),
                 HideSelect,
                 new ActionNode(AppearInBox)
             );
@@ -201,6 +208,8 @@ namespace Monster.Container
                 return INode.NodeState.Running;
 
             animationing = false;
+            DebugManager.Log($"Idle");
+            
             return INode.NodeState.Success;
         }
 
@@ -221,6 +230,8 @@ namespace Monster.Container
                 return INode.NodeState.Running;
 
             animationing = false;
+            DebugManager.Log($"TP");
+            
             return INode.NodeState.Success;
         }
         
@@ -235,22 +246,66 @@ namespace Monster.Container
 
         #region Hide
 
-        private INode.NodeState HideOnBox()
+        private INode.NodeState HideInBox()
         {
-            // 상자에 숨는 애니메이션 실행
+            if (false == animationing)
+            {
+                animator.PlayHideInBox();
+                animationing = true;
+            }
+
+            if (false == animator.HideTimerExpired)
+                return INode.NodeState.Running;
+
+            animationing = false;
+            DebugManager.Log($"Hide On Box");
+            
             return INode.NodeState.Success;
         }
         
         private INode.NodeState SmokeAttack()
         {
-            // VFX실행 및 범위 탐색으로 공격 실행
+            if (false == animationing)
+            {
+                animator.PlaySmokeAttack();
+                // darknessAttackEffect.SendEvent("OnPlay");
+                animationing = true;
+            }
+
+            if (false == animator.SmokeTimerExpired)
+                return INode.NodeState.Running;
+
+            animationing = false;
+            DebugManager.Log($"Smoke Attack");
+            
+            // 범위 탐색으로 공격 실행
+            
+            
             return INode.NodeState.Success;
         }
 
         #region Change Mask
 
+        private INode.NodeState ChangeAnimation()
+        {
+            if (false == animationing)
+            {
+                animator.PlayMaskChange();
+                animationing = true;
+            }
+
+            if (false == animator.MaskChangeTimerExpired)
+                return INode.NodeState.Running;
+
+            animationing = false;
+            DebugManager.Log($"Mask Change");
+            
+            return INode.NodeState.Success;
+        }
+        
         private INode.NodeState ChangeSmile()
         {
+            DebugManager.Log($"Change Smile");
             // 가면 Change ==> 속성 파라미터 변경, 모델 변경(API만들어서)
             ChangeMaskRPC(MaskType.Smile);
             
@@ -259,6 +314,7 @@ namespace Monster.Container
         
         private INode.NodeState ChangeCry()
         {
+            DebugManager.Log($"Change Cry");
             // 가면 Change ==> 속성 파라미터 변경, 모델 변경(API만들어서)
             ChangeMaskRPC(MaskType.Cry);
             
@@ -267,6 +323,7 @@ namespace Monster.Container
         
         private INode.NodeState ChangeAngry()
         {
+            DebugManager.Log($"Change Angry");
             // 가면 Change ==> 속성 파라미터 변경, 모델 변경(API만들어서)
             ChangeMaskRPC(MaskType.Angry);
             
@@ -277,7 +334,18 @@ namespace Monster.Container
         
         private INode.NodeState AppearInBox()
         {
-            // 상자에서 나오는 애니메이션 실행
+            if (false == animationing)
+            {
+                animator.PlayAppearInBox();
+                animationing = true;
+            }
+
+            if (false == animator.AppearTimerExpired)
+                return INode.NodeState.Running;
+
+            animationing = false;
+            DebugManager.Log($"Appear In Box");
+            
             return INode.NodeState.Success;
         }
         
@@ -289,6 +357,7 @@ namespace Monster.Container
 
         private INode.NodeState Punching()
         {
+            DebugManager.Log($"Punching");
             // 주먹질 애니메이션 실행
             // dotween으로 주먹 이동 및 충돌 처리
             return INode.NodeState.Success;
@@ -296,6 +365,7 @@ namespace Monster.Container
         
         private INode.NodeState FakePunching()
         {
+            DebugManager.Log($"Fake Punching");
             // 주먹질 애니메이션 실행
             // dotween으로 주먹 절반 이동 및 다른 방향으로 다시 이동 및 충돌 처리
             return INode.NodeState.Success;
@@ -303,6 +373,7 @@ namespace Monster.Container
 
         private INode.NodeState ClonePattern()
         {
+            DebugManager.Log($"Clone Pattern");
             // Clone 애니메이션 실행
             // 객체 소환
             return INode.NodeState.Success;
@@ -314,6 +385,7 @@ namespace Monster.Container
 
         private INode.NodeState CryingShield()
         {            
+            DebugManager.Log($"Cry Shield");
             // 애니메이션 실행
             // shield 파라미터 수정 후 속성값 대입
             return INode.NodeState.Success;
@@ -321,6 +393,7 @@ namespace Monster.Container
         
         private INode.NodeState ReverseCryingShield()
         {
+            DebugManager.Log($"Reverse Cry Shield");
             // 애니메이션 실행
             // shield 파라미터 수정 후 속성값 대입
             return INode.NodeState.Success;
@@ -328,12 +401,14 @@ namespace Monster.Container
 
         private INode.NodeState BreakHat()
         {
+            DebugManager.Log($"Break Hat");
             // 모자 소환 후 모자를 정속성으로 생성
             return INode.NodeState.Success;
         }
         
         private INode.NodeState NonBreakHat()
         {            
+            DebugManager.Log($"Non Break Hat");
             // 모자 소환 후 모자를 역속성으로 생성
             return INode.NodeState.Success;
         }
@@ -344,6 +419,7 @@ namespace Monster.Container
 
         private INode.NodeState HandLazer()
         {
+            DebugManager.Log($"Hand Lazer");
             // 손 내미는 에니메이션 실행
             // running
             
@@ -354,6 +430,7 @@ namespace Monster.Container
         
         private INode.NodeState ThrowBoom()
         {
+            DebugManager.Log($"Throw Boom");
             // 폭탄 던지는 애니메이션 실행
             // Running
             
@@ -363,6 +440,7 @@ namespace Monster.Container
 
         private INode.NodeState slapAttack()
         {
+            DebugManager.Log($"Slap Attack");
             // 싸다구 애니메이션 실행
             // 충돌처리
             return INode.NodeState.Success;
@@ -372,6 +450,7 @@ namespace Monster.Container
         
         private INode.NodeState IsSmile()
         {
+            DebugManager.Log($"Is Smile");
             if(_maskType == MaskType.Smile)
                 return INode.NodeState.Success;
             
@@ -384,6 +463,7 @@ namespace Monster.Container
         
         private INode.NodeState IsCry()
         {
+            DebugManager.Log($"Is Cry");
             if(_maskType == MaskType.Cry)
                 return INode.NodeState.Success;
             
@@ -396,6 +476,7 @@ namespace Monster.Container
         
         private INode.NodeState IsAngry()
         {
+            DebugManager.Log($"Is Angry");
             if(_maskType == MaskType.Angry)
                 return INode.NodeState.Success;
             
