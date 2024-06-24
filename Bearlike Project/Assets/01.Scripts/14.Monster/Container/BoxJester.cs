@@ -63,12 +63,7 @@ namespace Monster.Container
             
             // tpEffect.SetFloat("Time", animator.tptClip.length);
         }
-
-        public override INode InitBT()
-        {
-            throw new System.NotImplementedException();
-        }
-
+        
         #endregion
 
         #region Member Function
