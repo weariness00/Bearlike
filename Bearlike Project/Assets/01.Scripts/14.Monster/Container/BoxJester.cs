@@ -140,7 +140,6 @@ namespace Monster.Container
             #endregion
 
             #region Attack
-
             
             #region Smile
 
@@ -153,8 +152,8 @@ namespace Monster.Container
                     new SequenceNode(
                         new ActionNode(PunchReady),
                         new ActionNode(FakePunching)
-                    ),
-                    new ActionNode(ClonePattern)
+                    )
+                    // new ActionNode(ClonePattern)
                 );
 
             var Smile = new SequenceNode(
@@ -209,7 +208,7 @@ namespace Monster.Container
             var AttackPattern = new SelectorNode(
                 true, 
                 TP,
-                Hide,
+                // Hide,
                 Attack
             );
         
@@ -403,6 +402,7 @@ namespace Monster.Container
             
             // Calculation
             targetPosition = new Vector3(0, 0, 0);
+            fakeTargetPosition = new Vector3(0, 0, 0);
             minDistance = int.MaxValue;
             
             // 가까운 대상 계산
@@ -416,8 +416,14 @@ namespace Monster.Container
                 }
             }
 
-            // TODO : fakeTargetPosition을 구하는 for문 필요 => 위에 for문에서 못하나?
-            
+            foreach(var player in _players)
+            {
+                if (player.transform.position != targetPosition)
+                {
+                    fakeTargetPosition = player.transform.position;
+                    break;
+                }           
+            }
             
             // 공격 범위를 지정해서 구현할까? => 고민 필요
             // if (attackDistance < minDistance)
@@ -446,7 +452,7 @@ namespace Monster.Container
         {
             // TODO : 먼저 몸을 돌려야 자연스럽지 않을까?
             // dotween으로 주먹 절반 이동 및 다른 방향으로 다시 이동 및 충돌 처리
-            FakePunchAttackRPC(type, targetPosition, );
+            FakePunchAttackRPC(type, targetPosition, fakeTargetPosition);
             
             
             DebugManager.Log($"Fake Punching");
