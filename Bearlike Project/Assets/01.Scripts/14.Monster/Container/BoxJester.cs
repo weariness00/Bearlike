@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using BehaviorTree.Base;
 using DG.Tweening;
@@ -614,11 +615,22 @@ namespace Monster.Container
         private void FakePunchAttackRPC(int type, Vector3 targetPosition, Vector3 fakeTargetPosition)
         {
             hands[type].transform.DOMove(fakeTargetPosition, 1).SetEase(Ease.OutCirc); // TODO : 공격 속도를 변수처리 해야함
-            
-            // TODO : 1초 기다리는 타이머 만들어야함
-            
+
+            StartCoroutine(RealTartgetMoveCoroutine(1.0f, type, targetPosition));
+        }
+
+        private IEnumerator RealTartgetMoveCoroutine(float waitTime, int type, Vector3 targetPosition)
+        {
+            yield return new WaitForSeconds(waitTime);
+            RealPunchAttackRPC(type, targetPosition);
+        }
+        
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RealPunchAttackRPC(int type, Vector3 targetPosition)
+        {
             hands[type].transform.DOMove(targetPosition, 1).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
         }
+        
         
         #endregion
     }
