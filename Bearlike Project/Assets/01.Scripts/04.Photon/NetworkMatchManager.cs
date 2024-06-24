@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Data;
 using Fusion;
@@ -16,6 +15,7 @@ namespace Photon
     {
         public MatchRoomUserUI roomUserUI;
         public SceneReference playerJoinLoadingScene;
+        public SceneReference magicCotton;
 
         public List<NetworkPrefabRef> PlayerPrefabRefs;
 
@@ -27,6 +27,7 @@ namespace Photon
             LoadingManager.Initialize();
             LoadingManager.StartAction += ()=> SceneManager.LoadScene(playerJoinLoadingScene, LoadSceneMode.Additive);
             LoadingManager.EndAction += () => StartCoroutine(LoadingUnload());
+            SceneManager.LoadScene(magicCotton, LoadSceneMode.Additive);
         }
 
         public override void Spawned()

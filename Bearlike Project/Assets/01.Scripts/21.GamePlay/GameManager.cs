@@ -12,6 +12,7 @@ using Script.GamePlay;
 using Status;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using User.MagicCotton;
 using Random = UnityEngine.Random;
 
 namespace GamePlay
@@ -43,6 +44,7 @@ namespace GamePlay
         public SceneReference gameResultScene;
         public SceneReference loadingScene;
         public SceneReference modelUIScene;
+        public SceneReference magicCottonScene;
         
         #region Unity Event Function
         protected override void Awake()
@@ -50,6 +52,7 @@ namespace GamePlay
             base.Awake();
             _spawnPlace.Initialize();
             NetworkManager.LoadScene(loadingScene, LoadSceneMode.Additive);
+            SceneManager.LoadScene(magicCottonScene, LoadSceneMode.Additive);
         }
 
         public override void Spawned()
@@ -104,6 +107,7 @@ namespace GamePlay
                     AlivePlayerCount++;
                 }
             }
+
         }
 
         #endregion

@@ -35,7 +35,7 @@ namespace UI.User
 
         private void LevelUp()
         {
-            _magicCottonBase.LevelUp(UserInformation.Instance.cottonCoin);
+            _magicCottonBase.LevelUp(UserInformation.Instance.cottonInfo.cottonCoin);
             levelText.text = $"{_magicCottonBase.Level.Current} / {_magicCottonBase.Level.Max}";
             
             if(_magicCottonBase.Level.isMax)

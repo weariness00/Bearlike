@@ -17,6 +17,7 @@ namespace Manager
         public TMP_InputField userID;
     
         public SceneReference lobbyLoading;
+        public SceneReference magicCotton;
 
         private void Start()
         {
@@ -27,6 +28,7 @@ namespace Manager
             NetworkManager.Instance.LobbyConnect();
             LoadingManager.StartAction += () => SceneManager.LoadScene(lobbyLoading, LoadSceneMode.Additive);
             LoadingManager.EndAction += () => SceneManager.UnloadSceneAsync(lobbyLoading);
+            SceneManager.LoadScene(magicCotton, LoadSceneMode.Additive);
         }
 
         private void Update()

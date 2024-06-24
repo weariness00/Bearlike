@@ -27,7 +27,7 @@ namespace User.MagicCotton
 
         #endregion
 
-        public abstract void Apply(PlayerController playerController);
+        public abstract void Apply(GameObject applyObj);
 
     }
     
@@ -43,7 +43,7 @@ namespace User.MagicCotton
 
         public void LevelUp(int exp)
         {
-            if(Level.isMax) return;
+            if (Level.isMax) return;
 
             if (Experience[Level.Current] <= exp)
             {
