@@ -99,7 +99,11 @@ MonoBehaviour:
     RawGuidValue: 00000000000000000000000000000000
   animator: {fileID: 3241159647185788740}
   tpPlaces: []
+  hands:
+  - {fileID: 6688738386081428790}
+  - {fileID: 4614473276936410751}
   tpEffect: {fileID: 1387068177130579636}
+  darknessAttackEffect: {fileID: 0}
 --- !u!114 &6430590144718798744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -502,6 +506,18 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 3241159647185788740}
   m_SourcePrefab: {fileID: 100100000, guid: 05eea17261ad0f448b0c2564a349a473, type: 3}
+--- !u!1 &4614473276936410751 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3951497239925902052, guid: 05eea17261ad0f448b0c2564a349a473,
+    type: 3}
+  m_PrefabInstance: {fileID: 8565687280946879643}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6688738386081428790 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3029870511410424237, guid: 05eea17261ad0f448b0c2564a349a473,
+    type: 3}
+  m_PrefabInstance: {fileID: 8565687280946879643}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8166669136434756464 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 05eea17261ad0f448b0c2564a349a473,
@@ -574,6 +590,12 @@ MonoBehaviour:
   networkAnimator: {fileID: 6430590144718798744}
   idleClip: {fileID: 0}
   tptClip: {fileID: 0}
+  hideClip: {fileID: 0}
+  appearClip: {fileID: 0}
+  punchReadyClip: {fileID: 0}
+  handLazerClip: {fileID: 0}
+  throwBoomClip: {fileID: 0}
+  slapClip: {fileID: 0}
 --- !u!1001 &8944235140980742679
 PrefabInstance:
   m_ObjectHideFlags: 0

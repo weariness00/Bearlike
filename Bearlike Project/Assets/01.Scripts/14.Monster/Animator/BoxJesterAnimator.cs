@@ -25,6 +25,7 @@ namespace Monster.Container
         private static readonly int Teleport = Animator.StringToHash("tTeleport");
         private static readonly int Hide = Animator.StringToHash("tHide");
         private static readonly int Appear = Animator.StringToHash("tAppear");
+        private static readonly int Punch = Animator.StringToHash("tPunch");
         
         private TickTimer IdleTimer { get; set; }
         private TickTimer TeleportTimer { get; set; }
@@ -110,6 +111,13 @@ namespace Monster.Container
         {
             MaskChangeTimer = TickTimer.CreateFromSeconds(Runner, 1);
             // Box가 흔들리는 Animation이 있었으면 좋겠음
+        }
+        
+        public void PlayPunchReadyAction()
+        {
+            PunchReadyTimer = TickTimer.CreateFromSeconds(Runner, 1);
+            // PunchReadyTimer = TickTimer.CreateFromSeconds(Runner, punchReadyClip.length);
+            // networkAnimator.SetTrigger(Punch);
         }
     }
 }

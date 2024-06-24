@@ -1,11 +1,16 @@
-﻿using BehaviorTree.Base;
+﻿using System.Collections.Generic;
+using System.Linq;
+using BehaviorTree.Base;
+using DG.Tweening;
 using Fusion;
 using Sound;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Serialization;
 using UnityEngine.VFX;
 using DebugManager = Manager.DebugManager;
+using Random = UnityEngine.Random;
 
 namespace Monster.Container
 {
@@ -15,6 +20,7 @@ namespace Monster.Container
 
         // public SoundBox soundBox;
         private BehaviorTreeRunner _behaviorTreeRunner;
+        private GameObject[] _players;
         private bool animationing = false;
         
         [Header("Animator")]
@@ -22,6 +28,9 @@ namespace Monster.Container
         
         [Header("Teleport Properties")]
         [SerializeField] private Transform[] tpPlaces;
+
+        [Header("HandAttack Properties")] 
+        [SerializeField] private GameObject[] hands;
         
         [Header("VFX Properties")]
         [SerializeField] private VisualEffect tpEffect;
@@ -48,6 +57,10 @@ namespace Monster.Container
             base.Awake();
             
             animator = GetComponentInChildren<BoxJesterAnimator>();
+            hands = new GameObject[2];
+
+            // hands[0] = transform.Find("")
+            
             // tpEffect.SetFloat("Time", animator.tptClip.length);
         }
 
@@ -77,6 +90,14 @@ namespace Monster.Container
             {
                 DebugManager.LogError($"BoxJester의 TPPosition이 NULL입니다.");
             }
+            
+            // InGame Player 대입
+            List<GameObject> playerObjects = new List<GameObject>();
+            foreach (var playerRef in Runner.ActivePlayers.ToArray())
+            {
+                playerObjects.Add(Runner.GetPlayerObject(playerRef).gameObject);
+            }
+            _players = playerObjects.ToArray();
         }
 
         #endregion
@@ -125,8 +146,14 @@ namespace Monster.Container
 
             var SmilePattern = new SelectorNode(
                     true,
-                    new ActionNode(Punching),
-                    new ActionNode(FakePunching),
+                    new SequenceNode(
+                        new ActionNode(PunchReady),
+                            new ActionNode(Punching)
+                    ),
+                    new SequenceNode(
+                        new ActionNode(PunchReady),
+                        new ActionNode(FakePunching)
+                    ),
                     new ActionNode(ClonePattern)
                 );
 
@@ -355,27 +382,84 @@ namespace Monster.Container
 
         #region Smile
 
+        private Vector3 targetPosition = new Vector3(0, 0, 0);
+        private Vector3 fakeTargetPosition = new Vector3(0, 0, 0);
+        private int minDistance = int.MaxValue;
+        private int type = 0;
+        
+        private INode.NodeState PunchReady()
+        {
+            // 주먹질 애니메이션 실행
+            if (false == animationing)
+            {
+                animator.PlayPunchReadyAction();
+                animationing = true;
+            }
+
+            if (false == animator.PunchReadyTimerExpired)
+                return INode.NodeState.Running;
+
+            animationing = false;
+            
+            // Calculation
+            targetPosition = new Vector3(0, 0, 0);
+            minDistance = int.MaxValue;
+            
+            // 가까운 대상 계산
+            foreach(var player in _players)
+            {
+                var distance = (int)(math.distance(player.transform.position, transform.position));
+                if (minDistance > distance)
+                {
+                    minDistance = distance;
+                    targetPosition = player.transform.position;
+                }
+            }
+
+            // TODO : fakeTargetPosition을 구하는 for문 필요 => 위에 for문에서 못하나?
+            
+            
+            // 공격 범위를 지정해서 구현할까? => 고민 필요
+            // if (attackDistance < minDistance)
+            //     return INode.NodeState.Failure;
+
+            type = Random.Range(0, 2);
+            
+            DebugManager.Log($"Punching Ready");
+            
+            return INode.NodeState.Success;
+        }
+        
         private INode.NodeState Punching()
         {
-            DebugManager.Log($"Punching");
-            // 주먹질 애니메이션 실행
+            // TODO : 먼저 몸을 돌려야 자연스럽지 않을까?
+            
             // dotween으로 주먹 이동 및 충돌 처리
+            PunchAttackRPC(type, targetPosition);
+            
+            DebugManager.Log($"Punching");
+            
             return INode.NodeState.Success;
         }
         
         private INode.NodeState FakePunching()
         {
-            DebugManager.Log($"Fake Punching");
-            // 주먹질 애니메이션 실행
+            // TODO : 먼저 몸을 돌려야 자연스럽지 않을까?
             // dotween으로 주먹 절반 이동 및 다른 방향으로 다시 이동 및 충돌 처리
+            FakePunchAttackRPC(type, targetPosition, );
+            
+            
+            DebugManager.Log($"Fake Punching");
+            
             return INode.NodeState.Success;
         }
 
         private INode.NodeState ClonePattern()
         {
-            DebugManager.Log($"Clone Pattern");
             // Clone 애니메이션 실행
             // 객체 소환
+            DebugManager.Log($"Clone Pattern");
+            
             return INode.NodeState.Success;
         }
 
@@ -512,6 +596,22 @@ namespace Monster.Container
         private void ChangeMaskRPC(MaskType Type)
         {
             _maskType = Type;
+        }
+        
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void PunchAttackRPC(int type, Vector3 targetPosition)
+        {
+            hands[type].transform.DOMove(targetPosition, 2).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
+        }
+            
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void FakePunchAttackRPC(int type, Vector3 targetPosition, Vector3 fakeTargetPosition)
+        {
+            hands[type].transform.DOMove(fakeTargetPosition, 1).SetEase(Ease.OutCirc); // TODO : 공격 속도를 변수처리 해야함
+            
+            // TODO : 1초 기다리는 타이머 만들어야함
+            
+            hands[type].transform.DOMove(targetPosition, 1).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
         }
         
         #endregion
