@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using BehaviorTree.Base;
 using DG.Tweening;
 using Fusion;
 using Sound;
+using Status;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -18,11 +20,6 @@ namespace Monster.Container
     public class BoxJester : MonsterBase
     {
         #region Property
-
-        // public SoundBox soundBox;
-        private BehaviorTreeRunner _behaviorTreeRunner;
-        private GameObject[] _players;
-        private bool animationing = false;
         
         [Header("Animator")]
         [SerializeField] private BoxJesterAnimator animator;
@@ -36,17 +33,27 @@ namespace Monster.Container
         [Header("VFX Properties")]
         [SerializeField] private VisualEffect tpEffect;
         [SerializeField] private VisualEffect darknessAttackEffect;
-        
-        
-        private int _tpPlaceIndex = 0;
 
+        [Header("Effect")] 
+        [SerializeField] private Material bloodShieldMat;
+            
+        private static readonly int Dissolve = Shader.PropertyToID("_Dissolve");
+        
+        // public SoundBox soundBox;
+        private BehaviorTreeRunner _behaviorTreeRunner;
+        private GameObject[] _players;
+        
         enum MaskType
         {
             Smile,
             Cry,
             Angry
         }
+        
         private MaskType _maskType = MaskType.Smile;
+        private int _tpPlaceIndex = 0;
+        private int _shieldType;
+        private bool _animationing = false;
         
         #endregion
 
@@ -58,11 +65,14 @@ namespace Monster.Container
             base.Awake();
             
             animator = GetComponentInChildren<BoxJesterAnimator>();
+            
             // hands = new GameObject[2];
-
             // hands[0] = transform.Find("")
             
             // tpEffect.SetFloat("Time", animator.tptClip.length);
+
+            var bloodShieldRenderer = transform.Find("ShieldEffect").GetComponent<Renderer>();
+            bloodShieldMat = bloodShieldRenderer.material;
         }
         
         #endregion
@@ -146,10 +156,10 @@ namespace Monster.Container
 
             var SmilePattern = new SelectorNode(
                     true,
-                    // new SequenceNode(
-                    //     new ActionNode(PunchReady),
-                    //         new ActionNode(Punching)
-                    // )
+                    new SequenceNode(
+                        new ActionNode(PunchReady),
+                            new ActionNode(Punching)
+                    ),
                     new SequenceNode(
                         new ActionNode(PunchReady),
                         new ActionNode(FakePunching)
@@ -168,14 +178,20 @@ namespace Monster.Container
 
             var CryPattern = new SelectorNode(
                     true,
-                    new ActionNode(CryingShield),
-                    new ActionNode(ReverseCryingShield),
+                    new SequenceNode(
+                        new ActionNode(CryingShield),
+                        new ActionNode(ShieldOffAction)
+                    ),
+                    new SequenceNode(
+                        new ActionNode(ReverseCryingShield),
+                        new ActionNode(ShieldOffAction)
+                    ),
                     new ActionNode(BreakHat),
                     new ActionNode(NonBreakHat)
                 );
 
             var AnCrygry = new SequenceNode(
-                    new ActionNode(IsCry),
+                    // new ActionNode(IsCry),
                     CryPattern
                 );
             
@@ -199,7 +215,7 @@ namespace Monster.Container
 
             var Attack = new SelectorNode(
                     false,
-                    Smile,
+                    // Smile,
                     CryPattern,
                     Angry
                 );
@@ -225,16 +241,16 @@ namespace Monster.Container
 
         private INode.NodeState IdleNode()
         {
-            if (false == animationing)
+            if (false == _animationing)
             {
                 animator.PlayIdle();
-                animationing = true;
+                _animationing = true;
             }
 
             if(false == animator.IdleTimerExpired)
                 return INode.NodeState.Running;
 
-            animationing = false;
+            _animationing = false;
             DebugManager.Log($"Idle");
             
             return INode.NodeState.Success;
@@ -246,17 +262,17 @@ namespace Monster.Container
 
         private INode.NodeState TeleportCharge()
         {
-            if (false == animationing)
+            if (false == _animationing)
             {
                 tpEffect.SendEvent("OnPlay");
                 animator.PlayTeleport();
-                animationing = true;
+                _animationing = true;
             }
 
             if (false == animator.TeleportTimerExpired)
                 return INode.NodeState.Running;
 
-            animationing = false;
+            _animationing = false;
             DebugManager.Log($"TP");
             
             return INode.NodeState.Success;
@@ -275,16 +291,16 @@ namespace Monster.Container
 
         private INode.NodeState HideInBox()
         {
-            if (false == animationing)
+            if (false == _animationing)
             {
                 animator.PlayHideInBox();
-                animationing = true;
+                _animationing = true;
             }
 
             if (false == animator.HideTimerExpired)
                 return INode.NodeState.Running;
 
-            animationing = false;
+            _animationing = false;
             DebugManager.Log($"Hide On Box");
             
             return INode.NodeState.Success;
@@ -292,17 +308,17 @@ namespace Monster.Container
         
         private INode.NodeState SmokeAttack()
         {
-            if (false == animationing)
+            if (false == _animationing)
             {
                 animator.PlaySmokeAttack();
                 // darknessAttackEffect.SendEvent("OnPlay");
-                animationing = true;
+                _animationing = true;
             }
 
             if (false == animator.SmokeTimerExpired)
                 return INode.NodeState.Running;
 
-            animationing = false;
+            _animationing = false;
             DebugManager.Log($"Smoke Attack");
             
             // 범위 탐색으로 공격 실행
@@ -315,16 +331,16 @@ namespace Monster.Container
 
         private INode.NodeState ChangeAnimation()
         {
-            if (false == animationing)
+            if (false == _animationing)
             {
                 animator.PlayMaskChange();
-                animationing = true;
+                _animationing = true;
             }
 
             if (false == animator.MaskChangeTimerExpired)
                 return INode.NodeState.Running;
 
-            animationing = false;
+            _animationing = false;
             DebugManager.Log($"Mask Change");
             
             return INode.NodeState.Success;
@@ -361,16 +377,16 @@ namespace Monster.Container
         
         private INode.NodeState AppearInBox()
         {
-            if (false == animationing)
+            if (false == _animationing)
             {
                 animator.PlayAppearInBox();
-                animationing = true;
+                _animationing = true;
             }
 
             if (false == animator.AppearTimerExpired)
                 return INode.NodeState.Running;
 
-            animationing = false;
+            _animationing = false;
             DebugManager.Log($"Appear In Box");
             
             return INode.NodeState.Success;
@@ -386,11 +402,11 @@ namespace Monster.Container
         private Vector3 fakeTargetPosition = new Vector3(0, 0, 0);
         private int minDistance = int.MaxValue;
         private int type = 0;
-        
+
         private INode.NodeState PunchReady()
         {
             // 주먹질 애니메이션 실행
-            if (false == animationing)
+            if (false == _animationing)
             {
                 // Calculation
                 targetPosition = new Vector3(0, 0, 0);
@@ -415,7 +431,7 @@ namespace Monster.Container
                 
                 // Animation Play
                 animator.PlayPunchReadyAction();
-                animationing = true;
+                _animationing = true;
 
                 foreach(var player in _players)
                 {
@@ -436,7 +452,7 @@ namespace Monster.Container
             if (false == animator.PunchReadyTimerExpired)
                 return INode.NodeState.Running;
 
-            animationing = false;
+            _animationing = false;
             
             DebugManager.Log($"Punching Ready");
             
@@ -448,18 +464,18 @@ namespace Monster.Container
             // TODO : 먼저 몸을 돌려야 자연스럽지 않을까?
             
             
-            if (false == animationing)
+            if (false == _animationing)
             {
                 // dotween으로 주먹 이동 및 충돌 처리
                 PunchAttackRPC(type, targetPosition);
                 animator.PlayPunchAction();
-                animationing = true;
+                _animationing = true;
             }
 
             if (false == animator.PunchTimerExpired)
                 return INode.NodeState.Running;
 
-            animationing = false;
+            _animationing = false;
             DebugManager.Log($"Punching");
             
             return INode.NodeState.Success;
@@ -470,18 +486,18 @@ namespace Monster.Container
             // TODO : 먼저 몸을 돌려야 자연스럽지 않을까?
             
             
-            if (false == animationing)
+            if (false == _animationing)
             {
                 // dotween으로 주먹 절반 이동 및 다른 방향으로 다시 이동 및 충돌 처리
                 FakePunchAttackRPC(type, targetPosition, fakeTargetPosition);
                 animator.PlayPunchAction();
-                animationing = true;
+                _animationing = true;
             }
 
             if (false == animator.PunchTimerExpired)
                 return INode.NodeState.Running;
 
-            animationing = false;
+            _animationing = false;
             DebugManager.Log($"Fake Punching");
             
             return INode.NodeState.Success;
@@ -500,22 +516,105 @@ namespace Monster.Container
         
         #region Cry
 
+        
         private INode.NodeState CryingShield()
         {            
-            DebugManager.Log($"Cry Shield");
             // 애니메이션 실행
-            // shield 파라미터 수정 후 속성값 대입
+            if (false == _animationing)
+            {
+                animator.PlayShieldAction();
+                _animationing = true;
+                // shield 파라미터 수정 후 속성값 대입
+                _shieldType = 0;
+                ShieldOnRPC();
+            }
+
+            if (false == animator.ShieldTimerExpired)
+                return INode.NodeState.Running;
+
+            _animationing = false;
+            
+            DebugManager.Log($"Cry Shield");
             return INode.NodeState.Success;
         }
         
         private INode.NodeState ReverseCryingShield()
         {
-            DebugManager.Log($"Reverse Cry Shield");
             // 애니메이션 실행
-            // shield 파라미터 수정 후 속성값 대입
+            if (false == _animationing)
+            {
+                animator.PlayReverseShieldAction();
+                _animationing = true;
+                
+                // shield 파라미터 수정 후 속성값 대입
+                _shieldType = 1;
+                ShieldOnRPC();
+            }
+
+            if (false == animator.ShieldTimerExpired)
+                return INode.NodeState.Running;
+
+            _animationing = false;
+            
+            DebugManager.Log($"Reverse Cry Shield");
             return INode.NodeState.Success;
         }
 
+        IEnumerator ShieldOnCoroutine()
+        {
+            float value = 1.1f;
+            while (true)
+            {
+                yield return new WaitForSeconds(0.1f);
+
+                value -= 0.11f;
+                bloodShieldMat.SetFloat(Dissolve, value);
+                if(value <= 0)
+                {
+                    // 속성값 대입하는 RPC 실행해야함
+                    ShieldAddConditionRPC();
+                    yield break;
+                }
+            }
+        }
+        
+        private INode.NodeState ShieldOffAction()
+        {
+            if (false == _animationing)
+            {
+                animator.PlayShieldOffAction();
+                _animationing = true;
+                
+                // shield 파라미터 수정 후 속성값 대입
+                ShieldOffRPC();
+            }
+
+            if (false == animator.ShieldTimerExpired)
+                return INode.NodeState.Running;
+
+            _animationing = false;
+            
+            return INode.NodeState.Success;
+        }
+        
+        IEnumerator ShieldOffCoroutine()
+        {
+            float value = 0f;
+            while (true)
+            {
+                yield return new WaitForSeconds(0.1f);
+
+                value += 0.11f;
+                bloodShieldMat.SetFloat(Dissolve, value);
+                if (value >= 1.1f)
+                {
+                    // 속성값 대입하는 RPC 실행해야함
+                    ShieldDelConditionRPC();
+                    yield break;
+                }
+            }
+        }
+        
         private INode.NodeState BreakHat()
         {
             DebugManager.Log($"Break Hat");
@@ -630,7 +729,9 @@ namespace Monster.Container
         {
             _maskType = Type;
         }
-        
+
+        #region Punch Attack
+
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void PunchAttackRPC(int type, Vector3 targetPosition)
         {
@@ -678,7 +779,42 @@ namespace Monster.Container
             
             hands[type].transform.DOLocalMove(new Vector3(tmp, 4, 3), 1).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
         }
+
+        #endregion
+
+        #region Shield
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void ShieldOnRPC()
+        {
+            StartCoroutine(ShieldOnCoroutine());
+        }
         
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void ShieldOffRPC()
+        {
+            StartCoroutine(ShieldOffCoroutine());
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void ShieldAddConditionRPC()
+        {
+            if(_shieldType == 0) // Shield
+                status.AddCondition(CrowdControl.DamageIgnore);
+            else  // Reverse Shield
+                status.AddCondition(CrowdControl.DamageReflect);
+        }
+        
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void ShieldDelConditionRPC()
+        {
+            if(_shieldType == 0)
+                status.DelCondition(CrowdControl.DamageIgnore);
+            else
+                status.DelCondition(CrowdControl.DamageReflect);
+        }
+        
+        #endregion
         
         #endregion
     }

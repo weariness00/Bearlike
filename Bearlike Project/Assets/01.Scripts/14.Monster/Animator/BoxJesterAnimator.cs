@@ -16,7 +16,8 @@ namespace Monster.Container
         [SerializeField] private AnimationClip appearClip;
         [SerializeField] private AnimationClip punchReadyClip;
         // [SerializeField] private AnimationClip cloneClip;
-        // [SerializeField] private AnimationClip ShieldClip;
+        [SerializeField] private AnimationClip ShieldClip;
+        [SerializeField] private AnimationClip ReverseShieldClip;
         // [SerializeField] private AnimationClip hatClip;
         [SerializeField] private AnimationClip handLazerClip;
         [SerializeField] private AnimationClip throwBoomClip;
@@ -26,6 +27,8 @@ namespace Monster.Container
         private static readonly int Hide = Animator.StringToHash("tHide");
         private static readonly int Appear = Animator.StringToHash("tAppear");
         private static readonly int Punch = Animator.StringToHash("tPunch");
+        private static readonly int Shield = Animator.StringToHash("tShield");
+        private static readonly int ReverseShield = Animator.StringToHash("tReverseShield");
         
         private TickTimer IdleTimer { get; set; }
         private TickTimer TeleportTimer { get; set; }
@@ -36,7 +39,7 @@ namespace Monster.Container
         private TickTimer PunchReadyTimer { get; set; }
         private TickTimer PunchTimer { get; set; }
         // private TickTimer CloneTimer { get; set; }
-        // private TickTimer ShieldTimer { get; set; }
+        private TickTimer ShieldTimer { get; set; }
         // private TickTimer HatTimer { get; set; }
         private TickTimer HandLazerTimer { get; set; }
         private TickTimer ThrowBoomTimer { get; set; }
@@ -51,7 +54,7 @@ namespace Monster.Container
         public bool PunchReadyTimerExpired => PunchReadyTimer.Expired(Runner);
         public bool PunchTimerExpired => PunchTimer.Expired(Runner);
         // public bool CloneTimerExpired => CloneTimer.Expired(Runner);
-        // public bool ShieldTimerExpired => ShieldTimer.Expired(Runner);
+        public bool ShieldTimerExpired => ShieldTimer.Expired(Runner);
         // public bool HatTimerExpired => HatTimer.Expired(Runner);
         public bool HandLazerTimerExpired => HandLazerTimer.Expired(Runner);
         public bool ThrowBoomTimerExpired => ThrowBoomTimer.Expired(Runner);
@@ -70,7 +73,7 @@ namespace Monster.Container
             PunchReadyTimer = TickTimer.CreateFromTicks(Runner, 0);
             PunchTimer = TickTimer.CreateFromTicks(Runner, 0);
             // CloneTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // ShieldTimer = TickTimer.CreateFromTicks(Runner, 0);
+            ShieldTimer = TickTimer.CreateFromTicks(Runner, 0);
             // HatTimer = TickTimer.CreateFromTicks(Runner, 0);
             HandLazerTimer = TickTimer.CreateFromTicks(Runner, 0);
             ThrowBoomTimer = TickTimer.CreateFromTicks(Runner, 0);
@@ -85,7 +88,8 @@ namespace Monster.Container
 
         public void PlayTeleport()
         {
-            TeleportTimer = TickTimer.CreateFromSeconds(Runner, 3);
+            TeleportTimer = TickTimer.CreateFromSeconds(Runner, 2);
+            // TODO : VFX의 시간도 Clip대로 맞춰야함
             // TeleportTimer = TickTimer.CreateFromSeconds(Runner, tptClip.length);
             // networkAnimator.SetTrigger(Teleport);
         }
@@ -126,6 +130,25 @@ namespace Monster.Container
         public void PlayPunchAction()
         {
             PunchTimer = TickTimer.CreateFromSeconds(Runner, 3);
+        }
+        
+        public void PlayShieldAction()
+        {
+            ShieldTimer = TickTimer.CreateFromSeconds(Runner, 7);   // 상수화 해야함
+            // ShieldTimer = TickTimer.CreateFromSeconds(Runner, ShieldClip.length);
+            // networkAnimator.SetTrigger(Shield);
+        }
+        
+        public void PlayReverseShieldAction()
+        {
+            ShieldTimer = TickTimer.CreateFromSeconds(Runner, 7);   // 상수화 해야함
+            // ShieldTimer = TickTimer.CreateFromSeconds(Runner, ReverseShieldClip.length);
+            // networkAnimator.SetTrigger(ReverseShield);
+        }
+        
+        public void PlayShieldOffAction()
+        {
+            ShieldTimer = TickTimer.CreateFromSeconds(Runner, 1.5f);   // 상수화 해야함
         }
     }
 }

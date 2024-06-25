@@ -24,6 +24,7 @@ namespace Status
         Weak = 0b_0000_0010,                // 취약 => 최종 데미지 1.5배 증가
         DamageIgnore = 0b_0000_0100,             // 방어 => 데미지 감소 || 무효
         Burn = 0b_0000_1000,                // 화상 => 높은 도트 데미지
+        DamageReflect = 0b_0001_0000,       // 반사 => 데미지를 특정 비율로 반사
     }
     
     /// <summary>
