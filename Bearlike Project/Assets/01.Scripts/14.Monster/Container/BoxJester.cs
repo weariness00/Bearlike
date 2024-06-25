@@ -146,14 +146,14 @@ namespace Monster.Container
 
             var SmilePattern = new SelectorNode(
                     true,
-                    new SequenceNode(
-                        new ActionNode(PunchReady),
-                            new ActionNode(Punching)
-                    )
                     // new SequenceNode(
                     //     new ActionNode(PunchReady),
-                    //     new ActionNode(FakePunching)
+                    //         new ActionNode(Punching)
                     // )
+                    new SequenceNode(
+                        new ActionNode(PunchReady),
+                        new ActionNode(FakePunching)
+                    )
                     // new ActionNode(ClonePattern)
                 );
 
@@ -419,11 +419,15 @@ namespace Monster.Container
 
                 foreach(var player in _players)
                 {
-                    if (fakeTargetPosition != targetPosition)
+                    if (_players.Length < 2)
                     {
-                        fakeTargetPosition = player.transform.position;
+                        fakeTargetPosition = transform.position + new Vector3(0, 10, 0);
+                    }
+                    else if (player.transform.position != targetPosition)
+                    {
+                        fakeTargetPosition = (player.transform.position + targetPosition) / 2;
                         break;
-                    }           
+                    }        
                 }
 
                 type = Random.Range(0, 2);
