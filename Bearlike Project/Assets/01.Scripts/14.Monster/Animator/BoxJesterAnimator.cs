@@ -34,6 +34,7 @@ namespace Monster.Container
         private TickTimer SmokeTimer { get; set; }
         private TickTimer MaskChangeTimer { get; set; }
         private TickTimer PunchReadyTimer { get; set; }
+        private TickTimer PunchTimer { get; set; }
         // private TickTimer CloneTimer { get; set; }
         // private TickTimer ShieldTimer { get; set; }
         // private TickTimer HatTimer { get; set; }
@@ -48,6 +49,7 @@ namespace Monster.Container
         public bool SmokeTimerExpired => SmokeTimer.Expired(Runner);
         public bool MaskChangeTimerExpired => MaskChangeTimer.Expired(Runner);
         public bool PunchReadyTimerExpired => PunchReadyTimer.Expired(Runner);
+        public bool PunchTimerExpired => PunchTimer.Expired(Runner);
         // public bool CloneTimerExpired => CloneTimer.Expired(Runner);
         // public bool ShieldTimerExpired => ShieldTimer.Expired(Runner);
         // public bool HatTimerExpired => HatTimer.Expired(Runner);
@@ -66,6 +68,7 @@ namespace Monster.Container
             SmokeTimer = TickTimer.CreateFromTicks(Runner, 0);
             MaskChangeTimer = TickTimer.CreateFromTicks(Runner, 0);
             PunchReadyTimer = TickTimer.CreateFromTicks(Runner, 0);
+            PunchTimer = TickTimer.CreateFromTicks(Runner, 0);
             // CloneTimer = TickTimer.CreateFromTicks(Runner, 0);
             // ShieldTimer = TickTimer.CreateFromTicks(Runner, 0);
             // HatTimer = TickTimer.CreateFromTicks(Runner, 0);
@@ -118,6 +121,11 @@ namespace Monster.Container
             PunchReadyTimer = TickTimer.CreateFromSeconds(Runner, 1);
             // PunchReadyTimer = TickTimer.CreateFromSeconds(Runner, punchReadyClip.length);
             // networkAnimator.SetTrigger(Punch);
+        }
+        
+        public void PlayPunchAction()
+        {
+            PunchTimer = TickTimer.CreateFromSeconds(Runner, 3);
         }
     }
 }

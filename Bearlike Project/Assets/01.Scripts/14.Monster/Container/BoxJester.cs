@@ -58,7 +58,7 @@ namespace Monster.Container
             base.Awake();
             
             animator = GetComponentInChildren<BoxJesterAnimator>();
-            hands = new GameObject[2];
+            // hands = new GameObject[2];
 
             // hands[0] = transform.Find("")
             
@@ -149,11 +149,11 @@ namespace Monster.Container
                     new SequenceNode(
                         new ActionNode(PunchReady),
                             new ActionNode(Punching)
-                    ),
-                    new SequenceNode(
-                        new ActionNode(PunchReady),
-                        new ActionNode(FakePunching)
                     )
+                    // new SequenceNode(
+                    //     new ActionNode(PunchReady),
+                    //     new ActionNode(FakePunching)
+                    // )
                     // new ActionNode(ClonePattern)
                 );
 
@@ -208,7 +208,7 @@ namespace Monster.Container
 
             var AttackPattern = new SelectorNode(
                 true, 
-                TP,
+                // TP,
                 // Hide,
                 Attack
             );
@@ -392,45 +392,47 @@ namespace Monster.Container
             // 주먹질 애니메이션 실행
             if (false == animationing)
             {
+                // Calculation
+                targetPosition = new Vector3(0, 0, 0);
+                fakeTargetPosition = new Vector3(0, 0, 0);
+                minDistance = int.MaxValue;
+            
+                // 가까운 대상 계산
+                foreach(var player in _players)
+                {
+                    var distance = (int)(math.distance(player.transform.position, transform.position));
+                    if (minDistance > distance)
+                    {
+                        minDistance = distance;
+                        targetPosition = player.transform.position;
+                        fakeTargetPosition = targetPosition;
+                    }
+                }
+                
+                // 공격 범위를 지정해서 구현할까? => 고민 필요
+                // if (attackDistance < minDistance)
+                //     return INode.NodeState.Failure;
+                
+                // Animation Play
                 animator.PlayPunchReadyAction();
                 animationing = true;
+
+                foreach(var player in _players)
+                {
+                    if (fakeTargetPosition != targetPosition)
+                    {
+                        fakeTargetPosition = player.transform.position;
+                        break;
+                    }           
+                }
+
+                type = Random.Range(0, 2);
             }
 
             if (false == animator.PunchReadyTimerExpired)
                 return INode.NodeState.Running;
 
             animationing = false;
-            
-            // Calculation
-            targetPosition = new Vector3(0, 0, 0);
-            fakeTargetPosition = new Vector3(0, 0, 0);
-            minDistance = int.MaxValue;
-            
-            // 가까운 대상 계산
-            foreach(var player in _players)
-            {
-                var distance = (int)(math.distance(player.transform.position, transform.position));
-                if (minDistance > distance)
-                {
-                    minDistance = distance;
-                    targetPosition = player.transform.position;
-                }
-            }
-
-            foreach(var player in _players)
-            {
-                if (player.transform.position != targetPosition)
-                {
-                    fakeTargetPosition = player.transform.position;
-                    break;
-                }           
-            }
-            
-            // 공격 범위를 지정해서 구현할까? => 고민 필요
-            // if (attackDistance < minDistance)
-            //     return INode.NodeState.Failure;
-
-            type = Random.Range(0, 2);
             
             DebugManager.Log($"Punching Ready");
             
@@ -441,9 +443,19 @@ namespace Monster.Container
         {
             // TODO : 먼저 몸을 돌려야 자연스럽지 않을까?
             
-            // dotween으로 주먹 이동 및 충돌 처리
-            PunchAttackRPC(type, targetPosition);
             
+            if (false == animationing)
+            {
+                // dotween으로 주먹 이동 및 충돌 처리
+                PunchAttackRPC(type, targetPosition);
+                animator.PlayPunchAction();
+                animationing = true;
+            }
+
+            if (false == animator.PunchTimerExpired)
+                return INode.NodeState.Running;
+
+            animationing = false;
             DebugManager.Log($"Punching");
             
             return INode.NodeState.Success;
@@ -452,10 +464,20 @@ namespace Monster.Container
         private INode.NodeState FakePunching()
         {
             // TODO : 먼저 몸을 돌려야 자연스럽지 않을까?
-            // dotween으로 주먹 절반 이동 및 다른 방향으로 다시 이동 및 충돌 처리
-            FakePunchAttackRPC(type, targetPosition, fakeTargetPosition);
             
             
+            if (false == animationing)
+            {
+                // dotween으로 주먹 절반 이동 및 다른 방향으로 다시 이동 및 충돌 처리
+                FakePunchAttackRPC(type, targetPosition, fakeTargetPosition);
+                animator.PlayPunchAction();
+                animationing = true;
+            }
+
+            if (false == animator.PunchTimerExpired)
+                return INode.NodeState.Running;
+
+            animationing = false;
             DebugManager.Log($"Fake Punching");
             
             return INode.NodeState.Success;
@@ -609,6 +631,10 @@ namespace Monster.Container
         private void PunchAttackRPC(int type, Vector3 targetPosition)
         {
             hands[type].transform.DOMove(targetPosition, 2).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
+            
+            DebugManager.Log($"targetPosition : {targetPosition}");
+            
+            StartCoroutine(ComeBackPunchCoroutine(2, type));
         }
             
         [Rpc(RpcSources.All, RpcTargets.All)]
@@ -617,6 +643,7 @@ namespace Monster.Container
             hands[type].transform.DOMove(fakeTargetPosition, 1).SetEase(Ease.OutCirc); // TODO : 공격 속도를 변수처리 해야함
 
             StartCoroutine(RealTartgetMoveCoroutine(1.0f, type, targetPosition));
+            StartCoroutine(ComeBackPunchCoroutine(2, type));
         }
 
         private IEnumerator RealTartgetMoveCoroutine(float waitTime, int type, Vector3 targetPosition)
@@ -629,6 +656,23 @@ namespace Monster.Container
         private void RealPunchAttackRPC(int type, Vector3 targetPosition)
         {
             hands[type].transform.DOMove(targetPosition, 1).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
+        }
+
+        private IEnumerator ComeBackPunchCoroutine(float waitTime, int type)
+        {
+            yield return new WaitForSeconds(waitTime);
+
+            ComeBackPunchRPC(type);
+        }
+        
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void ComeBackPunchRPC(int type)
+        {
+            int tmp = 3;
+            if (type == 0)
+                tmp = -3;
+            
+            hands[type].transform.DOLocalMove(new Vector3(tmp, 4, 3), 1).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
         }
         
         
