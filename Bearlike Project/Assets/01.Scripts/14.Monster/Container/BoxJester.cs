@@ -194,7 +194,7 @@ namespace Monster.Container
                 );
 
             var Cry = new SequenceNode(
-                    // new ActionNode(IsCry),
+                    new ActionNode(IsCry),
                     CryPattern
                 );
             
@@ -210,7 +210,7 @@ namespace Monster.Container
                 );
 
             var Angry = new SequenceNode(
-                    new ActionNode(IsAngry),
+                    // new ActionNode(IsAngry),
                     AngryPattern
                 );
             
@@ -219,7 +219,7 @@ namespace Monster.Container
             var Attack = new SelectorNode(
                     false,
                     // Smile,
-                    Cry,
+                    // Cry,
                     Angry
                 );
             
@@ -228,8 +228,8 @@ namespace Monster.Container
             var AttackPattern = new SelectorNode(
                 true, 
                 // TP,
-                Hide
-                // Attack
+                // Hide,
+                Attack
             );
         
             var loop = new SequenceNode(
@@ -675,19 +675,43 @@ namespace Monster.Container
         
         private INode.NodeState ThrowBoom()
         {
+            if (false == _animationing)
+            {
+                animator.PlayThrowBoomAction();
+                _animationing = true;
+                
+                // 폭탄 소환 ==> 폭탄은 충돌되면 폭발 ( VFX, Damage, Script )
+                // VFX RPC실행 
+                // 데미지 판정 후 적용 RPC호출
+                
+            }
+
+            if (false == animator.ThrowBoomTimerExpired)
+                return INode.NodeState.Running;
+
+            _animationing = false;
             DebugManager.Log($"Throw Boom");
-            // 폭탄 던지는 애니메이션 실행
-            // Running
             
-            // 폭탄 소환 ==> 폭탄은 충돌되면 폭발 ( VFX, Damage, Script )
             return INode.NodeState.Success;
         }
 
         private INode.NodeState slapAttack()
         {
+            if (false == _animationing)
+            {
+                animator.PlaySlapAction();
+                _animationing = true;
+                
+                // 충돌처리
+                
+            }
+
+            if (false == animator.ThrowBoomTimerExpired)
+                return INode.NodeState.Running;
+
+            _animationing = false;
             DebugManager.Log($"Slap Attack");
-            // 싸다구 애니메이션 실행
-            // 충돌처리
+            
             return INode.NodeState.Success;
         }
 

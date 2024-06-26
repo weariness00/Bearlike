@@ -151,5 +151,18 @@ namespace Monster.Container
             networkAnimator.Animator.SetFloat(Attack, 1);
             networkAnimator.SetTrigger(tAttack);
         }
+
+        public void PlayThrowBoomAction()
+        {
+            ThrowBoomTimer = TickTimer.CreateFromSeconds(Runner, throwBoomClip.length);
+            networkAnimator.Animator.SetFloat(Attack, 2);
+            networkAnimator.SetTrigger(tAttack);
+        }
+        
+        public void PlaySlapAction()
+        {
+            // SlapTimer = TickTimer.CreateFromSeconds(Runner, slapClip.length);
+            // networkAnimator.SetTrigger(tSlap);
+        }
     }
 }
