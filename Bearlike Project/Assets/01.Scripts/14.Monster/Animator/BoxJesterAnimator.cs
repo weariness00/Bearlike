@@ -11,9 +11,9 @@ namespace Monster.Container
         
         [Header("Animation Clip")] 
         [SerializeField] private AnimationClip idleClip;
-        [SerializeField] private AnimationClip tptClip;
-        [SerializeField] private AnimationClip hideClip;
-        [SerializeField] private AnimationClip appearClip;
+        [SerializeField] private AnimationClip tpClip;
+        [SerializeField] private AnimationClip MaskChageClip;
+        [SerializeField] private AnimationClip DarknessBreathClip;
         [SerializeField] private AnimationClip punchReadyClip;
         // [SerializeField] private AnimationClip cloneClip;
         [SerializeField] private AnimationClip ShieldClip;
@@ -23,12 +23,19 @@ namespace Monster.Container
         [SerializeField] private AnimationClip throwBoomClip;
         [SerializeField] private AnimationClip slapClip;
         
-        private static readonly int Teleport = Animator.StringToHash("tTeleport");
-        private static readonly int Hide = Animator.StringToHash("tHide");
-        private static readonly int Appear = Animator.StringToHash("tAppear");
-        private static readonly int Punch = Animator.StringToHash("tPunch");
-        private static readonly int Shield = Animator.StringToHash("tShield");
-        private static readonly int ReverseShield = Animator.StringToHash("tReverseShield");
+        private static readonly int tIdle = Animator.StringToHash("tIdle");
+        private static readonly int tAttack = Animator.StringToHash("tAttack");
+        private static readonly int Attack = Animator.StringToHash("Attack");
+        private static readonly int tFaceHide = Animator.StringToHash("tFace Hide");
+        private static readonly int FaceHide = Animator.StringToHash("Face Hide");
+        private static readonly int tDeath = Animator.StringToHash("tDeath");
+        
+        // private static readonly int Teleport = Animator.StringToHash("tTeleport");
+        // private static readonly int Hide = Animator.StringToHash("tHide");
+        // private static readonly int Appear = Animator.StringToHash("tAppear");
+        // private static readonly int Punch = Animator.StringToHash("tPunch");
+        // private static readonly int Shield = Animator.StringToHash("tShield");
+        // private static readonly int ReverseShield = Animator.StringToHash("tReverseShield");
         
         private TickTimer IdleTimer { get; set; }
         private TickTimer TeleportTimer { get; set; }
@@ -62,7 +69,7 @@ namespace Monster.Container
         
         private void Awake()
         {
-            networkAnimator = GetComponent<NetworkMecanimAnimator>();
+            networkAnimator = transform.root.GetComponent<NetworkMecanimAnimator>();
             
             IdleTimer = TickTimer.CreateFromTicks(Runner, 0);
             TeleportTimer = TickTimer.CreateFromTicks(Runner, 0);
@@ -84,13 +91,16 @@ namespace Monster.Container
         {
             // IdleTimer = TickTimer.CreateFromSeconds(Runner, 3);
             IdleTimer = TickTimer.CreateFromSeconds(Runner, idleClip.length * 2);
+            var state = networkAnimator.Animator.GetCurrentAnimatorStateInfo(0);
+            if(!state.IsName("Clown_Idle"))
+                networkAnimator.SetTrigger(tIdle);
         }
 
         public void PlayTeleport()
         {
             TeleportTimer = TickTimer.CreateFromSeconds(Runner, 2);
             // TODO : VFX의 시간도 Clip대로 맞춰야함
-            // TeleportTimer = TickTimer.CreateFromSeconds(Runner, tptClip.length);
+            // TeleportTimer = TickTimer.CreateFromSeconds(Runner, tpClip.length);
             // networkAnimator.SetTrigger(Teleport);
         }
 
@@ -122,9 +132,9 @@ namespace Monster.Container
         
         public void PlayPunchReadyAction()
         {
-            PunchReadyTimer = TickTimer.CreateFromSeconds(Runner, 1);
-            // PunchReadyTimer = TickTimer.CreateFromSeconds(Runner, punchReadyClip.length);
-            // networkAnimator.SetTrigger(Punch);
+            PunchReadyTimer = TickTimer.CreateFromSeconds(Runner, punchReadyClip.length);
+            networkAnimator.SetTrigger(tAttack);
+            networkAnimator.Animator.SetFloat(Attack, 0);
         }
         
         public void PlayPunchAction()

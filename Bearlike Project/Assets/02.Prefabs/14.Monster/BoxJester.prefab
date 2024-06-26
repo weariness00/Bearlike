@@ -117,12 +117,12 @@ MonoBehaviour:
   m_Script: {fileID: 506319458, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Animator: {fileID: 0}
-  TotalWords: 0
+  Animator: {fileID: 6479934378002872796}
+  TotalWords: 3
   ApplyTiming: 2
   SyncSettings: 79
-  StateHashes: 
-  TriggerHashes: 
+  StateHashes: 00000000d009bbd9e3ba9eee33be54514b005c307090b77ac06108240d60fe46a82419f93f52437efd2082dcad7c4c0c0838abb3
+  TriggerHashes: 00000000e8a2e574408de59343e3d5c125742297
 --- !u!114 &6159267201163480657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161,7 +161,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2169112673862639238}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 1000
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -485,6 +485,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7913420218936763700, guid: 44e027b201d0de442ba1d19b500130f4,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: -7913420218936763700, guid: 44e027b201d0de442ba1d19b500130f4,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.04
+      objectReference: {fileID: 0}
+    - target: {fileID: -7913420218936763700, guid: 44e027b201d0de442ba1d19b500130f4,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.03
+      objectReference: {fileID: 0}
     - target: {fileID: -7820065762664842458, guid: 44e027b201d0de442ba1d19b500130f4,
         type: 3}
       propertyPath: m_IsActive
@@ -499,6 +514,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3379150826574563161, guid: 44e027b201d0de442ba1d19b500130f4,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 3379150826574563161, guid: 44e027b201d0de442ba1d19b500130f4,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.04
+      objectReference: {fileID: 0}
+    - target: {fileID: 3379150826574563161, guid: 44e027b201d0de442ba1d19b500130f4,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.03
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -652,12 +682,12 @@ MonoBehaviour:
   _IsAsyncClient: []
   _IsSpawnSuccess:
     _value: 0
-  networkAnimator: {fileID: 0}
+  networkAnimator: {fileID: 6430590144718798744}
   idleClip: {fileID: 9059461331345852336, guid: 44e027b201d0de442ba1d19b500130f4,
     type: 3}
-  tptClip: {fileID: 0}
-  hideClip: {fileID: 0}
-  appearClip: {fileID: 0}
+  tpClip: {fileID: 0}
+  MaskChageClip: {fileID: 0}
+  DarknessBreathClip: {fileID: 0}
   punchReadyClip: {fileID: 8763112752979857986, guid: 44e027b201d0de442ba1d19b500130f4,
     type: 3}
   ShieldClip: {fileID: -6117162519561694952, guid: 44e027b201d0de442ba1d19b500130f4,
