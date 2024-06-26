@@ -28,6 +28,8 @@ namespace Monster.Container
         private static readonly int Attack = Animator.StringToHash("Attack");
         private static readonly int tFaceHide = Animator.StringToHash("tFace Hide");
         private static readonly int FaceHide = Animator.StringToHash("Face Hide");
+        private static readonly int tChangeMask = Animator.StringToHash("tChange Mask");
+        private static readonly int tSmoke = Animator.StringToHash("tSmoke");
         private static readonly int tDeath = Animator.StringToHash("tDeath");
         
         // private static readonly int Teleport = Animator.StringToHash("tTeleport");
@@ -39,8 +41,6 @@ namespace Monster.Container
         
         private TickTimer IdleTimer { get; set; }
         private TickTimer TeleportTimer { get; set; }
-        private TickTimer HideTimer { get; set; }
-        private TickTimer AppearTimer { get; set; }
         private TickTimer SmokeTimer { get; set; }
         private TickTimer MaskChangeTimer { get; set; }
         private TickTimer PunchReadyTimer { get; set; }
@@ -54,8 +54,6 @@ namespace Monster.Container
         
         public bool IdleTimerExpired => IdleTimer.Expired(Runner);
         public bool TeleportTimerExpired => TeleportTimer.Expired(Runner);
-        public bool HideTimerExpired => HideTimer.Expired(Runner);
-        public bool AppearTimerExpired => AppearTimer.Expired(Runner);
         public bool SmokeTimerExpired => SmokeTimer.Expired(Runner);
         public bool MaskChangeTimerExpired => MaskChangeTimer.Expired(Runner);
         public bool PunchReadyTimerExpired => PunchReadyTimer.Expired(Runner);
@@ -73,8 +71,6 @@ namespace Monster.Container
             
             IdleTimer = TickTimer.CreateFromTicks(Runner, 0);
             TeleportTimer = TickTimer.CreateFromTicks(Runner, 0);
-            HideTimer = TickTimer.CreateFromTicks(Runner, 0);
-            AppearTimer = TickTimer.CreateFromTicks(Runner, 0);
             SmokeTimer = TickTimer.CreateFromTicks(Runner, 0);
             MaskChangeTimer = TickTimer.CreateFromTicks(Runner, 0);
             PunchReadyTimer = TickTimer.CreateFromTicks(Runner, 0);
@@ -103,31 +99,17 @@ namespace Monster.Container
             // TeleportTimer = TickTimer.CreateFromSeconds(Runner, tpClip.length);
             // networkAnimator.SetTrigger(Teleport);
         }
-
-        public void PlayHideInBox()
-        {
-            HideTimer = TickTimer.CreateFromSeconds(Runner, 2);
-            // HideTimer = TickTimer.CreateFromSeconds(Runner, hideClip.length);
-            // networkAnimator.SetTrigger(Hide);
-        }
-        
-        public void PlayAppearInBox()
-        {
-            AppearTimer = TickTimer.CreateFromSeconds(Runner, 2);
-            // AppearTimer = TickTimer.CreateFromSeconds(Runner, appearClip.length);
-            // networkAnimator.SetTrigger(Appear);
-        }
         
         public void PlaySmokeAttack()
         {
             SmokeTimer = TickTimer.CreateFromSeconds(Runner, 2);    // smoke 공격의 시간으로 설정해야함
-            // Box의 뚜껑이 열리는 Animation이 있었으면 좋겠음
+            networkAnimator.SetTrigger(tSmoke);
         }
         
         public void PlayMaskChange()
         {
             MaskChangeTimer = TickTimer.CreateFromSeconds(Runner, 1);
-            // Box가 흔들리는 Animation이 있었으면 좋겠음
+            networkAnimator.SetTrigger(tChangeMask);
         }
         
         public void PlayPunchReadyAction()

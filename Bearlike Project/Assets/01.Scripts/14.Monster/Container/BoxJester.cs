@@ -43,12 +43,13 @@ namespace Monster.Container
         // public SoundBox soundBox;
         private BehaviorTreeRunner _behaviorTreeRunner;
         private GameObject[] _players;
+        private GameObject[] _masks;
         
         enum MaskType
         {
-            Smile,
-            Cry,
-            Angry
+            Smile = 0,
+            Cry = 1,
+            Angry = 2
         }
         
         private MaskType _maskType = MaskType.Smile;
@@ -74,6 +75,14 @@ namespace Monster.Container
 
             var bloodShieldRenderer = transform.Find("ShieldEffect").GetComponent<Renderer>();
             bloodShieldMat = bloodShieldRenderer.material;
+            
+            // Mask 대입
+            var boxJester = transform.Find("Clown");
+            
+            _masks = new GameObject[3];
+            _masks[0] = boxJester.Find("Smile_Face").gameObject;
+            _masks[1] = boxJester.Find("Sad_Face").gameObject;
+            _masks[2] = boxJester.Find("Angry_Face").gameObject;
         }
         
         #endregion
@@ -128,27 +137,19 @@ namespace Monster.Container
 
             #region Hide
 
-            var ChangeMask = new SequenceNode(
-                    new ActionNode(ChangeAnimation),    
-                    new SelectorNode(
-                        true,
-                        new ActionNode(ChangeSmile),
-                        new ActionNode(ChangeCry),
-                        new ActionNode(ChangeAngry)
-                        )
-                    );
+            var ChangeMask =
+                new SelectorNode(
+                    true,
+                    new ActionNode(ChangeSmile),
+                    new ActionNode(ChangeCry),
+                    new ActionNode(ChangeAngry)
+                );
             
-            var HideSelect = new SelectorNode(
-                true, 
-                new ActionNode(SmokeAttack),
-                ChangeMask
-            );
-            
-            var Hide = new SequenceNode(
-                new ActionNode(HideInBox),
-                HideSelect,
-                new ActionNode(AppearInBox)
-            );
+            var Hide = new SelectorNode(
+                    true, 
+                    new ActionNode(SmokeAttack),
+                    ChangeMask
+                );  
 
             #endregion
 
@@ -227,8 +228,9 @@ namespace Monster.Container
             var AttackPattern = new SelectorNode(
                 true, 
                 // TP,
-                // Hide,
-                Attack
+                ChangeMask  // 임시
+                // Hide
+                // Attack
             );
         
             var loop = new SequenceNode(
@@ -290,23 +292,6 @@ namespace Monster.Container
         #endregion
 
         #region Hide
-
-        private INode.NodeState HideInBox()
-        {
-            if (false == _animationing)
-            {
-                animator.PlayHideInBox();
-                _animationing = true;
-            }
-
-            if (false == animator.HideTimerExpired)
-                return INode.NodeState.Running;
-
-            _animationing = false;
-            DebugManager.Log($"Hide On Box");
-            
-            return INode.NodeState.Success;
-        }
         
         private INode.NodeState SmokeAttack()
         {
@@ -331,68 +316,68 @@ namespace Monster.Container
 
         #region Change Mask
 
-        private INode.NodeState ChangeAnimation()
+        IEnumerator ChangeMaskCoroutine(MaskType maskType)
+        {
+            yield return new WaitForSeconds(0.2f);
+            ChangeMaskRPC(maskType);
+        }
+        
+        private INode.NodeState ChangeSmile()
         {
             if (false == _animationing)
             {
                 animator.PlayMaskChange();
                 _animationing = true;
+                StartCoroutine(ChangeMaskCoroutine(MaskType.Smile));
             }
 
             if (false == animator.MaskChangeTimerExpired)
                 return INode.NodeState.Running;
 
             _animationing = false;
-            DebugManager.Log($"Mask Change");
             
-            return INode.NodeState.Success;
-        }
-        
-        private INode.NodeState ChangeSmile()
-        {
             DebugManager.Log($"Change Smile");
-            // 가면 Change ==> 속성 파라미터 변경, 모델 변경(API만들어서)
-            ChangeMaskRPC(MaskType.Smile);
             
             return INode.NodeState.Success;
         }
         
         private INode.NodeState ChangeCry()
         {
+            if (false == _animationing)
+            {
+                animator.PlayMaskChange();
+                _animationing = true;
+                StartCoroutine(ChangeMaskCoroutine(MaskType.Cry));
+            }
+
+            if (false == animator.MaskChangeTimerExpired)
+                return INode.NodeState.Running;
+
+            _animationing = false;
             DebugManager.Log($"Change Cry");
-            // 가면 Change ==> 속성 파라미터 변경, 모델 변경(API만들어서)
-            ChangeMaskRPC(MaskType.Cry);
             
             return INode.NodeState.Success;
         }
         
         private INode.NodeState ChangeAngry()
         {
+            if (false == _animationing)
+            {
+                animator.PlayMaskChange();
+                _animationing = true;
+                StartCoroutine(ChangeMaskCoroutine(MaskType.Angry));
+            }
+
+            if (false == animator.MaskChangeTimerExpired)
+                return INode.NodeState.Running;
+
+            _animationing = false;
             DebugManager.Log($"Change Angry");
-            // 가면 Change ==> 속성 파라미터 변경, 모델 변경(API만들어서)
-            ChangeMaskRPC(MaskType.Angry);
             
             return INode.NodeState.Success;
         }
 
         #endregion
-        
-        private INode.NodeState AppearInBox()
-        {
-            if (false == _animationing)
-            {
-                animator.PlayAppearInBox();
-                _animationing = true;
-            }
-
-            if (false == animator.AppearTimerExpired)
-                return INode.NodeState.Running;
-
-            _animationing = false;
-            DebugManager.Log($"Appear In Box");
-            
-            return INode.NodeState.Success;
-        }
         
         #endregion
         
@@ -729,7 +714,11 @@ namespace Monster.Container
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void ChangeMaskRPC(MaskType Type)
         {
+            _masks[(int)(_maskType)].SetActive(false);
+            
             _maskType = Type;
+            
+            _masks[(int)(Type)].SetActive(true);
         }
 
         #region Punch Attack
