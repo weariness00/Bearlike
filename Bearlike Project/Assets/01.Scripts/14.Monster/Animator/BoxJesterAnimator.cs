@@ -115,8 +115,8 @@ namespace Monster.Container
         public void PlayPunchReadyAction()
         {
             PunchReadyTimer = TickTimer.CreateFromSeconds(Runner, punchReadyClip.length);
-            networkAnimator.SetTrigger(tAttack);
             networkAnimator.Animator.SetFloat(Attack, 0);
+            networkAnimator.SetTrigger(tAttack);
         }
         
         public void PlayPunchAction()
@@ -128,21 +128,28 @@ namespace Monster.Container
         {
             ShieldTimer = TickTimer.CreateFromSeconds(Runner, 7);   // 상수화 해야함
             // ShieldTimer = TickTimer.CreateFromSeconds(Runner, ShieldClip.length);
-            networkAnimator.SetTrigger(tFaceHide);
             networkAnimator.Animator.SetFloat(FaceHide, 0);
+            networkAnimator.SetTrigger(tFaceHide);
         }
         
         public void PlayReverseShieldAction()
         {
             ShieldTimer = TickTimer.CreateFromSeconds(Runner, 7);   // 상수화 해야함
             // ShieldTimer = TickTimer.CreateFromSeconds(Runner, ReverseShieldClip.length);
-            networkAnimator.SetTrigger(tFaceHide);
             networkAnimator.Animator.SetFloat(FaceHide, 1);
+            networkAnimator.SetTrigger(tFaceHide);
         }
         
         public void PlayShieldOffAction()
         {
             ShieldTimer = TickTimer.CreateFromSeconds(Runner, 1.5f);   // 상수화 해야함
+        }
+
+        public void PlayHandLazerAction()
+        {
+            HandLazerTimer = TickTimer.CreateFromSeconds(Runner, handLazerClip.length);
+            networkAnimator.Animator.SetFloat(Attack, 1);
+            networkAnimator.SetTrigger(tAttack);
         }
     }
 }

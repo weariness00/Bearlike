@@ -147,7 +147,7 @@ namespace Monster.Container
             
             var Hide = new SelectorNode(
                     true, 
-                    // new ActionNode(SmokeAttack),
+                    new ActionNode(SmokeAttack),
                     new ActionNode(ChangeMaskAction)
                 );  
 
@@ -528,8 +528,9 @@ namespace Monster.Container
         
         #region Cry
 
-        
-        private INode.NodeState CryingShield()
+        #region Shield
+
+         private INode.NodeState CryingShield()
         {            
             // 애니메이션 실행
             if (false == _animationing)
@@ -626,7 +627,11 @@ namespace Monster.Container
                 }
             }
         }
-        
+
+        #endregion
+
+        #region Hat
+
         private INode.NodeState BreakHat()
         {
             DebugManager.Log($"Break Hat");
@@ -643,16 +648,28 @@ namespace Monster.Container
 
         #endregion
         
+
+        #endregion
+        
         #region Angry
 
         private INode.NodeState HandLazer()
         {
+            if (false == _animationing)
+            {
+                animator.PlayHandLazerAction();
+                _animationing = true;
+                
+                // VFX RPC실행 
+                // 데미지 판정 후 적용 RPC호출
+            }
+
+            if (false == animator.HandLazerTimerExpired)
+                return INode.NodeState.Running;
+
+            _animationing = false;
             DebugManager.Log($"Hand Lazer");
-            // 손 내미는 에니메이션 실행
-            // running
             
-            // VFX실행
-            // 데미지 판정
             return INode.NodeState.Success;
         }
         
