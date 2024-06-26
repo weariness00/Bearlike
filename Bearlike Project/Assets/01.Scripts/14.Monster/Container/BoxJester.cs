@@ -137,18 +137,18 @@ namespace Monster.Container
 
             #region Hide
 
-            var ChangeMask =
-                new SelectorNode(
-                    true,
-                    new ActionNode(ChangeSmile),
-                    new ActionNode(ChangeCry),
-                    new ActionNode(ChangeAngry)
-                );
+            // var ChangeMask =
+            //     new SelectorNode(
+            //         true,
+            //         new ActionNode(ChangeSmile),
+            //         new ActionNode(ChangeCry),
+            //         new ActionNode(ChangeAngry)
+            //     );
             
             var Hide = new SelectorNode(
                     true, 
-                    new ActionNode(SmokeAttack),
-                    ChangeMask
+                    // new ActionNode(SmokeAttack),
+                    new ActionNode(ChangeMaskAction)
                 );  
 
             #endregion
@@ -228,8 +228,7 @@ namespace Monster.Container
             var AttackPattern = new SelectorNode(
                 true, 
                 // TP,
-                ChangeMask  // 임시
-                // Hide
+                Hide
                 // Attack
             );
         
@@ -315,6 +314,32 @@ namespace Monster.Container
         }
 
         #region Change Mask
+
+        private INode.NodeState ChangeMaskAction()
+        {
+            if (false == _animationing)
+            {
+                int tmp = Random.Range(0, 3);
+
+                while (tmp == (int)(_maskType))
+                {
+                    tmp = Random.Range(0, 3);
+                }
+                
+                animator.PlayMaskChange();
+                _animationing = true;
+                StartCoroutine(ChangeMaskCoroutine((MaskType)(tmp)));
+                
+                DebugManager.Log($"MaskChange : {((MaskType)(tmp)).ToString()}");
+            }
+
+            if (false == animator.MaskChangeTimerExpired)
+                return INode.NodeState.Running;
+
+            _animationing = false;
+            
+            return INode.NodeState.Success;
+        }
 
         IEnumerator ChangeMaskCoroutine(MaskType maskType)
         {
