@@ -146,14 +146,16 @@ namespace Monster.Container
         {
             ShieldTimer = TickTimer.CreateFromSeconds(Runner, 7);   // 상수화 해야함
             // ShieldTimer = TickTimer.CreateFromSeconds(Runner, ShieldClip.length);
-            // networkAnimator.SetTrigger(Shield);
+            networkAnimator.SetTrigger(tFaceHide);
+            networkAnimator.Animator.SetFloat(FaceHide, 0);
         }
         
         public void PlayReverseShieldAction()
         {
             ShieldTimer = TickTimer.CreateFromSeconds(Runner, 7);   // 상수화 해야함
             // ShieldTimer = TickTimer.CreateFromSeconds(Runner, ReverseShieldClip.length);
-            // networkAnimator.SetTrigger(ReverseShield);
+            networkAnimator.SetTrigger(tFaceHide);
+            networkAnimator.Animator.SetFloat(FaceHide, 1);
         }
         
         public void PlayShieldOffAction()

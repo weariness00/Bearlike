@@ -192,8 +192,8 @@ namespace Monster.Container
                     new ActionNode(NonBreakHat)
                 );
 
-            var AnCrygry = new SequenceNode(
-                    new ActionNode(IsCry),
+            var Cry = new SequenceNode(
+                    // new ActionNode(IsCry),
                     CryPattern
                 );
             
@@ -217,8 +217,8 @@ namespace Monster.Container
 
             var Attack = new SelectorNode(
                     false,
-                    Smile,
-                    CryPattern,
+                    // Smile,
+                    Cry,
                     Angry
                 );
             
