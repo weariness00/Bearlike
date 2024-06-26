@@ -82,8 +82,8 @@ namespace Monster.Container
         
         public void PlayIdle()
         {
-            IdleTimer = TickTimer.CreateFromSeconds(Runner, 3);
-            // IdleTimer = TickTimer.CreateFromSeconds(Runner, idleClip.length);
+            // IdleTimer = TickTimer.CreateFromSeconds(Runner, 3);
+            IdleTimer = TickTimer.CreateFromSeconds(Runner, idleClip.length * 2);
         }
 
         public void PlayTeleport()

@@ -8,6 +8,7 @@ using Fusion;
 using Sound;
 using Status;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Serialization;
@@ -36,7 +37,7 @@ namespace Monster.Container
 
         [Header("Effect")] 
         [SerializeField] private Material bloodShieldMat;
-            
+        
         private static readonly int Dissolve = Shader.PropertyToID("_Dissolve");
         
         // public SoundBox soundBox;
@@ -110,7 +111,8 @@ namespace Monster.Container
             }
             _players = playerObjects.ToArray();
         }
-
+        
+        
         #endregion
 
         #region BT Function
@@ -773,11 +775,11 @@ namespace Monster.Container
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void ComeBackPunchRPC(int type)
         {
-            int tmp = 3;
+            float tmp = 0.03f;
             if (type == 0)
-                tmp = -3;
+                tmp = -0.03f;
             
-            hands[type].transform.DOLocalMove(new Vector3(tmp, 4, 3), 1).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
+            hands[type].transform.DOLocalMove(new Vector3(tmp, 0.04f, 0.03f), 1).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
         }
 
         #endregion
