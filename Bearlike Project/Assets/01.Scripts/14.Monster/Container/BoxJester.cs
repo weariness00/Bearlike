@@ -565,9 +565,9 @@ namespace Monster.Container
             float value = 1.1f;
             while (true)
             {
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(0.01f);
 
-                value -= 0.11f;
+                value -= 0.011f;
                 bloodShieldMat.SetFloat(Dissolve, value);
                 if(value <= 0)
                 {
@@ -602,9 +602,9 @@ namespace Monster.Container
             float value = 0f;
             while (true)
             {
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(0.01f);
 
-                value += 0.11f;
+                value += 0.011f;
                 bloodShieldMat.SetFloat(Dissolve, value);
                 if (value >= 1.1f)
                 {
