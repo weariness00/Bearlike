@@ -66,7 +66,7 @@ namespace Monster.Container
             // hands = new GameObject[2];
             // hands[0] = transform.Find("")
             
-            // tpEffect.SetFloat("Time", animator.tptClip.length);
+            tpEffect.SetFloat("Time", animator.tpClip.length);
 
             var bloodShieldRenderer = transform.Find("ShieldEffect").GetComponent<Renderer>();
             bloodShieldMat = bloodShieldRenderer.material;
@@ -142,7 +142,11 @@ namespace Monster.Container
             
             var Hide = new SelectorNode(
                     true, 
-                    new ActionNode(SmokeAttack),
+                    new SequenceNode(
+                        new ActionNode(StartSmokeAttack),
+                        new ActionNode(SmokingAttack),
+                        new ActionNode(EndSmokeAttack)
+                    ),
                     new ActionNode(ChangeMaskAction)
                 );  
 
@@ -222,9 +226,9 @@ namespace Monster.Container
 
             var AttackPattern = new SelectorNode(
                 true, 
-                // TP,
-                // Hide,
-                Attack
+                // TP
+                Hide
+                // Attack
             );
         
             var loop = new SequenceNode(
@@ -287,20 +291,60 @@ namespace Monster.Container
 
         #region Hide
         
-        private INode.NodeState SmokeAttack()
+        private INode.NodeState StartSmokeAttack()
         {
             if (false == _animationing)
             {
-                animator.PlaySmokeAttack();
+                animator.PlaySmokeStartAttack();
                 // darknessAttackEffect.SendEvent("OnPlay");
                 _animationing = true;
             }
 
-            if (false == animator.SmokeTimerExpired)
+            if (false == animator.SmokeStartTimerExpired)
                 return INode.NodeState.Running;
 
             _animationing = false;
-            DebugManager.Log($"Smoke Attack");
+            DebugManager.Log($"Start Smoke Attack");
+            
+            // 범위 탐색으로 공격 실행
+            
+            
+            return INode.NodeState.Success;
+        }
+
+        private INode.NodeState SmokingAttack()
+        {
+            // VFX와 동시에 smoke Attack이 실행 되어야함
+            if (false == _animationing)
+            {
+                animator.PlaySmokingAttack();
+                // darknessAttackEffect.SendEvent("OnPlay");
+                _animationing = true;
+            }
+
+            if (false == animator.SmokingTimerExpired)
+                return INode.NodeState.Running;
+
+            _animationing = false;
+            DebugManager.Log($"Smoking");
+            
+            return INode.NodeState.Success;
+        }
+
+        private INode.NodeState EndSmokeAttack()
+        {
+            if (false == _animationing)
+            {
+                animator.PlaySmokeEndAttack();
+                // darknessAttackEffect.SendEvent("OnPlay");
+                _animationing = true;
+            }
+
+            if (false == animator.SmokeEndTimerExpired)
+                return INode.NodeState.Running;
+
+            _animationing = false;
+            DebugManager.Log($"End Smoke Attack");
             
             // 범위 탐색으로 공격 실행
             
@@ -412,6 +456,8 @@ namespace Monster.Container
 
         private INode.NodeState PunchReady()
         {
+            // TODO : 코루틴으로 시간 맞춰서 주먹을 움직여야함
+            // TODO : 아니면 애니메이션을 두개로 쪼개야함
             // 주먹질 애니메이션 실행
             if (false == _animationing)
             {
@@ -468,6 +514,9 @@ namespace Monster.Container
         
         private INode.NodeState Punching()
         {
+            // TODO : 코루틴으로 시간 맞춰서 주먹을 움직여야함
+            // TODO : 아니면 애니메이션을 두개로 쪼개야함
+            
             // TODO : 먼저 몸을 돌려야 자연스럽지 않을까?
             
             
@@ -490,6 +539,9 @@ namespace Monster.Container
         
         private INode.NodeState FakePunching()
         {
+            // TODO : 코루틴으로 시간 맞춰서 주먹을 움직여야함
+            // TODO : 아니면 애니메이션을 두개로 쪼개야함
+            
             // TODO : 먼저 몸을 돌려야 자연스럽지 않을까?
             
             

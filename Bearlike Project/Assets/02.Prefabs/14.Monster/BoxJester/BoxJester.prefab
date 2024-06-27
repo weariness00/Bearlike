@@ -121,8 +121,8 @@ MonoBehaviour:
   TotalWords: 3
   ApplyTiming: 2
   SyncSettings: 79
-  StateHashes: 0000000033be54514b005c307090b77ac06108240d60fe46a82419f93f52437efd2082dcad7c4c0c0838abb396f9a88456cee8fc699eb019b735f17a
-  TriggerHashes: 00000000e8a2e574408de59343e3d5c117dfd46fd60fc6a68554c3b0
+  StateHashes: 0000000033be54514b005c307090b77ac06108240d60fe46a82419f93f52437efd2082dcad7c4c0c0838abb396f9a88456cee8fc699eb019b735f17a7f10d5cb6217128c
+  TriggerHashes: 0000000025742297e8a2e574408de59317dfd46fd60fc6a68554c3b0c5ad950f43e3d5c1
 --- !u!114 &6159267201163480657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -335,6 +335,9 @@ VisualEffect:
       m_Array:
       - m_Value: 5
         m_Name: Size
+        m_Overridden: 1
+      - m_Value: 2
+        m_Name: Time
         m_Overridden: 1
     m_Vector2f:
       m_Array: []
@@ -683,11 +686,13 @@ MonoBehaviour:
   _IsSpawnSuccess:
     _value: 0
   networkAnimator: {fileID: 6430590144718798744}
-  idleClip: {fileID: 9059461331345852336, guid: 44e027b201d0de442ba1d19b500130f4,
+  idleClip: {fileID: -248664233814177982, guid: 44e027b201d0de442ba1d19b500130f4,
     type: 3}
-  tpClip: {fileID: 0}
-  MaskChageClip: {fileID: 0}
-  DarknessBreathClip: {fileID: 0}
+  tpClip: {fileID: 6249639091889934529, guid: 44e027b201d0de442ba1d19b500130f4, type: 3}
+  MaskChageClip: {fileID: -6117162519561694952, guid: 44e027b201d0de442ba1d19b500130f4,
+    type: 3}
+  DarknessBreathClip: {fileID: 6978938840450539140, guid: 44e027b201d0de442ba1d19b500130f4,
+    type: 3}
   punchReadyClip: {fileID: 8763112752979857986, guid: 44e027b201d0de442ba1d19b500130f4,
     type: 3}
   ShieldClip: {fileID: -6117162519561694952, guid: 44e027b201d0de442ba1d19b500130f4,

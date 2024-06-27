@@ -11,9 +11,10 @@ namespace Monster.Container
         
         [Header("Animation Clip")] 
         [SerializeField] private AnimationClip idleClip;
-        [SerializeField] private AnimationClip tpClip;
+        public AnimationClip tpClip;
         [SerializeField] private AnimationClip MaskChageClip;
-        [SerializeField] private AnimationClip DarknessBreathClip;
+        [SerializeField] private AnimationClip DarknessBreathStartClip;
+        [SerializeField] private AnimationClip DarknessBreathEndClip;
         [SerializeField] private AnimationClip punchReadyClip;
         // [SerializeField] private AnimationClip cloneClip;
         [SerializeField] private AnimationClip ShieldClip;
@@ -31,18 +32,14 @@ namespace Monster.Container
         private static readonly int tChangeMask = Animator.StringToHash("tChangeFace");
         private static readonly int tSmoke = Animator.StringToHash("tSmoke");
         private static readonly int tSmokeEnd = Animator.StringToHash("tSmokeEnd");
+        private static readonly int tTeleport = Animator.StringToHash("tTeleport");
         private static readonly int tDeath = Animator.StringToHash("tDeath");
-        
-        // private static readonly int Teleport = Animator.StringToHash("tTeleport");
-        // private static readonly int Hide = Animator.StringToHash("tHide");
-        // private static readonly int Appear = Animator.StringToHash("tAppear");
-        // private static readonly int Punch = Animator.StringToHash("tPunch");
-        // private static readonly int Shield = Animator.StringToHash("tShield");
-        // private static readonly int ReverseShield = Animator.StringToHash("tReverseShield");
         
         private TickTimer IdleTimer { get; set; }
         private TickTimer TeleportTimer { get; set; }
-        private TickTimer SmokeTimer { get; set; }
+        private TickTimer SmokeStartTimer { get; set; }
+        private TickTimer SmokingTimer { get; set; }
+        private TickTimer SmokeEndTimer { get; set; }
         private TickTimer MaskChangeTimer { get; set; }
         private TickTimer PunchReadyTimer { get; set; }
         private TickTimer PunchTimer { get; set; }
@@ -55,7 +52,9 @@ namespace Monster.Container
         
         public bool IdleTimerExpired => IdleTimer.Expired(Runner);
         public bool TeleportTimerExpired => TeleportTimer.Expired(Runner);
-        public bool SmokeTimerExpired => SmokeTimer.Expired(Runner);
+        public bool SmokeStartTimerExpired => SmokeStartTimer.Expired(Runner);
+        public bool SmokingTimerExpired => SmokingTimer.Expired(Runner);
+        public bool SmokeEndTimerExpired => SmokeEndTimer.Expired(Runner);
         public bool MaskChangeTimerExpired => MaskChangeTimer.Expired(Runner);
         public bool PunchReadyTimerExpired => PunchReadyTimer.Expired(Runner);
         public bool PunchTimerExpired => PunchTimer.Expired(Runner);
@@ -72,7 +71,9 @@ namespace Monster.Container
             
             IdleTimer = TickTimer.CreateFromTicks(Runner, 0);
             TeleportTimer = TickTimer.CreateFromTicks(Runner, 0);
-            SmokeTimer = TickTimer.CreateFromTicks(Runner, 0);
+            SmokeStartTimer = TickTimer.CreateFromTicks(Runner, 0);
+            SmokingTimer = TickTimer.CreateFromTicks(Runner, 0);
+            SmokeEndTimer = TickTimer.CreateFromTicks(Runner, 0);
             MaskChangeTimer = TickTimer.CreateFromTicks(Runner, 0);
             PunchReadyTimer = TickTimer.CreateFromTicks(Runner, 0);
             PunchTimer = TickTimer.CreateFromTicks(Runner, 0);
@@ -95,21 +96,32 @@ namespace Monster.Container
 
         public void PlayTeleport()
         {
-            TeleportTimer = TickTimer.CreateFromSeconds(Runner, 2);
+            // TeleportTimer = TickTimer.CreateFromSeconds(Runner, 2);
             // TODO : VFX의 시간도 Clip대로 맞춰야함
-            // TeleportTimer = TickTimer.CreateFromSeconds(Runner, tpClip.length);
-            // networkAnimator.SetTrigger(Teleport);
+            TeleportTimer = TickTimer.CreateFromSeconds(Runner, tpClip.length);
+            networkAnimator.SetTrigger(tTeleport);
         }
         
-        public void PlaySmokeAttack()
+        public void PlaySmokeStartAttack()
         {
-            SmokeTimer = TickTimer.CreateFromSeconds(Runner, 2);    // smoke 공격의 시간으로 설정해야함
+            SmokeStartTimer = TickTimer.CreateFromSeconds(Runner, DarknessBreathStartClip.length);
             networkAnimator.SetTrigger(tSmoke);
+        }
+        
+        public void PlaySmokingAttack()
+        {
+            SmokingTimer = TickTimer.CreateFromSeconds(Runner, 3);    // 상수화 필요
+        }
+        
+        public void PlaySmokeEndAttack()
+        {
+            SmokeEndTimer = TickTimer.CreateFromSeconds(Runner, DarknessBreathEndClip.length);
+            networkAnimator.SetTrigger(tSmokeEnd);
         }
         
         public void PlayMaskChange()
         {
-            MaskChangeTimer = TickTimer.CreateFromSeconds(Runner, 1);
+            MaskChangeTimer = TickTimer.CreateFromSeconds(Runner, MaskChageClip.length);
             networkAnimator.SetTrigger(tChangeMask);
         }
         
