@@ -28,8 +28,9 @@ namespace Monster.Container
         private static readonly int Attack = Animator.StringToHash("Attack");
         private static readonly int tFaceHide = Animator.StringToHash("tFace Hide");
         private static readonly int FaceHide = Animator.StringToHash("Face Hide");
-        private static readonly int tChangeMask = Animator.StringToHash("tChange Mask");
+        private static readonly int tChangeMask = Animator.StringToHash("tChangeFace");
         private static readonly int tSmoke = Animator.StringToHash("tSmoke");
+        private static readonly int tSmokeEnd = Animator.StringToHash("tSmokeEnd");
         private static readonly int tDeath = Animator.StringToHash("tDeath");
         
         // private static readonly int Teleport = Animator.StringToHash("tTeleport");
@@ -88,7 +89,7 @@ namespace Monster.Container
             // IdleTimer = TickTimer.CreateFromSeconds(Runner, 3);
             IdleTimer = TickTimer.CreateFromSeconds(Runner, idleClip.length * 2);
             var state = networkAnimator.Animator.GetCurrentAnimatorStateInfo(0);
-            if(!state.IsName("Clown_Idle"))
+            if(!state.IsName("Clown_|Idle_Hand"))
                 networkAnimator.SetTrigger(tIdle);
         }
 
