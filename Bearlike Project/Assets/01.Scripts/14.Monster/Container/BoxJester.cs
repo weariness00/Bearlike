@@ -26,6 +26,10 @@ namespace Monster.Container
         [Header("HandAttack Properties")] 
         [SerializeField] private GameObject[] hands;
         
+        [Header("Hat")]
+        [SerializeField] private GameObject hat;
+        [SerializeField] private Transform[] hatPlaces;
+        
         [Header("VFX Properties")]
         [SerializeField] private VisualEffect tpEffect;
         [SerializeField] private VisualEffect darknessAttackEffect;
@@ -217,9 +221,9 @@ namespace Monster.Container
 
             var Attack = new SelectorNode(
                     false,
-                    Smile
+                    // Smile,
                     // Cry,
-                    // Angry
+                    Angry
                 );
             
             #endregion
@@ -681,6 +685,20 @@ namespace Monster.Container
 
         private INode.NodeState BreakHat()
         {
+            foreach (var hatplace in hatPlaces)
+            {
+                Runner.SpawnAsync(hat.gameObject, hatplace.position, transform.rotation, null,
+                    (runner, o) =>
+                    {
+                        var h = o.GetComponent<BoxJesterHat>();
+                        // b.OwnerId = OwnerId;
+                        // b.OwnerGunId = Object.Id;
+                        // b.KnockBack = nuckBack;
+                        // b.destination = fireTransform.position + (dst * status.attackRange) + randomVector3;
+                        // b.PenetrateCount = penetrateCount;
+                    });
+            }
+            
             DebugManager.Log($"Break Hat");
             // 모자 소환 후 모자를 정속성으로 생성
             return INode.NodeState.Success;
