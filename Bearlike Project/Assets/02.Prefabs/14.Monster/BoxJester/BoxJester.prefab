@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 4396439169868473961}
   - component: {fileID: 3950356254066584260}
   - component: {fileID: 8945742259451894778}
-  m_Layer: 1
+  m_Layer: 0
   m_Name: BoxJester
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -293,7 +293,7 @@ GameObject:
   - component: {fileID: 7328226088550664021}
   - component: {fileID: 1387068177130579636}
   - component: {fileID: 352848829361866562}
-  m_Layer: 1
+  m_Layer: 0
   m_Name: TPEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -408,7 +408,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6030188988761829948}
-  m_Layer: 1
+  m_Layer: 0
   m_Name: ---------------
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -689,9 +689,11 @@ MonoBehaviour:
   idleClip: {fileID: -248664233814177982, guid: 44e027b201d0de442ba1d19b500130f4,
     type: 3}
   tpClip: {fileID: 6249639091889934529, guid: 44e027b201d0de442ba1d19b500130f4, type: 3}
-  MaskChageClip: {fileID: -6117162519561694952, guid: 44e027b201d0de442ba1d19b500130f4,
+  MaskChageClip: {fileID: 5266990846719083834, guid: 44e027b201d0de442ba1d19b500130f4,
     type: 3}
-  DarknessBreathClip: {fileID: 6978938840450539140, guid: 44e027b201d0de442ba1d19b500130f4,
+  DarknessBreathStartClip: {fileID: -6887647190926248668, guid: 44e027b201d0de442ba1d19b500130f4,
+    type: 3}
+  DarknessBreathEndClip: {fileID: 5325591804074188983, guid: 44e027b201d0de442ba1d19b500130f4,
     type: 3}
   punchReadyClip: {fileID: 8763112752979857986, guid: 44e027b201d0de442ba1d19b500130f4,
     type: 3}
@@ -817,7 +819,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: f7113b6b477c978479f087738ccdbd71,
         type: 3}
       propertyPath: m_Layer
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f7113b6b477c978479f087738ccdbd71,
         type: 3}

@@ -7,7 +7,7 @@ namespace Monster.Container
     public class BoxJesterAnimator : NetworkBehaviourEx
     {
         [Header("Animator")]
-        [SerializeField] private NetworkMecanimAnimator networkAnimator;
+        public NetworkMecanimAnimator networkAnimator;
         
         [Header("Animation Clip")] 
         [SerializeField] private AnimationClip idleClip;

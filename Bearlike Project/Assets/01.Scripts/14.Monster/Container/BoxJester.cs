@@ -227,8 +227,8 @@ namespace Monster.Container
             var AttackPattern = new SelectorNode(
                 true, 
                 // TP
-                Hide
-                // Attack
+                // Hide
+                Attack
             );
         
             var loop = new SequenceNode(
@@ -473,7 +473,7 @@ namespace Monster.Container
                     if (minDistance > distance)
                     {
                         minDistance = distance;
-                        targetPosition = player.transform.position;
+                        targetPosition = player.transform.position + new Vector3(0, 0.75f, 0);
                         fakeTargetPosition = targetPosition;
                     }
                 }
@@ -839,6 +839,7 @@ namespace Monster.Container
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void PunchAttackRPC(int type, Vector3 targetPosition)
         {
+            animator.networkAnimator.Animator.enabled = false;
             hands[type].transform.DOMove(targetPosition, 2).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
             
             DebugManager.Log($"targetPosition : {targetPosition}");
@@ -849,6 +850,7 @@ namespace Monster.Container
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void FakePunchAttackRPC(int type, Vector3 targetPosition, Vector3 fakeTargetPosition)
         {
+            animator.networkAnimator.Animator.enabled = false;
             hands[type].transform.DOMove(fakeTargetPosition, 1).SetEase(Ease.OutCirc); // TODO : 공격 속도를 변수처리 해야함
 
             StartCoroutine(RealTartgetMoveCoroutine(1.0f, type, targetPosition));
@@ -872,6 +874,8 @@ namespace Monster.Container
             yield return new WaitForSeconds(waitTime);
 
             ComeBackPunchRPC(type);
+            yield return new WaitForSeconds(1.0f);
+            AnimatorOnRPC();
         }
         
         [Rpc(RpcSources.All, RpcTargets.All)]
@@ -882,6 +886,12 @@ namespace Monster.Container
                 tmp = -3f;
             
             hands[type].transform.DOLocalMove(new Vector3(tmp, 4f, 3f), 1).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
+        }
+        
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void AnimatorOnRPC()
+        {
+            animator.networkAnimator.Animator.enabled = true;
         }
 
         #endregion
