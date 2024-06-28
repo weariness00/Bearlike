@@ -9,9 +9,15 @@ namespace Manager
     {
         public List<GameObject> disableObjectList;
         public List<GameObject> activeFalseObjectList;
-
-        public void Awake()
+        public List<GameObject> dontDestroyObjectList;
+        
+        public virtual void Awake()
         {
+            foreach (var o in dontDestroyObjectList)
+            {
+                DontDestroyOnLoad(o);
+            }
+            
             foreach (var o in disableObjectList)
             {
                 Destroy(o);

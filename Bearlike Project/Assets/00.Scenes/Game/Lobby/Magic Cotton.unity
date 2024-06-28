@@ -524,6 +524,7 @@ MonoBehaviour:
   - {fileID: 1717082547}
   activeFalseObjectList:
   - {fileID: 934407711}
+  dontDestroyObjectList: []
   blockTransform: {fileID: 281440496}
   blockObject: {fileID: 512344867}
 --- !u!1 &512344867
@@ -970,6 +971,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 882bb6d68f6044df8ddd7504d8aeb26a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  applyStatusRef:
+    RawGuidValue: 00000000000000000000000000000000
   _magicCottonList:
   - {fileID: 1940633417}
 --- !u!4 &1655533815
@@ -986,6 +989,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1940633418}
+  - {fileID: 2131870372}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1717082547
@@ -1408,7 +1412,7 @@ MonoBehaviour:
       isOverMin: 0
       isMin: 0
       isMax: 0
-    Experience: 
+    ExperienceArray: 
   icon: {fileID: 0}
 --- !u!4 &1940633418
 Transform:
@@ -1493,6 +1497,64 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1717082548}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2131870371
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2131870372}
+  - component: {fileID: 2131870373}
+  m_Layer: 0
+  m_Name: Critical Change Up
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2131870372
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2131870371}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1655533815}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2131870373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2131870371}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55cfabee385f460288a1479430cf55fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  block: {fileID: 0}
+  info:
+    Id: 1
+    Name: 
+    Level:
+      _min: 0
+      _max: 0
+      _current: 0
+      isOverMax: 0
+      isOverMin: 0
+      isMin: 0
+      isMax: 0
+    ExperienceArray: 
+  icon: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

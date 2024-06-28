@@ -18,6 +18,15 @@ namespace Util
 
         public static bool HasInstance() => _instance;
 
+        public static void Destroy()
+        {
+            if (_instance)
+            {
+                Destroy(_instance.gameObject);
+                _instance = null;
+            }
+        }
+
         protected virtual void Awake()
         {
             if (_instance != null)

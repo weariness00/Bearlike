@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using Data;
 using Player;
 using Status;
 using UI.User;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace User.MagicCotton
 {
@@ -22,7 +24,7 @@ namespace User.MagicCotton
         public string Name => info.Name;
         public int Id => info.Id;
         public StatusValue<int> Level => info.Level;
-        public void LevelUp(int exp) => info.LevelUp(exp);
+        public void LevelUp() => info.LevelUp();
         public int NeedExperience => info.NeedExperience;
 
         #endregion
@@ -32,23 +34,33 @@ namespace User.MagicCotton
     }
     
     [System.Serializable]
-    public struct MagicCottonInfo
+    public struct MagicCottonInfo : IJsonData<MagicCottonInfoJsonData>
     {
         public int Id;
         public string Name;
         public StatusValue<int> Level;
-        public List<int> Experience; // 필요 경험치
+        public int[] ExperienceArray; // 필요 경험치
 
-        public int NeedExperience => Level.isMax ? -1 :  Experience[Level.Current];
+        public int NeedExperience => Level.isMax ? -1 :  ExperienceArray[Level.Current];
 
-        public void LevelUp(int exp)
+        public void LevelUp()
         {
             if (Level.isMax) return;
+            ++Level.Current;
+        }
 
-            if (Experience[Level.Current] <= exp)
-            {
-                ++Level.Current;
-            }
+        public MagicCottonInfoJsonData GetJsonData()
+        {
+            return new MagicCottonInfoJsonData();
+        }
+
+        public void SetJsonData(MagicCottonInfoJsonData json)
+        {
+            Id = json.id;
+            Name = json.name;
+            Level ??= new StatusValue<int>();
+            Level.Max = json.maxLevel;
+            ExperienceArray = json.GetNeedCoinArray();
         }
     }
 }

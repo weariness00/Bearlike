@@ -14,6 +14,7 @@ namespace Photon
     public class NetworkMatchManager : NetworkBehaviour
     {
         public MatchRoomUserUI roomUserUI;
+        public SceneReference gameScene;
         public SceneReference playerJoinLoadingScene;
         public SceneReference magicCotton;
 
@@ -52,7 +53,7 @@ namespace Photon
             Runner.SessionInfo.IsOpen = false;
             SetDifficultRPC(roomUserUI.GetDifficult());
             
-            await NetworkManager.LoadScene(SceneType.Game, LoadSceneMode.Single, LocalPhysicsMode.Physics3D);
+            await NetworkManager.LoadScene(gameScene, LoadSceneMode.Single, LocalPhysicsMode.Physics3D);
         }
 
         private IEnumerator InitCoroutine()

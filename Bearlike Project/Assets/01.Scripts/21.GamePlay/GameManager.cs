@@ -80,7 +80,7 @@ namespace GamePlay
                 gameClearPortal.gameObject.SetActive(true);
                 gameClearPortal.InteractKeyDownAction = async (obj) =>
                 {
-                    await NetworkManager.LoadScene(SceneType.Lobby);
+                    await NetworkManager.LoadScene(NetworkManager.Instance.lobbyScene);
                 };
             }
             

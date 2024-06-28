@@ -1,12 +1,14 @@
 ﻿using System;
-using System.Collections;
 using Loading;
 using Photon;
+using ProjectUpdate;
+using SceneExtension;
 using Script.Data;
 using TMPro;
 using UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace Manager
 {
@@ -15,20 +17,29 @@ namespace Manager
     {
         public AudioClip BGM;
         public TMP_InputField userID;
-    
-        public SceneReference lobbyLoading;
-        public SceneReference magicCotton;
+
+        public Button magicCottonSceneButton;
+
+        private SceneReference _lobbyLoading;
+        private SceneReference _magicCotton;
 
         private void Start()
         {
+            _lobbyLoading = SceneList.GetScene("Lobby Loading");
+            _magicCotton = SceneList.GetScene("Magic Cotton");
             SoundManager.Play(BGM, SoundManager.SoundType.BGM);
             
             Cursor.lockState = CursorLockMode.None;
             
             NetworkManager.Instance.LobbyConnect();
-            LoadingManager.StartAction += () => SceneManager.LoadScene(lobbyLoading, LoadSceneMode.Additive);
-            LoadingManager.EndAction += () => SceneManager.UnloadSceneAsync(lobbyLoading);
-            SceneManager.LoadScene(magicCotton, LoadSceneMode.Additive);
+            LoadingManager.StartAction += () => SceneManager.LoadScene(_lobbyLoading, LoadSceneMode.Additive);
+            LoadingManager.EndAction += () =>
+            {
+                SceneManager.UnloadSceneAsync(_lobbyLoading);
+                SceneManager.LoadScene(_magicCotton, LoadSceneMode.Additive);
+            };
+            ProjectUpdateManager.Instance.Init();
+            
         }
 
         private void Update()

@@ -31,7 +31,10 @@ namespace Photon
         public static int PlayerCount => Runner.ActivePlayers.ToArray().Length;
 
         public bool isTest = true; // 현재 테스트 상황인지
+
+        public SceneReference matchingScene;
         public SceneReference lobbyScene;
+        
         private NetworkRunner _runner;
         private SessionInfo[] _sessionInfoAll = Array.Empty<SessionInfo>();
 
@@ -86,6 +89,19 @@ namespace Photon
             SceneLoadDoneAction?.Invoke();
             SceneLoadDoneAction = null;
         }
+
+        IEnumerator JoinPlayerCoroutine(NetworkRunner runner, PlayerRef player)
+        {
+            while (UserData.Instance == null)
+                yield return null;
+            
+            var data = new UserDataStruct
+            {
+                PlayerRef = player,
+                Name = player.ToString()
+            };
+            UserData.Instance.InsertUserDataRPC(player, data);
+        }
         
         public static async Task LoadScene(SceneRef sceneRef, LoadSceneParameters parameters, bool setActiveOnLoad = false)
         {
@@ -104,23 +120,6 @@ namespace Photon
             }
         }
 
-        public static async Task LoadScene(SceneType type, LoadSceneMode sceneMode = LoadSceneMode.Single, LocalPhysicsMode physicsMode = LocalPhysicsMode.None, bool setActiveOnLoad = false)
-        {
-            DebugManager.ToDo("나중에 씬 호출을 에셋 번들로 바꾸기");
-            if (Instance._runner.IsSceneAuthority)
-            {
-                LoadSceneParameters sceneParameters = new LoadSceneParameters()
-                {
-                    loadSceneMode = sceneMode,
-                    localPhysicsMode = physicsMode,
-                };
-                await NetworkManager.LoadScene(type, sceneParameters, setActiveOnLoad);
-            }
-        }
-
-        public static Task LoadScene(SceneType type, LoadSceneParameters parameters, bool setActiveOnLoad = false) => LoadScene(SceneRef.FromIndex((int)type), parameters, setActiveOnLoad);
-        public static Task LoadScene(int type, LoadSceneMode sceneMode = LoadSceneMode.Single, LocalPhysicsMode physicsMode = LocalPhysicsMode.None, bool setActiveOnLoad = false) => LoadScene((SceneType)type, sceneMode, physicsMode, setActiveOnLoad);
-
         public static Task LoadScene(string path, LoadSceneMode sceneMode = LoadSceneMode.Single, LocalPhysicsMode physicsMode = LocalPhysicsMode.None, bool setActiveOnLoad = false) => LoadScene(SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(path)), new LoadSceneParameters(sceneMode, physicsMode), setActiveOnLoad);
         public static Task LoadScene(string path, LoadSceneParameters parameters, bool setActiveOnLoad = false) => LoadScene(SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(path)), parameters, setActiveOnLoad);
 
@@ -133,7 +132,6 @@ namespace Photon
         }
 
         public static void UnloadScene(string path) => UnloadScene(SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(path)));
-        public static void UnloadScene(SceneType type) => UnloadScene(SceneRef.FromIndex((int)type));
 
         #endregion
 
@@ -161,7 +159,7 @@ namespace Photon
             LoadingManager.Initialize();
             
             // Create the NetworkSceneInfo from the current scene
-            var scene = SceneRef.FromIndex((int)SceneType.Matching);
+            var scene = SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(matchingScene));
             var sceneInfo = new NetworkSceneInfo();
             if (scene.IsValid)
             {
@@ -263,22 +261,8 @@ namespace Photon
         {
             if(runner.IsServer)
                 LoadingManager.AddWait();
-            
-            var data = new UserDataStruct
-            {
-                PlayerRef = player,
-                Name = player.ToString()
-            };
 
-            if (UserData.Instance == null)
-            {
-                SceneLoadDoneAction += () =>
-                {
-                    UserData.Instance.AfterSpawnedAction += () => UserData.Instance.InsertUserDataRPC(player, data);
-                };
-            }            
-            else
-                UserData.Instance.InsertUserDataRPC(player, data);
+            StartCoroutine(JoinPlayerCoroutine(runner, player));
         }
 
         public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
@@ -413,7 +397,7 @@ namespace Photon
         {
             DebugManager.LogWarning($"서버 연결이 끊김\n" +
                                     $"서버 이름 : {runner.SceneManager.MainRunnerScene.name}");
-            SceneManager.LoadScene((int)SceneType.Lobby);
+            SceneManager.LoadScene(lobbyScene);
         }
 
         public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request,

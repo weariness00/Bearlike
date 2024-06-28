@@ -7,6 +7,7 @@ import * as Stage from './Stage.js';
 import * as Weapon from './Weapon.js';
 import * as TreasureBox from './TreasureBox.js';
 import * as Difficult from './Difficult.js';
+import * as MagicCotton from './MagicCotton.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -33,3 +34,5 @@ Stage.MakeData(app);
 Weapon.MakeData(app);
 
 TreasureBox.MakeData(app);
+
+MagicCotton.MakeData(app);

@@ -65,7 +65,7 @@ namespace ProjectUpdate
 
         #endregion
 
-        void Start()
+        public void Init()
         {
             LoadingManager.AddWait();
             // DownLoadJsonToStorage(serverInfo); // 스토리지에서 웹 서버 정보 가져오기

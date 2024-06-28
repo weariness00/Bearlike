@@ -35,11 +35,17 @@ namespace UI.User
 
         private void LevelUp()
         {
-            _magicCottonBase.LevelUp(UserInformation.Instance.cottonInfo.cottonCoin);
-            levelText.text = $"{_magicCottonBase.Level.Current} / {_magicCottonBase.Level.Max}";
+            var coin = UserInformation.Instance.cottonInfo.GetCoin();
+            if (_magicCottonBase.NeedExperience <= coin)
+            {
+                UserInformation.Instance.cottonInfo.SetCoin(coin - _magicCottonBase.NeedExperience);
+                
+                _magicCottonBase.LevelUp();
+                levelText.text = $"{_magicCottonBase.Level.Current} / {_magicCottonBase.Level.Max}";
             
-            if(_magicCottonBase.Level.isMax)
-                levelUpButton.onClick.RemoveListener(LevelUp);
+                if(_magicCottonBase.Level.isMax)
+                    levelUpButton.onClick.RemoveListener(LevelUp);
+            }
         }
     }
 }
