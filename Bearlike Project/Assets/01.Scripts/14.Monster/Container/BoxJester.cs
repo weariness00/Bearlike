@@ -1,10 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using BehaviorTree.Base;
 using DG.Tweening;
 using Fusion;
+using Player;
 using Status;
+using UI.Status;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.VFX;
@@ -57,6 +60,7 @@ namespace Monster.Container
         private int _tpPlaceIndex = 0;
         private int _shieldType;
         private bool _animationing = false;
+        public int hatCount;
         
         #endregion
 
@@ -206,16 +210,22 @@ namespace Monster.Container
 
             var CryPattern = new SelectorNode(
                     true,
-                    // new SequenceNode(
-                    //     new ActionNode(CryingShield),
-                    //     new ActionNode(ShieldOffAction)
-                    // ),
-                    // new SequenceNode(
-                    //     new ActionNode(ReverseCryingShield),
-                    //     new ActionNode(ShieldOffAction)
-                    // ),
-                    new ActionNode(BreakHat)
-                    // new ActionNode(NonBreakHat)
+                    new SequenceNode(
+                        new ActionNode(CryingShield),
+                        new ActionNode(ShieldOffAction)
+                    ),
+                    new SequenceNode(
+                        new ActionNode(ReverseCryingShield),
+                        new ActionNode(ShieldOffAction)
+                    ),
+                    new SequenceNode(
+                    new ActionNode(BreakHat),
+                        new ActionNode(CheckHatCount)
+                    ),
+                    new SequenceNode(
+                    new ActionNode(BreakReverseHat),
+                    new ActionNode(CheckReverseHatCount)
+                    )
                 );
 
             var Cry = new SequenceNode(
@@ -709,6 +719,7 @@ namespace Monster.Container
         {
             if (_animationing == false)
             {
+                hatCount = hatPlaces.Length;
                 animator.PlayHatAction();
                 _animationing = true;
                 
@@ -720,7 +731,6 @@ namespace Monster.Container
                             var h = o.GetComponent<BoxJesterHat>();
                             h.OwnerId = OwnerId;
                             h.hatType = 0;
-
                         });
                 }
             }
@@ -733,10 +743,31 @@ namespace Monster.Container
             return INode.NodeState.Success;
         }
         
-        private INode.NodeState NonBreakHat()
+        private INode.NodeState CheckHatCount()
+        {
+            if (hatCount > 0)
+                status.ApplyHealRPC(10, OwnerId);   // 힐량은 밸런스 측정해서 하자
+            
+            return INode.NodeState.Success;
+        }
+        
+        private INode.NodeState BreakReverseHat()
         {            
             DebugManager.Log($"Non Break Hat");
             // 모자 소환 후 모자를 역속성으로 생성
+            return INode.NodeState.Success;
+        }
+        
+        private INode.NodeState CheckReverseHatCount()
+        {
+            if (hatCount != hatPlaces.Length)
+            {
+                foreach (var player in _players)
+                {
+                    player.GetComponent<PlayerStatus>().ApplyDamageRPC(status.damage, DamageTextType.Normal, OwnerId);
+                }
+            }
+            
             return INode.NodeState.Success;
         }
 
