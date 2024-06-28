@@ -45,7 +45,7 @@ namespace Monster.Container
         private TickTimer PunchTimer { get; set; }
         // private TickTimer CloneTimer { get; set; }
         private TickTimer ShieldTimer { get; set; }
-        // private TickTimer HatTimer { get; set; }
+        private TickTimer HatTimer { get; set; }
         private TickTimer HandLazerTimer { get; set; }
         private TickTimer ThrowBoomTimer { get; set; }
         private TickTimer SlapTimer { get; set; }
@@ -60,7 +60,7 @@ namespace Monster.Container
         public bool PunchTimerExpired => PunchTimer.Expired(Runner);
         // public bool CloneTimerExpired => CloneTimer.Expired(Runner);
         public bool ShieldTimerExpired => ShieldTimer.Expired(Runner);
-        // public bool HatTimerExpired => HatTimer.Expired(Runner);
+        public bool HatTimerExpired => HatTimer.Expired(Runner);
         public bool HandLazerTimerExpired => HandLazerTimer.Expired(Runner);
         public bool ThrowBoomTimerExpired => ThrowBoomTimer.Expired(Runner);
         public bool SlapTimerExpired => SlapTimer.Expired(Runner);
@@ -156,6 +156,11 @@ namespace Monster.Container
         public void PlayShieldOffAction()
         {
             ShieldTimer = TickTimer.CreateFromSeconds(Runner, 1.5f);   // 상수화 해야함
+        }
+
+        public void PlayHatAction()
+        {
+            HatTimer = TickTimer.CreateFromSeconds(Runner, 10.0f);  // 상수화 필요
         }
 
         public void PlayHandLazerAction()

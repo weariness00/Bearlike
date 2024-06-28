@@ -39,6 +39,8 @@ namespace Monster.Container
         
         private static readonly int Dissolve = Shader.PropertyToID("_Dissolve");
         
+        [Networked] public NetworkId OwnerId { get; set; }
+        
         // public SoundBox soundBox;
         private BehaviorTreeRunner _behaviorTreeRunner;
         private GameObject[] _players;
@@ -67,9 +69,6 @@ namespace Monster.Container
             
             animator = GetComponentInChildren<BoxJesterAnimator>();
             
-            // hands = new GameObject[2];
-            // hands[0] = transform.Find("")
-            
             tpEffect.SetFloat("Time", animator.tpClip.length);
 
             var bloodShieldRenderer = transform.Find("ShieldEffect").GetComponent<Renderer>();
@@ -93,6 +92,7 @@ namespace Monster.Container
             base.Spawned();
             tpEffect.SendEvent("StopPlay");
 
+            // TP Position 넣기
             // Transform rootTrans = transform.root.Find("TPPosition"); // pool에 들어가는 경우
             Transform rootTrans = GameObject.Find("Boss Stage").transform.Find("TPPosition"); // 안들어가는 경우
 
@@ -110,6 +110,26 @@ namespace Monster.Container
             {
                 DebugManager.LogError($"BoxJester의 TPPosition이 NULL입니다.");
             }
+
+            
+            // Hat Position 넣기
+            // rootTrans = transform.root.Find("HatPosition"); // pool에 들어가는 경우
+            rootTrans = GameObject.Find("Boss Stage").transform.Find("HatPosition"); // 안들어가는 경우
+
+            if (rootTrans != null)
+            {
+                hatPlaces = new Transform[rootTrans.childCount];
+
+                for (int i = 0; i < rootTrans.childCount; ++i)
+                {
+                    DebugManager.Log($"HatPlaces[i] : {hatPlaces[i]}, rootTrans.GetChild(i) : {rootTrans.GetChild(i)}");
+                    hatPlaces[i] = rootTrans.GetChild(i);
+                }
+            }
+            else
+            {
+                DebugManager.LogError($"BoxJester의 TPPosition이 NULL입니다.");
+            }
             
             // InGame Player 대입
             List<GameObject> playerObjects = new List<GameObject>();
@@ -118,6 +138,8 @@ namespace Monster.Container
                 playerObjects.Add(Runner.GetPlayerObject(playerRef).gameObject);
             }
             _players = playerObjects.ToArray();
+
+            OwnerId = gameObject.GetComponent<NetworkObject>().Id;
         }
         
         
@@ -184,20 +206,20 @@ namespace Monster.Container
 
             var CryPattern = new SelectorNode(
                     true,
-                    new SequenceNode(
-                        new ActionNode(CryingShield),
-                        new ActionNode(ShieldOffAction)
-                    ),
-                    new SequenceNode(
-                        new ActionNode(ReverseCryingShield),
-                        new ActionNode(ShieldOffAction)
-                    ),
-                    new ActionNode(BreakHat),
-                    new ActionNode(NonBreakHat)
+                    // new SequenceNode(
+                    //     new ActionNode(CryingShield),
+                    //     new ActionNode(ShieldOffAction)
+                    // ),
+                    // new SequenceNode(
+                    //     new ActionNode(ReverseCryingShield),
+                    //     new ActionNode(ShieldOffAction)
+                    // ),
+                    new ActionNode(BreakHat)
+                    // new ActionNode(NonBreakHat)
                 );
 
             var Cry = new SequenceNode(
-                    new ActionNode(IsCry),
+                    // new ActionNode(IsCry),
                     CryPattern
                 );
             
@@ -222,8 +244,8 @@ namespace Monster.Container
             var Attack = new SelectorNode(
                     false,
                     // Smile,
-                    // Cry,
-                    Angry
+                    Cry
+                    // Angry
                 );
             
             #endregion
@@ -685,20 +707,27 @@ namespace Monster.Container
 
         private INode.NodeState BreakHat()
         {
-            foreach (var hatplace in hatPlaces)
+            if (_animationing == false)
             {
-                Runner.SpawnAsync(hat.gameObject, hatplace.position, transform.rotation, null,
-                    (runner, o) =>
-                    {
-                        var h = o.GetComponent<BoxJesterHat>();
-                        // b.OwnerId = OwnerId;
-                        // b.OwnerGunId = Object.Id;
-                        // b.KnockBack = nuckBack;
-                        // b.destination = fireTransform.position + (dst * status.attackRange) + randomVector3;
-                        // b.PenetrateCount = penetrateCount;
-                    });
+                animator.PlayHatAction();
+                _animationing = true;
+                
+                foreach (var hatplace in hatPlaces)
+                {
+                    Runner.SpawnAsync(hat.gameObject, hatplace.position, transform.rotation, null,
+                        (runner, o) =>
+                        {
+                            var h = o.GetComponent<BoxJesterHat>();
+                            h.OwnerId = OwnerId;
+                            h.hatType = 0;
+
+                        });
+                }
             }
-            
+            if (false == animator.HatTimerExpired)
+                return INode.NodeState.Running;
+
+            _animationing = false;
             DebugManager.Log($"Break Hat");
             // 모자 소환 후 모자를 정속성으로 생성
             return INode.NodeState.Success;
