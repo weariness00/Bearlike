@@ -20,6 +20,7 @@ namespace User
             // 기본 인스펙터 추가
             InspectorElement.FillDefaultInspector(root, serializedObject, this);
 
+            AllUpdate(root);
             MakeBlock(root);
             IconUpdate(root);
             
@@ -59,10 +60,34 @@ namespace User
 
                 Repaint();
                 
+                EditorUtility.SetDirty(target);
                 Debug.Log("Magic Cotton Block UI 생성");
             })
             {
                 text = "Make Cotton Block"
+            };
+
+            // 버튼을 루트 요소에 추가
+            root.Add(button);
+        }
+
+        private void AllUpdate(VisualElement root)
+        {
+            MagicCottonBase script = target as MagicCottonBase;
+
+            if(!script.block) return;
+            
+            var button = new Button(() =>
+            {
+                script.block.SetMagicCotton(script);
+                script.block.SetIcon(script.icon);
+                Repaint();
+                
+                EditorUtility.SetDirty(target);
+                Debug.Log($"{script.Name}의 Block의 모든 것을 업데이트");
+            })
+            {
+                text = "Block All Update"
             };
 
             // 버튼을 루트 요소에 추가
@@ -77,9 +102,10 @@ namespace User
             
             var button = new Button(() =>
             {
-                script.block.icon.sprite = script.icon;
+                script.block.SetIcon(script.icon);
                 Repaint();
                 
+                EditorUtility.SetDirty(target);
                 Debug.Log($"{script.Name}의 Icon을 업데이트");
             })
             {

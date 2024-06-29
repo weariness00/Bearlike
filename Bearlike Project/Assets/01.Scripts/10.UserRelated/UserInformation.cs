@@ -24,7 +24,8 @@ namespace User
 
         public void Init()
         {
-            FireBaseDataBaseManager.ReadRealTimeDataBase($"UserData/{FireBaseAuthManager.UserId}", snapshot =>
+            var userData = FireBaseDataBaseManager.RootReference.GetChild($"UserData/{FireBaseAuthManager.UserId}");
+            userData.SnapShot(snapshot =>
             {
                 if (snapshot.HasChild("CottonCoin"))
                 {
@@ -32,8 +33,13 @@ namespace User
                 }
                 else
                 {
-                    FireBaseDataBaseManager.WriteRealTimeDataBase($"UserData/{FireBaseAuthManager.UserId}", new Dictionary<string, object>(){{"CottonCoin", 0}});
+                    snapshot.Reference.SetChild("CottonCoin", 0);
                 }
+
+                // if (snapshot.HasChild("MagicCottonContainer") == false)
+                // {
+                //     snapshot.Reference.SetChild("MagicCottonContainer", null);
+                // }
             });
         }
 
@@ -41,7 +47,10 @@ namespace User
         public void SetCoin(int value)
         {
             _cottonCoin.Current = value;
-            FireBaseDataBaseManager.WriteRealTimeDataBase($"UserData/{FireBaseAuthManager.UserId}", new Dictionary<string, object>(){{"CottonCoin", value}});
+            FireBaseDataBaseManager.RootReference.GetChild($"UserData/{FireBaseAuthManager.UserId}").SnapShot(snapshot =>
+            {
+                snapshot.Child("CottonCoin").Reference.SetValueAsync(value);
+            });
         }
     }
 }

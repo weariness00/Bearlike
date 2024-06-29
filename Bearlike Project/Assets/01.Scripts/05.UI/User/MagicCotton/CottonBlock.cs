@@ -8,13 +8,14 @@ namespace UI.User
 {
     public class CottonBlock : MonoBehaviour
     {
-        public RectTransform blockRect;
-        public Button levelUpButton;
-        public Image icon;
-        public TMP_Text levelText;
+        [SerializeField] private MagicCottonBase magicCottonBase;
+        
+        [SerializeField] private RectTransform blockRect;
+        [SerializeField] private Button levelUpButton;
+        [SerializeField] private Image icon;
+        [SerializeField] private TMP_Text levelText;
 
-        private MagicCottonBase _magicCottonBase;
-
+        private int _maxLevel = 0;
         private void Awake()
         {
             levelUpButton.onClick.AddListener(LevelUp);
@@ -23,27 +24,40 @@ namespace UI.User
         public void SetMagicCotton(MagicCottonBase mc)
         {
             icon.sprite = mc.icon;
-            SetLevel(mc.Level.Max);
+            SetMaxLevel(mc.Level.Max);
             
-            _magicCottonBase = mc;
+            magicCottonBase = mc;
+        }
+
+        public void SetIcon(Sprite sprite) => icon.sprite = sprite;
+
+        public void SetLevel()
+        {
+            levelText.text = $"{magicCottonBase.Level.Current} / {magicCottonBase.Level.Max}";
         }
         
-        public void SetLevel(int maxLevel)
+        public void SetMaxLevel(int maxLevel)
         {
+            _maxLevel = maxLevel;
             levelText.text = $"0 / {maxLevel}";
+        }
+
+        public void SetCurrentLevel(int level)
+        {
+            levelText.text = $"{level} / {_maxLevel}";
         }
 
         private void LevelUp()
         {
             var coin = UserInformation.Instance.cottonInfo.GetCoin();
-            if (_magicCottonBase.NeedExperience <= coin)
+            if (magicCottonBase.NeedExperience <= coin)
             {
-                UserInformation.Instance.cottonInfo.SetCoin(coin - _magicCottonBase.NeedExperience);
+                UserInformation.Instance.cottonInfo.SetCoin(coin - magicCottonBase.NeedExperience);
                 
-                _magicCottonBase.LevelUp();
-                levelText.text = $"{_magicCottonBase.Level.Current} / {_magicCottonBase.Level.Max}";
+                magicCottonBase.LevelUp();
+                levelText.text = $"{magicCottonBase.Level.Current} / {magicCottonBase.Level.Max}";
             
-                if(_magicCottonBase.Level.isMax)
+                if(magicCottonBase.Level.isMax)
                     levelUpButton.onClick.RemoveListener(LevelUp);
             }
         }

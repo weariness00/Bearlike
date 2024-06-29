@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace User
 {
-    public class MagicCottonInfoJsonData
+    public struct MagicCottonInfoJsonData
     {
         [JsonProperty("ID")] public int id;
         [JsonProperty("Name")] public string name;

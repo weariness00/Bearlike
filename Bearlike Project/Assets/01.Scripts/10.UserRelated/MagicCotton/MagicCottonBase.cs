@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Data;
+using Manager.FireBase;
 using Player;
 using Status;
 using UI.User;
@@ -14,6 +16,16 @@ namespace User.MagicCotton
     /// </summary>
     public abstract class MagicCottonBase : MonoBehaviour
     {
+        #region Static
+
+        // Info Data 캐싱
+        private static Dictionary<int, MagicCottonInfoJsonData> _infoDataCash = new Dictionary<int, MagicCottonInfoJsonData>();
+        public static void AddInfoData(int id, MagicCottonInfoJsonData data) => _infoDataCash.TryAdd(id, data);
+        public static MagicCottonInfoJsonData GetInfoData(int id) => _infoDataCash.TryGetValue(id, out var data) ? data : new MagicCottonInfoJsonData();
+        public static void ClearInfosData() => _infoDataCash.Clear();
+
+        #endregion
+        
         public CottonBlock block;
         
         public MagicCottonInfo info;
@@ -25,12 +37,19 @@ namespace User.MagicCotton
         public int Id => info.Id;
         public StatusValue<int> Level => info.Level;
         public void LevelUp() => info.LevelUp();
+        public void SetLevel(int level) => info.Level.Current = level;
         public int NeedExperience => info.NeedExperience;
 
         #endregion
 
-        public abstract void Apply(GameObject applyObj);
+        public virtual void Awake()
+        {
+            info.SetJsonData(GetInfoData(Id));
+            
+            block.SetMaxLevel(info.Level.Max);
+        }
 
+        public abstract void Apply(GameObject applyObj);
     }
     
     [System.Serializable]
@@ -47,6 +66,12 @@ namespace User.MagicCotton
         {
             if (Level.isMax) return;
             ++Level.Current;
+            var id = Id.ToString();
+            var l = Level.Current;
+            FireBaseDataBaseManager.RootReference.GetChild($"UserData/{FireBaseAuthManager.UserId}/MagicCottonContainer").SnapShot(snapshot =>
+            {
+                snapshot.Reference.SetChild(id, l);
+            });
         }
 
         public MagicCottonInfoJsonData GetJsonData()

@@ -1,5 +1,4 @@
-﻿using UI.User;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -35,8 +34,8 @@ namespace SceneExtension
                     
                     if(!block) continue;
 
-                    block.icon.sprite = cotton.icon;
-                    block.SetLevel(cotton.Level.Max);
+                    block.SetIcon(cotton.icon);
+                    block.SetMaxLevel(cotton.Level.Max);
                 }
                 
                 Repaint();

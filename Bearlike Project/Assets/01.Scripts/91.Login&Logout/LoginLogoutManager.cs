@@ -57,7 +57,13 @@ namespace Login_Logout
             if (value)
             {
                 if (idMemoryToggle.isOn) PlayerPrefs.SetString("ID", idInputFiled.text);
-                FireBaseDataBaseManager.RootReference.GetChild("UserData").SetChild(FireBaseAuthManager.UserId,true);
+                FireBaseDataBaseManager.RootReference.GetChild("UserData").SnapShot(snapshot =>
+                {
+                    if (snapshot.HasChild(FireBaseAuthManager.UserId) == false)
+                    {
+                        snapshot.Reference.SetChild(FireBaseAuthManager.UserId, true);
+                    }
+                });
                 
                 SceneManager.LoadScene(SceneList.GetScene("Lobby"));
             }

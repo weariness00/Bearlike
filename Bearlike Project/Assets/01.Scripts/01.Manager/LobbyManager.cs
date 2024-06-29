@@ -1,5 +1,6 @@
 ﻿using System;
 using Loading;
+using Manager.FireBase;
 using Photon;
 using ProjectUpdate;
 using SceneExtension;
@@ -18,10 +19,20 @@ namespace Manager
         public AudioClip BGM;
         public TMP_InputField userID;
 
+        [SerializeField] private Button logoutButton;
         public Button magicCottonSceneButton;
 
         private SceneReference _lobbyLoading;
         private SceneReference _magicCotton;
+
+        private void Awake()
+        {
+            logoutButton.onClick.AddListener(() =>
+            {
+                FireBaseAuthManager.LogOut();
+                SceneManager.LoadScene(SceneList.GetScene("Initialize"));
+            });
+        }
 
         private void Start()
         {

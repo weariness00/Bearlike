@@ -13,6 +13,8 @@ using Script.Data;
 using Skill;
 using Status;
 using UnityEngine;
+using User;
+using User.MagicCotton;
 using Util;
 using Weapon.Gun;
 
@@ -228,6 +230,18 @@ namespace ProjectUpdate
                 LoadingManager.EndWait("스테이지 드랍률 불러오기 성공");
             }, true, true);
             
+            MagicCottonBase.ClearInfosData();
+            WebRequestJson("MagicCotton","MagicCotton", json =>
+            {
+                var data = JsonConvert.DeserializeObject<MagicCottonInfoJsonData[]>(json);
+                foreach (var infoData in data)
+                {
+                    MagicCottonBase.AddInfoData(infoData.id, infoData);
+                }
+                
+                LoadingManager.EndWait("마법의 천 불러오기 성공");
+            });
+            
             LoadingManager.EndWait();
         }
 
@@ -266,7 +280,10 @@ namespace ProjectUpdate
                     // 버전이 최신이라면 load
                     else
                     {
-                        JsonConvertExtension.Load(fileName, action);
+                        if (JsonConvertExtension.Load(fileName, action) == false)
+                        {
+                            WebManager.DownloadJson(url, fileName, action, isLoop, isSave);
+                        }
                     }
                 });
                 // 버전이 없다면 다운로드

@@ -31,6 +31,8 @@ namespace User
             {
                 Debug.Log("Magic Cotton List 초기화");
                 script.SetList(script.GetComponentsInChildren<MagicCottonBase>().ToList());
+                
+                EditorUtility.SetDirty(target);
             })
             {
                 text = "Initialize List"
