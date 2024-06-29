@@ -26,12 +26,12 @@ async function MakeInfoData(app)
         res.json(version);
     })
 
-    app.get('/Item/', async (req, res) => {
+    app.get('/MagicCotton/', async (req, res) => {
         var json = await InfoQuery();
         res.json(json);
     })
 
-    app.get(`/Item/id/:id`, async (req,res) => {
+    app.get(`/MagicCotton/id/:id`, async (req,res) => {
         var id = req.params.id;
         var json = await InfoQuery();
         var data = json.find(i => i.ID == id);
