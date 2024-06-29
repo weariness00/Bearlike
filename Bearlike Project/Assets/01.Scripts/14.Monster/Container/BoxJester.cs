@@ -57,10 +57,14 @@ namespace Monster.Container
         }
         
         private MaskType _maskType = MaskType.Smile;
+        
         private int _tpPlaceIndex = 0;
         private int _shieldType;
+        
         private bool _animationing = false;
+        
         public int hatCount;
+        private readonly int HATNUM = 4;
         
         #endregion
 
@@ -719,13 +723,23 @@ namespace Monster.Container
         {
             if (_animationing == false)
             {
-                hatCount = hatPlaces.Length;
+                hatCount = HATNUM;
                 animator.PlayHatAction();
                 _animationing = true;
+
+                List<int> indexList = new List<int>();
                 
-                foreach (var hatplace in hatPlaces)
+                for (;indexList.Count < HATNUM;)
                 {
-                    Runner.SpawnAsync(hat[0].gameObject, hatplace.position, transform.rotation, null,
+                    var index = Random.Range(0, hatPlaces.Length);
+
+                    if (false == indexList.Contains(index))
+                        indexList.Add(index);
+                }
+
+                foreach (var index in indexList)
+                {
+                    Runner.SpawnAsync(hat[0].gameObject, hatPlaces[index].position, transform.rotation, null,
                         (runner, o) =>
                         {
                             var h = o.GetComponent<BoxJesterHat>();
@@ -733,6 +747,17 @@ namespace Monster.Container
                             h.hatType = 0;
                         });
                 }
+                
+                // foreach (var hatplace in hatPlaces)
+                // {
+                //     Runner.SpawnAsync(hat[0].gameObject, hatplace.position, transform.rotation, null,
+                //         (runner, o) =>
+                //         {
+                //             var h = o.GetComponent<BoxJesterHat>();
+                //             h.OwnerId = OwnerId;
+                //             h.hatType = 0;
+                //         });
+                // }
             }
             if (false == animator.HatTimerExpired)
                 return INode.NodeState.Running;
@@ -747,7 +772,7 @@ namespace Monster.Container
         {
             DebugManager.Log($"hatCount : {hatCount}");
             if (hatCount > 0)
-                status.ApplyHealRPC(10, OwnerId);   // 힐량은 밸런스 측정해서 하자
+                status.ApplyHealRPC(10 * hatCount, OwnerId);   // 힐량은 밸런스 측정해서 하자
             
             return INode.NodeState.Success;
         }
@@ -756,13 +781,23 @@ namespace Monster.Container
         {            
             if (_animationing == false)
             {
-                hatCount = hatPlaces.Length;
+                hatCount = HATNUM;
                 animator.PlayHatAction();
                 _animationing = true;
                 
-                foreach (var hatplace in hatPlaces)
+                List<int> indexList = new List<int>();
+                
+                for (;indexList.Count < HATNUM;)
                 {
-                    Runner.SpawnAsync(hat[1].gameObject, hatplace.position, transform.rotation, null,
+                    var index = Random.Range(0, hatPlaces.Length);
+
+                    if (false == indexList.Contains(index))
+                        indexList.Add(index);
+                }
+
+                foreach (var index in indexList)
+                {
+                    Runner.SpawnAsync(hat[1].gameObject, hatPlaces[index].position, transform.rotation, null,
                         (runner, o) =>
                         {
                             var h = o.GetComponent<BoxJesterHat>();
@@ -770,6 +805,17 @@ namespace Monster.Container
                             h.hatType = 1;
                         });
                 }
+                
+                // foreach (var hatplace in hatPlaces)
+                // {
+                //     Runner.SpawnAsync(hat[1].gameObject, hatplace.position, transform.rotation, null,
+                //         (runner, o) =>
+                //         {
+                //             var h = o.GetComponent<BoxJesterHat>();
+                //             h.OwnerId = OwnerId;
+                //             h.hatType = 1;
+                //         });
+                // }
             }
             if (false == animator.HatTimerExpired)
                 return INode.NodeState.Running;
@@ -785,11 +831,11 @@ namespace Monster.Container
         {
             DebugManager.Log($"hatCount : {hatCount}");
             
-            if (hatCount != hatPlaces.Length)
+            if (hatCount < HATNUM)
             {
                 foreach (var player in _players)
                 {
-                    player.GetComponent<PlayerStatus>().ApplyDamageRPC(status.damage, DamageTextType.Normal, OwnerId);
+                    player.GetComponent<PlayerStatus>().ApplyDamageRPC(status.damage * hatCount, DamageTextType.Normal, OwnerId);
                 }
             }
             
