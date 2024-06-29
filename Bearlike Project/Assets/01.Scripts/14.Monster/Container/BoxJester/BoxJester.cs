@@ -32,6 +32,9 @@ namespace Monster.Container
         [Header("Hat")]
         [SerializeField] private GameObject[] hat;
         [SerializeField] private Transform[] hatPlaces;
+
+        [Header("Boom")] 
+        [SerializeField] private GameObject boom;
         
         [Header("VFX Properties")]
         [SerializeField] private VisualEffect tpEffect;
@@ -879,6 +882,12 @@ namespace Monster.Container
                 // VFX RPC실행 
                 // 데미지 판정 후 적용 RPC호출
                 
+                Runner.SpawnAsync(boom, transform.position, transform.rotation, null,
+                    (runner, o) =>
+                    {
+                        var h = o.GetComponent<BoxJesterBoom>();
+                        h.OwnerId = OwnerId;
+                    });
             }
 
             if (false == animator.ThrowBoomTimerExpired)
