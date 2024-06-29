@@ -29,6 +29,7 @@ namespace Monster.Container
         private static readonly int Attack = Animator.StringToHash("Attack");
         private static readonly int tFaceHide = Animator.StringToHash("tFace Hide");
         private static readonly int FaceHide = Animator.StringToHash("Face Hide");
+        private static readonly int tHat = Animator.StringToHash("tHat");
         private static readonly int tChangeMask = Animator.StringToHash("tChangeFace");
         private static readonly int tSmoke = Animator.StringToHash("tSmoke");
         private static readonly int tSmokeEnd = Animator.StringToHash("tSmokeEnd");
@@ -87,17 +88,14 @@ namespace Monster.Container
         
         public void PlayIdle()
         {
-            // IdleTimer = TickTimer.CreateFromSeconds(Runner, 3);
             IdleTimer = TickTimer.CreateFromSeconds(Runner, idleClip.length * 2);
             var state = networkAnimator.Animator.GetCurrentAnimatorStateInfo(0);
-            if(!state.IsName("Clown_|Idle_Hand"))
+            if(!state.IsName("Clown_Idle_Hand"))
                 networkAnimator.SetTrigger(tIdle);
         }
 
         public void PlayTeleport()
         {
-            // TeleportTimer = TickTimer.CreateFromSeconds(Runner, 2);
-            // TODO : VFX의 시간도 Clip대로 맞춰야함
             TeleportTimer = TickTimer.CreateFromSeconds(Runner, tpClip.length);
             networkAnimator.SetTrigger(tTeleport);
         }
@@ -161,6 +159,7 @@ namespace Monster.Container
         public void PlayHatAction()
         {
             HatTimer = TickTimer.CreateFromSeconds(Runner, 10.0f);  // 상수화 필요
+            networkAnimator.SetTrigger(tHat);
         }
 
         public void PlayHandLazerAction()

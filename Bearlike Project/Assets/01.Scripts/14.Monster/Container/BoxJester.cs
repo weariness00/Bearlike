@@ -844,7 +844,6 @@ namespace Monster.Container
 
         #endregion
         
-
         #endregion
         
         #region Angry
