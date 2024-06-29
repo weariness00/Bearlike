@@ -1,6 +1,7 @@
 ﻿using Fusion;
 using Photon;
 using Status;
+using Unity.VisualScripting;
 
 namespace Monster.Container
 {
@@ -13,6 +14,7 @@ namespace Monster.Container
 
         private void Awake()
         {
+            status = gameObject.GetOrAddComponent<MonsterStatus>();
             status.hp.Max = 100;
             status.hp.Current = 100;
         }

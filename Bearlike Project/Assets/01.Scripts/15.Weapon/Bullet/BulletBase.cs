@@ -45,7 +45,7 @@ namespace Weapon.Bullet
         {
             direction = (destination - transform.position).normalized;
 
-            DebugManager.ToDo("Json으로 moveSpeed받아오도록 수정");
+            // DebugManager.ToDo("Json으로 moveSpeed받아오도록 수정");
             status.moveSpeed.Max = 50;
             status.moveSpeed.Current = status.moveSpeed.Max;
         }

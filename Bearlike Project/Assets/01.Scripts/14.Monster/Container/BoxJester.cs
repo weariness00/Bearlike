@@ -30,7 +30,7 @@ namespace Monster.Container
         [SerializeField] private GameObject[] hands;
         
         [Header("Hat")]
-        [SerializeField] private GameObject hat;
+        [SerializeField] private GameObject[] hat;
         [SerializeField] private Transform[] hatPlaces;
         
         [Header("VFX Properties")]
@@ -210,14 +210,14 @@ namespace Monster.Container
 
             var CryPattern = new SelectorNode(
                     true,
-                    new SequenceNode(
-                        new ActionNode(CryingShield),
-                        new ActionNode(ShieldOffAction)
-                    ),
-                    new SequenceNode(
-                        new ActionNode(ReverseCryingShield),
-                        new ActionNode(ShieldOffAction)
-                    ),
+                    // new SequenceNode(
+                    //     new ActionNode(CryingShield),
+                    //     new ActionNode(ShieldOffAction)
+                    // ),
+                    // new SequenceNode(
+                    //     new ActionNode(ReverseCryingShield),
+                    //     new ActionNode(ShieldOffAction)
+                    // ),
                     new SequenceNode(
                     new ActionNode(BreakHat),
                         new ActionNode(CheckHatCount)
@@ -725,7 +725,7 @@ namespace Monster.Container
                 
                 foreach (var hatplace in hatPlaces)
                 {
-                    Runner.SpawnAsync(hat.gameObject, hatplace.position, transform.rotation, null,
+                    Runner.SpawnAsync(hat[0].gameObject, hatplace.position, transform.rotation, null,
                         (runner, o) =>
                         {
                             var h = o.GetComponent<BoxJesterHat>();
@@ -753,6 +753,28 @@ namespace Monster.Container
         
         private INode.NodeState BreakReverseHat()
         {            
+            if (_animationing == false)
+            {
+                hatCount = hatPlaces.Length;
+                animator.PlayHatAction();
+                _animationing = true;
+                
+                foreach (var hatplace in hatPlaces)
+                {
+                    Runner.SpawnAsync(hat[1].gameObject, hatplace.position, transform.rotation, null,
+                        (runner, o) =>
+                        {
+                            var h = o.GetComponent<BoxJesterHat>();
+                            h.OwnerId = OwnerId;
+                            h.hatType = 1;
+                        });
+                }
+            }
+            if (false == animator.HatTimerExpired)
+                return INode.NodeState.Running;
+
+            _animationing = false;
+            
             DebugManager.Log($"Non Break Hat");
             // 모자 소환 후 모자를 역속성으로 생성
             return INode.NodeState.Success;
