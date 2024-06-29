@@ -83,6 +83,18 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 8086979583785243896}
+    - targetCorrespondingSourceObject: {fileID: 3678760257840645163, guid: 97a7a0c9a69272042adefa28903fde36,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4246930759634558404}
+    - targetCorrespondingSourceObject: {fileID: 3678760257840645163, guid: 97a7a0c9a69272042adefa28903fde36,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 490543106071738681}
+    - targetCorrespondingSourceObject: {fileID: 3678760257840645163, guid: 97a7a0c9a69272042adefa28903fde36,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3860217276043291461}
   m_SourcePrefab: {fileID: 100100000, guid: 97a7a0c9a69272042adefa28903fde36, type: 3}
 --- !u!1 &4814253299813407196 stripped
 GameObject:
@@ -104,12 +116,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SortKey: 959121841
   ObjectInterest: 1
-  Flags: 1
+  Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 862353798012240195}
   - {fileID: -5465708535267703775}
   - {fileID: 8086979583785243896}
+  - {fileID: 4246930759634558404}
 --- !u!114 &862353798012240195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -143,7 +156,7 @@ MonoBehaviour:
     _value: 0
   _OwnerId:
     Raw: 0
-  status: {fileID: 0}
+  status: {fileID: 8086979583785243896}
   hatType: 0
 --- !u!114 &8086979583785243896
 MonoBehaviour:
@@ -232,3 +245,131 @@ MonoBehaviour:
   poisonDamage: 0
   knockBack: 0
   monsterBase: {fileID: 0}
+--- !u!1 &9008137111454802086 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3678760257840645163, guid: 97a7a0c9a69272042adefa28903fde36,
+    type: 3}
+  m_PrefabInstance: {fileID: 5624644157003555981}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4246930759634558404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9008137111454802086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damage:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  damageMultiple: 1
+  criticalHitChance:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  criticalHitMultiple: 1
+  defence:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  avoid:
+    _min: 0
+    _max: 1
+    _current: 0
+    isOverMax: 1
+    isOverMin: 1
+    isMin: 1
+    isMax: 0
+  avoidMultiple: 1
+  moveSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  moveSpeedMultiple: 1
+  attackSpeed:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  attackSpeedMultiple: 1
+  attackRange:
+    _min: 0
+    _max: 99999
+    _current: 0
+    isOverMax: 0
+    isOverMin: 0
+    isMin: 1
+    isMax: 0
+  condition: 0
+  property: 0
+  burnDamage: 0
+  poisonDamage: 0
+  knockBack: 0
+--- !u!114 &490543106071738681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9008137111454802086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e603ee20d1f4a339352f26601171dff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  originalStatus: {fileID: 8086979583785243896}
+  status: {fileID: 0}
+--- !u!64 &3860217276043291461
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9008137111454802086}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 5301045040993325132, guid: 97a7a0c9a69272042adefa28903fde36, type: 3}

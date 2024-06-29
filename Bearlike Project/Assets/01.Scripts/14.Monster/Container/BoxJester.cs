@@ -745,6 +745,7 @@ namespace Monster.Container
         
         private INode.NodeState CheckHatCount()
         {
+            DebugManager.Log($"hatCount : {hatCount}");
             if (hatCount > 0)
                 status.ApplyHealRPC(10, OwnerId);   // 힐량은 밸런스 측정해서 하자
             
@@ -782,6 +783,8 @@ namespace Monster.Container
         
         private INode.NodeState CheckReverseHatCount()
         {
+            DebugManager.Log($"hatCount : {hatCount}");
+            
             if (hatCount != hatPlaces.Length)
             {
                 foreach (var player in _players)
@@ -1029,6 +1032,13 @@ namespace Monster.Container
         }
         
         #endregion
+        
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void DestroyHatRPC()
+        {
+            hatCount -= 1;
+        }
+        
         
         #endregion
     }
