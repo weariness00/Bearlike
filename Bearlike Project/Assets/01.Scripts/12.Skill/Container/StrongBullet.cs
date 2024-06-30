@@ -20,7 +20,6 @@ namespace Skill.Container
 
         #endregion
         
-        
         public override void Earn(GameObject earnTargetObject)
         {
             base.Earn(earnTargetObject);
@@ -45,7 +44,7 @@ namespace Skill.Container
         {
             base.LevelUp(upAmount, isAddInventory);
             
-            status.criticalHitMultiple = 1f + _damageMultiplePerLevel * level.Current;
+            status.damageMultiple = 1f + _damageMultiplePerLevel * level.Current;
         }
 
         public override void ExplainUpdate()
