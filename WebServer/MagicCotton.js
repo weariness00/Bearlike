@@ -26,7 +26,7 @@ async function MakeInfoData(app)
         res.json(version);
     })
 
-    app.get('/MagicCotton/', async (req, res) => {
+    app.get('/MagicCotton', async (req, res) => {
         var json = await InfoQuery();
         res.json(json);
     })
