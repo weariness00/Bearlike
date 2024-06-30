@@ -48,7 +48,7 @@ namespace UserRelated.MagicCotton
                 foreach (var snapshotChild in mcContainer.Children)
                 {
                     var id = snapshotChild.Key();
-                    var level = snapshotChild.Value();
+                    var level = snapshotChild.ValueInt();
 
                     var mc = mcDict[id];
                     mc.Level.Current = level;

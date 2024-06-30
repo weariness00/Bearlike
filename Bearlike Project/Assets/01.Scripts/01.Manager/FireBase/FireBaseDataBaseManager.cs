@@ -78,6 +78,7 @@ namespace Manager.FireBase
         }
 
         public static int Key(this DataSnapshot snapshot) => int.Parse(snapshot.Key);
-        public static int Value(this DataSnapshot snapshot) => int.Parse(snapshot.Value.ToString());
+        public static int ValueInt(this DataSnapshot snapshot) => int.Parse(snapshot.Value.ToString());
+        public static string ValueString(this DataSnapshot snapshot) => snapshot.Value.ToString();
     } 
 }

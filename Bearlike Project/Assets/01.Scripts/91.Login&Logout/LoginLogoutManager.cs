@@ -19,6 +19,8 @@ namespace Login_Logout
 
         private void Start()
         {
+            passwordInputFiled.onValueChanged.AddListener(ValidateInput);
+            
             LogOut();
             accountCreateButton.onClick.AddListener(AccountCreate);
             loginButton.onClick.AddListener(Login);
@@ -84,6 +86,36 @@ namespace Login_Logout
             FireBaseAuthManager.LogOut();
         }
         
+        #endregion
+
+        #region Password Funciton
+
+        void ValidateInput(string input)
+        {
+            string filtered = "";
+            foreach (char c in input)
+            {
+                if (IsAllowedCharacter(c))
+                {
+                    filtered += c;
+                }
+            }
+            passwordInputFiled.text = filtered;
+        }
+        
+        bool IsAllowedCharacter(char c)
+        {
+            // 숫자, 영어, 특수문자만 허용
+            return char.IsLetterOrDigit(c) || IsSpecialCharacter(c);
+        }
+
+        bool IsSpecialCharacter(char c)
+        {
+            // 특수문자 범위 지정 (예: !, @, #, $, %, ^, &, *)
+            string specialCharacters = "!@#$%^&*()_-+=<>?{}[]|~`";
+            return specialCharacters.Contains(c);
+        }
+
         #endregion
     }
 }

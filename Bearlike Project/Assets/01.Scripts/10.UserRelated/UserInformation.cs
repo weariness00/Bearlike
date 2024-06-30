@@ -27,9 +27,12 @@ namespace User
             var userData = FireBaseDataBaseManager.RootReference.GetChild($"UserData/{FireBaseAuthManager.UserId}");
             userData.SnapShot(snapshot =>
             {
+                if(snapshot.HasChild("Name") == false)
+                    snapshot.Reference.SetChild("Name", "Unknown");
+                
                 if (snapshot.HasChild("CottonCoin"))
                 {
-                    _cottonCoin.Current = snapshot.Child("CottonCoin").Value();
+                    _cottonCoin.Current = snapshot.Child("CottonCoin").ValueInt();
                 }
                 else
                 {

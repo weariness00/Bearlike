@@ -10,6 +10,7 @@ using Fusion.Photon.Realtime;
 using Fusion.Sockets;
 using Loading;
 using Manager;
+using Manager.FireBase;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -95,12 +96,16 @@ namespace Photon
             while (UserData.Instance == null)
                 yield return null;
             
-            var data = new UserDataStruct
+            FireBaseDataBaseManager.RootReference.GetChild($"UserData/{FireBaseAuthManager.UserId}/Name").SnapShot(snapshot =>
             {
-                PlayerRef = player,
-                Name = player.ToString()
-            };
-            UserData.Instance.InsertUserDataRPC(player, data);
+                var data = new UserDataStruct
+                {
+                    PlayerRef = player,
+                    Name = snapshot.ValueString(),
+                };
+                
+                UserData.Instance.InsertUserDataRPC(player, data);
+            });
         }
         
         public static async Task LoadScene(SceneRef sceneRef, LoadSceneParameters parameters, bool setActiveOnLoad = false)
