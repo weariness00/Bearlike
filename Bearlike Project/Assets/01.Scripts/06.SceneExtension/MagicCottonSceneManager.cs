@@ -1,6 +1,8 @@
 ﻿using System;
 using Manager;
+using Manager.FireBase;
 using Script.Data;
+using TMPro;
 using UnityEngine;
 
 namespace SceneExtension
@@ -10,6 +12,9 @@ namespace SceneExtension
     {
         public Transform blockTransform;
         public GameObject blockObject;
+
+        [Header("Canvas")] 
+        [SerializeField] private TMP_Text cottonCoinText; 
 
         private void Start()
         {
@@ -24,6 +29,8 @@ namespace SceneExtension
                     }
                 });
             }
+
+            CottonCoinInit();
         }
 
         public void Update()
@@ -36,8 +43,32 @@ namespace SceneExtension
                 }
             }
         }
-        
-        
+
+        private void CottonCoinInit()
+        {
+            var reference = FireBaseDataBaseManager.RootReference.GetChild($"UserData/{FireBaseAuthManager.UserId}/CottonCoin");
+            reference.SnapShot(snapshot =>
+            {
+                cottonCoinText.text = snapshot.ValueString();
+            });
+            
+            reference.ValueChanged += (sender, args) =>
+            {
+                if (args == null)
+                {
+                    Debug.LogError("ValueChangedEventArgs is null");
+                    return;
+                }
+
+                if (args.DatabaseError != null)
+                {
+                    Debug.LogError(args.DatabaseError.Message);
+                    return;
+                }
+                
+                cottonCoinText.text = args.Snapshot.ValueString();
+            };
+        }
     }
 }
 
