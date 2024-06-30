@@ -246,9 +246,9 @@ namespace Monster.Container
             
             var AngryPattern = new SelectorNode(
                     true,
-                    new ActionNode(HandLazer),
-                    new ActionNode(ThrowBoom),
-                    new ActionNode(slapAttack)
+                    // new ActionNode(HandLazer),
+                    new ActionNode(ThrowBoom)
+                    // new ActionNode(slapAttack)
                 );
 
             var Angry = new SequenceNode(
@@ -261,8 +261,8 @@ namespace Monster.Container
             var Attack = new SelectorNode(
                     false,
                     // Smile,
-                    Cry
-                    // Angry
+                    // Cry
+                    Angry
                 );
             
             #endregion
@@ -881,13 +881,10 @@ namespace Monster.Container
                 // 폭탄 소환 ==> 폭탄은 충돌되면 폭발 ( VFX, Damage, Script )
                 // VFX RPC실행 
                 // 데미지 판정 후 적용 RPC호출
+
+                StartCoroutine(SpawneBoomCoroutine());
                 
-                Runner.SpawnAsync(boom, transform.position, transform.rotation, null,
-                    (runner, o) =>
-                    {
-                        var h = o.GetComponent<BoxJesterBoom>();
-                        h.OwnerId = OwnerId;
-                    });
+                //1.1초 뒤에 날라가기
             }
 
             if (false == animator.ThrowBoomTimerExpired)
@@ -897,6 +894,23 @@ namespace Monster.Container
             DebugManager.Log($"Throw Boom");
             
             return INode.NodeState.Success;
+        }
+
+        IEnumerator SpawneBoomCoroutine()
+        {
+            yield return new WaitForSeconds(1.1f);
+
+            var pos = (hands[0].transform.position + hands[1].transform.position) / 2;
+            pos -= transform.forward * 2;
+            pos += transform.up * 3;
+            
+            Runner.SpawnAsync(boom, pos, transform.rotation, null,
+                (runner, o) =>
+                {
+                    var h = o.GetComponent<BoxJesterBoom>();
+                    h.OwnerId = OwnerId;
+                    h.dir = transform.forward;
+                });
         }
 
         private INode.NodeState slapAttack()
@@ -920,16 +934,14 @@ namespace Monster.Container
         }
 
         #endregion
-        
+
+        #region Cal Mask
+
         private INode.NodeState IsSmile()
         {
             DebugManager.Log($"Is Smile");
             if(_maskType == MaskType.Smile)
                 return INode.NodeState.Success;
-            
-            // Timer 1초 대기
-
-            // 나타나는 애니메이션 있으면 좋을듯
             
             return INode.NodeState.Failure;
         }
@@ -940,10 +952,6 @@ namespace Monster.Container
             if(_maskType == MaskType.Cry)
                 return INode.NodeState.Success;
             
-            // Timer 1초 대기
-            
-            // 나타나는 애니메이션 있으면 좋을듯
-            
             return INode.NodeState.Failure;
         }
         
@@ -953,12 +961,10 @@ namespace Monster.Container
             if(_maskType == MaskType.Angry)
                 return INode.NodeState.Success;
             
-            // Timer 1초 대기
-            
-            // 나타나는 애니메이션 있으면 좋을듯
-            
             return INode.NodeState.Failure;
         }
+
+        #endregion
         
         #endregion
         
@@ -1092,7 +1098,6 @@ namespace Monster.Container
         {
             hatCount -= 1;
         }
-        
         
         #endregion
     }
