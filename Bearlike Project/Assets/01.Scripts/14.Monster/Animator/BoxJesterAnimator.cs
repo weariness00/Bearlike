@@ -19,10 +19,9 @@ namespace Monster.Container
         // [SerializeField] private AnimationClip cloneClip;
         [SerializeField] private AnimationClip ShieldClip;
         [SerializeField] private AnimationClip ReverseShieldClip;
-        // [SerializeField] private AnimationClip hatClip;
         [SerializeField] private AnimationClip handLazerClip;
         [SerializeField] private AnimationClip throwBoomClip;
-        [SerializeField] private AnimationClip slapClip;
+        // [SerializeField] private AnimationClip slapClip;
         
         private static readonly int tIdle = Animator.StringToHash("tIdle");
         private static readonly int tAttack = Animator.StringToHash("tAttack");
@@ -70,20 +69,20 @@ namespace Monster.Container
         {
             networkAnimator = transform.root.GetComponent<NetworkMecanimAnimator>();
             
-            IdleTimer = TickTimer.CreateFromTicks(Runner, 0);
-            TeleportTimer = TickTimer.CreateFromTicks(Runner, 0);
-            SmokeStartTimer = TickTimer.CreateFromTicks(Runner, 0);
-            SmokingTimer = TickTimer.CreateFromTicks(Runner, 0);
-            SmokeEndTimer = TickTimer.CreateFromTicks(Runner, 0);
-            MaskChangeTimer = TickTimer.CreateFromTicks(Runner, 0);
-            PunchReadyTimer = TickTimer.CreateFromTicks(Runner, 0);
-            PunchTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // IdleTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // TeleportTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // SmokeStartTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // SmokingTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // SmokeEndTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // MaskChangeTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // PunchReadyTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // PunchTimer = TickTimer.CreateFromTicks(Runner, 0);
             // CloneTimer = TickTimer.CreateFromTicks(Runner, 0);
-            ShieldTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // ShieldTimer = TickTimer.CreateFromTicks(Runner, 0);
             // HatTimer = TickTimer.CreateFromTicks(Runner, 0);
-            HandLazerTimer = TickTimer.CreateFromTicks(Runner, 0);
-            ThrowBoomTimer = TickTimer.CreateFromTicks(Runner, 0);
-            SlapTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // HandLazerTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // ThrowBoomTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // SlapTimer = TickTimer.CreateFromTicks(Runner, 0);
         }
         
         public void PlayIdle()
@@ -178,7 +177,7 @@ namespace Monster.Container
         
         public void PlaySlapAction()
         {
-            // SlapTimer = TickTimer.CreateFromSeconds(Runner, slapClip.length);
+            SlapTimer = TickTimer.CreateFromSeconds(Runner, 5);
             // networkAnimator.SetTrigger(tSlap);
         }
     }

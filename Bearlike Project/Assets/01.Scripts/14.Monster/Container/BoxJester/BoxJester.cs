@@ -202,8 +202,8 @@ namespace Monster.Container
                     new SequenceNode(
                         new ActionNode(PunchReady),
                         new ActionNode(FakePunching)
-                    )
-                    // new ActionNode(ClonePattern)
+                    ),
+                    new ActionNode(ClonePattern)
                 );
 
             var Smile = new SequenceNode(
@@ -217,14 +217,14 @@ namespace Monster.Container
 
             var CryPattern = new SelectorNode(
                     true,
-                    // new SequenceNode(
-                    //     new ActionNode(CryingShield),
-                    //     new ActionNode(ShieldOffAction)
-                    // ),
-                    // new SequenceNode(
-                    //     new ActionNode(ReverseCryingShield),
-                    //     new ActionNode(ShieldOffAction)
-                    // ),
+                    new SequenceNode(
+                        new ActionNode(CryingShield),
+                        new ActionNode(ShieldOffAction)
+                    ),
+                    new SequenceNode(
+                        new ActionNode(ReverseCryingShield),
+                        new ActionNode(ShieldOffAction)
+                    ),
                     new SequenceNode(
                     new ActionNode(BreakHat),
                         new ActionNode(CheckHatCount)
@@ -236,7 +236,7 @@ namespace Monster.Container
                 );
 
             var Cry = new SequenceNode(
-                    // new ActionNode(IsCry),
+                    new ActionNode(IsCry),
                     CryPattern
                 );
             
@@ -246,13 +246,13 @@ namespace Monster.Container
             
             var AngryPattern = new SelectorNode(
                     true,
-                    // new ActionNode(HandLazer),
-                    new ActionNode(ThrowBoom)
-                    // new ActionNode(slapAttack)
+                    new ActionNode(HandLazer),
+                    new ActionNode(ThrowBoom),
+                    new ActionNode(slapAttack)
                 );
 
             var Angry = new SequenceNode(
-                    // new ActionNode(IsAngry),
+                    new ActionNode(IsAngry),
                     AngryPattern
                 );
             
@@ -260,8 +260,8 @@ namespace Monster.Container
 
             var Attack = new SelectorNode(
                     false,
-                    // Smile,
-                    // Cry
+                    Smile,
+                    Cry,
                     Angry
                 );
             
@@ -269,8 +269,8 @@ namespace Monster.Container
 
             var AttackPattern = new SelectorNode(
                 true, 
-                // TP
-                // Hide
+                TP,
+                Hide,
                 Attack
             );
         
@@ -877,14 +877,8 @@ namespace Monster.Container
             {
                 animator.PlayThrowBoomAction();
                 _animationing = true;
-                
-                // 폭탄 소환 ==> 폭탄은 충돌되면 폭발 ( VFX, Damage, Script )
-                // VFX RPC실행 
-                // 데미지 판정 후 적용 RPC호출
 
                 StartCoroutine(SpawneBoomCoroutine());
-                
-                //1.1초 뒤에 날라가기
             }
 
             if (false == animator.ThrowBoomTimerExpired)
@@ -910,6 +904,7 @@ namespace Monster.Container
                     var h = o.GetComponent<BoxJesterBoom>();
                     h.OwnerId = OwnerId;
                     h.dir = transform.forward;
+                    // Effect 넣어줘야함
                 });
         }
 
@@ -917,17 +912,19 @@ namespace Monster.Container
         {
             if (false == _animationing)
             {
+                animator.networkAnimator.Animator.enabled = false;
                 animator.PlaySlapAction();
                 _animationing = true;
                 
                 // 충돌처리
-                
+                SlapStartRPC();
             }
 
-            if (false == animator.ThrowBoomTimerExpired)
+            if (false == animator.SlapTimerExpired)
                 return INode.NodeState.Running;
 
             _animationing = false;
+            animator.networkAnimator.Animator.enabled = true;
             DebugManager.Log($"Slap Attack");
             
             return INode.NodeState.Success;
@@ -1098,6 +1095,31 @@ namespace Monster.Container
         {
             hatCount -= 1;
         }
+
+        #region Slap
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void SlapStartRPC()
+        {
+            hands[1].transform.DOLocalMove(new Vector3(5, 3, 2), 1).SetEase(Ease.InCirc);
+            hands[1].transform.DOLocalRotate(new Vector3(0, 0, -45f), 1).SetEase(Ease.InCirc);
+            StartCoroutine(SlapAttackCoroutine());
+        }
+
+        IEnumerator SlapAttackCoroutine()
+        {
+            yield return new WaitForSeconds(1);
+
+            // SlapingRPC();
+        }
+        
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void SlapingRPC()
+        {
+            
+        }
+
+        #endregion
         
         #endregion
     }
