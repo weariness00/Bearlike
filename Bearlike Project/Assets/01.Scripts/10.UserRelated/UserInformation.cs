@@ -36,10 +36,8 @@ namespace User
                     snapshot.Reference.SetChild("CottonCoin", 0);
                 }
 
-                // if (snapshot.HasChild("MagicCottonContainer") == false)
-                // {
-                //     snapshot.Reference.SetChild("MagicCottonContainer", null);
-                // }
+                if (snapshot.HasChild("MagicCottonContainer") == false)
+                    snapshot.Reference.SetChild("MagicCottonContainer", true);
             });
         }
 
@@ -52,5 +50,6 @@ namespace User
                 snapshot.Child("CottonCoin").Reference.SetValueAsync(value);
             });
         }
+        public void AddCoin(int value) => SetCoin(_cottonCoin.Current + value);
     }
 }
