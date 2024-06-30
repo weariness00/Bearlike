@@ -51,7 +51,7 @@ namespace User
                 var o = Instantiate(mcScene.blockObject, mcScene.blockTransform);
                 var block = o.GetComponent<CottonBlock>();
 
-                o.name = script.Name + " Block";
+                o.name = script.name + " Block";
                 o.SetActive(true);
                 
                 block.SetMagicCotton(script);

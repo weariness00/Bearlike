@@ -13,6 +13,7 @@ using Status;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using User.MagicCotton;
+using UserRelated.MagicCotton;
 using Random = UnityEngine.Random;
 
 namespace GamePlay
@@ -34,6 +35,9 @@ namespace GamePlay
         
         [SerializeField]private SpawnPlace _spawnPlace = new SpawnPlace();
 
+        [Header("유저 정보")] 
+        [SerializeField] private NetworkPrefabRef networkMagicCottonContainerRef;
+
         [Header("스테이지")]
         public StageBase defaultStage;
         [Tooltip("보스 스테이지를 마지막 인덱스에 넣어줘야함")]public List<StageData> stageList = new List<StageData>();
@@ -44,15 +48,16 @@ namespace GamePlay
         public SceneReference gameResultScene;
         public SceneReference loadingScene;
         public SceneReference modelUIScene;
-        public SceneReference magicCottonScene;
         
         #region Unity Event Function
         protected override void Awake()
         {
+            LoadingManager.Initialize();
+            LoadingManager.AddWait();
+            
             base.Awake();
             _spawnPlace.Initialize();
             NetworkManager.LoadScene(loadingScene, LoadSceneMode.Additive);
-            SceneManager.LoadScene(magicCottonScene, LoadSceneMode.Additive);
         }
 
         public override void Spawned()
@@ -70,6 +75,8 @@ namespace GamePlay
             
             Init();
             UserInit();
+            
+            LoadingManager.EndWait();
         }
 
         public override void FixedUpdateNetwork()
@@ -98,16 +105,18 @@ namespace GamePlay
         
         async void UserInit()
         {   
+            LoadingManager.AddWait();
             await UserData.Instance.SpawnPlayers();
             if (Runner != null && Runner.IsServer)
             {
                 foreach (var (key, user) in UserData.Instance.UserDictionary)
                 {
+                    await Runner.SpawnAsync(networkMagicCottonContainerRef, null, null, key);
                     UserData.SetTeleportPosition(key, _spawnPlace.GetRandomSpot().position);
                     AlivePlayerCount++;
                 }
             }
-
+            LoadingManager.EndWait();
         }
 
         #endregion

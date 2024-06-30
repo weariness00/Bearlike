@@ -1,9 +1,11 @@
 ﻿using System;
 using Manager;
+using Script.Data;
 using UnityEngine;
 
 namespace SceneExtension
 {
+    [DefaultExecutionOrder((int)DefaultExecutionOrderType.Inisialize)]
     public class MagicCottonSceneManager : SceneManagerExtension
     {
         public Transform blockTransform;

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Data;
 using Manager.FireBase;
-using Player;
 using Status;
 using UI.User;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace User.MagicCotton
 {
@@ -45,8 +42,7 @@ namespace User.MagicCotton
         public virtual void Awake()
         {
             info.SetJsonData(GetInfoData(Id));
-            
-            block.SetMaxLevel(info.Level.Max);
+            if(block) block.SetMaxLevel(info.Level.Max);
         }
 
         public abstract void Apply(GameObject applyObj);

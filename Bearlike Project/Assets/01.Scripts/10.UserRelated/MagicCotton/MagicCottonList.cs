@@ -5,24 +5,23 @@ using Manager;
 using Manager.FireBase;
 using Photon;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Util;
 
 namespace User.MagicCotton
 {
     public class MagicCottonList : Singleton<MagicCottonList>
     {
-        public NetworkPrefabRef applyStatusRef;
-
-        [SerializeField] private List<MagicCottonBase> _magicCottonList = new List<MagicCottonBase>();
-
+        [SerializeField] private List<MagicCottonBase> magicCottonList = new List<MagicCottonBase>();
         
         private void OnEnable()
         {
             Load();
         }
 
-        public void SetList(List<MagicCottonBase> list) => _magicCottonList = list;
-
+        public void SetList(List<MagicCottonBase> list) => magicCottonList = list;
+        public List<MagicCottonBase> GetList() => magicCottonList;
+        
         private bool _isLoad = false;
         public void Load()
         {
@@ -35,21 +34,19 @@ namespace User.MagicCotton
                     snapshot.Reference.SetChild("MagicCottonContainer", true);
                 }
                 
-                DebugManager.ToDo("이중 for문 사용중 나중에 바꿀 수 있으면 바꾸기");
+                var mcDict = new Dictionary<int, MagicCottonBase>();
+                foreach (var mc in magicCottonList)
+                    mcDict.Add(mc.Id, mc);
+                
                 var mcContainer = snapshot.Child("MagicCottonContainer");
                 foreach (var snapshotChild in mcContainer.Children)
                 {
                     var id = snapshotChild.Key();
                     var level = snapshotChild.Value();
-                    
-                    foreach (var mc in _magicCottonList)
-                    {
-                        if (mc.Id == id)
-                        {
-                            mc.Level.Current = level;
-                            mc.block.SetCurrentLevel(level);
-                        }
-                    }
+
+                    var mc = mcDict[id];
+                    mc.Level.Current = level;
+                    mc.block.SetCurrentLevel(level);
                 }
 
                 _isLoad = false;
