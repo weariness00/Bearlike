@@ -177,7 +177,7 @@ namespace Monster.Container
         
         public void PlaySlapAction()
         {
-            SlapTimer = TickTimer.CreateFromSeconds(Runner, 5);
+            SlapTimer = TickTimer.CreateFromSeconds(Runner, 4.5f);
             // networkAnimator.SetTrigger(tSlap);
         }
     }

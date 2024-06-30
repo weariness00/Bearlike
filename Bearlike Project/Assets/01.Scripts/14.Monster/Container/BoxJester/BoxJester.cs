@@ -246,13 +246,13 @@ namespace Monster.Container
             
             var AngryPattern = new SelectorNode(
                     true,
-                    new ActionNode(HandLazer),
-                    new ActionNode(ThrowBoom),
+                    // new ActionNode(HandLazer),
+                    // new ActionNode(ThrowBoom),
                     new ActionNode(slapAttack)
                 );
 
             var Angry = new SequenceNode(
-                    new ActionNode(IsAngry),
+                    // new ActionNode(IsAngry),
                     AngryPattern
                 );
             
@@ -260,8 +260,8 @@ namespace Monster.Container
 
             var Attack = new SelectorNode(
                     false,
-                    Smile,
-                    Cry,
+                    // Smile,
+                    // Cry,
                     Angry
                 );
             
@@ -269,8 +269,8 @@ namespace Monster.Container
 
             var AttackPattern = new SelectorNode(
                 true, 
-                TP,
-                Hide,
+                // TP,
+                // Hide,
                 Attack
             );
         
@@ -916,7 +916,6 @@ namespace Monster.Container
                 animator.PlaySlapAction();
                 _animationing = true;
                 
-                // 충돌처리
                 SlapStartRPC();
             }
 
@@ -1108,17 +1107,39 @@ namespace Monster.Container
 
         IEnumerator SlapAttackCoroutine()
         {
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(1.5f);
 
-            // SlapingRPC();
+            SlapingRPC();
         }
+
+        private float _radius = 15f;
+        private float _duration = 2f;
+        private int _segments = 36;
         
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void SlapingRPC()
         {
-            
+            Vector3[] path = new Vector3[_segments];
+            float angleStep = 180f / _segments;
+
+            for (int i = 0; i < _segments; i++)
+            {
+                float angle = i * angleStep * Mathf.Deg2Rad;
+                path[i] = new Vector3(Mathf.Cos(angle) * _radius, 0.5f, Mathf.Sin(angle) * _radius);
+            }
+
+            hands[1].transform.DOLocalPath(path, _duration).SetOptions(true);
+            hands[1].transform.DOLocalRotate(new Vector3(0, -180f, 0), _duration);
+
+            StartCoroutine(HandRotationCoroutine());
         }
 
+        IEnumerator HandRotationCoroutine()
+        {
+            yield return new WaitForSeconds(_duration);
+            hands[1].transform.DOLocalRotate(new Vector3(0, 0, 0), 0.5f);
+        }
+        
         #endregion
         
         #endregion
