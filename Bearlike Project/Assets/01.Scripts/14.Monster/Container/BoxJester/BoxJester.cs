@@ -916,7 +916,6 @@ namespace Monster.Container
                 animator.PlaySlapAction();
                 _animationing = true;
                 
-                // 충돌처리
                 SlapStartRPC();
             }
 
