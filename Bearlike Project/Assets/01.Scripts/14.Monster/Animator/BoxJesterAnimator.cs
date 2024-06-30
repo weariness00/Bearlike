@@ -7,117 +7,178 @@ namespace Monster.Container
     public class BoxJesterAnimator : NetworkBehaviourEx
     {
         [Header("Animator")]
-        [SerializeField] private NetworkMecanimAnimator networkAnimator;
+        public NetworkMecanimAnimator networkAnimator;
         
         [Header("Animation Clip")] 
         [SerializeField] private AnimationClip idleClip;
-        [SerializeField] private AnimationClip tptClip;
-        [SerializeField] private AnimationClip hideClip;
-        [SerializeField] private AnimationClip appearClip;
+        public AnimationClip tpClip;
+        [SerializeField] private AnimationClip MaskChageClip;
+        [SerializeField] private AnimationClip DarknessBreathStartClip;
+        [SerializeField] private AnimationClip DarknessBreathEndClip;
         [SerializeField] private AnimationClip punchReadyClip;
         // [SerializeField] private AnimationClip cloneClip;
-        // [SerializeField] private AnimationClip ShieldClip;
-        // [SerializeField] private AnimationClip hatClip;
+        [SerializeField] private AnimationClip ShieldClip;
+        [SerializeField] private AnimationClip ReverseShieldClip;
         [SerializeField] private AnimationClip handLazerClip;
         [SerializeField] private AnimationClip throwBoomClip;
-        [SerializeField] private AnimationClip slapClip;
+        // [SerializeField] private AnimationClip slapClip;
         
-        private static readonly int Teleport = Animator.StringToHash("tTeleport");
-        private static readonly int Hide = Animator.StringToHash("tHide");
-        private static readonly int Appear = Animator.StringToHash("tAppear");
-        private static readonly int Punch = Animator.StringToHash("tPunch");
+        private static readonly int tIdle = Animator.StringToHash("tIdle");
+        private static readonly int tAttack = Animator.StringToHash("tAttack");
+        private static readonly int Attack = Animator.StringToHash("Attack");
+        private static readonly int tFaceHide = Animator.StringToHash("tFace Hide");
+        private static readonly int FaceHide = Animator.StringToHash("Face Hide");
+        private static readonly int tHat = Animator.StringToHash("tHat");
+        private static readonly int tChangeMask = Animator.StringToHash("tChangeFace");
+        private static readonly int tSmoke = Animator.StringToHash("tSmoke");
+        private static readonly int tSmokeEnd = Animator.StringToHash("tSmokeEnd");
+        private static readonly int tTeleport = Animator.StringToHash("tTeleport");
+        private static readonly int tDeath = Animator.StringToHash("tDeath");
         
         private TickTimer IdleTimer { get; set; }
         private TickTimer TeleportTimer { get; set; }
-        private TickTimer HideTimer { get; set; }
-        private TickTimer AppearTimer { get; set; }
-        private TickTimer SmokeTimer { get; set; }
+        private TickTimer SmokeStartTimer { get; set; }
+        private TickTimer SmokingTimer { get; set; }
+        private TickTimer SmokeEndTimer { get; set; }
         private TickTimer MaskChangeTimer { get; set; }
         private TickTimer PunchReadyTimer { get; set; }
+        private TickTimer PunchTimer { get; set; }
         // private TickTimer CloneTimer { get; set; }
-        // private TickTimer ShieldTimer { get; set; }
-        // private TickTimer HatTimer { get; set; }
+        private TickTimer ShieldTimer { get; set; }
+        private TickTimer HatTimer { get; set; }
         private TickTimer HandLazerTimer { get; set; }
         private TickTimer ThrowBoomTimer { get; set; }
         private TickTimer SlapTimer { get; set; }
         
         public bool IdleTimerExpired => IdleTimer.Expired(Runner);
         public bool TeleportTimerExpired => TeleportTimer.Expired(Runner);
-        public bool HideTimerExpired => HideTimer.Expired(Runner);
-        public bool AppearTimerExpired => AppearTimer.Expired(Runner);
-        public bool SmokeTimerExpired => SmokeTimer.Expired(Runner);
+        public bool SmokeStartTimerExpired => SmokeStartTimer.Expired(Runner);
+        public bool SmokingTimerExpired => SmokingTimer.Expired(Runner);
+        public bool SmokeEndTimerExpired => SmokeEndTimer.Expired(Runner);
         public bool MaskChangeTimerExpired => MaskChangeTimer.Expired(Runner);
         public bool PunchReadyTimerExpired => PunchReadyTimer.Expired(Runner);
+        public bool PunchTimerExpired => PunchTimer.Expired(Runner);
         // public bool CloneTimerExpired => CloneTimer.Expired(Runner);
-        // public bool ShieldTimerExpired => ShieldTimer.Expired(Runner);
-        // public bool HatTimerExpired => HatTimer.Expired(Runner);
+        public bool ShieldTimerExpired => ShieldTimer.Expired(Runner);
+        public bool HatTimerExpired => HatTimer.Expired(Runner);
         public bool HandLazerTimerExpired => HandLazerTimer.Expired(Runner);
         public bool ThrowBoomTimerExpired => ThrowBoomTimer.Expired(Runner);
         public bool SlapTimerExpired => SlapTimer.Expired(Runner);
         
         private void Awake()
         {
-            networkAnimator = GetComponent<NetworkMecanimAnimator>();
+            networkAnimator = transform.root.GetComponent<NetworkMecanimAnimator>();
             
-            IdleTimer = TickTimer.CreateFromTicks(Runner, 0);
-            TeleportTimer = TickTimer.CreateFromTicks(Runner, 0);
-            HideTimer = TickTimer.CreateFromTicks(Runner, 0);
-            AppearTimer = TickTimer.CreateFromTicks(Runner, 0);
-            SmokeTimer = TickTimer.CreateFromTicks(Runner, 0);
-            MaskChangeTimer = TickTimer.CreateFromTicks(Runner, 0);
-            PunchReadyTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // IdleTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // TeleportTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // SmokeStartTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // SmokingTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // SmokeEndTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // MaskChangeTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // PunchReadyTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // PunchTimer = TickTimer.CreateFromTicks(Runner, 0);
             // CloneTimer = TickTimer.CreateFromTicks(Runner, 0);
             // ShieldTimer = TickTimer.CreateFromTicks(Runner, 0);
             // HatTimer = TickTimer.CreateFromTicks(Runner, 0);
-            HandLazerTimer = TickTimer.CreateFromTicks(Runner, 0);
-            ThrowBoomTimer = TickTimer.CreateFromTicks(Runner, 0);
-            SlapTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // HandLazerTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // ThrowBoomTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // SlapTimer = TickTimer.CreateFromTicks(Runner, 0);
         }
         
         public void PlayIdle()
         {
-            IdleTimer = TickTimer.CreateFromSeconds(Runner, 3);
-            // IdleTimer = TickTimer.CreateFromSeconds(Runner, idleClip.length);
+            IdleTimer = TickTimer.CreateFromSeconds(Runner, idleClip.length * 2);
+            var state = networkAnimator.Animator.GetCurrentAnimatorStateInfo(0);
+            if(!state.IsName("Clown_Idle_Hand"))
+                networkAnimator.SetTrigger(tIdle);
         }
 
         public void PlayTeleport()
         {
-            TeleportTimer = TickTimer.CreateFromSeconds(Runner, 3);
-            // TeleportTimer = TickTimer.CreateFromSeconds(Runner, tptClip.length);
-            // networkAnimator.SetTrigger(Teleport);
-        }
-
-        public void PlayHideInBox()
-        {
-            HideTimer = TickTimer.CreateFromSeconds(Runner, 2);
-            // HideTimer = TickTimer.CreateFromSeconds(Runner, hideClip.length);
-            // networkAnimator.SetTrigger(Hide);
+            TeleportTimer = TickTimer.CreateFromSeconds(Runner, tpClip.length);
+            networkAnimator.SetTrigger(tTeleport);
         }
         
-        public void PlayAppearInBox()
+        public void PlaySmokeStartAttack()
         {
-            AppearTimer = TickTimer.CreateFromSeconds(Runner, 2);
-            // AppearTimer = TickTimer.CreateFromSeconds(Runner, appearClip.length);
-            // networkAnimator.SetTrigger(Appear);
+            SmokeStartTimer = TickTimer.CreateFromSeconds(Runner, DarknessBreathStartClip.length);
+            networkAnimator.SetTrigger(tSmoke);
         }
         
-        public void PlaySmokeAttack()
+        public void PlaySmokingAttack()
         {
-            SmokeTimer = TickTimer.CreateFromSeconds(Runner, 2);    // smoke 공격의 시간으로 설정해야함
-            // Box의 뚜껑이 열리는 Animation이 있었으면 좋겠음
+            SmokingTimer = TickTimer.CreateFromSeconds(Runner, 3);    // 상수화 필요
+        }
+        
+        public void PlaySmokeEndAttack()
+        {
+            SmokeEndTimer = TickTimer.CreateFromSeconds(Runner, DarknessBreathEndClip.length);
+            networkAnimator.SetTrigger(tSmokeEnd);
         }
         
         public void PlayMaskChange()
         {
-            MaskChangeTimer = TickTimer.CreateFromSeconds(Runner, 1);
-            // Box가 흔들리는 Animation이 있었으면 좋겠음
+            MaskChangeTimer = TickTimer.CreateFromSeconds(Runner, MaskChageClip.length);
+            networkAnimator.SetTrigger(tChangeMask);
         }
         
         public void PlayPunchReadyAction()
         {
-            PunchReadyTimer = TickTimer.CreateFromSeconds(Runner, 1);
-            // PunchReadyTimer = TickTimer.CreateFromSeconds(Runner, punchReadyClip.length);
-            // networkAnimator.SetTrigger(Punch);
+            PunchReadyTimer = TickTimer.CreateFromSeconds(Runner, punchReadyClip.length);
+            networkAnimator.Animator.SetFloat(Attack, 0);
+            networkAnimator.SetTrigger(tAttack);
+        }
+        
+        public void PlayPunchAction()
+        {
+            PunchTimer = TickTimer.CreateFromSeconds(Runner, 3);
+        }
+        
+        public void PlayShieldAction()
+        {
+            ShieldTimer = TickTimer.CreateFromSeconds(Runner, 7);   // 상수화 해야함
+            // ShieldTimer = TickTimer.CreateFromSeconds(Runner, ShieldClip.length);
+            networkAnimator.Animator.SetFloat(FaceHide, 0);
+            networkAnimator.SetTrigger(tFaceHide);
+        }
+        
+        public void PlayReverseShieldAction()
+        {
+            ShieldTimer = TickTimer.CreateFromSeconds(Runner, 7);   // 상수화 해야함
+            // ShieldTimer = TickTimer.CreateFromSeconds(Runner, ReverseShieldClip.length);
+            networkAnimator.Animator.SetFloat(FaceHide, 1);
+            networkAnimator.SetTrigger(tFaceHide);
+        }
+        
+        public void PlayShieldOffAction()
+        {
+            ShieldTimer = TickTimer.CreateFromSeconds(Runner, 1.5f);   // 상수화 해야함
+        }
+
+        public void PlayHatAction()
+        {
+            HatTimer = TickTimer.CreateFromSeconds(Runner, 10.0f);  // 상수화 필요
+            networkAnimator.SetTrigger(tHat);
+        }
+
+        public void PlayHandLazerAction()
+        {
+            HandLazerTimer = TickTimer.CreateFromSeconds(Runner, handLazerClip.length);
+            networkAnimator.Animator.SetFloat(Attack, 1);
+            networkAnimator.SetTrigger(tAttack);
+        }
+
+        public void PlayThrowBoomAction()
+        {
+            ThrowBoomTimer = TickTimer.CreateFromSeconds(Runner, throwBoomClip.length);
+            networkAnimator.Animator.SetFloat(Attack, 2);
+            networkAnimator.SetTrigger(tAttack);
+        }
+        
+        public void PlaySlapAction()
+        {
+            SlapTimer = TickTimer.CreateFromSeconds(Runner, 5);
+            // networkAnimator.SetTrigger(tSlap);
         }
     }
 }

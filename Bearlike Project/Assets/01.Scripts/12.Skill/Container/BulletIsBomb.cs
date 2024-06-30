@@ -2,7 +2,6 @@
 using Skill.Support;
 using Status;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Util;
 
 namespace Skill.Container

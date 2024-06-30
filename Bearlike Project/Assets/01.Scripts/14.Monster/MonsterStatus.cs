@@ -77,6 +77,7 @@ namespace Status
 
         #endregion
 
+        
         #region Json Data Interfacec
 
         public override void SetJsonData(StatusJsonData json)
