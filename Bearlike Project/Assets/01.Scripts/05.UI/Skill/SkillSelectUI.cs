@@ -1,11 +1,11 @@
 ﻿using System.Linq;
 using Fusion;
+using Manager;
 using Photon;
 using Player;
 using Skill;
 using Status;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Util;
 
@@ -33,7 +33,7 @@ namespace UI.Skill
         public void SpawnSkillBlocks(int count)
         {
             gameObject.SetActive(true);
-            GameUIManager.AddActiveUI(gameObject);
+            UIManager.AddActiveUI(gameObject);
             
             // 이미 있는 스킬들 삭제
             var handles = toggleGroup.GetComponentsInChildren<SkillSelectBlockHandle>().ToList();

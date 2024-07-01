@@ -517,13 +517,13 @@ MonoBehaviour:
     isMax: 0
   gmModeScene:
     sceneAsset: {fileID: 102900000, guid: 5b95cfc0949287e47aada999f20668e3, type: 3}
-    scenePath: Assets/00.Scenes/Game/Game Admin.unity
+    scenePath: Assets/00.Scenes/Game/Game/Game Admin.unity
   gameResultScene:
     sceneAsset: {fileID: 102900000, guid: b432b15f467c51e4da51bf8cdb5f9046, type: 3}
-    scenePath: Assets/00.Scenes/Game/Game Result.unity
+    scenePath: Assets/00.Scenes/Game/Game/Game Result.unity
   loadingScene:
     sceneAsset: {fileID: 102900000, guid: 458e08f0c6c6b754c8522ad427003f08, type: 3}
-    scenePath: Assets/00.Scenes/Game/Game Start Loading.unity
+    scenePath: Assets/00.Scenes/Game/Game/Game Start Loading.unity
   modelUIScene:
     sceneAsset: {fileID: 102900000, guid: a5aff987f2767994d844f02c5fb5ecd6, type: 3}
     scenePath: Assets/00.Scenes/Game/UI/ModelOverlayCameraScene.unity
@@ -2345,8 +2345,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 784191602}
   - {fileID: 1326831432}
+  - {fileID: 784191602}
   - {fileID: 588536578}
   m_Father: {fileID: 1751381620}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4298,10 +4298,10 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1751381620}
   - {fileID: 1557299802}
   - {fileID: 584468388}
   - {fileID: 556872186}
-  - {fileID: 1751381620}
   - {fileID: 685587447}
   - {fileID: 2692068592733485788}
   - {fileID: 470940455}
@@ -5271,7 +5271,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1751381615}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b368c155cae89e4a9999d69ffda402b, type: 3}
+  m_Script: {fileID: 11500000, guid: 86d90fcc095c4e5580c66f3e18f4b2cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   settingCanvas: {fileID: 1751381619}
@@ -5340,7 +5340,7 @@ MonoBehaviour:
     _value: 0
   sceneReference:
     sceneAsset: {fileID: 102900000, guid: e7baadc751a3c7842a48433dc69d5b99, type: 3}
-    scenePath: Assets/00.Scenes/Game/Game.unity
+    scenePath: Assets/00.Scenes/Game/Game/Game.unity
   stageData: {fileID: 11400000, guid: 560e17d057023cc44a0c687c04ed4de8, type: 2}
   isStageClear: 0
   isStageOver: 0

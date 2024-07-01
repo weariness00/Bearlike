@@ -286,11 +286,11 @@ namespace Player
             void UIActive(GameObject uiObj)
             {
                 var isActive = uiObj.activeSelf;
-                GameUIManager.ActiveUIAllDisable();
+                UIManager.ActiveUIAllDisable();
                 if (!isActive)
                 {
                     uiObj.SetActive(true);
-                    GameUIManager.AddActiveUI(uiObj);
+                    UIManager.AddActiveUI(uiObj);
                 }
                 
                 _uiKeyDownTimer = TickTimer.CreateFromTicks(Runner, 2);

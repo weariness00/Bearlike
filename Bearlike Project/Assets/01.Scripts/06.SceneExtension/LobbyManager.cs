@@ -1,9 +1,8 @@
-﻿using System;
-using Loading;
+﻿using Loading;
+using Manager;
 using Manager.FireBase;
 using Photon;
 using ProjectUpdate;
-using SceneExtension;
 using Script.Data;
 using TMPro;
 using UI;
@@ -11,7 +10,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace Manager
+namespace SceneExtension
 {
     [DefaultExecutionOrder((int)DefaultExecutionOrderType.LobbySceneStart)]
     public class LobbyManager : MonoBehaviour
@@ -44,6 +43,7 @@ namespace Manager
             Cursor.lockState = CursorLockMode.None;
             
             NetworkManager.Instance.LobbyConnect();
+            LoadingManager.Initialize();
             LoadingManager.StartAction += () => SceneManager.LoadScene(_lobbyLoading, LoadSceneMode.Additive);
             LoadingManager.EndAction += () =>
             {
@@ -68,9 +68,9 @@ namespace Manager
 
         private void Update()
         {
-            if (KeyManager.InputActionDown(KeyToAction.Esc))
+            if (UIManager.HasActiveUI() == false && Input.GetKeyDown(KeyCode.Escape))
             {
-                SettingCanvas.SetActive(SettingCanvasType.Setting);
+                SettingCanvas.Active(SettingCanvasType.All);
             }
         }
     }

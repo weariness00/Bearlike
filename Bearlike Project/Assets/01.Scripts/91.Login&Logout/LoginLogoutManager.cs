@@ -14,6 +14,7 @@ namespace Login_Logout
         public Button loginButton;
         public Button accountCreateButton;
         public Toggle idMemoryToggle;
+        [SerializeField] private Button exitButton; // 게임 종료 버튼
         
         #region Unity Event Function
 
@@ -24,6 +25,12 @@ namespace Login_Logout
             LogOut();
             accountCreateButton.onClick.AddListener(AccountCreate);
             loginButton.onClick.AddListener(Login);
+            
+#if UNITY_EDITOR
+            exitButton.onClick.AddListener(() => UnityEditor.EditorApplication.isPlaying = false);
+#else
+            exitButton.onClick.AddListener(Application.Quit);
+#endif
 
             FireBaseAuthManager.LoginState -= ChangeLoginState;
             FireBaseAuthManager.LoginState += ChangeLoginState;
