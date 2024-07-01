@@ -39,6 +39,7 @@ namespace Monster.Container
         [Header("VFX Properties")]
         [SerializeField] private VisualEffect tpEffect;
         [SerializeField] private VisualEffect darknessAttackEffect;
+        [SerializeField] private VisualEffect HandLazerEffect;
 
         [Header("Effect")] 
         [SerializeField] private Material bloodShieldMat;
@@ -102,6 +103,7 @@ namespace Monster.Container
         {
             base.Spawned();
             tpEffect.SendEvent("StopPlay");
+            HandLazerEffect.gameObject.SetActive(false);
 
             // TP Position 넣기
             // Transform rootTrans = transform.root.Find("TPPosition"); // pool에 들어가는 경우
@@ -202,8 +204,8 @@ namespace Monster.Container
                     new SequenceNode(
                         new ActionNode(PunchReady),
                         new ActionNode(FakePunching)
-                    ),
-                    new ActionNode(ClonePattern)
+                    )
+                    // new ActionNode(ClonePattern)
                 );
 
             var Smile = new SequenceNode(
@@ -246,13 +248,13 @@ namespace Monster.Container
             
             var AngryPattern = new SelectorNode(
                     true,
-                    // new ActionNode(HandLazer),
-                    // new ActionNode(ThrowBoom),
+                    new ActionNode(HandLazer),
+                    new ActionNode(ThrowBoom),
                     new ActionNode(slapAttack)
                 );
 
             var Angry = new SequenceNode(
-                    // new ActionNode(IsAngry),
+                    new ActionNode(IsAngry),
                     AngryPattern
                 );
             
@@ -260,8 +262,8 @@ namespace Monster.Container
 
             var Attack = new SelectorNode(
                     false,
-                    // Smile,
-                    // Cry,
+                    Smile,
+                    Cry,
                     Angry
                 );
             
@@ -269,8 +271,8 @@ namespace Monster.Container
 
             var AttackPattern = new SelectorNode(
                 true, 
-                // TP,
-                // Hide,
+                TP,
+                Hide,
                 Attack
             );
         
@@ -858,7 +860,6 @@ namespace Monster.Container
                 animator.PlayHandLazerAction();
                 _animationing = true;
                 
-                // VFX RPC실행 
                 // 데미지 판정 후 적용 RPC호출
             }
 
@@ -1141,7 +1142,6 @@ namespace Monster.Container
         }
         
         #endregion
-        
         #endregion
     }
 }
