@@ -48,6 +48,8 @@ namespace Aggro
 
         public AggroTarget FindAggroTarget(bool isCheckDis = true)
         {
+            if (!target) targetScore = -1;
+            
             foreach (var aggroTarget in _aggroList)
             {
                 var value = aggroTarget.CheckAggro();

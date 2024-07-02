@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Aggro;
 using Fusion;
 using GamePlay;
 using Manager;
@@ -22,6 +23,7 @@ namespace Weapon.Bullet
         [Networked] public NetworkId OwnerId { get; set; } // 이 총을 쏜 주인의 ID
         [Networked] public NetworkId OwnerGunId { get; set; }
         public StatusBase status;
+        private AggroTarget _aggroTarget;
 
         private IWeaponHitEffect _hitEffect;
         private IWeaponHitSound _hitSound;
@@ -58,6 +60,7 @@ namespace Weapon.Bullet
             if (ownerObj)
             {
                 _hitSound = ownerObj.GetComponent<IWeaponHitSound>();
+                _aggroTarget = ownerObj.GetComponent<AggroTarget>();
             }
 
             var ownerGunObj = Runner.FindObject(OwnerGunId);
@@ -78,6 +81,16 @@ namespace Weapon.Bullet
         private void OnTriggerEnter(Collider other)
         {
             if (!HasStateAuthority) return;
+
+            if (_aggroTarget)
+            {
+                var point = other.ClosestPoint(transform.position);
+                var hits = Physics.SphereCastAll(point, 6f, Vector3.zero, 0f);
+                foreach (var hit in hits)
+                {
+                    if(hit.collider.TryGetComponent(out AggroController aggroController) && aggroController.HasTarget() == false) aggroController.ChangeAggroTarget(_aggroTarget);
+                }
+            }
 
             StatusBase otherStatus = null;
             if (other.TryGetComponent(out ColliderStatus colliderStatus))
