@@ -13,7 +13,7 @@ namespace Monster.Container
     public class BoxJesterBoomObject : NetworkBehaviourEx
     {
         [Networked] public NetworkId OwnerId { get; set; }
-        public VisualEffect BoomEffect;
+        public ParticleSystem BoomEffect;
         
         public MonsterStatus status;
         
@@ -30,7 +30,8 @@ namespace Monster.Container
 
         public override void Spawned()
         {
-            Destroy(gameObject, 1f);
+            BoomEffect.Play();
+            Destroy(gameObject, 1.5f);
         }
         
         private void OnTriggerEnter(Collider other)

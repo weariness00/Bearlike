@@ -22,8 +22,6 @@ namespace Monster.Container
 
         [Header("Bomb")] [SerializeField] private GameObject bombPrefab;
         
-        public VisualEffect BoomEffect;
-        
         public Vector3 dir;
         private float speed;
         private float time;
@@ -53,7 +51,6 @@ namespace Monster.Container
                     var bomb = o.GetComponent<BoxJesterBoomObject>();
                 
                     bomb.OwnerId = OwnerId;
-                    bomb.BoomEffect = BoomEffect;
                 });
                 
                 Destroy(gameObject, 0f); // 터지는 이벤트 발생해야함
