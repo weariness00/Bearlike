@@ -101,7 +101,6 @@ namespace Photon
                 var data = new UserDataStruct
                 {
                     PlayerRef = player,
-                    Name = snapshot.ValueString(),
                 };
                 
                 UserData.Instance.InsertUserDataRPC(player, data);

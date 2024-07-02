@@ -15,16 +15,12 @@ namespace UI.Status
         public StatusBase statusBase;
         public TMP_Text hpText;
         public Image hpImage;
+        public TMP_Text nameText;
         
         [SerializeField]private Animation damageAnimation;
 
         private int _currentHp;
         private float _ratio;
-
-        private void Awake()
-        {
-            gameObject.SetActive(false);
-        }
 
         void Start()
         {
@@ -50,7 +46,7 @@ namespace UI.Status
                 StartCoroutine(LerpHealth(_ratio));
             }
         }
-        
+
         private IEnumerator LerpHealth(float targetHealth)
         {
             float startHealth = hpImage.fillAmount;
