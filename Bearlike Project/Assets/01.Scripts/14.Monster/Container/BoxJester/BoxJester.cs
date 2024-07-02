@@ -248,8 +248,8 @@ namespace Monster.Container
             
             var AngryPattern = new SelectorNode(
                     true,
-                    // new ActionNode(HandLazer),
-                    new ActionNode(ThrowBoom)
+                    new ActionNode(HandLazer)
+                    // new ActionNode(ThrowBoom),
                     // new ActionNode(slapAttack)
                 );
 
@@ -286,11 +286,38 @@ namespace Monster.Container
 
         #region Idle
 
+        IEnumerator RotationCoroutine()
+        {
+            var mindistance = float.MaxValue;
+            var playerPosition = new Vector3(0, 0, 0);
+            foreach (var player in _players)
+            {
+                var dis = math.distance(transform.position, player.transform.position);
+                if (dis < mindistance)
+                {
+                    mindistance = dis;
+                    playerPosition = player.transform.position;
+                }
+            }
+
+            float time = 0.0f;
+            
+            while (true)
+            {
+                time += 0.01f;
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(new Vector3(playerPosition.x, 0, playerPosition.z)), time);
+                yield return new WaitForSeconds(0.01f);
+                if(time > 1.0f)
+                    yield break;
+            }
+        }
+        
         private INode.NodeState IdleNode()
         {
             if (false == _animationing)
             {
                 animator.PlayIdle();
+                StartCoroutine(RotationCoroutine());
                 _animationing = true;
             }
 
@@ -861,6 +888,7 @@ namespace Monster.Container
                 _animationing = true;
                 
                 // 데미지 판정 후 적용 RPC호출
+                
             }
 
             if (false == animator.HandLazerTimerExpired)
