@@ -107,7 +107,7 @@ namespace Monster.Container
         
         public void PlaySmokingAttack()
         {
-            SmokingTimer = TickTimer.CreateFromSeconds(Runner, 3);    // 상수화 필요
+            SmokingTimer = TickTimer.CreateFromSeconds(Runner, 2);    // 상수화 필요
         }
         
         public void PlaySmokeEndAttack()

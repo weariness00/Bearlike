@@ -33,8 +33,10 @@ namespace Monster.Container
         [SerializeField] private GameObject[] hat;
         [SerializeField] private Transform[] hatPlaces;
 
-        [Header("Boom")] 
+        [Header("AttackObject")] 
         [SerializeField] private GameObject boom;
+        [SerializeField] private GameObject lazer;
+        [SerializeField] private GameObject breath;
         
         [Header("VFX Properties")]
         [SerializeField] private VisualEffect tpEffect;
@@ -103,6 +105,7 @@ namespace Monster.Container
         {
             base.Spawned();
             tpEffect.SendEvent("StopPlay");
+            darknessAttackEffect.SendEvent("StopPlay");
             HandLazerEffect.gameObject.SetActive(false);
 
             // TP Position 넣기
@@ -272,8 +275,8 @@ namespace Monster.Container
             var AttackPattern = new SelectorNode(
                 true, 
                 // TP,
-                // Hide,
-                Attack
+                Hide
+                // Attack
             );
         
             var loop = new SequenceNode(
@@ -368,7 +371,6 @@ namespace Monster.Container
             if (false == _animationing)
             {
                 animator.PlaySmokeStartAttack();
-                // darknessAttackEffect.SendEvent("OnPlay");
                 _animationing = true;
             }
 
@@ -378,21 +380,29 @@ namespace Monster.Container
             _animationing = false;
             DebugManager.Log($"Start Smoke Attack");
             
-            // 범위 탐색으로 공격 실행
-            
-            
             return INode.NodeState.Success;
         }
 
         private INode.NodeState SmokingAttack()
         {
-            // VFX와 동시에 smoke Attack이 실행 되어야함
             if (false == _animationing)
             {
                 animator.PlaySmokingAttack();
-                // darknessAttackEffect.SendEvent("OnPlay");
+                darknessAttackEffect.SendEvent("OnPlay");
                 _animationing = true;
+                
+                //==> 그냥 파티클에서 사용한 메쉬를 소환해서 스크립트 하나를 만들자
+                Runner.SpawnAsync(breath, transform.position, transform.rotation, null,
+                    (runner, o) =>
+                    {
+                        var h = o.GetComponent<BoxJesterAttackObject>();
+                        h.OwnerId = OwnerId;
+                        h.damage = 2;
+                    });
             }
+            // 거리 계산 및 데미지 측정 필요
+            // 각도와 거리 계산 필요
+            
 
             if (false == animator.SmokingTimerExpired)
                 return INode.NodeState.Running;
@@ -408,7 +418,6 @@ namespace Monster.Container
             if (false == _animationing)
             {
                 animator.PlaySmokeEndAttack();
-                // darknessAttackEffect.SendEvent("OnPlay");
                 _animationing = true;
             }
 
@@ -417,9 +426,6 @@ namespace Monster.Container
 
             _animationing = false;
             DebugManager.Log($"End Smoke Attack");
-            
-            // 범위 탐색으로 공격 실행
-            
             
             return INode.NodeState.Success;
         }
@@ -887,8 +893,13 @@ namespace Monster.Container
                 animator.PlayHandLazerAction();
                 _animationing = true;
                 
-                // 데미지 판정 후 적용 RPC호출
-                
+                Runner.SpawnAsync(lazer, transform.position, transform.rotation, null,
+                    (runner, o) =>
+                    {
+                        var h = o.GetComponent<BoxJesterAttackObject>();
+                        h.OwnerId = OwnerId;
+                        h.damage = 1;
+                    });
             }
 
             if (false == animator.HandLazerTimerExpired)
