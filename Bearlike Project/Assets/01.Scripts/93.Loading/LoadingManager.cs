@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Manager;
 using Status;
 using UnityEngine;
@@ -12,6 +13,7 @@ namespace Loading
         [HideInInspector] public StatusValue<int> refValue;
         [SerializeField] private int _waitCount; // 현재 로딩되어야 할 카운트
         [SerializeField] private StatusValue<int> _downByte = new StatusValue<int>(); // 로딩에 필요한게 용량 부분인지
+        [SerializeField] private HashSet<string> endWaitStringSet; // loading이 완료된 것에 이름을 담아주는 Set
 
         // 로딩 시작시 호출
         // _waitCount = 0에서 1로 바뀌면 호출됨
@@ -97,5 +99,8 @@ namespace Loading
             
             if(processName != null) LoadingProcessSuccess?.Invoke(processName);
         }
+
+        public static bool HasWaitName(string waitName) => Instance.endWaitStringSet.Contains(waitName);
+        public static void EndWaitName(string waitName) => Instance.endWaitStringSet.Add(waitName);
     }
 }

@@ -29,6 +29,7 @@ namespace Data
     public class UserData : NetworkSingleton<UserData>
     {
         [Networked, Capacity(3)] public NetworkDictionary<PlayerRef, UserDataStruct> UserDictionary { get; }
+        [Networked] public NetworkBool IsSpawnPlayer { get; private set; }
 
         public Action AfterSpawnedAction;
         public Action<PlayerRef> UserJoinAction;
@@ -163,6 +164,8 @@ namespace Data
 
                     Runner.SetPlayerObject(playerRef, spawnObject);
                 }
+
+                IsSpawnPlayer = true;
             }
 
             return true;

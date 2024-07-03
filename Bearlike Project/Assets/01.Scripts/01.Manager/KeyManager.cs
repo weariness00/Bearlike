@@ -22,6 +22,7 @@ namespace Manager
         ItemInventory,
         SkillInventory,
         SkillSelect,
+        GameProgress,
         Interact,
         
         Attack,

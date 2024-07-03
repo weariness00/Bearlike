@@ -4,6 +4,7 @@ using Data;
 using Fusion;
 using GamePlay.Stage;
 using GamePlay.StageLevel;
+using GamePlay.UI;
 using Loading;
 using Manager;
 using Photon;

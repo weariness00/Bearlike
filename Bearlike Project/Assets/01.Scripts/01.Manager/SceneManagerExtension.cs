@@ -9,6 +9,7 @@ namespace Manager
     {
         public List<GameObject> disableObjectList;
         public List<GameObject> activeFalseObjectList;
+        public List<GameObject> activeTrueObjectList;
         public List<GameObject> dontDestroyObjectList;
         
         public virtual void Awake()
@@ -26,6 +27,11 @@ namespace Manager
             foreach (var o in activeFalseObjectList)
             {
                 o.SetActive(false);
+            }
+            
+            foreach (var o in activeTrueObjectList)
+            {
+                o.SetActive(true);
             }
         }
     }

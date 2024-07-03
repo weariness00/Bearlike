@@ -30,7 +30,7 @@ namespace SceneExtension
             logoutButton.onClick.AddListener(() =>
             {
                 FireBaseAuthManager.LogOut();
-                SceneManager.LoadScene(SceneList.GetScene("Initialize"));
+                SceneManager.LoadScene(SceneList.GetScene("Login"));
             });
         }
 

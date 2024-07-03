@@ -4,6 +4,7 @@ using Data;
 using Fusion;
 using Fusion.Addons.SimpleKCC;
 using GamePlay;
+using GamePlay.UI;
 using Item;
 using Manager;
 using Photon;
@@ -22,7 +23,7 @@ using Weapon.Gun;
 namespace Player
 {
     [RequireComponent(typeof(PlayerCameraController), typeof(PlayerStatus))]
-    public class PlayerController : NetworkBehaviourEx
+    public class PlayerController : NetworkBehaviourEx, IAfterApplyDamage
     {
         #region Static
 
@@ -58,6 +59,7 @@ namespace Player
         public PlayerEXP levelCanvas;
         public BuffCanvas buffCanvas;
         public GoodsCanvas goodsCanvas;
+        public GameProgressCanvas progressCanvas;
         public AggroTarget aggroTarget;
         
         public Animator animator;
@@ -70,6 +72,7 @@ namespace Player
         [Tooltip("마우스 움직임에 따라 회전할 오브젝트")] public GameObject mouseRotateObject;
 
         public Action<GameObject> MonsterKillAction;
+        public Action<int> AfterApplyDamageAction { get; set; }
 
         [Networked] public float W { get; set; } = 1f;
         private TickTimer _uiKeyDownTimer;
@@ -164,6 +167,9 @@ namespace Player
                 levelCanvas.gameObject.SetActive(true);
                 buffCanvas.gameObject.SetActive(true);
                 goodsCanvas.gameObject.SetActive(true);
+
+                progressCanvas = FindObjectOfType<GameProgressCanvas>();
+                
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
             }
             else
@@ -311,6 +317,10 @@ namespace Player
             else if (data.SkillSelect)
             {
                 UIActive(skillSelectUI.canvas.gameObject);
+            }
+            else if (data.GameProgress)
+            {
+                UIActive(progressCanvas.gameObject);
             }
         }
         

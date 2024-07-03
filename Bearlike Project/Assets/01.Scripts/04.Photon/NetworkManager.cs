@@ -364,6 +364,8 @@ namespace Photon
                 playerInputData.SkillSelect = trueValue;
             if (KeyManager.InputAction(KeyToAction.Interact) || KeyManager.InputActionDown(KeyToAction.Interact))
                 playerInputData.Interact = trueValue;
+            if (KeyManager.InputActionDown(KeyToAction.GameProgress))
+                playerInputData.GameProgress = trueValue;
             
             playerInputData.MouseAxis.x = Input.GetAxis("Mouse X");
             playerInputData.MouseAxis.y = Input.GetAxis("Mouse Y");
