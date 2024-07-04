@@ -1,4 +1,7 @@
-﻿using Fusion;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using Fusion;
 using Photon;
 using Status;
 using UI.Status;
@@ -14,6 +17,9 @@ namespace Monster.Container
 
         public float damage;
         
+        private HashSet<GameObject> damagePlayerSet = new HashSet<GameObject>(); // 이미 대미지를 입은 플레이어인지
+        private Dictionary<GameObject, Coroutine> damageCoroutines = new Dictionary<GameObject, Coroutine>();
+        
         private void Awake()
         {
             status = gameObject.GetOrAddComponent<MonsterStatus>();
@@ -27,21 +33,62 @@ namespace Monster.Container
             // 지속 데미지임
             Destroy(gameObject, 2.0f);
         }
+
+        IEnumerator ContinuousDamageCoroutine(StatusBase otherStatus)
+        {
+            while (true)
+            {
+                status.AddAdditionalStatus(otherStatus);
+                        
+                // otherStatus.ApplyDamageRPC(status.CalDamage(out bool isCritical),
+                //     isCritical ? DamageTextType.Critical : DamageTextType.Normal, OwnerId);
+                otherStatus.ApplyDamageRPC(1, DamageTextType.Normal, OwnerId);
+                        
+                status.RemoveAdditionalStatus(otherStatus);
+                
+                yield return new WaitForSeconds(0.2f);
+            }
+        }
         
         private void OnTriggerEnter(Collider other)
         {
             StatusBase otherStatus = null;
 
-            if (false == other.gameObject.CompareTag("Monster"))
+            if (true == other.gameObject.CompareTag("Player"))
             {
                 if (other.gameObject.TryGetComponent(out otherStatus) ||
                     other.transform.root.gameObject.TryGetComponent(out otherStatus))
                 {
-                    status.AddAdditionalStatus(otherStatus);
-                    // otherStatus.ApplyDamageRPC(status.CalDamage(out bool isCritical),
-                    //     isCritical ? DamageTextType.Critical : DamageTextType.Normal, OwnerId);
-                    otherStatus.ApplyDamageRPC(1, DamageTextType.Normal, OwnerId); 
-                    status.RemoveAdditionalStatus(otherStatus);
+                    if (damagePlayerSet.Contains(otherStatus.gameObject) == false)
+                    {
+                        Coroutine coroutine = StartCoroutine(ContinuousDamageCoroutine(otherStatus));
+                        damageCoroutines[otherStatus.gameObject] = coroutine;
+                        
+                        damagePlayerSet.Add(otherStatus.gameObject);
+                    }
+                }
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            StatusBase otherStatus = null;
+            
+            if (true == other.gameObject.CompareTag("Player"))
+            {
+                if (other.gameObject.TryGetComponent(out otherStatus) ||
+                    other.transform.root.gameObject.TryGetComponent(out otherStatus))
+                {
+                    if (damagePlayerSet.Contains(otherStatus.gameObject) == true)
+                    {
+                        if (damageCoroutines.TryGetValue(otherStatus.gameObject, out Coroutine coroutine))
+                        {
+                            StopCoroutine(coroutine);
+                            damageCoroutines.Remove(otherStatus.gameObject);
+                        }
+                        
+                        damagePlayerSet.Remove(otherStatus.gameObject);
+                    }
                 }
             }
         }

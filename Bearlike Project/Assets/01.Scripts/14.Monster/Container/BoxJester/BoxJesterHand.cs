@@ -22,7 +22,7 @@ namespace Monster.Container
         {
             StatusBase otherStatus = null;
 
-            if (false == other.gameObject.CompareTag("Monster"))//
+            if (true == other.gameObject.CompareTag("Player"))
             {
                 if (other.gameObject.TryGetComponent(out otherStatus) ||
                     other.transform.root.gameObject.TryGetComponent(out otherStatus))

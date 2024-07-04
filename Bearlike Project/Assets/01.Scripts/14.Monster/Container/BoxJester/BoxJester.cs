@@ -188,8 +188,8 @@ namespace Monster.Container
                         new ActionNode(StartSmokeAttack),
                         new ActionNode(SmokingAttack),
                         new ActionNode(EndSmokeAttack)
-                    ),
-                    new ActionNode(ChangeMaskAction)
+                    )
+                    // new ActionNode(ChangeMaskAction)
                 );  
 
             #endregion
@@ -275,8 +275,8 @@ namespace Monster.Container
             var AttackPattern = new SelectorNode(
                 true, 
                 // TP,
-                Hide
-                // Attack
+                Hide,
+                Attack
             );
         
             var loop = new SequenceNode(
