@@ -41,6 +41,8 @@ namespace Skill
         {
             skillList.Add(skill);
             skill.SetCoolTimeReductionRate(coolTimeReductionRate);
+            
+            EventBusManager.Publish(EventBusType.AddSkill, skill);
         }
 
         public SkillBase GetSkillFromId(int id)
