@@ -645,15 +645,18 @@ namespace Monster.Container
                 _animationing = true;
             }
 
-            if (false == animator.PunchTimerExpired)
+            if (false == animator.CloneTimerExpired)
                 return INode.NodeState.Running;
 
             _animationing = false;
             DebugManager.Log($"Clone Pattern");
+
+            int randomPlace = Random.Range(0, tpPlaces.Length);
             
+            while(randomPlace == _tpPlaceIndex)
+                randomPlace = Random.Range(0, tpPlaces.Length);
             
-            // 객체 소환
-            Runner.SpawnAsync(cloneObject, transform.position, transform.rotation, null,
+            Runner.SpawnAsync(cloneObject, tpPlaces[randomPlace].position, transform.rotation, null,
                 (runner, o) =>
                 {
                     var h = o.GetComponent<BoxJesterClone>();
