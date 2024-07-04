@@ -1,25 +1,22 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using BehaviorTree.Base;
 using DG.Tweening;
 using Fusion;
-using Player;
+using Manager;
 using Status;
-using UI.Status;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.VFX;
-using DebugManager = Manager.DebugManager;
 using Random = UnityEngine.Random;
 
 namespace Monster.Container
 {
-    public class BoxJester : MonsterBase
+    public class BoxJesterClone : MonsterBase
     {
-        #region Property
-        
+        #region Properties
+
         [Header("Animator")]
         [SerializeField] private BoxJesterAnimator animator;
         
@@ -29,21 +26,12 @@ namespace Monster.Container
         [Header("HandAttack Properties")] 
         [SerializeField] private GameObject[] hands;
         
-        [Header("Hat")]
-        [SerializeField] private GameObject[] hat;
-        [SerializeField] private Transform[] hatPlaces;
-
         [Header("AttackObject")] 
         [SerializeField] private GameObject boom;
-        [SerializeField] private GameObject lazer;
-        [SerializeField] private GameObject breath;
-        [SerializeField] private GameObject cloneObject;
         
         [Header("VFX Properties")]
         [SerializeField] private VisualEffect tpEffect;
-        [SerializeField] private VisualEffect darknessAttackEffect;
-        [SerializeField] private VisualEffect HandLazerEffect;
-
+        
         [Header("Effect")] 
         [SerializeField] private Material bloodShieldMat;
         
@@ -51,7 +39,6 @@ namespace Monster.Container
         
         [Networked] public NetworkId OwnerId { get; set; }
         
-        // public SoundBox soundBox;
         private BehaviorTreeRunner _behaviorTreeRunner;
         private GameObject[] _players;
         private GameObject[] _masks;
@@ -69,13 +56,9 @@ namespace Monster.Container
         private int _shieldType;
         
         private bool _animationing = false;
-        
-        public int hatCount;
-        private readonly int HATNUM = 4;
-        
+
         #endregion
-
-
+        
         #region Unity Event Function
 
         void Awake()
@@ -106,8 +89,6 @@ namespace Monster.Container
         {
             base.Spawned();
             tpEffect.SendEvent("StopPlay");
-            darknessAttackEffect.SendEvent("StopPlay");
-            HandLazerEffect.gameObject.SetActive(false);
 
             // TP Position 넣기
             // Transform rootTrans = transform.root.Find("TPPosition"); // pool에 들어가는 경우
@@ -127,26 +108,6 @@ namespace Monster.Container
             {
                 DebugManager.LogError($"BoxJester의 TPPosition이 NULL입니다.");
             }
-
-            
-            // Hat Position 넣기
-            // rootTrans = transform.root.Find("HatPosition"); // pool에 들어가는 경우
-            rootTrans = GameObject.Find("Boss Stage").transform.Find("HatPosition"); // 안들어가는 경우
-
-            if (rootTrans != null)
-            {
-                hatPlaces = new Transform[rootTrans.childCount];
-
-                for (int i = 0; i < rootTrans.childCount; ++i)
-                {
-                    DebugManager.Log($"HatPlaces[i] : {hatPlaces[i]}, rootTrans.GetChild(i) : {rootTrans.GetChild(i)}");
-                    hatPlaces[i] = rootTrans.GetChild(i);
-                }
-            }
-            else
-            {
-                DebugManager.LogError($"BoxJester의 TPPosition이 NULL입니다.");
-            }
             
             // InGame Player 대입
             List<GameObject> playerObjects = new List<GameObject>();
@@ -157,12 +118,12 @@ namespace Monster.Container
             _players = playerObjects.ToArray();
 
             OwnerId = gameObject.GetComponent<NetworkObject>().Id;
+            
+            Destroy(gameObject, 10.0f);
         }
         
-        
         #endregion
-
-        #region BT Function
+        
         
         public override INode InitBT()
         {
@@ -175,23 +136,7 @@ namespace Monster.Container
 
             #region Hide
 
-            // var ChangeMask =
-            //     new SelectorNode(
-            //         true,
-            //         new ActionNode(ChangeSmile),
-            //         new ActionNode(ChangeCry),
-            //         new ActionNode(ChangeAngry)
-            //     );
-            
-            var Hide = new SelectorNode(
-                    true, 
-                    new SequenceNode(
-                        new ActionNode(StartSmokeAttack),
-                        new ActionNode(SmokingAttack),
-                        new ActionNode(EndSmokeAttack)
-                    ),
-                    new ActionNode(ChangeMaskAction)
-                );  
+            var Hide = new ActionNode(ChangeMaskAction);
 
             #endregion
 
@@ -201,15 +146,14 @@ namespace Monster.Container
 
             var SmilePattern = new SelectorNode(
                     true,
-                    // new SequenceNode(
-                    //     new ActionNode(PunchReady),
-                    //         new ActionNode(Punching)
-                    // ),
-                    // new SequenceNode(
-                    //     new ActionNode(PunchReady),
-                    //     new ActionNode(FakePunching)
-                    // ),
-                    new ActionNode(ClonePattern)
+                    new SequenceNode(
+                        new ActionNode(PunchReady),
+                            new ActionNode(Punching)
+                    ),
+                    new SequenceNode(
+                        new ActionNode(PunchReady),
+                        new ActionNode(FakePunching)
+                    )
                 );
 
             var Smile = new SequenceNode(
@@ -230,14 +174,6 @@ namespace Monster.Container
                     new SequenceNode(
                         new ActionNode(ReverseCryingShield),
                         new ActionNode(ShieldOffAction)
-                    ),
-                    new SequenceNode(
-                    new ActionNode(BreakHat),
-                        new ActionNode(CheckHatCount)
-                    ),
-                    new SequenceNode(
-                    new ActionNode(BreakReverseHat),
-                    new ActionNode(CheckReverseHatCount)
                     )
                 );
 
@@ -252,7 +188,6 @@ namespace Monster.Container
             
             var AngryPattern = new SelectorNode(
                     true,
-                    new ActionNode(HandLazer),
                     new ActionNode(ThrowBoom),
                     new ActionNode(slapAttack)
                 );
@@ -266,17 +201,17 @@ namespace Monster.Container
 
             var Attack = new SelectorNode(
                     false,
-                    Smile
-                    // Cry,
-                    // Angry
+                    Smile,
+                    Cry,
+                    Angry
                 );
             
             #endregion
 
             var AttackPattern = new SelectorNode(
                 true, 
-                // TP,
-                // Hide,
+                TP,
+                Hide,
                 Attack
             );
         
@@ -287,7 +222,7 @@ namespace Monster.Container
 
             return loop;
         }
-
+        
         #region Idle
 
         IEnumerator RotationCoroutine()
@@ -367,66 +302,6 @@ namespace Monster.Container
 
         #region Hide
         
-        private INode.NodeState StartSmokeAttack()
-        {
-            if (false == _animationing)
-            {
-                animator.PlaySmokeStartAttack();
-                _animationing = true;
-            }
-
-            if (false == animator.SmokeStartTimerExpired)
-                return INode.NodeState.Running;
-
-            _animationing = false;
-            DebugManager.Log($"Start Smoke Attack");
-            
-            return INode.NodeState.Success;
-        }
-
-        private INode.NodeState SmokingAttack()
-        {
-            if (false == _animationing)
-            {
-                animator.PlaySmokingAttack();
-                darknessAttackEffect.SendEvent("OnPlay");
-                _animationing = true;
-                
-                Runner.SpawnAsync(breath, transform.position, transform.rotation, null,
-                    (runner, o) =>
-                    {
-                        var h = o.GetComponent<BoxJesterAttackObject>();
-                        h.OwnerId = OwnerId;
-                        h.damage = 2;
-                    });
-            }
-
-            if (false == animator.SmokingTimerExpired)
-                return INode.NodeState.Running;
-
-            _animationing = false;
-            DebugManager.Log($"Smoking");
-            
-            return INode.NodeState.Success;
-        }
-
-        private INode.NodeState EndSmokeAttack()
-        {
-            if (false == _animationing)
-            {
-                animator.PlaySmokeEndAttack();
-                _animationing = true;
-            }
-
-            if (false == animator.SmokeEndTimerExpired)
-                return INode.NodeState.Running;
-
-            _animationing = false;
-            DebugManager.Log($"End Smoke Attack");
-            
-            return INode.NodeState.Success;
-        }
-
         #region Change Mask
 
         private INode.NodeState ChangeMaskAction()
@@ -459,61 +334,6 @@ namespace Monster.Container
         {
             yield return new WaitForSeconds(0.2f);
             ChangeMaskRPC(maskType);
-        }
-        
-        private INode.NodeState ChangeSmile()
-        {
-            if (false == _animationing)
-            {
-                animator.PlayMaskChange();
-                _animationing = true;
-                StartCoroutine(ChangeMaskCoroutine(MaskType.Smile));
-            }
-
-            if (false == animator.MaskChangeTimerExpired)
-                return INode.NodeState.Running;
-
-            _animationing = false;
-            
-            DebugManager.Log($"Change Smile");
-            
-            return INode.NodeState.Success;
-        }
-        
-        private INode.NodeState ChangeCry()
-        {
-            if (false == _animationing)
-            {
-                animator.PlayMaskChange();
-                _animationing = true;
-                StartCoroutine(ChangeMaskCoroutine(MaskType.Cry));
-            }
-
-            if (false == animator.MaskChangeTimerExpired)
-                return INode.NodeState.Running;
-
-            _animationing = false;
-            DebugManager.Log($"Change Cry");
-            
-            return INode.NodeState.Success;
-        }
-        
-        private INode.NodeState ChangeAngry()
-        {
-            if (false == _animationing)
-            {
-                animator.PlayMaskChange();
-                _animationing = true;
-                StartCoroutine(ChangeMaskCoroutine(MaskType.Angry));
-            }
-
-            if (false == animator.MaskChangeTimerExpired)
-                return INode.NodeState.Running;
-
-            _animationing = false;
-            DebugManager.Log($"Change Angry");
-            
-            return INode.NodeState.Success;
         }
 
         #endregion
@@ -637,31 +457,6 @@ namespace Monster.Container
             return INode.NodeState.Success;
         }
 
-        private INode.NodeState ClonePattern()
-        {
-            if (false == _animationing)
-            {
-                animator.PlayCloneAction();
-                _animationing = true;
-            }
-
-            if (false == animator.PunchTimerExpired)
-                return INode.NodeState.Running;
-
-            _animationing = false;
-            DebugManager.Log($"Clone Pattern");
-            
-            
-            // 객체 소환
-            Runner.SpawnAsync(cloneObject, transform.position, transform.rotation, null,
-                (runner, o) =>
-                {
-                    var h = o.GetComponent<BoxJesterClone>();
-                });
-            
-            return INode.NodeState.Success;
-        }
-
         #endregion
         
         #region Cry
@@ -767,163 +562,10 @@ namespace Monster.Container
         }
 
         #endregion
-
-        #region Hat
-
-        private INode.NodeState BreakHat()
-        {
-            if (_animationing == false)
-            {
-                hatCount = HATNUM;
-                animator.PlayHatAction();
-                _animationing = true;
-
-                List<int> indexList = new List<int>();
-                
-                for (;indexList.Count < HATNUM;)
-                {
-                    var index = Random.Range(0, hatPlaces.Length);
-
-                    if (false == indexList.Contains(index))
-                        indexList.Add(index);
-                }
-
-                foreach (var index in indexList)
-                {
-                    Runner.SpawnAsync(hat[0].gameObject, hatPlaces[index].position, transform.rotation, null,
-                        (runner, o) =>
-                        {
-                            var h = o.GetComponent<BoxJesterHat>();
-                            h.OwnerId = OwnerId;
-                            h.hatType = 0;
-                        });
-                }
-                
-                // foreach (var hatplace in hatPlaces)
-                // {
-                //     Runner.SpawnAsync(hat[0].gameObject, hatplace.position, transform.rotation, null,
-                //         (runner, o) =>
-                //         {
-                //             var h = o.GetComponent<BoxJesterHat>();
-                //             h.OwnerId = OwnerId;
-                //             h.hatType = 0;
-                //         });
-                // }
-            }
-            if (false == animator.HatTimerExpired)
-                return INode.NodeState.Running;
-
-            _animationing = false;
-            DebugManager.Log($"Break Hat");
-            // 모자 소환 후 모자를 정속성으로 생성
-            return INode.NodeState.Success;
-        }
-        
-        private INode.NodeState CheckHatCount()
-        {
-            DebugManager.Log($"hatCount : {hatCount}");
-            if (hatCount > 0)
-                status.ApplyHealRPC(10 * hatCount, OwnerId);   // 힐량은 밸런스 측정해서 하자
-            
-            return INode.NodeState.Success;
-        }
-        
-        private INode.NodeState BreakReverseHat()
-        {            
-            if (_animationing == false)
-            {
-                hatCount = HATNUM;
-                animator.PlayHatAction();
-                _animationing = true;
-                
-                List<int> indexList = new List<int>();
-                
-                for (;indexList.Count < HATNUM;)
-                {
-                    var index = Random.Range(0, hatPlaces.Length);
-
-                    if (false == indexList.Contains(index))
-                        indexList.Add(index);
-                }
-
-                foreach (var index in indexList)
-                {
-                    Runner.SpawnAsync(hat[1].gameObject, hatPlaces[index].position, transform.rotation, null,
-                        (runner, o) =>
-                        {
-                            var h = o.GetComponent<BoxJesterHat>();
-                            h.OwnerId = OwnerId;
-                            h.hatType = 1;
-                        });
-                }
-                
-                // foreach (var hatplace in hatPlaces)
-                // {
-                //     Runner.SpawnAsync(hat[1].gameObject, hatplace.position, transform.rotation, null,
-                //         (runner, o) =>
-                //         {
-                //             var h = o.GetComponent<BoxJesterHat>();
-                //             h.OwnerId = OwnerId;
-                //             h.hatType = 1;
-                //         });
-                // }
-            }
-            if (false == animator.HatTimerExpired)
-                return INode.NodeState.Running;
-
-            _animationing = false;
-            
-            DebugManager.Log($"Non Break Hat");
-            // 모자 소환 후 모자를 역속성으로 생성
-            return INode.NodeState.Success;
-        }
-        
-        private INode.NodeState CheckReverseHatCount()
-        {
-            DebugManager.Log($"hatCount : {hatCount}");
-            
-            if (hatCount < HATNUM)
-            {
-                foreach (var player in _players)
-                {
-                    player.GetComponent<PlayerStatus>().ApplyDamageRPC(status.damage * hatCount, DamageTextType.Normal, OwnerId);
-                }
-            }
-            
-            return INode.NodeState.Success;
-        }
-
-        #endregion
         
         #endregion
         
         #region Angry
-
-        private INode.NodeState HandLazer()
-        {
-            if (false == _animationing)
-            {
-                animator.PlayHandLazerAction();
-                _animationing = true;
-                
-                //TODO : 준비동작에서는 데미지가 안 들어가도록 수정해야함
-                Runner.SpawnAsync(lazer, transform.position, transform.rotation, null,
-                    (runner, o) =>
-                    {
-                        var h = o.GetComponent<BoxJesterAttackObject>();
-                        h.OwnerId = OwnerId;
-                        h.damage = 1;
-                    });
-            }
-
-            if (false == animator.HandLazerTimerExpired)
-                return INode.NodeState.Running;
-
-            _animationing = false;
-            DebugManager.Log($"Hand Lazer");
-            
-            return INode.NodeState.Success;
-        }
         
         private INode.NodeState ThrowBoom()
         {
@@ -1014,8 +656,6 @@ namespace Monster.Container
             return INode.NodeState.Failure;
         }
 
-        #endregion
-        
         #endregion
         
         #endregion
@@ -1142,12 +782,6 @@ namespace Monster.Container
         }
         
         #endregion
-        
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        public void DestroyHatRPC()
-        {
-            hatCount -= 1;
-        }
 
         #region Slap
 

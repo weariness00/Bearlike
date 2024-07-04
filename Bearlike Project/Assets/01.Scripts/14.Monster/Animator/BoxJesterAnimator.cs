@@ -21,7 +21,6 @@ namespace Monster.Container
         [SerializeField] private AnimationClip ReverseShieldClip;
         [SerializeField] private AnimationClip handLazerClip;
         [SerializeField] private AnimationClip throwBoomClip;
-        // [SerializeField] private AnimationClip slapClip;
         
         private static readonly int tIdle = Animator.StringToHash("tIdle");
         private static readonly int tAttack = Animator.StringToHash("tAttack");
@@ -43,7 +42,7 @@ namespace Monster.Container
         private TickTimer MaskChangeTimer { get; set; }
         private TickTimer PunchReadyTimer { get; set; }
         private TickTimer PunchTimer { get; set; }
-        // private TickTimer CloneTimer { get; set; }
+        private TickTimer CloneTimer { get; set; }
         private TickTimer ShieldTimer { get; set; }
         private TickTimer HatTimer { get; set; }
         private TickTimer HandLazerTimer { get; set; }
@@ -58,7 +57,7 @@ namespace Monster.Container
         public bool MaskChangeTimerExpired => MaskChangeTimer.Expired(Runner);
         public bool PunchReadyTimerExpired => PunchReadyTimer.Expired(Runner);
         public bool PunchTimerExpired => PunchTimer.Expired(Runner);
-        // public bool CloneTimerExpired => CloneTimer.Expired(Runner);
+        public bool CloneTimerExpired => CloneTimer.Expired(Runner);
         public bool ShieldTimerExpired => ShieldTimer.Expired(Runner);
         public bool HatTimerExpired => HatTimer.Expired(Runner);
         public bool HandLazerTimerExpired => HandLazerTimer.Expired(Runner);
@@ -179,6 +178,12 @@ namespace Monster.Container
         {
             SlapTimer = TickTimer.CreateFromSeconds(Runner, 4.5f);
             // networkAnimator.SetTrigger(tSlap);
+        }
+
+        public void PlayCloneAction()
+        {
+            CloneTimer = TickTimer.CreateFromSeconds(Runner, tpClip.length);
+            networkAnimator.SetTrigger(tTeleport);
         }
     }
 }
