@@ -244,13 +244,13 @@ namespace Monster.Container
             
             var AngryPattern = new SelectorNode(
                     true,
-                    // new ActionNode(HandLazer)
-                    new ActionNode(ThrowBoom)
-                    // new ActionNode(slapAttack)
+                    new ActionNode(HandLazer),
+                    new ActionNode(ThrowBoom),
+                    new ActionNode(slapAttack)
                 );
 
             var Angry = new SequenceNode(
-                    // new ActionNode(IsAngry),
+                    new ActionNode(IsAngry),
                     AngryPattern
                 );
             
@@ -258,8 +258,8 @@ namespace Monster.Container
 
             var Attack = new SelectorNode(
                     false,
-                    // Smile,
-                    // Cry,
+                    Smile,
+                    Cry,
                     Angry
                 );
             
@@ -267,8 +267,8 @@ namespace Monster.Container
 
             var AttackPattern = new SelectorNode(
                 true, 
-                // TP,
-                // Hide,
+                TP,
+                Hide,
                 Attack
             );
         
@@ -451,61 +451,6 @@ namespace Monster.Container
         {
             yield return new WaitForSeconds(0.2f);
             ChangeMaskRPC(maskType);
-        }
-        
-        private INode.NodeState ChangeSmile()
-        {
-            if (false == _animationing)
-            {
-                animator.PlayMaskChange();
-                _animationing = true;
-                StartCoroutine(ChangeMaskCoroutine(MaskType.Smile));
-            }
-
-            if (false == animator.MaskChangeTimerExpired)
-                return INode.NodeState.Running;
-
-            _animationing = false;
-            
-            DebugManager.Log($"Change Smile");
-            
-            return INode.NodeState.Success;
-        }
-        
-        private INode.NodeState ChangeCry()
-        {
-            if (false == _animationing)
-            {
-                animator.PlayMaskChange();
-                _animationing = true;
-                StartCoroutine(ChangeMaskCoroutine(MaskType.Cry));
-            }
-
-            if (false == animator.MaskChangeTimerExpired)
-                return INode.NodeState.Running;
-
-            _animationing = false;
-            DebugManager.Log($"Change Cry");
-            
-            return INode.NodeState.Success;
-        }
-        
-        private INode.NodeState ChangeAngry()
-        {
-            if (false == _animationing)
-            {
-                animator.PlayMaskChange();
-                _animationing = true;
-                StartCoroutine(ChangeMaskCoroutine(MaskType.Angry));
-            }
-
-            if (false == animator.MaskChangeTimerExpired)
-                return INode.NodeState.Running;
-
-            _animationing = false;
-            DebugManager.Log($"Change Angry");
-            
-            return INode.NodeState.Success;
         }
 
         #endregion

@@ -90,10 +90,7 @@ namespace Monster.Container
             base.Spawned();
             tpEffect.SendEvent("StopPlay");
 
-            // TODO : Clone은 본체랑 다른 TP위치를 가지고 있어야 한다.
-            // TP Position 넣기
-            // Transform rootTrans = transform.root.Find("TPPosition"); // pool에 들어가는 경우
-            Transform rootTrans = GameObject.Find("Boss Stage").transform.Find("TPPosition"); // 안들어가는 경우
+            Transform rootTrans = GameObject.Find("Boss Stage").transform.Find("CloneTPPosition"); // 안들어가는 경우
 
             if (rootTrans != null)
             {
