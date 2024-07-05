@@ -21,6 +21,7 @@ namespace Monster.Container
         [Networked] private float NetworkedTime { get; set; }
 
         [Header("Bomb")] [SerializeField] private GameObject bombPrefab;
+        [Header("Effect")] [SerializeField] private VisualEffect effect;
         
         public Vector3 dir;
         private float speed;
@@ -38,6 +39,7 @@ namespace Monster.Container
             NetworkedTime = time;
 
             BoomMoveRPC();
+            StartCoroutine(TransformCoroutine());
         }
         
         private void OnCollisionEnter(Collision other)
@@ -56,6 +58,15 @@ namespace Monster.Container
                 Destroy(gameObject, 0f); // 터지는 이벤트 발생해야함
             }
         }
+
+        IEnumerator TransformCoroutine()
+        {
+            while (true)
+            {
+                TransformRPC();
+                yield return new WaitForSeconds(0.01f);
+            }
+        }
         
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void BoomMoveRPC()
@@ -64,6 +75,12 @@ namespace Monster.Container
             transform.DOMoveZ(NetworkedDest.z, NetworkedTime).SetEase(Ease.InQuad);
 
             transform.DOMoveY(transform.position.y + 4, NetworkedTime * 0.3f).SetEase(Ease.InSine);
+        }
+        
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void TransformRPC()
+        {
+            effect.SetVector3("Position", transform.position);
         }
     }
 }

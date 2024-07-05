@@ -320,7 +320,7 @@ PrefabInstance:
     - target: {fileID: 3941310505116450348, guid: 650c9d00beba13e46a34685aa27ec121,
         type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6635764407264499861, guid: 650c9d00beba13e46a34685aa27ec121,
         type: 3}
@@ -331,6 +331,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6635764407264499861, guid: 650c9d00beba13e46a34685aa27ec121,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8375466905762486367, guid: 650c9d00beba13e46a34685aa27ec121,
         type: 3}
@@ -828,6 +833,117 @@ MonoBehaviour:
   animator: {fileID: 1269761202}
   smoke: {fileID: 1907094779}
   shotMat: {fileID: 2100000, guid: ecbde57b0d823b54bb1d6eca307a6ad2, type: 2}
+--- !u!1 &1609948512
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1609948515}
+  - component: {fileID: 1609948514}
+  - component: {fileID: 1609948513}
+  m_Layer: 0
+  m_Name: FireBall
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!73398921 &1609948513
+VFXRenderer:
+  serializedVersion: 1
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1609948512}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 0
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!2083052967 &1609948514
+VisualEffect:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1609948512}
+  m_Enabled: 1
+  m_Asset: {fileID: 8926484042661614526, guid: 8f397c611aced5c428ede16a9cbd13a3, type: 3}
+  m_InitialEventName: OnPlay
+  m_InitialEventNameOverriden: 0
+  m_StartSeed: 0
+  m_ResetSeedOnPlay: 1
+  m_AllowInstancing: 1
+  m_ResourceVersion: 1
+  m_PropertySheet:
+    m_Float:
+      m_Array: []
+    m_Vector2f:
+      m_Array: []
+    m_Vector3f:
+      m_Array: []
+    m_Vector4f:
+      m_Array: []
+    m_Uint:
+      m_Array: []
+    m_Int:
+      m_Array: []
+    m_Matrix4x4f:
+      m_Array: []
+    m_AnimationCurve:
+      m_Array: []
+    m_Gradient:
+      m_Array: []
+    m_NamedObject:
+      m_Array: []
+    m_Bool:
+      m_Array: []
+--- !u!4 &1609948515
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1609948512}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1625473137
 GameObject:
   m_ObjectHideFlags: 0
@@ -1656,6 +1772,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: BreathEffect
       objectReference: {fileID: 0}
+    - target: {fileID: 1036461688273761181, guid: a36d478d29c9cda4e9e2bed7cced33cb,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2592247472775995148, guid: a36d478d29c9cda4e9e2bed7cced33cb,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7226102189014365529, guid: a36d478d29c9cda4e9e2bed7cced33cb,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1719,6 +1845,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5819867191031756414, guid: 6b1abb32f5b01124e84de689b50bb9d2,
+        type: 3}
+      propertyPath: SortKey
+      value: 2640908434
+      objectReference: {fileID: 0}
     - target: {fileID: 2719269935342864524, guid: 6b1abb32f5b01124e84de689b50bb9d2,
         type: 3}
       propertyPath: m_Name
@@ -1870,3 +2001,4 @@ SceneRoots:
   - {fileID: 503349140608530878}
   - {fileID: 358844634}
   - {fileID: 1064967145771387737}
+  - {fileID: 1609948515}

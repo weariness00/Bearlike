@@ -174,14 +174,6 @@ namespace Monster.Container
                 );
 
             #region Hide
-
-            // var ChangeMask =
-            //     new SelectorNode(
-            //         true,
-            //         new ActionNode(ChangeSmile),
-            //         new ActionNode(ChangeCry),
-            //         new ActionNode(ChangeAngry)
-            //     );
             
             var Hide = new SelectorNode(
                     true, 
@@ -201,14 +193,14 @@ namespace Monster.Container
 
             var SmilePattern = new SelectorNode(
                     true,
-                    // new SequenceNode(
-                    //     new ActionNode(PunchReady),
-                    //         new ActionNode(Punching)
-                    // ),
-                    // new SequenceNode(
-                    //     new ActionNode(PunchReady),
-                    //     new ActionNode(FakePunching)
-                    // ),
+                    new SequenceNode(
+                        new ActionNode(PunchReady),
+                            new ActionNode(Punching)
+                    ),
+                    new SequenceNode(
+                        new ActionNode(PunchReady),
+                        new ActionNode(FakePunching)
+                    ),
                     new ActionNode(ClonePattern)
                 );
 
@@ -252,13 +244,13 @@ namespace Monster.Container
             
             var AngryPattern = new SelectorNode(
                     true,
-                    new ActionNode(HandLazer),
-                    new ActionNode(ThrowBoom),
-                    new ActionNode(slapAttack)
+                    // new ActionNode(HandLazer)
+                    new ActionNode(ThrowBoom)
+                    // new ActionNode(slapAttack)
                 );
 
             var Angry = new SequenceNode(
-                    new ActionNode(IsAngry),
+                    // new ActionNode(IsAngry),
                     AngryPattern
                 );
             
@@ -266,9 +258,9 @@ namespace Monster.Container
 
             var Attack = new SelectorNode(
                     false,
-                    Smile
+                    // Smile,
                     // Cry,
-                    // Angry
+                    Angry
                 );
             
             #endregion
@@ -961,7 +953,6 @@ namespace Monster.Container
                     var h = o.GetComponent<BoxJesterBoom>();
                     h.OwnerId = OwnerId;
                     h.dir = transform.forward;
-                    // Effect 넣어줘야함
                 });
         }
 
