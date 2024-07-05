@@ -56,6 +56,7 @@ namespace GamePlay.UI
             {
                 EventBusManager.Subscribe<SkillBase>(EventBusType.AddSkill, AddSkillBlock);
                 EventBusManager.Subscribe<SkillBase>(EventBusType.SkillLevelUp, SkillLevelUp);
+                EventBusManager.Subscribe(EventBusType.SkillLevelUp, () => { });
             }
 
             _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
