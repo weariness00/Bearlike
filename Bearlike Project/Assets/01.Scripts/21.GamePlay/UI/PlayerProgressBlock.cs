@@ -15,8 +15,8 @@ namespace GamePlay.UI
     {
         [Networked] public NetworkId PlayerId { get; set; }
         [Networked] public NetworkId ParentId { get; set; }
-        [Networked] private int KillCount { get; set; }
-        [Networked] private int DamageCount { get; set; }
+        [Networked] public int KillCount { get; set; }
+        [Networked] public int DamageCount { get; set; }
 
         private PlayerController _playerController;
 
@@ -91,6 +91,8 @@ namespace GamePlay.UI
         #endregion
 
         #region Member Function
+
+        public string GetPlayerName() => nameText.text;
 
         public void AddSkillBlock(SkillBase skill)
         {

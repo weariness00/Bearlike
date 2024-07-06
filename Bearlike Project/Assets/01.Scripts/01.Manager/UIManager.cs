@@ -40,7 +40,7 @@ namespace Manager
 
                     var queue = _ActiveUIQueue.Dequeue();
                     foreach (var o in queue)
-                        o.SetActive(false);
+                        if(o) o.SetActive(false);
                 }
             }
 
@@ -54,9 +54,11 @@ namespace Manager
             {
                 foreach (var uiObj in uiObjs)
                 {
-                    uiObj.SetActive(false);
+                    if(uiObj) uiObj.SetActive(false);
                 }
             }
         }
+
+        public static void QueueClear() => Instance._ActiveUIQueue.AllDequeue();
     }
 }

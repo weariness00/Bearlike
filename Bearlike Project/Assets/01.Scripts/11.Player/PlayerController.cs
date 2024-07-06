@@ -42,6 +42,7 @@ namespace Player
         
         public PlayerRef PlayerRef => Object.InputAuthority;
         public PlayerCharacterType playerType;
+        public Sprite icon;
         
         // public Status status;
         [Header("컴포넌트")] 

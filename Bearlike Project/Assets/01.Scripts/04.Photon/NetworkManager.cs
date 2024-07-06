@@ -113,6 +113,7 @@ namespace Photon
             {
                 if (parameters.loadSceneMode == LoadSceneMode.Single)
                 {
+                    UIManager.QueueClear();
                     Instance._runner.LoadScene(sceneRef, parameters, setActiveOnLoad);
                 }
                 else

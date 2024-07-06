@@ -14,7 +14,7 @@ namespace SceneExtension
         public static SceneReference GetScene(int index) => Instance.GetSceneByIndex(index);
         
         [SerializeField] private List<SceneReference> sceneReferencesList;
-
+        
         public SceneReference GetSceneByName(string sceneName)
         {
             foreach (var sceneReference in sceneReferencesList)

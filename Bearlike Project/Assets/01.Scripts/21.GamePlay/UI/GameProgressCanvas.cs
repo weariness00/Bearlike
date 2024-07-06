@@ -17,7 +17,6 @@ namespace GamePlay.UI
             LoadingManager.AddWait();
             
             base.Spawned();
-            progressBlockParent.gameObject.SetActive(false);
             
             StartCoroutine(InitProgressCoroutine());
         }
@@ -33,7 +32,7 @@ namespace GamePlay.UI
                     SpawnBlockRPC(data.PlayerRef, data.NetworkId);
                 }
             }
-            
+
             progressBlockParent.gameObject.SetActive(true);
             gameObject.SetActive(false);
             LoadingManager.EndWait();
