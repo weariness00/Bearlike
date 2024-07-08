@@ -19,6 +19,7 @@ namespace Player
         {
             monsterHit.playOnAwake = true;
             var sound = Instantiate(monsterHit.gameObject);
+            Destroy(sound, 3f);
             monsterHit.playOnAwake = false;
         }
         

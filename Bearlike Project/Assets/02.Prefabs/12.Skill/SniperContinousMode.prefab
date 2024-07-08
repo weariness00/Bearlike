@@ -66,14 +66,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
-  duration:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
+  effectVFX: {fileID: 0}
 --- !u!114 &8310383764273831033
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,7 +96,6 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -112,6 +104,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 99999
@@ -128,6 +121,7 @@ MonoBehaviour:
     isOverMin: 1
     isMin: 0
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 99999
@@ -144,6 +138,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 99999
@@ -156,6 +151,7 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0
 --- !u!114 &-5320853382675779889
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170,7 +166,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SortKey: 1445064578
   ObjectInterest: 1
-  Flags: 1
+  Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 7856296637238042012}

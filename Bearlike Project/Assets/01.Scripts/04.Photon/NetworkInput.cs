@@ -19,6 +19,7 @@ namespace Photon
         public NetworkBool StageSelect;
         public NetworkBool ItemInventory;
         public NetworkBool SkillInventory;
+        public NetworkBool SkillSelect;
         public NetworkBool Interact;
 
         public NetworkBool Attack;

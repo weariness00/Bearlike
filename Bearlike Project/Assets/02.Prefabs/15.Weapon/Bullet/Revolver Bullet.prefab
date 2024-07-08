@@ -82,7 +82,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 8655d4bb6fd41784a819a194153f6d43, type: 2}
+      objectReference: {fileID: 2100000, guid: 9a7688c2077a74b46833212c743860ab, type: 2}
     - target: {fileID: 919132149155446097, guid: dfad28fc6bdacd846ad9f91b84eb5618,
         type: 3}
       propertyPath: m_Name
@@ -205,7 +205,6 @@ MonoBehaviour:
     isMin: 1
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -214,6 +213,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 99999
@@ -230,6 +230,7 @@ MonoBehaviour:
     isOverMin: 1
     isMin: 1
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 99999
@@ -246,6 +247,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 99999
@@ -258,6 +260,7 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0
 --- !u!114 &5965120652794382619
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -273,13 +276,14 @@ MonoBehaviour:
   _IsAsyncClient: []
   _IsSpawnSuccess:
     _value: 0
-  ownerId:
+  _OwnerId:
+    Raw: 0
+  _OwnerGunId:
     Raw: 0
   status: {fileID: 0}
-  penetrateCount: 0
   destination: {x: 0, y: 0, z: 0}
-  hitEffect: {fileID: 0}
-  bknock: 0
+  penetrateCount: 0
+  _KnockBack: 0
 --- !u!114 &9099330970391010057
 MonoBehaviour:
   m_ObjectHideFlags: 0
