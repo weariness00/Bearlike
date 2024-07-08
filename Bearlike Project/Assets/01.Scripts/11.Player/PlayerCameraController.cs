@@ -28,7 +28,6 @@ namespace Player
         public Camera targetCamera;
         public Camera weaponCamera;
         public Camera uiCamera;
-        public Camera skillCamera;
         public Camera fullScreenCamera;
         public Vector3 firstOffset;
         public Vector3 thirdOffset;
@@ -47,17 +46,25 @@ namespace Player
                 targetCamera.GetComponent<AudioListener>().enabled = false;
                 targetCamera.enabled = false;
                 weaponCamera.enabled = false;
-                skillCamera.enabled = false;
 
                 return;
             }
 
             targetCamera.tag = "MainCamera";
 
+            // 카메라 순서
+            // 해당 순서는 포스트 프로세싱효과와 여러 작용에 의해 결정된 사항임
+            // 0. 기본 카메라
+            // 1. Weapon
+            // 2. Full Screen
+            // 3. UI ( PP 사용 )
+            // 4. Model UI
+            
+            
             SetOwnerCamera();
-            TargetCameraAddOverlay(weaponCamera);
-            TargetCameraAddOverlay(skillCamera);            
-            TargetCameraAddOverlay(fullScreenCamera);
+            TargetCameraAddOverlay(0,weaponCamera);
+            TargetCameraAddOverlay(1,fullScreenCamera);
+            TargetCameraAddOverlay(2,uiCamera);
 
             StartCoroutine(WeaponCameraShake());
         }
@@ -93,7 +100,6 @@ namespace Player
             targetCameraTransform.localPosition = firstOffset;
             
             weaponCamera.enabled = true;
-            skillCamera.enabled = true;
         }
 
         private void SetThirdPersonCamera()
@@ -104,7 +110,6 @@ namespace Player
             targetCameraTransform.localPosition = thirdOffset;
 
             weaponCamera.enabled = false;
-            skillCamera.enabled = false;
         }
 
         public void TargetCameraAddOverlay(Camera overlayCamera)
@@ -396,8 +401,10 @@ namespace Player
         
         private IEnumerator WeaponCameraShake()
         {
-            var weaponCameraPosition = weaponCamera.transform.position;
-            var weaponCameraRotation = weaponCamera.transform.rotation;
+            var weaponCameraPosition = weaponCamera.transform.localPosition;
+            var weaponCameraRotation = weaponCamera.transform.localRotation;
+            DebugManager.Log($"{weaponCameraPosition}");
+            
             //Ease.InOutCubic
             weaponMove = weaponCamera.transform.DOLocalMoveY(weaponCameraPosition.y + movement, time / 2).SetEase(Ease.Linear);
             weaponRotate = weaponCamera.transform.DOLocalRotate(weaponCameraRotation.eulerAngles + new Vector3(rotationAngle, 0, 0), time / 2);

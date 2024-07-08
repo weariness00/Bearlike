@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 5200242015167350875}
   - component: {fileID: 7921027183398551752}
   - component: {fileID: 7399838276585827804}
+  - component: {fileID: 8390206725234074920}
   m_Layer: 0
   m_Name: TrumpCard Hart Prefab
   m_TagString: Untagged
@@ -59,6 +60,7 @@ MonoBehaviour:
   _IsSpawnSuccess:
     _value: 0
   rigidbody: {fileID: 0}
+  collider: {fileID: 0}
   networkAnimator: {fileID: 0}
   status: {fileID: 0}
   lootingTable: {fileID: 0}
@@ -67,13 +69,15 @@ MonoBehaviour:
   id: 3
   explain: 
   type: 
+  crowdControlType: 8
   targetPlayer: {fileID: 0}
   targetMask:
     serializedVersion: 2
     m_Bits: 4096
+  dieEffectRef:
+    RawGuidValue: f14573c9eef1b524a9ec2d47dcdd0255
   weaponTransform: {fileID: 8707331476629445827}
   crowdControlType: 8
-  dieEffectObject: {fileID: 2216129801778754255}
   prickVFX: {fileID: 0}
   animatorInfo: {fileID: 0}
   idleClip: {fileID: 7780236524212964778, guid: 5d2f767215dc2e74a84bb996a69bc6c6,
@@ -145,6 +149,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -183,7 +188,8 @@ MonoBehaviour:
   SortKey: 2751378005
   ObjectInterest: 1
   Flags: 262145
-  NestedObjects: []
+  NestedObjects:
+  - {fileID: 6388145208409016450}
   NetworkedBehaviours:
   - {fileID: 7981730870125110770}
   - {fileID: 674265917643183397}
@@ -327,6 +333,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
+--- !u!65 &8390206725234074920
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2383832287530238719}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 1
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 67108864
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 2, z: 0.2}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1 &5460177193982989174
 GameObject:
   m_ObjectHideFlags: 0
@@ -367,6 +394,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 734750755969937449}
     m_Modifications:
+    - target: {fileID: -4508932537286299345, guid: f14573c9eef1b524a9ec2d47dcdd0255,
+        type: 3}
+      propertyPath: Flags
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4508932537286299345, guid: f14573c9eef1b524a9ec2d47dcdd0255,
+        type: 3}
+      propertyPath: SortKey
+      value: 3082944005
+      objectReference: {fileID: 0}
+    - target: {fileID: -4508932537286299345, guid: f14573c9eef1b524a9ec2d47dcdd0255,
+        type: 3}
+      propertyPath: NetworkedBehaviours.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4508932537286299345, guid: f14573c9eef1b524a9ec2d47dcdd0255,
+        type: 3}
+      propertyPath: NetworkedBehaviours.Array.data[0]
+      value: 
+      objectReference: {fileID: 8839690946593692631}
     - target: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -442,18 +489,36 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f14573c9eef1b524a9ec2d47dcdd0255, type: 3}
---- !u!1 &2216129801778754255 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 507512403959860066, guid: f14573c9eef1b524a9ec2d47dcdd0255,
-    type: 3}
-  m_PrefabInstance: {fileID: 1858383040708622765}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2216129801778754288 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 507512403959860061, guid: f14573c9eef1b524a9ec2d47dcdd0255,
     type: 3}
   m_PrefabInstance: {fileID: 1858383040708622765}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6388145208409016450 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -4508932537286299345, guid: f14573c9eef1b524a9ec2d47dcdd0255,
+    type: 3}
+  m_PrefabInstance: {fileID: 1858383040708622765}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8839690946593692631 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -2060773329342029190, guid: f14573c9eef1b524a9ec2d47dcdd0255,
+    type: 3}
+  m_PrefabInstance: {fileID: 1858383040708622765}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6435439803484548469
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -864,7 +929,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: -1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.000000011175871, y: 0.39977768, z: 0.00000005957554}
+  m_ConnectedAnchor: {x: -0.000000029802322, y: 0.39977753, z: 0.000000059590093}
   serializedVersion: 2
   m_SwingAxis: {x: -1, y: 0, z: 0}
   m_TwistLimitSpring:
@@ -961,6 +1026,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -1065,7 +1131,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.000000074505806, y: 0.5541437, z: 0.00000026077035}
+  m_ConnectedAnchor: {x: 0.00000008940697, y: 0.5541439, z: 0.00000021606687}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 0, z: -1}
   m_TwistLimitSpring:
@@ -1162,6 +1228,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -1264,7 +1331,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.000000044703484, y: 0.693652, z: -0.00000017788261}
+  m_ConnectedAnchor: {x: -0.000000022351742, y: 0.693652, z: 0.00000006053597}
   serializedVersion: 2
   m_SwingAxis: {x: -1, y: 0, z: 0}
   m_TwistLimitSpring:
@@ -1361,6 +1428,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -1463,7 +1531,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.039832994, y: -0.6905344, z: -0.012940874}
+  m_ConnectedAnchor: {x: -0.03983301, y: -0.6905344, z: -0.0129408175}
   serializedVersion: 2
   m_SwingAxis: {x: -1, y: 0, z: 0}
   m_TwistLimitSpring:
@@ -1560,6 +1628,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -1713,6 +1782,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -1817,7 +1887,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: -1, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.18730474, y: 0.65561855, z: -0.41659176}
+  m_ConnectedAnchor: {x: -0.1873048, y: 0.65561855, z: -0.41659164}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_TwistLimitSpring:
@@ -1914,6 +1984,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -2018,7 +2089,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.000000037252903, y: 0.5541747, z: -0.00000008940697}
+  m_ConnectedAnchor: {x: 0.000000014901161, y: 0.5541748, z: -0.00000010430813}
   serializedVersion: 2
   m_SwingAxis: {x: -1, y: 0, z: 0}
   m_TwistLimitSpring:
@@ -2115,6 +2186,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -2263,7 +2335,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: -1, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.039832994, y: -0.6905344, z: -0.012940874}
+  m_ConnectedAnchor: {x: 0.0000000056970704, y: 0.000000059604645, z: 0.0000000012470452}
   serializedVersion: 2
   m_SwingAxis: {x: -1, y: 0, z: 0}
   m_TwistLimitSpring:
@@ -2360,6 +2432,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -2464,7 +2537,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: -1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.11269926, y: 0.65879923, z: 0.44289783}
+  m_ConnectedAnchor: {x: 0.11269921, y: 0.65879923, z: 0.44289795}
   serializedVersion: 2
   m_SwingAxis: {x: -1, y: 0, z: 0}
   m_TwistLimitSpring:
@@ -2561,6 +2634,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -2671,7 +2745,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.000000033527613, y: 0.39983663, z: 0.000000029790503}
+  m_ConnectedAnchor: {x: -0.000000022351742, y: 0.39983684, z: 0.000000029793231}
   serializedVersion: 2
   m_SwingAxis: {x: 1, y: 0, z: 0}
   m_TwistLimitSpring:
@@ -2768,6 +2842,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -2878,7 +2953,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 1, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.000000023967182, y: 0.00000005960463, z: -0.000000055769632}
+  m_ConnectedAnchor: {x: 0.0000000056970704, y: 0.000000059604645, z: 0.0000000012470452}
   serializedVersion: 2
   m_SwingAxis: {x: 1, y: 0, z: 0}
   m_TwistLimitSpring:
@@ -2975,6 +3050,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999

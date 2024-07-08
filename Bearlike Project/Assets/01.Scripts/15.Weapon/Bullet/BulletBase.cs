@@ -1,16 +1,16 @@
 ﻿using System.Collections;
+using Aggro;
 using Fusion;
 using GamePlay;
 using Manager;
 using Photon;
 using Photon.MeshDestruct;
-using Player;
 using Status;
+using UI.Status;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace Weapon.Bullet
@@ -23,13 +23,15 @@ namespace Weapon.Bullet
         [Networked] public NetworkId OwnerId { get; set; } // 이 총을 쏜 주인의 ID
         [Networked] public NetworkId OwnerGunId { get; set; }
         public StatusBase status;
+        private AggroTarget _aggroTarget;
 
         private IWeaponHitEffect _hitEffect;
         private IWeaponHitSound _hitSound;
+        private IWeaponHit _hitInterface;
 
         private Vector3 direction;
         public Vector3 destination = Vector3.zero;
-        public int penetrateCount = 0; // 관통 가능 횟수
+        [Networked] public int PenetrateCount { get; set; } // 관통 가능 횟수
         [Networked] public int KnockBack { get; set; }
 
         #endregion
@@ -45,7 +47,7 @@ namespace Weapon.Bullet
         {
             direction = (destination - transform.position).normalized;
 
-            DebugManager.ToDo("Json으로 moveSpeed받아오도록 수정");
+            // DebugManager.ToDo("Json으로 moveSpeed받아오도록 수정");
             status.moveSpeed.Max = 50;
             status.moveSpeed.Current = status.moveSpeed.Max;
         }
@@ -58,6 +60,7 @@ namespace Weapon.Bullet
             if (ownerObj)
             {
                 _hitSound = ownerObj.GetComponent<IWeaponHitSound>();
+                _aggroTarget = ownerObj.GetComponent<AggroTarget>();
             }
 
             var ownerGunObj = Runner.FindObject(OwnerGunId);
@@ -65,25 +68,39 @@ namespace Weapon.Bullet
             {
                 if(ownerGunObj.TryGetComponent(out StatusBase s)) status.AddAdditionalStatus(s); 
                 ownerGunObj.TryGetComponent(out _hitEffect);
+                ownerGunObj.TryGetComponent(out _hitInterface);
+                if (ownerGunObj.TryGetComponent(out IWeaponHitSound hs)) _hitSound = hs;
             }
         }
 
         public override void FixedUpdateNetwork()
         {
-            transform.position += direction * Runner.DeltaTime * status.moveSpeed;
+            transform.position += direction * Runner.DeltaTime * status.GetMoveSpeed();
         }
 
         private void OnTriggerEnter(Collider other)
         {
             if (!HasStateAuthority) return;
-            
+
+            if (_aggroTarget)
+            {
+                var point = other.ClosestPoint(transform.position);
+                var hits = Physics.SphereCastAll(point, 6f, Vector3.zero, 0f);
+                foreach (var hit in hits)
+                {
+                    if(hit.collider.TryGetComponent(out AggroController aggroController) && aggroController.HasTarget() == false) aggroController.ChangeAggroTarget(_aggroTarget);
+                }
+            }
+
+            StatusBase otherStatus = null;
             if (other.TryGetComponent(out ColliderStatus colliderStatus))
             {
-                StatusBase otherStatus = colliderStatus.originalStatus;
-                otherStatus.AddAdditionalStatus(colliderStatus.status);
+                otherStatus = colliderStatus.originalStatus;
+                status.AddAdditionalStatus(colliderStatus.status);
+                _hitInterface?.BeforeHitAction?.Invoke(gameObject, otherStatus.gameObject);
                 
-                otherStatus.ApplyDamageRPC(status.CalDamage(), OwnerId);//
-                otherStatus.RemoveAdditionalStatus(colliderStatus.status);
+                otherStatus.ApplyDamageRPC(status.CalDamage(out bool isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, OwnerId);
+                status.RemoveAdditionalStatus(colliderStatus.status);
                 _hitEffect?.OnWeaponHitEffect(transform.position);
                 _hitSound?.PlayWeaponHit();
                 
@@ -97,14 +114,16 @@ namespace Weapon.Bullet
 
                     otherStatus.KnockBackRPC(knockbackDirection, KnockBack);
                 }
+                
+                _hitInterface?.AfterHitAction?.Invoke(gameObject, otherStatus.gameObject);
             }
-            else if (other.transform.root.gameObject.TryGetComponent(out PlayerStatus playerStatus))
+            else if (other.TryGetComponent(out otherStatus) || other.transform.root.gameObject.TryGetComponent(out otherStatus))
             {
-                playerStatus.ApplyDamageRPC(status.CalDamage(), OwnerId);
-            }
-            else if (other.TryGetComponent(out StatusBase otherStatus))
-            {
-                otherStatus.ApplyDamageRPC(status.CalDamage(), OwnerId);
+                _hitInterface?.BeforeHitAction?.Invoke(gameObject, otherStatus.gameObject);
+
+                otherStatus.ApplyDamageRPC(status.CalDamage(out var isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, OwnerId);
+                
+                _hitInterface?.AfterHitAction?.Invoke(gameObject, otherStatus.gameObject);
             }
             // 메쉬 붕괴 객체와 충돌 시
             else if (other.CompareTag("Destruction"))
@@ -113,7 +132,7 @@ namespace Weapon.Bullet
                 NetworkMeshSliceSystem.Instance.SliceRPC(networkObj.Id, Random.onUnitSphere, transform.position, 0f);
             }
 
-            if (penetrateCount-- == 0)
+            if (PenetrateCount-- == 0)
             {
                 Destroy(gameObject);
             }

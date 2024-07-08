@@ -6,6 +6,7 @@ public class ClownAnimation : MonoBehaviour
 {
     public enum AttackBlend
     {
+        Punch,
         Raser,
         Boom
     }

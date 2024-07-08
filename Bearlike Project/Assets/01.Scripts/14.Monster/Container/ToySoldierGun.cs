@@ -2,8 +2,6 @@
 using Fusion;
 using Status;
 using UnityEngine;
-using UnityEngine.AI;
-using Weapon.Bullet;
 using Weapon.Gun;
 using Random = UnityEngine.Random;
 
@@ -12,74 +10,20 @@ namespace Monster.Container
     // 장난감 병정 장총병
     public class ToySoldierGun : MonsterBase
     {
-        private BehaviorTreeRunner _behaviorTreeRunner;
+        [SerializeField] private ToySoldierGunAnimator animator;
         public GunBase gun;
 
-        [Header("Effect")] 
-        [SerializeField] private GameObject dieEffectObject;
-
-        [Header("Animation Clip")] 
-        public AnimationClip idleClip;
-        public AnimationClip moveClip;
-        public AnimationClip longAttackClip;
-
         private bool _isInitAnimation = false;
-        [Networked] private TickTimer AniIdleTimer { get; set; }
-        [Networked] private TickTimer AniMoveTimer { get; set; }
-        [Networked] private TickTimer AniLongAttackTimer { get; set; }
-        private static readonly int AniPropertyMoveSpeed = Animator.StringToHash("f Move Speed");
 
-        #region Unity Event Function
-
-        public override void Start()
+        public override void Awake()
         {
-            base.Start();
-
-            DieAction += () =>
-            {
-                dieEffectObject.SetActive(true);
-            };
-
-            navMeshAgent = GetComponent<NavMeshAgent>();
-            navMeshAgent.enabled = false;
-            if (NavMesh.SamplePosition(transform.position, out var hit, 10.0f, NavMesh.AllAreas))
-                transform.position = hit.position; // NavMesh 위치로 이동
-            navMeshAgent.enabled = true;
-            
-            gun.BeforeShootAction += BeforeShoot;
+            base.Awake();
+            animator = GetComponentInChildren<ToySoldierGunAnimator>();
         }
 
-        public override void Spawned()
-        {
-            base.Spawned();
-            _behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
-        }
-
-        public override void FixedUpdateNetwork()
-        {
-            base.FixedUpdateNetwork();
-            _behaviorTreeRunner.Operator();
-        }
-
-        #endregion
-
-        #region Member Function
-
-        private void BeforeShoot(BulletBase bullet)
-        {
-            bullet.status.damage.Current = status.damage.Current + gun.status.damage.Current;
-            
-            bullet.status.attackRange.Max = gun.status.attackRange.Max;
-            bullet.status.attackRange.Current = gun.status.attackRange.Current;
-
-            bullet.status.moveSpeed.Current = gun.status.moveSpeed.Current;
-        }
-
-        #endregion
-        
         #region BT Function
 
-        private INode InitBT()
+        public override INode InitBT()
         {
             var findTarget = new ActionNode(FindTarget);
             var idle = new ActionNode(Idle);
@@ -104,8 +48,8 @@ namespace Monster.Container
                 findTarget,
                 new SelectorNode(
                     false,
-                    new Detector(() => targetPlayer == null, offTarget),
-                    new Detector(() => targetPlayer != null, onTarget)
+                    new Detector(() => !aggroController.HasTarget(), offTarget),
+                    new Detector(() =>  aggroController.HasTarget(), onTarget)
                 )
             );
             return loop;
@@ -120,16 +64,14 @@ namespace Monster.Container
             if (_isInitAnimation == false)
             {
                 _isInitAnimation = true;
-                AniIdleTimer = TickTimer.CreateFromSeconds(Runner, idleClip.length);
-                networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 0f);
+                animator.PlayIdle();
             }
 
-            if (AniIdleTimer.Expired(Runner) == false)
+            if (animator.IdleTimerExpired == false)
             {
                 return INode.NodeState.Running;
             }
 
-            networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 0f);
             _isInitAnimation = false;
             return INode.NodeState.Success;
         }
@@ -143,30 +85,29 @@ namespace Monster.Container
         {
             if (CheckStraightDis(status.attackRange.Current - 1.0f))
             {
-                networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 0f);
+                animator.MoveSpeed = 0f;
                 _isInitAnimation = false;
-                if(navMeshAgent.isActiveAndEnabled) navMeshAgent.isStopped = true;
+                if(navMeshAgent.isActiveAndEnabled && navMeshAgent.isOnNavMesh) navMeshAgent.isStopped = true;
                 return INode.NodeState.Success;
             }
             
             if (_isInitAnimation == false)
             {
                 _isInitAnimation = true;
-                if(navMeshAgent.isActiveAndEnabled) navMeshAgent.isStopped = false;
-                AniMoveTimer = TickTimer.CreateFromSeconds(Runner, moveClip.length);
-                networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 1f);
+                if(navMeshAgent.isActiveAndEnabled && navMeshAgent.isOnNavMesh) navMeshAgent.isStopped = false;
+                animator.PlayMove();
                 randomDir = Random.onUnitSphere * 2f;
                 randomDir.y = 0;
                 navMeshAgent.speed = status.moveSpeed.Current;
             }
             
-            if (AniMoveTimer.Expired(Runner) == false && navMeshAgent.isOnNavMesh)
+            if (animator.MoveTimerExpired == false && navMeshAgent.isOnNavMesh)
             {
                 // 타겟 한테 이동
-                if (targetPlayer)
+                if ( aggroController.HasTarget())
                 {
                     navMeshAgent.stoppingDistance = status.attackRange.Current - 1.0f;
-                    navMeshAgent.SetDestination(targetPlayer.transform.position);
+                    navMeshAgent.SetDestination( aggroController.GetTarget().transform.position);
                 }
                 else
                 {
@@ -177,9 +118,9 @@ namespace Monster.Container
                 return INode.NodeState.Running;
             }
             
-            networkAnimator.Animator.SetFloat(AniPropertyMoveSpeed, 0f);
+            animator.MoveSpeed = 0f;
             _isInitAnimation = false;
-            if(navMeshAgent.isActiveAndEnabled) navMeshAgent.isStopped = true;
+            if(navMeshAgent.isActiveAndEnabled && navMeshAgent.isOnNavMesh) navMeshAgent.isStopped = true;
             return INode.NodeState.Success;
         }
 
@@ -198,7 +139,7 @@ namespace Monster.Container
             // 공격 딜레이가 남아있으면 실패, 총을 쏠 수 있는 상태가 아니면 실패
             if (status.AttackLateTimer.Expired(Runner) == false)
             {
-                Vector3 dir = (targetPlayer.transform.position - transform.position).normalized;
+                Vector3 dir = (aggroController.GetTarget().transform.position - transform.position).normalized;
                 dir.y = 0;
                 Quaternion lookRotation = Quaternion.LookRotation(dir);
                 transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Runner.DeltaTime);
@@ -211,13 +152,12 @@ namespace Monster.Container
                 gun.FireBullet(false);
                 gun.SetMagazineRPC(StatusValueType.Current, 10);
                 _isInitAnimation = true;
-                AniLongAttackTimer = TickTimer.CreateFromSeconds(Runner, longAttackClip.length);
-                networkAnimator.SetTrigger("tAttack");
+                animator.PlayLongAttack();
 
                 gun.FireLateTimer = TickTimer.CreateFromSeconds(Runner, 0);
             }
             
-            if (AniLongAttackTimer.Expired(Runner) == false)
+            if (animator.LongAttackTimerExpired == false)
             {
                 return INode.NodeState.Running;
             }

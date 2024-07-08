@@ -11,15 +11,14 @@ namespace Skill.Container
     /// </summary>
     public class KnockbackShot : SkillBase
     {
-        
         private float _durationTime;
         private TickTimer DurationTimeTimer { get; set; }
 
         private int diff;
         
-        public override void Start()
+        public override void Awake()
         {
-            base.Start();
+            base.Awake();
             var statusData = GetStatusData(id);
             _durationTime = statusData.GetFloat("Duration Time");
         }
@@ -45,7 +44,7 @@ namespace Skill.Container
             if (DurationTimeTimer.Expired(Runner) && true == isInvoke)
             {
                 isInvoke = false;
-                SetSkillCoolTimerRPC(coolTime);
+                SetSkillCoolTimerRPC(GetCoolTime());
 
                 status.knockBack -= diff;
             }

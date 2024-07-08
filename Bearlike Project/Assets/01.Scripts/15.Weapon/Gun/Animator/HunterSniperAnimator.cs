@@ -2,13 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace Weapon.Gun.Container
 {
     public class HunterSniperAnimator : MonoBehaviour
     {
-        public GameObject hideBulletObject;
+        public GameObject hideMagazineObject;
 
         [HideInInspector] public Animator animator;
         [SerializeField] private AnimationClip fireClip;
@@ -62,15 +63,15 @@ namespace Weapon.Gun.Container
         
         #region Events Function
 
-        void BulletHide()
+        void MagazineHide()
         {
-            hideBulletObject.SetActive(false);
+            hideMagazineObject.SetActive(false);
             //reload 10~15 frame
         }
 
-        void BulletVisible()
+        void MagazineVisible()
         {
-            hideBulletObject.SetActive(true);
+            hideMagazineObject.SetActive(true);
         }
         
         #endregion

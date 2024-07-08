@@ -43,7 +43,7 @@ async function MakeGunInfoData(app)
     app.get('/Gun', async (req, res) =>{ 
         var json = await GunInfoQuery();
         res.json(json); 
-    });
+    }); 
 }
 
 async function MakeGunStatusData(app)

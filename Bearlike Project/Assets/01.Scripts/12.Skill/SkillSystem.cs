@@ -13,7 +13,12 @@ namespace Skill
     public class SkillSystem : NetworkBehaviourEx
     {
         public List<SkillBase> skillList = new List<SkillBase>();
+        public int SkillLength => skillList.Count;
 
+        [SerializeField] private float coolTimeReductionRate; // 모든 스킬들의 쿨타임 감소율
+
+        #region Unity Event Function
+        
         private void Start()
         {
             skillList = GetComponentsInChildren<SkillBase>().ToList();
@@ -30,9 +35,14 @@ namespace Skill
             }
         }
 
+        #endregion
+
         public void AddSkill(SkillBase skill)
         {
             skillList.Add(skill);
+            skill.SetCoolTimeReductionRate(coolTimeReductionRate);
+            
+            EventBusManager.Publish(EventBusType.AddSkill, skill);
         }
 
         public SkillBase GetSkillFromId(int id)
@@ -78,6 +88,45 @@ namespace Skill
             DebugManager.LogError($"[{skillName}]이라는 스킬이 존재하지 않습니다.");
 
             return null;
+        }
+
+        public List<SkillBase> GetActiveSkills()
+        {
+            List<SkillBase> activeSkillList = new List<SkillBase>();
+            foreach (var skill in skillList)
+            {
+                if (skill.type == SKillType.Active && skill.level.Current > 0)
+                {
+                    activeSkillList.Add(skill);
+                }
+            }
+
+            return activeSkillList;
+        }
+
+        public int GetMaxLevelSkillCount()
+        {
+            int count = 0;
+            foreach (var skill in skillList)
+            {
+                if (skill.level.isMax)
+                    ++count;
+            }
+
+            return count;
+        }
+        
+        public void SetCoolTimeReductionRate(float rate)
+        {
+            var activeSkillList = GetActiveSkills();
+
+            foreach (var skill in activeSkillList)
+            {
+                var realRate = skill.GetCoolTimeReductionRate() - coolTimeReductionRate + rate;
+                skill.SetCoolTimeReductionRate(realRate);
+            }
+
+            coolTimeReductionRate = rate;
         }
     }
 }

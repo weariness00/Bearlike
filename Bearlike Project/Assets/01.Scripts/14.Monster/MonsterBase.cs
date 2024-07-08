@@ -2,9 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Aggro;
 using BehaviorTree.Base;
 using Data;
 using Fusion;
+using GamePlay;
 using GamePlay.DeadBodyObstacle;
 using Item.Looting;
 using Manager;
@@ -14,13 +16,12 @@ using Status;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace Monster
 {
-    [RequireComponent(typeof(MonsterStatus), typeof(LootingTable))]
-    public class MonsterBase : NetworkBehaviourEx, IJsonData<MonsterJsonData>
+    [RequireComponent(typeof(MonsterStatus), typeof(LootingTable), typeof(AggroController))]
+    public abstract class MonsterBase : NetworkBehaviourEx, IJsonData<MonsterJsonData>
     {
         #region Static
 
@@ -47,36 +48,44 @@ namespace Monster
         #endregion
         
         [HideInInspector] public Rigidbody rigidbody;
+        [HideInInspector] public Collider collider;
         [HideInInspector] public NetworkMecanimAnimator networkAnimator;
         [HideInInspector] public MonsterStatus status;
         [HideInInspector] public LootingTable lootingTable;
         private DeadBodyObstacleObject _deadBody;
         public Transform pivot; // Pivot이 메쉬 가운데가 아닌 다리에 위치할 떄가 있다. 그때 진짜 pivot으로 사용할 변수
+        [HideInInspector] public AggroController aggroController;
         [HideInInspector] public NavMeshAgent navMeshAgent;
         
-        protected PlayerController[] players;
+        protected BehaviorTreeRunner behaviorTreeRunner;
         
         [Header("Monster 정보")]
         public int id = 0;
         public string explain;
         public string type;
         
-        public PlayerController targetPlayer; // 나중에 어그로 시스템 생기면 바꾸기
+        public CrowdControl crowdControlType;
         public LayerMask targetMask;
         
         public Action DieAction;
+        
+        [Header("기본 Effect")]
+        [SerializeField] protected NetworkPrefabRef dieEffectRef;
 
         #region Unity Evenet Function
 
-        public void Awake()
+        public virtual void Awake()
         {
             rigidbody = GetComponent<Rigidbody>();
+            collider = GetComponent<Collider>();
+            if (collider) collider.enabled = false;
             networkAnimator = GetComponent<NetworkMecanimAnimator>();
             _deadBody = GetComponent<DeadBodyObstacleObject>();
             if (pivot == null) pivot = transform;
             
             status = gameObject.GetOrAddComponent<MonsterStatus>();
             lootingTable = gameObject.GetOrAddComponent<LootingTable>();
+            aggroController = GetComponent<AggroController>();
 
             // 하위 콜라이더들 재설정
             var colliders = GetComponentsInChildren<Collider>();
@@ -105,18 +114,15 @@ namespace Monster
             }
 
             lootingTable.CalLootingItem(GetLootingData(id).LootingItems);
-            DieAction += () =>
-            {
-                if (_deadBody) _deadBody.OnDeadBodyRPC();
-                lootingTable.SpawnDropItem();
-                Destroy(this);
-            };
+            DieAction += OnDieAction;
 
             var statusData = GetStatusData(id);
             status.SetJsonData(statusData);
             if (statusData.HasFloat("Rigidbody Mass")) rigidbody.mass = statusData.GetFloat("Rigidbody Mass");
-        }
 
+            SetDifficultStatus();
+        }
+        
         private void OnDestroy()
         {
             Destroy(lootingTable);
@@ -124,11 +130,13 @@ namespace Monster
 
         public override void Spawned()
         {
-            players = FindObjectsOfType<PlayerController>(); // 접속한 플레이어들 저장
+            behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
+            aggroController.AddTarget(FindObjectsOfType<AggroTarget>());// 접속한 플레이어들 저장
         }
 
         public override void FixedUpdateNetwork()
         {
+            behaviorTreeRunner.Operator();
             if (HasStateAuthority)
             {
                 if (status.IsDie)
@@ -142,9 +150,32 @@ namespace Monster
 
         #region Member Function
 
-        public void RotateTarget()
+        private void SetDifficultStatus()
         {
-            Vector3 dir = (targetPlayer.transform.position - transform.position).normalized;
+            status.hp.Max = (int)(status.hp.Max * Difficult.MonsterHpRate);
+            status.hp.SetMax();
+            status.damage.Current = (int)(status.damage.Current * Difficult.MonsterHpRate);
+        }
+        
+        private async void OnDieAction()
+        {
+            if (_deadBody) _deadBody.OnDeadBodyRPC();
+            lootingTable.SpawnDropItem();
+            Destroy(this);
+
+            // Effect
+            if (dieEffectRef != NetworkPrefabRef.Empty)
+            {
+                var obj = await Runner.SpawnAsync(dieEffectRef, pivot.position, pivot.rotation);
+                Destroy(obj.gameObject, 2f);
+            }
+        }
+
+        public void RotateToTarget()
+        {
+            if (!aggroController.HasTarget()) return;
+            
+            Vector3 dir = (aggroController.GetTarget().transform.position - transform.position).normalized;
             dir.y = 0;
             Quaternion lookRotation = Quaternion.LookRotation(dir);
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Runner.DeltaTime);
@@ -182,28 +213,33 @@ namespace Monster
             var dis = 0f;
             if (NavMesh.CalculatePath(transform.position, targetPosition, NavMesh.AllAreas, path))
             {
+                // Target이 NavMesh가 없는 곳에 있을때는 직선거리로 판단한다.
+                if (path.corners.Length == 0)
+                    dis = StraightDistanceFromTarget(targetPosition);
+                
                 for (int i = 0; i < path.corners.Length - 1; i++)
                 {
                     dis += Vector3.Distance(path.corners[i], path.corners[i + 1]);
                 }
             }
+            else
+                dis = StraightDistanceFromTarget(targetPosition);
 
             return dis;
         }
         
         public bool CheckStraightDis(float checkDis)
         {
-            if (targetPlayer == null)
+            if (!aggroController.HasTarget())
                 return false;
             
-            var dis = StraightDistanceFromTarget(targetPlayer.transform.position);
+            var dis = StraightDistanceFromTarget(aggroController.GetTarget().transform.position);
             return dis < checkDis;
         }
 
         /// <summary>
         /// 경로에 Nav Mesh Link가 포함되어있는지 확인
         /// </summary>
-        /// <param name="agent"></param>
         /// <param name="targetPosition"></param>
         /// <returns></returns>
         public bool IsIncludeLink(Vector3 targetPosition)
@@ -231,7 +267,7 @@ namespace Monster
             return false;
         }
         
-        Vector3 SetAgentDestination(Vector3 targetPosition)
+        public Vector3 SetAgentDestination(Vector3 targetPosition)
         {
             if (!navMeshAgent) return targetPosition;
             
@@ -250,24 +286,28 @@ namespace Monster
         /// <returns></returns>
         public bool CheckNavMeshDis(float checkDis)
         {
-            if (targetPlayer == null)
-            {
+            if (!aggroController.HasTarget())
                 return false;
-            }
-            var dis = NavMeshDistanceFromTarget(targetPlayer.transform.position);
+            
+            var dis = NavMeshDistanceFromTarget(aggroController.GetTarget().transform.position);
             return dis < checkDis;
         }
 
-        public void DisableNavMeshAgent()
+        public void DisableNavMeshAgent(bool isIncludeCollider = true, bool isGravity = true)
         {
             if (!navMeshAgent)
                 return;
-
-            navMeshAgent.isStopped = true;
-
+            
             navMeshAgent.enabled = false;
-            rigidbody.useGravity = true;
+            rigidbody.useGravity = isGravity;
             rigidbody.isKinematic = false;
+
+            if (isIncludeCollider)
+            {
+                collider.includeLayers = 1 << LayerMask.NameToLayer("Default");
+                collider.excludeLayers = 1 << LayerMask.NameToLayer("Ignore Nav Mesh");
+                collider.enabled = true;
+            }
         }
         
         /// <summary>
@@ -288,15 +328,20 @@ namespace Monster
 
             if (duration != 0)
                 yield return new WaitForSeconds(duration);
-
-            navMeshAgent.enabled = true;
+            
+            LayerMask mask = 1 << LayerMask.NameToLayer("Default");
+            var originPivot = new Vector3(0, 0.1f, 0);
             while (true)
             {
                 yield return null;
-                if (navMeshAgent.isOnNavMesh)
+                DebugManager.DrawRay(transform.position + originPivot, -transform.up * 0.3f, Color.blue, 1f);
+                if (Runner.LagCompensation.Raycast(transform.position + originPivot, -transform.up, 0.3f, Runner.LocalPlayer, out var hit) || 
+                    Physics.Raycast(transform.position + originPivot, -transform.up, out var phit, 0.3f))
                 {
                     navMeshAgent.enabled = true;
+                    rigidbody.useGravity = false;
                     rigidbody.isKinematic = true;
+                    collider.enabled = false;
                     break;
                 }
             }
@@ -306,82 +351,18 @@ namespace Monster
 
         #region Default BT Function
 
+        public abstract INode InitBT();
+
         protected INode.NodeState FindTarget()
         {
-            DebugManager.ToDo("어그로 시스템이 없어 가장 가까운 적을 인식하도록 함" +
-                              "어그로 시스템을 만들어 인식된 적들중 어그로가 높은 적을 인식하도록 바꾸기");
-            
-            // target이 쓰러진 상태면 Targeting 풀기
-            if (!targetPlayer ||
-                targetPlayer.status.isInjury ||
-                targetPlayer.status.isRevive ||
-                targetPlayer.status.IsDie)
+            aggroController.SetRange(status.attackRange.Current + 30f);
+            aggroController.CheckTargetAggro();
+            if (!aggroController.HasTarget())
             {
-                targetPlayer = null;
-            }
-            
-            if (!targetPlayer && players.Length != 0)
-            {
-                // 직선 거리상 인식 범위 내에 있는 플레이어 탐색
-                var targetPlayers = players.Where(player => 
-                    !player.status.isInjury &&
-                    !player.status.isRevive &&
-                    !player.status.IsDie &&
-                    StraightDistanceFromTarget(player.transform.position) <= status.attackRange.Current + 10f).ToList();
-
-                // 인식범위 내에 있는 아무 플레이어를 Target으로 지정
-                targetPlayer = targetPlayers.Count != 0 ? targetPlayers[Random.Range(0, targetPlayers.Count)] : null;
-            }
-            else
-            {
-                // Target대상이 인식 범위내에 벗어나면 Target을 풀어주기
-                var dis = StraightDistanceFromTarget(targetPlayer.transform.position);
-                if (dis > status.attackRange.Current + 12f)
-                {
-                    targetPlayer = null;
-                }
+                aggroController.FindAggroTarget();
             }
 
             return INode.NodeState.Success;
-        }
-        
-        /// <summary>
-        /// NavMesh 상의 거리를 판단해 Target을 찾아준다.
-        /// </summary>
-        /// <returns></returns>
-        public INode.NodeState FindTargetFromNavMesh()
-        {
-            // target이 쓰러진 상태면 Targeting 풀기
-            if (!targetPlayer ||
-                targetPlayer.status.isInjury ||
-                targetPlayer.status.isRevive ||
-                targetPlayer.status.IsDie)
-            {
-                targetPlayer = null;
-            }
-            
-            if (targetPlayer == null && players.Length != 0)
-            {
-                var targetPlayers = players.Where(player => 
-                    !player.status.isInjury &&
-                    !player.status.isRevive &&
-                    !player.status.IsDie &&
-                    NavMeshDistanceFromTarget(player.transform.position) <= status.attackRange.Current + 10f
-                ).ToList();
-                
-                targetPlayer = targetPlayers.Count != 0 ? targetPlayers[Random.Range(0, targetPlayers.Count)] : null;
-            }
-            else
-            {
-                // Target대상이 인식 범위내에 벗어나면 Target을 풀어주기
-                var dis = NavMeshDistanceFromTarget(targetPlayer.transform.position);
-                if (dis > status.attackRange.Current + 12f)
-                {
-                    targetPlayer = null;
-                }
-            }
-
-            return INode.NodeState.Success; 
         }
 
         #endregion

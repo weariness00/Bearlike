@@ -1,8 +1,10 @@
 using System;
+using Aggro;
 using Data;
 using Fusion;
 using Fusion.Addons.SimpleKCC;
 using GamePlay;
+using GamePlay.UI;
 using Item;
 using Manager;
 using Photon;
@@ -11,6 +13,7 @@ using Status;
 using UI;
 using UI.Skill;
 using UI.Status;
+using UI.Weapon;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
@@ -20,10 +23,26 @@ using Weapon.Gun;
 namespace Player
 {
     [RequireComponent(typeof(PlayerCameraController), typeof(PlayerStatus))]
-    public class PlayerController : NetworkBehaviourEx
+    public class PlayerController : NetworkBehaviourEx, IAfterApplyDamage
     {
+        #region Static
+
+        public static bool CheckPlayer(GameObject obj, out PlayerController pc)
+        {
+            pc = null;
+            if (obj.CompareTag("Player") && obj.transform.parent.TryGetComponent(out pc))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        #endregion
+        
         public PlayerRef PlayerRef => Object.InputAuthority;
         public PlayerCharacterType playerType;
+        public Sprite icon;
         
         // public Status status;
         [Header("컴포넌트")] 
@@ -38,7 +57,11 @@ namespace Player
         public SkillInventory skillInventory;
         public SkillSelectUI skillSelectUI;
         public SkillCanvas skillCanvas;
-        public PlayerLevelCanvas levelCanvas;
+        public PlayerEXP levelCanvas;
+        public BuffCanvas buffCanvas;
+        public GoodsCanvas goodsCanvas;
+        public GameProgressCanvas progressCanvas;
+        public AggroTarget aggroTarget;
         
         public Animator animator;
         [HideInInspector] public SimpleKCC simpleKcc;
@@ -47,11 +70,10 @@ namespace Player
         private Rig _headRig;
         private StageSelectUI _stageSelectUI;
 
-        public StatusValue<int> ammo = new StatusValue<int>();
-
         [Tooltip("마우스 움직임에 따라 회전할 오브젝트")] public GameObject mouseRotateObject;
 
         public Action<GameObject> MonsterKillAction;
+        public Action<int> AfterApplyDamageAction { get; set; }
 
         [Networked] public float W { get; set; } = 1f;
         private TickTimer _uiKeyDownTimer;
@@ -81,6 +103,7 @@ namespace Player
             soundController = GetComponent<PlayerSoundController>();
             weaponSystem = gameObject.GetComponentInChildren<WeaponSystem>();
             animator = GetComponentInChildren<Animator>();
+            aggroTarget = GetComponent<AggroTarget>();
 
             _stageSelectUI = FindObjectOfType<StageSelectUI>();
 
@@ -88,7 +111,22 @@ namespace Player
             rigBuilder = GetComponentInChildren<RigBuilder>();
             _headRig = rigBuilder.layers.Find(rig => rig.name == "Head Rig").rig;
         }
-        
+
+        private void Start()
+        {
+            status.LevelUpAction += () =>
+            {
+                if (HasInputAuthority)
+                {
+                    if (skillSelectUI.GetSelectCount() <= 0)
+                        skillSelectUI.SpawnSkillBlocks(3);
+                    skillSelectUI.AddSelectCount();
+                }
+            };
+                
+            aggroTarget.AddCondition(AggroCondition);
+        }
+
         public override void Spawned()
         {
             DebugManager.LogWarning("headRig를 Update에서 계속 바꿔주고 있는거고치기");
@@ -128,6 +166,11 @@ namespace Player
                 gunUI.gameObject.SetActive(true);
                 hpUI.gameObject.SetActive(true);
                 levelCanvas.gameObject.SetActive(true);
+                buffCanvas.gameObject.SetActive(true);
+                goodsCanvas.gameObject.SetActive(true);
+
+                progressCanvas = FindObjectOfType<GameProgressCanvas>();
+                
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
             }
             else
@@ -250,11 +293,11 @@ namespace Player
             void UIActive(GameObject uiObj)
             {
                 var isActive = uiObj.activeSelf;
-                GameUIManager.ActiveUIAllDisable();
+                UIManager.ActiveUIAllDisable();
                 if (!isActive)
                 {
                     uiObj.SetActive(true);
-                    GameUIManager.AddActiveUI(uiObj);
+                    UIManager.AddActiveUI(uiObj);
                 }
                 
                 _uiKeyDownTimer = TickTimer.CreateFromTicks(Runner, 2);
@@ -276,6 +319,10 @@ namespace Player
             {
                 UIActive(skillSelectUI.canvas.gameObject);
             }
+            else if (data.GameProgress)
+            {
+                UIActive(progressCanvas.gameObject);
+            }
         }
         
         private void MoveControl(PlayerInputData data = default)
@@ -286,7 +333,7 @@ namespace Player
             }
             
             Vector3 dir = Vector3.zero;
-            Vector3 jumpImpulse = default;
+            Vector3 jumpImpulse = Vector3.zero;
             bool isMoveX = false, isMoveY = false;
             if (data.MoveFront)
             {
@@ -315,7 +362,7 @@ namespace Player
             animator.SetFloat(AniFrontMove, isMoveX ? 1 : 0);
             animator.SetFloat(AniSideMove, isMoveY ? 1 : 0);
             
-            dir *= Runner.DeltaTime * status.moveSpeed * 110f;
+            dir *= Runner.DeltaTime * status.GetMoveSpeed() * 110f;
 
             if (data.Jump)
             {
@@ -328,6 +375,9 @@ namespace Player
                 }
             }
 
+            var dirY = simpleKcc.RealVelocity.y;
+            if ( 0 < dirY && dirY < 0.2f)
+                jumpImpulse = -Vector3.up * 100f;   
             simpleKcc.Move(dir, jumpImpulse);
         }
 
@@ -356,9 +406,32 @@ namespace Player
 
             if (HasInputAuthority)
             {
-                if (data.ChangeWeapon0) ChangeWeaponRPC(0);
-                else if (data.ChangeWeapon1) ChangeWeaponRPC(1);
-                else if (data.ChangeWeapon2) ChangeWeaponRPC(2);
+                var overlayCameraSetups = FindObjectsOfType<OverlayCameraSetup>();
+                
+                if (data.ChangeWeapon0)
+                {
+                    foreach (var overlayCameraSetup in overlayCameraSetups)
+                    {
+                        overlayCameraSetup.ChangeWeapon(0);
+                    }
+                    ChangeWeaponRPC(0);
+                }
+                else if (data.ChangeWeapon1)
+                {
+                    foreach (var overlayCameraSetup in overlayCameraSetups)
+                    {
+                        overlayCameraSetup.ChangeWeapon(1);
+                    }
+                    ChangeWeaponRPC(1);
+                }
+                else if (data.ChangeWeapon2)
+                {
+                    foreach (var overlayCameraSetup in overlayCameraSetups)
+                    {
+                        overlayCameraSetup.ChangeWeapon(2);
+                    }
+                    ChangeWeaponRPC(2);
+                }
             }
             
 
@@ -378,6 +451,22 @@ namespace Player
                 gun.ReloadBullet();
             }
         }
+
+        #region Aggro
+
+        private bool AggroCondition()
+        {
+            if (status.isInjury ||
+                status.isRevive ||
+                status.IsDie)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        #endregion
         
         #endregion
         

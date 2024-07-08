@@ -15,7 +15,10 @@ namespace Manager
         
         private static readonly int Alpha = Shader.PropertyToID("_Alpha");
         private static readonly int FullScreenIntensity = Shader.PropertyToID("_FullScreenIntensity");
-
+        private static readonly int VignetteIntensity = Shader.PropertyToID("_VignetteIntensity");
+        
+        #region Unity Evnet Function
+        
         void Start()
         {
             var cameraData = Camera.main.GetComponent<UniversalAdditionalCameraData>();
@@ -49,6 +52,8 @@ namespace Manager
                 }
             }
         }
+        
+        #endregion
 
         public void StartEffect(string name)
         {
@@ -73,18 +78,18 @@ namespace Manager
             }
         
             yield return new WaitForSeconds(0.5f);
-            // 굳이 if문 필요없다.
-            if (_rendererFeaturesEffectDictionary.TryGetValue(name, out fullScreenPassRendererFeature))
-            {
-                fullScreenPassRendererFeature.SetActive(false);
-            }
+            // // 굳이 if문 필요없다.
+            // if (_rendererFeaturesEffectDictionary.TryGetValue(name, out fullScreenPassRendererFeature))
+            // {
+            //     fullScreenPassRendererFeature.SetActive(false);
+            // }
         }
 
         IEnumerator EffectAlphaCoroutine(int mode, Material material)
         {
             if (mode == 0)
             {
-                float value = 0.0f;
+                float value = 0.6f;
                 while (value <= 1.0f)
                 {
                     material.SetFloat(Alpha, value);
@@ -92,6 +97,8 @@ namespace Manager
                     value += 0.01f;
                 }
 
+                yield return new WaitForSeconds(0.5f);
+                
                 while (value >= 0.0f)
                 {
                     material.SetFloat(Alpha, value);
@@ -100,24 +107,44 @@ namespace Manager
                 }
                 material.SetFloat(Alpha, 0);
             }
-            else if (1 <= mode && mode <= 2)
+            else if (mode == 3)
             {
-                DebugManager.ToDo("FullScreenEffect의 fire와 shield의 시간은 나중에 연동하자"); 
-                float value = 1.0f;
-                while (value >= 0.95f)
+                float value = 0.7f;
+                while (value <= 0.9f)
                 {
-                    material.SetFloat(FullScreenIntensity, value);
-                    yield return new WaitForSeconds(0.1f);
-                    value -= 0.01f;
+                    material.SetFloat(VignetteIntensity, value);
+                    yield return new WaitForSeconds(0.0025f);
+                    value += 0.01f;
                 }
 
-                while (value <= 1.0f)
+                yield return new WaitForSeconds(0.5f);
+                
+                while (value >= 0.0f)
                 {
-                    material.SetFloat(FullScreenIntensity, value);
-                    yield return new WaitForSeconds(0.1f);
+                    material.SetFloat(VignetteIntensity, value);
+                    yield return new WaitForSeconds(0.0025f);
                     value -= 0.01f;
                 }
+                material.SetFloat(VignetteIntensity, 0);
             }
+            // else if (1 <= mode && mode <= 2)
+            // {
+            //     DebugManager.ToDo("FullScreenEffect의 fire와 shield의 시간은 나중에 연동하자"); 
+            //     float value = 1.0f;
+            //     while (value >= 0.95f)
+            //     {
+            //         material.SetFloat(FullScreenIntensity, value);
+            //         yield return new WaitForSeconds(0.1f);
+            //         value -= 0.01f;
+            //     }
+            //
+            //     while (value <= 1.0f)
+            //     {
+            //         material.SetFloat(FullScreenIntensity, value);
+            //         yield return new WaitForSeconds(0.1f);
+            //         value -= 0.01f;
+            //     }
+            // }
         }
     
     }

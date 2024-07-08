@@ -9,6 +9,7 @@ using GamePlay.DeadBodyObstacle;
 using Manager;
 using Photon.MeshDestruct;
 using Player;
+using UI.Status;
 using UnityEngine;
 using UnityEngine.AI;
 using Util;
@@ -21,7 +22,6 @@ namespace Monster.Container
         public DiceAnimator animatorInfo;
         public NetworkPrefabRef diePrefab;
         
-        private BehaviorTreeRunner _behaviorTreeRunner;
         private bool _isCollide = true; // 현재 충돌 중인지
         private float _moveDelay; // 몇초에 한번씩 움직일지 1번의 움직임이 1m움직임이라 가정( 자연스러운 움직임 구현을 위해 사용 )
         [Networked] private TickTimer MoveDelayTimer { get; set; }
@@ -46,18 +46,11 @@ namespace Monster.Container
             MoveDelayTimer = TickTimer.CreateFromSeconds(Runner, 0);
             AttackTimer = TickTimer.CreateFromSeconds(Runner, 0);
             
-            _behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
-            _moveDelay = 1f / status.moveSpeed;
+            _moveDelay = 1f / status.GetMoveSpeed();
 
             DieAction += DeadSlice;
         }
 
-        public override void FixedUpdateNetwork()
-        {
-            base.FixedUpdateNetwork();
-             _behaviorTreeRunner.Operator();
-        }
-        
         #endregion
 
         #region Member Function
@@ -77,7 +70,7 @@ namespace Monster.Container
                     {
                         if (hit.GameObject.TryGetComponent(out targetStatus) || hit.GameObject.transform.root.TryGetComponent(out targetStatus))
                         {
-                            targetStatus.PlayerApplyDamage(status.CalDamage(), Object.Id,CrowdControl.Normality);
+                            targetStatus.ApplyDamageRPC(status.CalDamage(out var isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, Object.Id,CrowdControl.Normality);
                         }
                     }
                 }
@@ -131,7 +124,7 @@ namespace Monster.Container
 
         #region BT Function
 
-        private INode InitBT()
+        public override INode InitBT()
         {
             var findTarget = new ActionNode(FindTarget);
             var move = new ActionNode(Move);
@@ -165,18 +158,19 @@ namespace Monster.Container
                 Vector3 dir = Vector3.zero;
                 MoveDelayTimer = TickTimer.CreateFromSeconds(Runner, _moveDelay);
 
-                if (targetPlayer == null)
+                if (!aggroController.HasTarget())
                 {
                     // 타겟이 없으면 자유로운 방향으로 이동하게 하기
                     var randomCircle = Random.insideUnitCircle;
                     dir = SetRotateDir(transform.position + new Vector3(randomCircle.x, 0, randomCircle.y));
                 }
-                else 
+                else
                 {
+                    var target = aggroController.GetTarget();
                     var path = new NavMeshPath();
                     NavMeshQueryFilter filter = new NavMeshQueryFilter();
                     filter.areaMask = 1 << NavMesh.GetAreaFromName("Walkable");
-                    if (NavMesh.CalculatePath(transform.position, targetPlayer.transform.position, NavMesh.AllAreas, path))
+                    if (NavMesh.CalculatePath(transform.position, target.transform.position, NavMesh.AllAreas, path))
                     {
                         if (path.corners.Length > 1)
                         {
@@ -185,11 +179,11 @@ namespace Monster.Container
                     }
                     else
                     {
-                        dir = SetRotateDir(targetPlayer.transform.position);
+                        dir = SetRotateDir(target.transform.position);
                     }
                 }
 
-                dir = 300f * rigidbody.mass * status.moveSpeed * dir;
+                dir = 300f * rigidbody.mass * status.GetMoveSpeed() * dir;
                 rigidbody.AddTorque(dir);
 
                 return INode.NodeState.Success; 
@@ -226,7 +220,7 @@ namespace Monster.Container
                 StatusBase playerStatus;
                 if (hit.transform.TryGetComponent(out playerStatus) || hit.transform.parent.TryGetComponent(out playerStatus))
                 {
-                    playerStatus.PlayerApplyDamage(status.CalDamage(), Object.Id, CrowdControl.Normality);
+                    playerStatus.ApplyDamageRPC(status.CalDamage(out var isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, Object.Id, CrowdControl.Normality);
                 }
             }
             return INode.NodeState.Failure;

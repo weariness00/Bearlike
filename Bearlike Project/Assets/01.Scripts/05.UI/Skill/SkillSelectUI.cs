@@ -1,11 +1,11 @@
 ﻿using System.Linq;
 using Fusion;
+using Manager;
 using Photon;
 using Player;
 using Skill;
 using Status;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Util;
 
@@ -21,37 +21,19 @@ namespace UI.Skill
         [Header("Player")]
         public PlayerController playerController;
 
-        public int selectCount = 0; // 횟수가 남아있다면 스킬을 선택후 다시 스킬 선택창 리롤
-        
-        #region Unity Event Function
-
-        private void Awake()
-        {
-            selectUIBlockObject.GetComponent<SkillSelectBlockHandle>().DoubleClickEvent += SelectSkill;
-        }
-
-        private void Update()
-        {
-            // 해당 스킬을 업그레이드
-            if (Input.GetKeyDown(KeyCode.Return))
-            {
-                SelectSkill();
-            }
-        }
-
-        #endregion
+        private int _selectCount = 0; // 횟수가 남아있다면 스킬을 선택후 다시 스킬 선택창 리롤
 
         #region Member Funtion
 
-        public void AddSelectCount() => ++selectCount;
-        public void RemoveSelectCount() => --selectCount;
+        public int GetSelectCount() => _selectCount;
+        public void AddSelectCount() => ++_selectCount;
+        public void RemoveSelectCount() => --_selectCount;
         
         // Select UI를 초반 셋팅 해주는 함수
         public void SpawnSkillBlocks(int count)
         {
             gameObject.SetActive(true);
-            
-            if(selectCount > 0) return;
+            UIManager.AddActiveUI(gameObject);
             
             // 이미 있는 스킬들 삭제
             var handles = toggleGroup.GetComponentsInChildren<SkillSelectBlockHandle>().ToList();
@@ -59,6 +41,7 @@ namespace UI.Skill
                 Destroy(handle.gameObject);
 
             // 스킬 UI 생성
+            bool isSuccessSelectSkillSpawn = false;
             UniqueRandom random = new UniqueRandom(0, SkillObjectList.SkillCount);
             for (int i = 0; i < count; i++)
             {
@@ -71,7 +54,7 @@ namespace UI.Skill
                     // 모든 스킬들이 만렙이면 더이상 Block을 만들지 않는다.
                     if (randomInt == -1)
                     {
-                        gameObject.SetActive(false);
+                        if(!isSuccessSelectSkillSpawn) gameObject.SetActive(false);
                         return;
                     }
                     
@@ -89,25 +72,30 @@ namespace UI.Skill
                     if (skill)
                         break;
                 }
+
+                isSuccessSelectSkillSpawn = true;
                 
                 if (playerController.skillSystem.TryGetSkillFromID(skill.id, out var hasSkill)) skill = hasSkill;
-                else skill.SetJsonData(SkillBase.GetInfoData(skill.id));
+                else
+                {   
+                    skill.SetJsonData(SkillBase.GetInfoData(skill.id));
+                    skill.status = skill.GetComponent<StatusBase>();
+                    skill.Awake();
+                }
                 
                 var obj = Instantiate(selectUIBlockObject, toggleGroup.transform);
                 var handle = obj.GetComponent<SkillSelectBlockHandle>();
                 obj.SetActive(true);
                 handle.SettingBlock(skill);
+                handle.button.onClick.AddListener(() => SelectSkill(skill.id));
             }
         }
 
-        private async void SelectSkill()
+        private async void SelectSkill(int id)
         {
-            var activeToggle = toggleGroup.GetFirstActiveToggle();
-            var handle = activeToggle.GetComponent<SkillSelectBlockHandle>();
-            if (!playerController.skillSystem.TryGetSkillFromID(handle.id, out var skill))
+            if (!playerController.skillSystem.TryGetSkillFromID(id, out var skill))
             {
-                var skillObj = await NetworkManager.Runner.SpawnAsync(SkillObjectList.GetFromID(handle.id).gameObject, Vector3.zero, Quaternion.identity, playerController.Object.InputAuthority);
-                InitSpawnSkillRPC(skillObj.Id);
+                SpawnSkillRPC(id);
             }
             else
             {
@@ -115,24 +103,35 @@ namespace UI.Skill
             }
 
             RemoveSelectCount();
-            if (selectCount > 0)
+            if (_selectCount > 0)
                 SpawnSkillBlocks(3);
             else
+            {
+                var handles = toggleGroup.GetComponentsInChildren<SkillSelectBlockHandle>().ToList();
+                foreach (var h in handles)
+                    Destroy(h.gameObject); 
                 gameObject.SetActive(false);
+            }
         }
         
         #endregion
 
         #region RPC Function
 
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public async void SpawnSkillRPC(int skillId)
+        {
+            var skillObj = await NetworkManager.Runner.SpawnAsync(SkillObjectList.GetFromID(skillId).gameObject, Vector3.zero, Quaternion.identity, playerController.Object.InputAuthority);
+            InitSpawnSkillRPC(skillObj.Id);
+        }
+
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void InitSpawnSkillRPC(NetworkId skillID)
         {
             var skill = Runner.FindObject(skillID).GetComponent<SkillBase>();
             skill.gameObject.transform.SetParent(playerController.skillSystem.transform);
-            skill.ownerPlayer = playerController;
-            skill.LevelUp();
             skill.Earn(playerController.gameObject);
+            skill.LevelUp();
             playerController.skillSystem.AddSkill(skill);
         }
         

@@ -16,6 +16,7 @@ namespace Status
     /// <summary>
     /// Object의 상태를 나타내는 열거형
     /// </summary>
+    [Serializable]
     public enum CrowdControl
     {
         Normality = 0b_0000_0000,           // 정상
@@ -23,6 +24,7 @@ namespace Status
         Weak = 0b_0000_0010,                // 취약 => 최종 데미지 1.5배 증가
         DamageIgnore = 0b_0000_0100,             // 방어 => 데미지 감소 || 무효
         Burn = 0b_0000_1000,                // 화상 => 높은 도트 데미지
+        DamageReflect = 0b_0001_0000,       // 반사 => 데미지를 특정 비율로 반사
     }
     
     /// <summary>
@@ -45,6 +47,7 @@ namespace Status
         public StatusValue<float> avoid = new StatusValue<float>(){Min = 0, Max = 1, isOverMax = true, isOverMin = true};           // 회피율 0 ~ 1 사이값
         public float avoidMultiple = 1f;
         public StatusValue<float> moveSpeed = new StatusValue<float>(){Max = 99999f};           // 이동 속도
+        public float moveSpeedMultiple = 1f;
         public StatusValue<float> attackSpeed = new StatusValue<float>(){Max = 99999f};     // 초당 공격 속도
         public float attackSpeedMultiple = 1f;   // 공격 속도 배율
         [Networked] public TickTimer AttackLateTimer { get; set; }
@@ -58,7 +61,9 @@ namespace Status
         public int knockBack = 0;    // 넉백 속성
         
         public bool IsDie => hp.isMin;
-        
+
+        private Func<int, int> _beforeApplyDamage; // 대미지 적용 직전 이벤트
+
         #endregion
 
         #region Unity Evenet Function
@@ -81,22 +86,55 @@ namespace Status
         public void ClearAdditionalStatus() => _additionalStatusList.Clear();
         public void AddAdditionalStatus(StatusBase otherStatus) => _additionalStatusList.Add(otherStatus);
         public void RemoveAdditionalStatus(StatusBase otherStatus) => _additionalStatusList.Remove(otherStatus);
-    
-        public virtual int CalDamage(int additionalDamage = 0, float additionalDamageMultiple = 0f, float additionalCriticalHitMultiple = 0f)
+
+        /// <summary>
+        /// 대미지를 적용하기 직전에 동작하는 이벤트를 추가
+        /// 반환형 : int, 인자 int ApplyDamage
+        /// </summary>
+        /// <param name="func"></param>
+        /// <param name="isPermitDuplication">이벤트 추가할때 중복된 이벤트가 있어도 추가할지에 대한 여부</param>
+        public void AddBeforeApplyDamageEvent(Func<int, int> func, bool isPermitDuplication = true)
+        {
+            if (isPermitDuplication == false)
+            {
+                if (_beforeApplyDamage != null)
+                {
+                    bool isIncluded = false;
+                    foreach (var @delegate in _beforeApplyDamage.GetInvocationList())
+                    {
+                        var includeFunc = (Func<int, int>)@delegate;
+                        if (includeFunc.Method == func.Method)
+                        {
+                            isIncluded = true;
+                            break;
+                        }
+                    }
+
+                    if (isIncluded == false)
+                    {
+                        _beforeApplyDamage += func;
+                    }
+                }
+            }
+            else
+            {
+                _beforeApplyDamage += func;
+            }
+        }
+        public void RemoveBeforeApplyDamageEvent(Func<int, int> func) => _beforeApplyDamage -= func;
+        
+        #region Damage
+
+        public virtual int CalDamage(out bool isCritical, int additionalDamage = 0, float additionalDamageMultiple = 0f, float additionalCriticalHitMultiple = 0f)
         {
             var d = AddAllDamage() + additionalDamage;
             var dm = AddAllDamageMagnification() + 1 + additionalDamageMultiple;
             var chm = CalCriticalHit() + additionalCriticalHitMultiple;
 
+            isCritical = !chm.Equals(1f);
+            
+            if (dm < 0) return 0; // 대미지 배율이 -이면 대미지는 0이다.
             return (int)Math.Round(chm * dm * d);
-        }
-        
-        public virtual int CalAttackSpeed(int additionalAttackSpeed = 0, float additionalAttackSpeedMultiple = 0f)
-        {
-            var ats = AddAllAttackSpeed() + additionalAttackSpeed;
-            var atsm = AddAllAttackSpeedMultiple() + 1 + additionalAttackSpeedMultiple;
-
-            return (int)Math.Round(atsm * ats);
         }
 
         private float CalCriticalHit()
@@ -121,7 +159,7 @@ namespace Status
             return resultCHM;
         }
         
-        private int AddAllDamage()
+        public int AddAllDamage()
         {
             var d = damage.Current;
             foreach (var statusBase in _additionalStatusList)
@@ -153,6 +191,28 @@ namespace Status
 
             return chm;
         }
+        
+        private float AddAllCriticalHitChance()
+        {
+            float chc = criticalHitChance;
+            foreach (var statusBase in _additionalStatusList)
+            {
+                chc += statusBase.AddAllCriticalHitChance();
+            }
+            return chc;
+        }
+        
+        #endregion
+
+        #region Attack Speed
+        
+        public virtual int CalAttackSpeed(int additionalAttackSpeed = 0, float additionalAttackSpeedMultiple = 0f)
+        {
+            var ats = AddAllAttackSpeed() + additionalAttackSpeed;
+            var atsm = AddAllAttackSpeedMultiple() + 1 + additionalAttackSpeedMultiple;
+
+            return (int)Math.Round(atsm * ats);
+        }
 
         private float AddAllAttackSpeed()
         {
@@ -179,15 +239,37 @@ namespace Status
             return asm;
         }
         
-        private float AddAllCriticalHitChance()
+        #endregion
+
+        #region Move Speed
+        
+        public virtual float GetMoveSpeed()
         {
-            float chc = criticalHitChance;
-            foreach (var statusBase in _additionalStatusList)
-            {
-                chc += statusBase.AddAllCriticalHitChance();
-            }
-            return chc;
+            var ms = AddAllMoveSpeed();
+            var msm = AddAllMoveSpeedMultiple() + 1;
+
+            return ms * msm;
         }
+
+        private float AddAllMoveSpeed()
+        {
+            var ms = moveSpeed.Current;
+            foreach (var statusBase in _additionalStatusList)
+                ms += statusBase.AddAllMoveSpeed();
+
+            return ms;
+        }
+
+        private float AddAllMoveSpeedMultiple()
+        {
+            float msm = moveSpeedMultiple - 1;
+            foreach (var statusBase in _additionalStatusList)
+                msm += statusBase.AddAllMoveSpeedMultiple();
+
+            return msm;
+        }
+        
+        #endregion
 
         public int GetAllNuckBack()
         {
@@ -202,7 +284,7 @@ namespace Status
             return nb;
         }
 
-        public virtual void ApplyDamage(int applyDamage, NetworkId ownerId, CrowdControl cc)
+        public virtual void ApplyDamage(int applyDamage, DamageTextType damageType, NetworkId ownerId, CrowdControl cc)
         {
             if (hp.isMin)
             {
@@ -217,6 +299,15 @@ namespace Status
 
             if (!ConditionDamageIgnoreIsOn())
             {
+                if (_beforeApplyDamage != null)
+                {
+                    foreach (var @delegate in _beforeApplyDamage.GetInvocationList())
+                    {
+                        var func = (Func<int, int>)@delegate;
+                        applyDamage = func(applyDamage);
+                    }
+                }
+                
                 AddCondition(cc); // Monster의 속성을 Player상태에 적용
 
                 var damageRate = math.clamp(math.log10((applyDamage / (float)(defence * 2)) * 10), 0.0f, 1.0f);
@@ -230,7 +321,18 @@ namespace Status
 
                 var realDamage = (int)(damageRate * applyDamage);
                 hp.Current -= realDamage;
-                DamageText(realDamage);
+                DamageText(realDamage, damageType);
+
+                { // 대미지를 입고 난 후에 이벤트 OwnerId에 해당하는 Object가 소지한 이벤트를 발동시킨다.
+                    var ownerObj = Runner.FindObject(ownerId);
+                    if (ownerObj)
+                    {
+                        if (ownerObj.TryGetComponent(out IAfterApplyDamage afterApplyDamage))
+                        {
+                            afterApplyDamage.AfterApplyDamageAction?.Invoke(realDamage);
+                        }
+                    }
+                }
                 
                 DebugManager.Log(
                     $"{gameObject.name}에게 {damageRate * applyDamage}만큼 데미지\n" +
@@ -256,7 +358,7 @@ namespace Status
             
         }
         
-        public virtual void DamageText(int realDamage){}
+        public virtual void DamageText(int realDamage, DamageTextType type){}
         public virtual void HealingText(int realHealAmount) {}
 
         public virtual void ShowInfo()
@@ -336,6 +438,7 @@ namespace Status
             
             attackSpeed.Max = json.GetFloat("AttackSpeed Max");
             attackSpeed.Current = json.GetFloat("AttackSpeed Current");
+            if(json.HasFloat("AttackSpeed Multiple")) attackSpeedMultiple = json.GetFloat("AttackSpeed Multiple");
             
             attackRange.Max = json.GetFloat("AttackRange Max");
             attackRange.Current = json.GetFloat("AttackRange Current");
@@ -394,24 +497,10 @@ namespace Status
             AttackLateTimer = TickTimer.CreateFromSeconds(Runner, 1f / attackSpeed.Current);
         }
         
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="damage"></param>
-        /// <param name="id">대미지를 준 대상의 Network ID</param>
-        /// <param name="enemyProperty"></param>
-        /// <param name="info"></param>
-        public void PlayerApplyDamage(int damage, NetworkId id, CrowdControl enemyProperty = CrowdControl.Normality, RpcInfo info = default)
-        {
-            URPRendererFeaturesManager.Instance.StartEffect("HitEffect");
-            ApplyDamageRPC(damage, id, enemyProperty);
-        }
-        
-        
         [Rpc(RpcSources.All, RpcTargets.All, Channel = RpcChannel.Reliable)]
-        public void ApplyDamageRPC(int damage, NetworkId id, CrowdControl enemyProperty = CrowdControl.Normality, RpcInfo info = default)
+        public void ApplyDamageRPC(int applyDamage, DamageTextType damageType, NetworkId id, CrowdControl enemyProperty = CrowdControl.Normality, RpcInfo info = default)
         {
-            ApplyDamage(damage, id, enemyProperty);
+            ApplyDamage(applyDamage, damageType, id, enemyProperty);
         }
         
         [Rpc(RpcSources.All, RpcTargets.All, Channel = RpcChannel.Reliable)]

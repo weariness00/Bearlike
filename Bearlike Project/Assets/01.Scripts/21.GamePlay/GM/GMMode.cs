@@ -2,6 +2,7 @@
 using Data;
 using Monster;
 using Player;
+using UI.Status;
 using UnityEngine;
 using Weapon.Bullet;
 using Weapon.Gun;
@@ -57,6 +58,8 @@ namespace GamePlay.GM
         // F9 : 네비 메쉬 리빌드
         
         // CapsLock + 1~3 : 1~3 번 플레이어 100 데미지
+        // CapsLcok + 4 : 자기 자신 무적화 활성
+        // CapsLcok + 5 : 자기 자신 무적화 해제
         // CapsLock + 8 : 플레이어 레벨업
         // CapsLock + 9 : 스킬 쿨타임 초기화
         // CapsLock + 0 : 모든 플레이어 총알 100개씩 지급
@@ -67,18 +70,28 @@ namespace GamePlay.GM
             {
                 if (Input.GetKeyDown(KeyCode.Alpha1))
                 {
-                    players[0].status.PlayerApplyDamage(100, players[0].Object.Id);
+                    players[0].status.ApplyDamageRPC(100, DamageTextType.Normal, players[0].Object.Id);
                     if(players[0].status.isInjury) players[0].status.GoReviveRPC();
                 }
                 else if (players.Length >= 2 && Input.GetKeyDown(KeyCode.Alpha2))
                 {
-                    players[1].status.PlayerApplyDamage(100, players[1].Object.Id);
+                    players[1].status.ApplyDamageRPC(100, DamageTextType.Normal, players[1].Object.Id);
                     if(players[1].status.isInjury) players[0].status.GoReviveRPC();
                 }
                 else if (players.Length >= 3 && Input.GetKeyDown(KeyCode.Alpha3))
                 {
-                    players[2].status.PlayerApplyDamage(100, players[2].Object.Id);
+                    players[2].status.ApplyDamageRPC(100, DamageTextType.Normal, players[2].Object.Id);
                     if(players[2].status.isInjury) players[0].status.GoReviveRPC();
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha4))
+                {
+                    var p = players.First(p => p.HasInputAuthority);
+                    p.status.LevelUpRPC();
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha5))
+                {
+                    var p = players.First(p => p.HasInputAuthority);
+                    p.status.LevelUpRPC();
                 }
                 else if (Input.GetKeyDown(KeyCode.Alpha8))
                 {
@@ -140,7 +153,7 @@ namespace GamePlay.GM
             {
                 var monsters = FindObjectsOfType<MonsterBase>();
                 foreach (var monster in monsters)
-                    monster.status.PlayerApplyDamage(99999, monster.Object.Id);
+                    monster.status.ApplyDamageRPC(99999, DamageTextType.Normal, monster.Object.Id);
             }
             else if (Input.GetKeyDown(KeyCode.F9))
                 NavMeshRebuildSystem.ReBuildRPC();

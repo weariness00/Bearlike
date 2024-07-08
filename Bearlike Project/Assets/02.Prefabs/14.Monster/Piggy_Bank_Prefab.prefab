@@ -207,10 +207,12 @@ MonoBehaviour:
   _IsSpawnSuccess:
     _value: 0
   rigidbody: {fileID: 0}
+  collider: {fileID: 0}
   networkAnimator: {fileID: 0}
   status: {fileID: 0}
   lootingTable: {fileID: 0}
   pivot: {fileID: 3339886792441595485}
+  navMeshAgent: {fileID: 0}
   id: 2
   explain: 
   type: 
@@ -680,7 +682,7 @@ GameObject:
   - component: {fileID: 7700742438508380647}
   - component: {fileID: 3841230496136363441}
   - component: {fileID: 5231320230019402885}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Total
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -703,7 +705,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -50}
+  m_AnchoredPosition: {x: 0, y: -133}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3841230496136363441
@@ -869,7 +871,7 @@ GameObject:
   - component: {fileID: 1290045057729934055}
   - component: {fileID: 1706705517784863117}
   - component: {fileID: 1387875946176420820}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Percent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -892,7 +894,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 88, y: -50}
+  m_AnchoredPosition: {x: 88, y: -133}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1706705517784863117
@@ -1258,7 +1260,7 @@ GameObject:
   - component: {fileID: 3889784639799032822}
   - component: {fileID: 7054713019704540907}
   - component: {fileID: 3118172674841814758}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: HPCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1491,7 +1493,7 @@ GameObject:
   - component: {fileID: 8635529319041911189}
   - component: {fileID: 2708602319329153691}
   - component: {fileID: 2518727459950337773}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Current
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1514,7 +1516,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -50}
+  m_AnchoredPosition: {x: 0, y: -133}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2708602319329153691
@@ -1566,7 +1568,7 @@ GameObject:
   - component: {fileID: 1253737707814202611}
   - component: {fileID: 7878916074198274469}
   - component: {fileID: 8767506947093985903}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Mart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1589,7 +1591,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -800, y: -50}
+  m_AnchoredPosition: {x: -705, y: -133}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7878916074198274469
@@ -1785,6 +1787,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Piggy_Prefab
       objectReference: {fileID: 0}
+    - target: {fileID: 3564466901058331918, guid: 54046c7806e811b4ebc8d24b42b61055,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: f4b452e96bd2255469430c8213b32223, type: 2}
     - target: {fileID: 4748870830279182150, guid: 54046c7806e811b4ebc8d24b42b61055,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1835,6 +1842,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7283336343398878547, guid: 54046c7806e811b4ebc8d24b42b61055,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a6d51f9c3859cfd42b08ccee1f6a1930, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

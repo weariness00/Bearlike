@@ -188,7 +188,7 @@ namespace UI
 
             gameObject.SetActive(true);
             selectToggle.gameObject.SetActive(true);
-            GameUIManager.AddActiveUI(gameObject);
+            UIManager.AddActiveUI(gameObject);
             
             DebugManager.Log("스테이지 선택 UI 셋팅");
         }

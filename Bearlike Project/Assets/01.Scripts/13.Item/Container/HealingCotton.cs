@@ -40,6 +40,7 @@ namespace Item.Container
             {
                 var maximumProportionalRecoveryHp = (int)(pc.status.hp.Max * _healingMultiple); // 최대 체력 비례 회복량
                 pc.status.ApplyHealRPC(_healingAmount + maximumProportionalRecoveryHp, pc.Object.Id);
+                
                 pc.soundController.PlayItemHeal();
             }
         }

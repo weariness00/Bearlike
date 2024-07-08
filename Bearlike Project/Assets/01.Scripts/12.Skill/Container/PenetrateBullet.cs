@@ -1,5 +1,6 @@
 ﻿using Player;
 using UnityEngine;
+using Util;
 using Weapon.Bullet;
 using Weapon.Gun;
 
@@ -18,25 +19,21 @@ namespace Skill.Container
                 if (pc.weaponSystem.equipment.IsGun)
                 {
                     var gun = pc.weaponSystem.equipment as GunBase;
-                    gun.BeforeShootAction += ReinforceBullet;
+                    gun.penetrateCount = level;
                 }
             }
         }
 
-        public override void MainLoop()
-        {
-        }
+        public override void MainLoop(){}
+        public override void Run(){}
 
-        public override void Run()
+        public override void ExplainUpdate()
         {
-        }
-
-        /// <summary>
-        /// 총알이 관통이 되도록 하는 함수
-        /// </summary>
-        public void ReinforceBullet(BulletBase bullet)
-        {
-            bullet.penetrateCount = level;
+            base.ExplainUpdate();
+            if (explain.Contains("(Level)"))
+                explain = explain.Replace("(Level)", $"{level.Current}");
+            
+            explain = StringExtension.CalculateNumber(explain);
         }
     }
 }

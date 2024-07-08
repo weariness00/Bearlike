@@ -1,9 +1,9 @@
-﻿using Fusion;
+﻿using Aggro;
+using Fusion;
 using Monster;
 using Player;
 using UI.Status;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Status
 {
@@ -13,6 +13,8 @@ namespace Status
     public class MonsterStatus : StatusBase
     {
         [HideInInspector] public MonsterBase monsterBase;
+
+        private bool isInvokeKillAction = false;
         
         private void Start()
         {
@@ -37,29 +39,45 @@ namespace Status
             hp.Current -= value;
         }
 
-        public override void ApplyDamage(int applyDamage, NetworkId ownerId, CrowdControl cc)
+        public override void ApplyDamage(int applyDamage, DamageTextType damageType, NetworkId ownerId, CrowdControl cc)
         {
-            base.ApplyDamage(applyDamage, ownerId, cc);
+            base.ApplyDamage(applyDamage, damageType, ownerId, cc);
             if (IsDie)
             {
                 var obj = Runner.FindObject(ownerId);
-                if(obj == null) return;
-                if (obj.TryGetComponent(out PlayerController pc))
+                if(!obj.gameObject) return;
+                
+                if (!isInvokeKillAction && obj.TryGetComponent(out PlayerController pc))
                 {
+                    isInvokeKillAction = true;
                     pc.MonsterKillAction?.Invoke(gameObject);
+                }
+            }
+            else
+            {
+                // 어그로 대상이 없는 상태에서 공격을 받으면 해당 대상이 어그로로 잡힘
+                if (!monsterBase.aggroController.HasTarget())
+                {
+                    var obj = Runner.FindObject(ownerId);
+                    if(!obj.gameObject) return;
+                    if (obj.TryGetComponent(out AggroTarget target))
+                    {
+                        monsterBase.aggroController.ChangeAggroTarget(target);
+                    }
                 }
             }
         }
 
-        public override void DamageText(int realDamage)
+        public override void DamageText(int realDamage, DamageTextType type)
         {
             var randomDir = Random.insideUnitSphere;
             randomDir.y = Mathf.Abs(randomDir.y);
-            DamageTextCanvas.SpawnDamageText(monsterBase.pivot.position + randomDir, realDamage);
+            DamageTextCanvas.SpawnDamageText(monsterBase.pivot.position + randomDir, realDamage, type);
         }
 
         #endregion
 
+        
         #region Json Data Interfacec
 
         public override void SetJsonData(StatusJsonData json)

@@ -9,11 +9,12 @@ using Player;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.VFX;
+using Util;
 using Weapon.Bullet;
 
 namespace Weapon.Gun
 {
-    public class GunBase : WeaponBase, IJsonData<GunJsonData>, IWeaponHitEffect
+    public class GunBase : WeaponBase, IJsonData<GunJsonData>, IWeaponHitEffect, IWeaponHit
     {
         #region Static
 
@@ -35,6 +36,7 @@ namespace Weapon.Gun
         #endregion
         
         private Camera _camera;
+        private MeshRenderer _meshRenderer;
 
         [Header("총 정보")] 
         public int id;
@@ -43,7 +45,7 @@ namespace Weapon.Gun
         [Header("총 이펙트")] 
         public VisualEffect shootEffect; // 발사 이펙트
         public VisualEffect shotsmoke;      // 총구 연기
-        public Material shotOverHeating;    // 총열 과열
+        [SerializeField] private MaterialPropertyBlockExtension shotOverHeatingPropertyBlock;
         public NetworkPrefabRef hitEffectPrefab;
         
         [Header("사운드")]
@@ -55,7 +57,8 @@ namespace Weapon.Gun
         public BulletBase bullet;
         public static StatusValue<int> ammo = new StatusValue<int>(){Max = 100, Current = int.MaxValue};
         public StatusValue<int> magazine = new StatusValue<int>() {Max = 10, Current = 10}; // max 최대 탄약, current 현재 장정된 탄약
-
+        public int penetrateCount = 0;
+        
         public float bulletFirePerMinute; // 분당 총알 발사량
         public float BulletFirePerSecond => bulletFirePerMinute / 60f;
         [Networked] public TickTimer FireLateTimer { get; set; }
@@ -63,10 +66,6 @@ namespace Weapon.Gun
         public float fireLateSecond;
         public float reloadLateSecond;
         public Transform fireTransform;
-
-        // 총을 쏘면 Bullet을 스폰하는데 스폰하기 전에 bullet에 적용할 메서드
-        // 해당 메서드는 총의 장착을 해제하면 null로 함
-        public Action<BulletBase> BeforeShootAction;
 
         /// <summary>
         /// 총을 쏘고 난 뒤에 동작하게 할 Action
@@ -80,7 +79,7 @@ namespace Weapon.Gun
         public override void Awake()
         {
             base.Awake();
-            
+
             // Json Data 가져오기
             SetJsonData(GetInfoData(id));
             var statusData = GetStatusData(id);
@@ -95,7 +94,6 @@ namespace Weapon.Gun
             ReleaseEquipAction += (obj) =>
             {
                 AfterFireAction = null;  
-                BeforeShootAction = null;
                 status.ClearAdditionalStatus();
             };
             
@@ -123,6 +121,10 @@ namespace Weapon.Gun
             };
             FireLateTimer = TickTimer.CreateFromSeconds(Runner, 0);
             ReloadLateTimer = TickTimer.CreateFromSeconds(Runner, 0);
+            
+            if(HasInputAuthority)
+                shootEffect.gameObject.layer = LayerMask.NameToLayer("Weapon");
+            OverHeatCal();
         }
 
         #endregion
@@ -173,8 +175,7 @@ namespace Weapon.Gun
                             b.OwnerGunId = Object.Id;
                             b.KnockBack = nuckBack;
                             b.destination = fireTransform.position + (dst * status.attackRange);
-
-                            BeforeShootAction?.Invoke(b);
+                            b.PenetrateCount = penetrateCount;
                         });
                 }
 
@@ -215,6 +216,7 @@ namespace Weapon.Gun
                 ammo.Current -= needChargingAmmoCount;
             magazine.Current += needChargingAmmoCount;
                 
+            OverHeatCal();
             AfterReloadAction?.Invoke();
             DebugManager.Log($"탄약 충전 : {magazine.Current} + {needChargingAmmoCount}");
         }
@@ -245,7 +247,8 @@ namespace Weapon.Gun
 
         private void SetVFX(GameObject gameObject)
         {
-            shotOverHeating.SetFloat(Value, 0.0f);
+            shotOverHeatingPropertyBlock.Block.SetFloat(Value, 0.0f);
+            shotOverHeatingPropertyBlock.SetBlock();
             // shotsmoke.gameObject.SetActive(false);
             
             DebugManager.ToDo("Muzzle Layer 설정 변경해야함");
@@ -261,6 +264,7 @@ namespace Weapon.Gun
         }
         
         // weaponSystem에서 작동해여 코루틴이 끝까지 작동함
+        // TODO : 로직 수정으로 인해서 잠시 사용 중단
         IEnumerator OverHeatCoroutine()
         {
             float value;
@@ -272,7 +276,9 @@ namespace Weapon.Gun
             {
                 elapsedTime += Time.deltaTime;
                 value = Mathf.Lerp(0, 0.8f, elapsedTime / duration);
-                shotOverHeating.SetFloat(Value, value);
+                shotOverHeatingPropertyBlock.Block.SetFloat(Value, value);
+                shotOverHeatingPropertyBlock.SetBlock();
+                // shotOverHeating.SetFloat(Value, value);
                 yield return null;
             }
         
@@ -280,7 +286,9 @@ namespace Weapon.Gun
             {
                 elapsedTime -= Time.deltaTime;
                 value = Mathf.Lerp(0, 0.8f, elapsedTime / duration);
-                shotOverHeating.SetFloat(Value, value);
+                shotOverHeatingPropertyBlock.Block.SetFloat(Value, value);
+                shotOverHeatingPropertyBlock.SetBlock();
+                // shotOverHeating.SetFloat(Value, value);
                 yield return null;
             }
             // if(shotOverHeating != null)
@@ -289,6 +297,32 @@ namespace Weapon.Gun
             //     shotsmoke.gameObject.SetActive(false);
         }
         
+        public void OverHeatCal()
+        {
+            if(!shotOverHeatingPropertyBlock) return;
+            
+            float bulletCount = 1 - (float)magazine.Current / magazine.Max;
+            
+            StartCoroutine(OverHitTimer(shotOverHeatingPropertyBlock.Block.GetFloat(Value), bulletCount));
+        }
+
+        IEnumerator OverHitTimer(float LValue, float RValue)
+        {            
+            float amount;
+            
+            float elapsedTime = 0f;
+            float duration = 0.6f; // 보간에 걸리는 시간
+            
+            while (elapsedTime < duration)
+            {
+                elapsedTime += Time.deltaTime;
+                amount = Mathf.Lerp(LValue, RValue, elapsedTime / duration);
+                shotOverHeatingPropertyBlock.Block.SetFloat(Value, amount);
+                shotOverHeatingPropertyBlock.SetBlock();
+                yield return null;
+            }
+        }
+
         #endregion
 
         #region Weapon Interface
@@ -297,6 +331,8 @@ namespace Weapon.Gun
         {
             Runner.SpawnAsync(hitEffectPrefab, hitPosition);
         }
+        public Action<GameObject, GameObject> BeforeHitAction { get; set; }
+        public Action<GameObject, GameObject> AfterHitAction { get; set; }
 
         #endregion
 
@@ -328,7 +364,11 @@ namespace Weapon.Gun
         }
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public void FireBulletRPC() => FireBullet();
+        public void FireBulletRPC()
+        {
+            FireBullet();
+            OverHeatCal();
+        }
 
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void ReloadBulletRPC(int needChargingAmmoCount) => ReLoadBullet(needChargingAmmoCount);
@@ -347,7 +387,7 @@ namespace Weapon.Gun
             if (false == shotsmoke.gameObject.activeSelf)
                 shotsmoke.gameObject.SetActive(true);
             shotsmoke.SendEvent("OnPlay");
-            StartCoroutine(OverHeatCoroutine());
+            // StartCoroutine(OverHeatCoroutine());
         }
         
         #endregion

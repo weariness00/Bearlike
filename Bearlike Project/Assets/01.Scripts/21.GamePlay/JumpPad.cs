@@ -35,32 +35,32 @@ namespace GamePlay
                 PlayerController pc;
                 if (other.TryGetComponent(out pc) || other.transform.parent.TryGetComponent(out pc))
                 {
-                    pc.simpleKcc.Move(default, Vector3.up * jumpPower);
+                    pc.simpleKcc.Move(default, jumpPower * 100f * Vector3.up);//
                 }
             }
             else
             {
-                var monster = other.GetComponentInParent<MonsterBase>();
-                if (monster)
-                {
-                    Vector3 dir = Vector3.zero;
-                    if (monster.navMeshAgent)
-                    {
-                        dir = monster.navMeshAgent.velocity.normalized;
-                        monster.DisableNavMeshAgent();
-                        monster.EnableNavMeshAgent(0.5f);
-                    }
-                    else if(monster.rigidbody)
-                    {
-                        dir = monster.rigidbody.velocity;
-                        dir.y = 0;
-                        dir = dir.normalized;
-                    }
-
-                    var force = jumpPower * monster.rigidbody.mass * Vector3.up  + dir * jumpDirectionPower;
-                    monster.rigidbody.AddForce(force);
-                    return;
-                }
+                // var monster = other.GetComponentInParent<MonsterBase>();
+                // if (monster)
+                // {
+                //     Vector3 dir = Vector3.zero;
+                //     if (monster.navMeshAgent)
+                //     {
+                //         dir = monster.navMeshAgent.velocity.normalized;
+                //         monster.DisableNavMeshAgent();
+                //         monster.EnableNavMeshAgent();
+                //     }
+                //     else if(monster.rigidbody)
+                //     {
+                //         dir = monster.rigidbody.velocity;
+                //         dir.y = 0;
+                //         dir = dir.normalized;
+                //     }
+                //
+                //     var force = jumpPower * 50f * monster.rigidbody.mass * Vector3.up  + dir * 100f * jumpDirectionPower;
+                //     monster.rigidbody.AddForce(force);
+                //     return;
+                // }
             }
         }
     }

@@ -174,21 +174,21 @@ namespace Item
             return addItem;
         }
         
-        public virtual UseItem UseItem<UseItem>(UseItem useItem, out bool isDestroy)
+        public virtual ItemBase UseItem<UseItem>(UseItem useItem, out bool isDestroy)
         {
             isDestroy = false;
-            if (useItem is ItemBase testItem)
+            if (useItem is ItemBase item)
             {
-                testItem.info.amount.Current -= 1;
+                Amount.Current -= item.Amount.Current;
 
-                if (testItem.info.amount.isMin)
+                if (Amount.isMin)
                 {
-                    Destroy(testItem.gameObject);
+                    Destroy(gameObject);
                     isDestroy = true;
                 }
             }
 
-            return useItem;
+            return this;
         }
 
         #endregion

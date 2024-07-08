@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using Data;
+using Item;
 using Item.Looting;
 using Newtonsoft.Json;
+using Player;
 using UI;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -32,7 +34,7 @@ namespace GamePlay
         public bool isUse; // 상자가 사용되었는지
         
         [Header("Component")]
-        [SerializeField] private Transform itemDropPosition;
+        [SerializeField] private Transform itemDropTransform;
         [SerializeField] private LootingTable lootingTable;
 
         [Header("Animation")]
@@ -41,6 +43,8 @@ namespace GamePlay
 
         [Header("Sound")]
         [SerializeField] private AudioSource openSound;
+
+        private PlayerController _playerController;
 
         private static readonly int AniBoxOpen = Animator.StringToHash("t Open");
 
@@ -82,6 +86,24 @@ namespace GamePlay
                 isOpen = true;
             }
         }
+        
+        // 조건을 만족하는 경우
+        public bool ConditionSatisfaction(TreasureBoxOpenCondition condition)
+        {
+            if (_playerController && 
+                _playerController.itemInventory.TryGetItem(1, out var coin) &&
+                coin.Amount.Current >= condition.MoneyAmount)
+            {
+                _playerController.itemInventory.UseItemRPC(new NetworkItemInfo(){Id =  1, amount = condition.MoneyAmount});
+                var spawnItem = ItemObjectList.GetFromId(condition.ItemID);
+                if (spawnItem)
+                    Instantiate(spawnItem, itemDropTransform.position, itemDropTransform.rotation);
+
+                return true;
+            }
+
+            return false;
+        }
 
         private Coroutine _afterOpenBoxCoroutine;
         private IEnumerator AfterOpenBoxCoroutine()
@@ -89,7 +111,7 @@ namespace GamePlay
             yield return new WaitForSeconds(openClip.length);
             
             TreasureBoxCanvas.Instance.InitConditionBlock(this);
-            lootingTable.SpawnDropItem(itemDropPosition.position);
+            lootingTable.SpawnDropItem(itemDropTransform.position);
 
             _afterOpenBoxCoroutine = null;
         }
@@ -134,6 +156,7 @@ namespace GamePlay
         
         private void BoxInteractKeyDown(GameObject targetObject)
         {
+            if (!_playerController) _playerController = targetObject.GetComponent<PlayerController>();
             OnBox();
         }
         
@@ -159,7 +182,7 @@ namespace GamePlay
             if (Explain.Contains("(Money)"))
                 Explain = Explain.Replace("(Money)", $"{MoneyAmount}");
             
-            return StringExtension.Replace(Explain);
+            return StringExtension.CalculateNumber(Explain);
         }
     }
     

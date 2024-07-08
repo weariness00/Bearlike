@@ -1,9 +1,11 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Data;
 using Fusion;
+using GamePlay;
+using Loading;
 using Player;
+using UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Util;
@@ -13,11 +15,22 @@ namespace Photon
     public class NetworkMatchManager : NetworkBehaviour
     {
         public MatchRoomUserUI roomUserUI;
+        public SceneReference gameScene;
+        public SceneReference playerJoinLoadingScene;
+        public SceneReference magicCotton;
 
         public List<NetworkPrefabRef> PlayerPrefabRefs;
 
         public PlayerCharacterType currenPlayerCharacterType = PlayerCharacterType.FirstBear;
         public GameObject[] playerModels;
+
+        public void Awake()
+        {
+            LoadingManager.Initialize();
+            LoadingManager.StartAction += ()=> SceneManager.LoadScene(playerJoinLoadingScene, LoadSceneMode.Additive);
+            LoadingManager.EndAction += () => StartCoroutine(LoadingUnload());
+            SceneManager.LoadScene(magicCotton, LoadSceneMode.Additive);
+        }
 
         public override void Spawned()
         {
@@ -39,7 +52,9 @@ namespace Photon
             gameObject.SetActive(false);
             Runner.SessionInfo.IsVisible = false;
             Runner.SessionInfo.IsOpen = false;
-            await NetworkManager.LoadScene(SceneType.Game, LoadSceneMode.Single, LocalPhysicsMode.Physics3D);
+            SetDifficultRPC(roomUserUI.GetDifficult());
+            
+            await NetworkManager.LoadScene(gameScene, LoadSceneMode.Single, LocalPhysicsMode.Physics3D);
         }
 
         private IEnumerator InitCoroutine()
@@ -55,6 +70,21 @@ namespace Photon
                 ChangeCharacterRPC(data.ClientNumber, data.PlayerCharacterType);
             }
         }
+        
+        private IEnumerator LoadingUnload()
+        {
+            while (true)
+            {
+                Scene s = SceneManager.GetSceneByPath(playerJoinLoadingScene);
+                if (s.isLoaded)
+                {
+                    SceneManager.UnloadSceneAsync(playerJoinLoadingScene);
+                    break;
+                }
+
+                yield return null;
+            }
+        }
 
         #region Rpc Function
 
@@ -66,6 +96,9 @@ namespace Photon
                 targetPlayerModels.transform.GetChild(i).gameObject.SetActive(false);
             targetPlayerModels.transform.GetChild((int)type).gameObject.SetActive(true);
         }
+        
+        [Rpc(RpcSources.All,RpcTargets.All)]
+        public void SetDifficultRPC(string diffName) => Difficult.InitDifficult(diffName);
 
         #endregion
     }

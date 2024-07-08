@@ -3537,17 +3537,11 @@ MonoBehaviour:
   skillSelectUI: {fileID: 4987421900864778705}
   skillCanvas: {fileID: 8663980505157702360}
   levelCanvas: {fileID: 0}
+  buffCanvas: {fileID: 0}
+  goodsCanvas: {fileID: 0}
   animator: {fileID: 0}
   simpleKcc: {fileID: 0}
   rigBuilder: {fileID: 0}
-  ammo:
-    _min: 0
-    _max: 0
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
   mouseRotateObject: {fileID: 1801531898679229535}
   _W: 0
   rotateSpeed: 500
@@ -3569,9 +3563,13 @@ MonoBehaviour:
   weaponCamera: {fileID: 6128144320921080608}
   uiCamera: {fileID: 0}
   skillCamera: {fileID: 0}
-  noVolumeCamera: {fileID: 0}
+  fullScreenCamera: {fileID: 0}
+  outlineCamera: {fileID: 0}
   firstOffset: {x: 0, y: 0, z: 0.27}
   thirdOffset: {x: 0, y: 0, z: -2}
+  movement: 0.01
+  rotationAngle: 1
+  time: 0.4
 --- !u!114 &6044406679217952669
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3750,6 +3748,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 10
@@ -4083,6 +4082,7 @@ MonoBehaviour:
   - {fileID: 2133340749592019906}
   - {fileID: 8072619942090662962}
   - {fileID: 1280258583995170202}
+  coolTimeReductionRate: 0
 --- !u!1 &4805358983158637603
 GameObject:
   m_ObjectHideFlags: 0
@@ -4379,7 +4379,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb2b65af5b3240df992cc799c40a658c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 3165011596384835103}
+  button: {fileID: 0}
   icon: {fileID: 7435358112774060157}
   titleText: {fileID: 792046276885494863}
   explainText: {fileID: 5960324012922778041}
@@ -4436,6 +4436,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponList:
   - {fileID: 76385481893508708}
+  smokeObject: {fileID: 0}
 --- !u!114 &3711483062211508347
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6116,7 +6117,6 @@ MonoBehaviour:
   toggleGroup: {fileID: 3752769399434269690}
   selectUIBlockObject: {fileID: 5198700945744738040}
   playerController: {fileID: 4304092530995406759}
-  selectCount: 0
 --- !u!1 &7279871377464235292
 GameObject:
   m_ObjectHideFlags: 0
@@ -7992,12 +7992,7 @@ PrefabInstance:
         type: 3}
       propertyPath: NetworkedBehaviours.Array.data[0]
       value: 
-      objectReference: {fileID: 1280258583995170202}
-    - target: {fileID: 4046691762488615660, guid: 2e367ffe1c14ba14796531dc6471ebd0,
-        type: 3}
-      propertyPath: NetworkedBehaviours.Array.data[1]
-      value: 
-      objectReference: {fileID: 5122656691363576964}
+      objectReference: {fileID: 4625218810934974900}
     - target: {fileID: 5600621591736803518, guid: 2e367ffe1c14ba14796531dc6471ebd0,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -8071,9 +8066,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc6a9ab5adb7bdc4fb9980305c8dc212, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &5122656691363576964 stripped
+--- !u!114 &4625218810934974900 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 408735745228232319, guid: 2e367ffe1c14ba14796531dc6471ebd0,
+  m_CorrespondingSourceObject: {fileID: 183345628811522895, guid: 2e367ffe1c14ba14796531dc6471ebd0,
     type: 3}
   m_PrefabInstance: {fileID: 4808520452833389307}
   m_PrefabAsset: {fileID: 0}

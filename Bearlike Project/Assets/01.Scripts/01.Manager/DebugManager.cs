@@ -23,22 +23,25 @@ namespace Manager
 
         #region Log
 
-        public static void Log(object massage)
+        public static void Log(object massage, Object context = null)
         {
             if (!DebugManager.Instance.isDebug || !DebugManager.Instance.log) return;
-            Debug.Log(massage);
+            if(context) Debug.Log(massage, context);
+            else Debug.Log(massage);
         }
 
-        public static void LogWarning(object massage)
+        public static void LogWarning(object massage, Object context = null)
         {
             if (!DebugManager.Instance.isDebug || !DebugManager.Instance.logWaring) return;
-            Debug.LogWarning(massage);
+            if(context) Debug.LogWarning(massage, context);
+            else Debug.LogWarning(massage);
         }
 
-        public static void LogError(object massage)
+        public static void LogError(object massage, Object context = null)
         {
             if (!DebugManager.Instance.isDebug || !DebugManager.Instance.logError) return;
-            Debug.LogError(massage);
+            if(context) Debug.LogError(massage, context);
+            else Debug.LogError(massage);
         }
 
         #endregion
@@ -112,4 +115,51 @@ namespace Manager
 
         #endregion
     }
+
+#if UNITY_EDITOR
+    [InitializeOnLoad]
+    public static class DebugLogExtension
+    {
+        static DebugLogExtension()
+        {
+            Application.logMessageReceived += HandleLog;
+        }
+
+        private static void HandleLog(string logString, string stackTrace, LogType type)
+        {
+            if (type == LogType.Log)
+            {
+                if (TryGetInstanceIDFromLog(logString, out int instanceID))
+                {
+                    EditorApplication.delayCall += () =>
+                    {
+                        Object contextObject = EditorUtility.InstanceIDToObject(instanceID);
+                        if (contextObject != null)
+                        {
+                            Selection.activeObject = contextObject;
+                            EditorGUIUtility.PingObject(contextObject);
+                        }
+                    };
+                }
+            }
+        }
+
+        private static bool TryGetInstanceIDFromLog(string logString, out int instanceID)
+        {
+            instanceID = -1;
+            const string contextPrefix = "[Object : ";
+            int contextIndex = logString.LastIndexOf(contextPrefix);
+            if (contextIndex != -1)
+            {
+                int endIndex = logString.IndexOf(']', contextIndex);
+                if (endIndex != -1)
+                {
+                    string idString = logString.Substring(contextIndex + contextPrefix.Length, endIndex - contextIndex - contextPrefix.Length);
+                    return int.TryParse(idString, out instanceID);
+                }
+            }
+            return false;
+        }
+    }
+#endif
 }

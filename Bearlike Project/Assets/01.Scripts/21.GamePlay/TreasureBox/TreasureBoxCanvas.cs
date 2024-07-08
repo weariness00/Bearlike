@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Manager;
 using TMPro;
-using UI;
 using UnityEngine;
 using UnityEngine.UI;
 using Util;
@@ -33,24 +32,28 @@ namespace GamePlay
             foreach (var obj in _instanceBlockList)
                 Destroy(obj);
             
-            blockObject.SetActive(true);
             var treasureBoxData = TreasureBox.GetTreasureBoxData(treasureBox.id);
             foreach (var condition in treasureBoxData.OpenConditions)
             {
                 blockExplainText.text = condition.GetExplain();
-                blockButton.onClick.AddListener(() =>
-                {
-                    treasureBox.isUse = true;
-                    gameObject.SetActive(false);
-                });
 
                 var obj =Instantiate(blockObject, blockParentTransform);
+                var objButton = obj.GetComponent<Button>();
+                objButton.onClick.AddListener(() =>
+                {
+                    if (treasureBox.ConditionSatisfaction(condition))
+                    {
+                        treasureBox.isUse = true;
+                        gameObject.SetActive(false);
+                    }
+                });
+                
+                obj.SetActive(true);
+                
                 _instanceBlockList.Add(obj);
-                blockButton.onClick.RemoveAllListeners();
             }
-            blockObject.SetActive(false);
             
-            GameUIManager.AddActiveUI(gameObject);
+            UIManager.AddActiveUI(gameObject);
         }
     }
 }

@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6835531890653758571}
-  - component: {fileID: 314389705019756867}
   - component: {fileID: 6582496449349687417}
   - component: {fileID: 4973092893459209289}
   m_Layer: 0
@@ -34,88 +33,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &314389705019756867
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9143825923765031029}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd01124aa4bc4dc4399f157bbd561130, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hp:
-    _min: 0
-    _max: 99999
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  damage:
-    _min: 0
-    _max: 99999
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  damageMultiple: 1
-  criticalHitMultiple: 1
-  criticalHitChance:
-    _min: 0
-    _max: 1
-    _current: 0
-    isOverMax: 1
-    isOverMin: 0
-    isMin: 1
-    isMax: 0
-  defence:
-    _min: 0
-    _max: 99999
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  avoid:
-    _min: 0
-    _max: 1
-    _current: 0
-    isOverMax: 1
-    isOverMin: 1
-    isMin: 0
-    isMax: 0
-  moveSpeed:
-    _min: 0
-    _max: 99999
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  attackSpeed:
-    _min: 0
-    _max: 99999
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  attackRange:
-    _min: 0
-    _max: 99999
-    _current: 0
-    isOverMax: 0
-    isOverMin: 0
-    isMin: 0
-    isMax: 0
-  condition: 0
-  property: 0
-  burnDamage: 0
-  poisonDamage: 0
 --- !u!114 &6582496449349687417
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -133,21 +50,23 @@ MonoBehaviour:
     _value: 0
   ownerPlayer: {fileID: 0}
   id: 100
-  skillName: 
-  explain: 
-  type: 0
+  skillName: Penetrate Bullet
+  explain: "\uCD1D\uC54C\uC774 0\uBC88 \uAD00\uD1B5\uB9CC\uD07C \uAD00\uD1B5\uD569\uB2C8\uB2E4."
+  type: 1
   icon: {fileID: 21300000, guid: e72c8e26a868f9c41b0b6e41ed31c89f, type: 3}
   coolTime: 0
+  coolTimeReductionRate: 0
   isInvoke: 0
   status: {fileID: 0}
   level:
     _min: 0
-    _max: 1
+    _max: 3
     _current: 0
     isOverMax: 0
     isOverMin: 0
-    isMin: 0
+    isMin: 1
     isMax: 0
+  effectVFX: {fileID: 0}
 --- !u!114 &4973092893459209289
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,5 +84,4 @@ MonoBehaviour:
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 314389705019756867}
   - {fileID: 6582496449349687417}

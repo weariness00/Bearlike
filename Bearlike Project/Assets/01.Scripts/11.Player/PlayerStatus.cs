@@ -21,6 +21,13 @@ namespace Player
         public StatusValue<int> level = new StatusValue<int>();               // 레벨
         public StatusValue<int> experience = new StatusValue<int>();                 // 경험치
         public List<int> experienceAmountList = new List<int>();  // 레벨별 경험치량
+
+        public Action LevelUpAction
+        {
+            get;
+            set;
+        }
+        
         public float immortalDurationAfterSpawn = 2f;           // 무적 시간
 
         public StatusValue<float> jumpPower = new StatusValue<float>();
@@ -117,19 +124,31 @@ namespace Player
         public void BePoisoned(int value)
         {
             hp.Current -= value;
-            
         }
         
-        public override void ApplyDamage(int applyDamage, NetworkId ownerId, CrowdControl cc) // MonsterRef instigator,
+        public override void ApplyDamage(int applyDamage, DamageTextType damageType, NetworkId ownerId, CrowdControl cc) // MonsterRef instigator,
         {
-            base.ApplyDamage(applyDamage, ownerId, cc);
+            base.ApplyDamage(applyDamage, damageType, ownerId, cc);
 
-            // _playerCameraController.ScreenHitImpact(1,1);
-            // URPRendererFeaturesManager.Instance.StartEffect("HitEffect");
+            if (HasInputAuthority)
+            {
+                playerController.cameraController.ScreenHitImpact(1,1);
+                URPRendererFeaturesManager.Instance.StartEffect("HitEffect");
+            }
             
             HpControlRPC();
         }
 
+        public override void ApplyHeal(int applyHeal, NetworkId ownerId, CrowdControl cc = CrowdControl.Normality)
+        {
+            base.ApplyHeal(applyHeal, ownerId, cc);
+            
+            if (HasInputAuthority)
+            {
+                URPRendererFeaturesManager.Instance.StartEffect("HealEffect");
+            }
+        }
+        
         /// <summary>
         /// 체력이 0이면 부상
         /// 부상에서 일정 시간이 지나면 죽음으로 바뀌게 하는 로직
@@ -175,6 +194,7 @@ namespace Player
                     return;
                 }
                 
+                // 여기서 
                 experience.Current -= experience.Max;
                 experience.Max = (int)(1.5f * experience.Max);
                 LevelUpRPC();
@@ -184,8 +204,7 @@ namespace Player
         public void LevelUp()
         {
             level.Current++;
-            if(HasInputAuthority)
-                playerController.skillSelectUI.SpawnSkillBlocks(3);
+            LevelUpAction?.Invoke();
         }
 
         public override void HealingText(int realHealAmount)

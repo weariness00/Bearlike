@@ -15,21 +15,8 @@ namespace Util
         }
         
         private List<int> _uniqueIntList;
-
-        public int RandomInt()
-        {
-            if (_uniqueIntList == null || _uniqueIntList.Count == 0)
-            {
-                DebugManager.LogError("UniqueRandom의 Array를 초기화 하기 위해 먼저 Initialize 메서드를 호출해주세요");
-                return -1;
-            }
-
-            var index = Random.Range(0, _uniqueIntList.Count);
-            var value = _uniqueIntList[index];
-            _uniqueIntList.RemoveAt(index);
-            return value;
-        }
-
+        public int Length => _uniqueIntList.Count;
+        
         /// <summary>
         /// [min, max) 를 포함한 랜덤
         /// </summary>
@@ -43,6 +30,26 @@ namespace Util
                 _uniqueIntList.Add(i);
             }
         }
+        
+        public int RandomInt()
+        {
+            if (_uniqueIntList == null)
+            {
+                DebugManager.LogError("UniqueRandom의 Array를 초기화 하기 위해 먼저 Initialize 메서드를 호출해주세요");
+                return -1;
+            }
+            else if (_uniqueIntList.Count == 0)
+            {
+                DebugManager.LogWarning("UniqueRandom에서 더이상 얻을 Random 값이 없습니다.");
+                return -1;
+            }
+
+            var index = Random.Range(0, _uniqueIntList.Count);
+            var value = _uniqueIntList[index];
+            _uniqueIntList.RemoveAt(index);
+            return value;
+        }
+
     }
 }
 

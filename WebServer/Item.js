@@ -34,7 +34,7 @@ async function MakeInfoData(app)
         res.json(version);
     })
 
-    app.get('/Item/', async (req, res) => {
+    app.get('/Item', async (req, res) => {
         var json = await InfoQuery();
         res.json(json);
     })
@@ -56,7 +56,7 @@ async function MakeStatusData(app)
         res.json(version);
     })
 
-    app.get('/Item/Status/', async (req, res) => {
+    app.get('/Item/Status', async (req, res) => {
         var json = await StatusQuery();
         res.json(json);
     })

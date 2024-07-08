@@ -10,7 +10,7 @@ using Fusion.Photon.Realtime;
 using Fusion.Sockets;
 using Loading;
 using Manager;
-using UI;
+using Manager.FireBase;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,13 +18,24 @@ using Random = System.Random;
 
 namespace Photon
 {
+    [Serializable]
+    public enum NetworkState
+    {
+        None,
+        JoinReady,
+        JoinSuccess,
+    }
+    
     public class NetworkManager : Util.Singleton<NetworkManager>, INetworkRunnerCallbacks
     {
         public static NetworkRunner Runner => Instance._runner;
         public static int PlayerCount => Runner.ActivePlayers.ToArray().Length;
 
         public bool isTest = true; // 현재 테스트 상황인지
+
+        public SceneReference matchingScene;
         public SceneReference lobbyScene;
+        
         private NetworkRunner _runner;
         private SessionInfo[] _sessionInfoAll = Array.Empty<SessionInfo>();
 
@@ -79,6 +90,22 @@ namespace Photon
             SceneLoadDoneAction?.Invoke();
             SceneLoadDoneAction = null;
         }
+
+        IEnumerator JoinPlayerCoroutine(NetworkRunner runner, PlayerRef player)
+        {
+            while (UserData.Instance == null)
+                yield return null;
+            
+            FireBaseDataBaseManager.RootReference.GetChild($"UserData/{FireBaseAuthManager.UserId}/Name").SnapShot(snapshot =>
+            {
+                var data = new UserDataStruct
+                {
+                    PlayerRef = player,
+                };
+                
+                UserData.Instance.InsertUserDataRPC(player, data);
+            });
+        }
         
         public static async Task LoadScene(SceneRef sceneRef, LoadSceneParameters parameters, bool setActiveOnLoad = false)
         {
@@ -86,6 +113,7 @@ namespace Photon
             {
                 if (parameters.loadSceneMode == LoadSceneMode.Single)
                 {
+                    UIManager.QueueClear();
                     Instance._runner.LoadScene(sceneRef, parameters, setActiveOnLoad);
                 }
                 else
@@ -96,23 +124,6 @@ namespace Photon
                 DebugManager.Log($"씬 불러오기 성공 : {sceneRef}");
             }
         }
-
-        public static async Task LoadScene(SceneType type, LoadSceneMode sceneMode = LoadSceneMode.Single, LocalPhysicsMode physicsMode = LocalPhysicsMode.None, bool setActiveOnLoad = false)
-        {
-            DebugManager.ToDo("나중에 씬 호출을 에셋 번들로 바꾸기");
-            if (Instance._runner.IsSceneAuthority)
-            {
-                LoadSceneParameters sceneParameters = new LoadSceneParameters()
-                {
-                    loadSceneMode = sceneMode,
-                    localPhysicsMode = physicsMode,
-                };
-                await NetworkManager.LoadScene(type, sceneParameters, setActiveOnLoad);
-            }
-        }
-
-        public static Task LoadScene(SceneType type, LoadSceneParameters parameters, bool setActiveOnLoad = false) => LoadScene(SceneRef.FromIndex((int)type), parameters, setActiveOnLoad);
-        public static Task LoadScene(int type, LoadSceneMode sceneMode = LoadSceneMode.Single, LocalPhysicsMode physicsMode = LocalPhysicsMode.None, bool setActiveOnLoad = false) => LoadScene((SceneType)type, sceneMode, physicsMode, setActiveOnLoad);
 
         public static Task LoadScene(string path, LoadSceneMode sceneMode = LoadSceneMode.Single, LocalPhysicsMode physicsMode = LocalPhysicsMode.None, bool setActiveOnLoad = false) => LoadScene(SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(path)), new LoadSceneParameters(sceneMode, physicsMode), setActiveOnLoad);
         public static Task LoadScene(string path, LoadSceneParameters parameters, bool setActiveOnLoad = false) => LoadScene(SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(path)), parameters, setActiveOnLoad);
@@ -126,7 +137,6 @@ namespace Photon
         }
 
         public static void UnloadScene(string path) => UnloadScene(SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(path)));
-        public static void UnloadScene(SceneType type) => UnloadScene(SceneRef.FromIndex((int)type));
 
         #endregion
 
@@ -151,10 +161,8 @@ namespace Photon
                               "누군가가 세션을 나가면 정보 업데이트 해줘야함\n" +
                               "세션에 한명도 없으면 json에 세션 지워줘야함");
 
-            LoadingManager.Initialize();
-            
             // Create the NetworkSceneInfo from the current scene
-            var scene = SceneRef.FromIndex((int)SceneType.Matching);
+            var scene = SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(matchingScene));
             var sceneInfo = new NetworkSceneInfo();
             if (scene.IsValid)
             {
@@ -254,21 +262,10 @@ namespace Photon
 
         public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
-            var data = new UserDataStruct
-            {
-                PlayerRef = player,
-                Name = player.ToString()
-            };
+            if(runner.IsServer)
+                LoadingManager.AddWait();
 
-            if (UserData.Instance == null)
-            {
-                SceneLoadDoneAction += () =>
-                {
-                    UserData.Instance.AfterSpawnedAction += () => UserData.Instance.InsertUserDataRPC(player, data);
-                };
-            }            
-            else
-                UserData.Instance.InsertUserDataRPC(player, data);
+            StartCoroutine(JoinPlayerCoroutine(runner, player));
         }
 
         public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
@@ -318,28 +315,11 @@ namespace Photon
                 if (KeyManager.InputAction(KeyToAction.Esc))
                 {
                     playerInputData.Escape = true;
-
-                    // switch (Cursor.lockState)
-                    // {
-                    //     case CursorLockMode.None:
-                    //         if(GameUIManager.HasInstance() && GameUIManager.HasActiveUI() == false) isCursor = true;
-                    //         playerInputData.Escape = false;
-                    //         break;
-                    //     case CursorLockMode.Locked:
-                    //         Cursor.lockState = CursorLockMode.None;
-                    //         isCursor = false;
-                    //         break;
-                    // }
-                    
                     _keyDownTimer = TickTimer.CreateFromTicks(runner, 2);
                 }
             }
             if (Cursor.lockState == CursorLockMode.None)
-            {
                 playerInputData.Cursor = trueValue;
-                input.Set(playerInputData);
-                return;
-            }
 
             if (KeyManager.InputAction(KeyToAction.MoveFront))
                 playerInputData.MoveFront = trueValue;
@@ -385,6 +365,8 @@ namespace Photon
                 playerInputData.SkillSelect = trueValue;
             if (KeyManager.InputAction(KeyToAction.Interact) || KeyManager.InputActionDown(KeyToAction.Interact))
                 playerInputData.Interact = trueValue;
+            if (KeyManager.InputActionDown(KeyToAction.GameProgress))
+                playerInputData.GameProgress = trueValue;
             
             playerInputData.MouseAxis.x = Input.GetAxis("Mouse X");
             playerInputData.MouseAxis.y = Input.GetAxis("Mouse Y");
@@ -420,7 +402,7 @@ namespace Photon
         {
             DebugManager.LogWarning($"서버 연결이 끊김\n" +
                                     $"서버 이름 : {runner.SceneManager.MainRunnerScene.name}");
-            SceneManager.LoadScene((int)SceneType.Lobby);
+            SceneManager.LoadScene(lobbyScene);
         }
 
         public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request,

@@ -13,8 +13,10 @@ public class SoundManager : MonoBehaviour
 	
 	public AudioSource[] audioSources;
 	Dictionary<string, AudioClip> clipDictionary = new Dictionary<string, AudioClip>();
-
+	
 	string defualt_Path = "Sound/";
+	private const float minDecibel = -80f; // 믹서의 최소 데시벨 값
+	private const float maxDecibel = 20f;  // 믹서의 최대 데시벨 값
 	
 	public enum SoundType
 	{
@@ -153,6 +155,20 @@ public class SoundManager : MonoBehaviour
     {
 	    if (Instance.audioMixer == null) return;
 	    Instance.audioMixer.SetFloat(Instance.audioSources[(int)soundType].outputAudioMixerGroup.name, value);
+    }
+    
+    // 0~100 범위의 선형 값을 데시벨 값으로 변환하는 함수
+    public static float LinearToDecibel(float linear)
+    {
+	    float dB = Mathf.Lerp(minDecibel, maxDecibel, linear / 100f);
+	    return dB;
+    }
+
+    // 데시벨 값을 0~100 범위의 선형 값으로 변환하는 함수
+    public static float DecibelToLinear(float dB)
+    {
+	    float linear = Mathf.InverseLerp(minDecibel, maxDecibel, dB) * 100f;
+	    return linear;
     }
     
 	AudioClip GetOrAddAudioClip(string path)

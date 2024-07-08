@@ -148,10 +148,10 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 1141117751
+    m_Bits: 1074008887
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 92160
+    m_Bits: 67201024
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -175,14 +175,14 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 1141117751
+    m_Bits: 1074008833
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 92160
+    m_Bits: 606300214
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 0
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
@@ -219,11 +219,12 @@ MonoBehaviour:
     _value: 0
   _OwnerId:
     Raw: 0
+  _OwnerGunId:
+    Raw: 0
   status: {fileID: 0}
-  penetrateCount: 0
   destination: {x: -17.54316, y: 99.12152, z: -1.22813}
-  hitEffect: {fileID: 0}
-  bknock: 0
+  _PenetrateCount: 0
+  _KnockBack: 0
 --- !u!114 &7277939220162606340
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -253,7 +254,6 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -262,6 +262,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 0
@@ -278,6 +279,7 @@ MonoBehaviour:
     isOverMin: 1
     isMin: 0
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 100
@@ -286,6 +288,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 0
@@ -294,6 +297,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 100
@@ -306,3 +310,4 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0

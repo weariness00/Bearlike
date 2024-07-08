@@ -138,7 +138,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 512, y: 512}
+  m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2915054258918165932
 CanvasRenderer:
@@ -168,7 +168,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d910043acf9bad243bf5a7688fe361cb, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3711ed65a4d01844e91ff76533bd7859, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -261,7 +261,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a884712bb989f4f4b8e9195e8beb388b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e6705ced2a3e6bd48b3bc44640135a7e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -357,6 +357,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  effectVFX: {fileID: 0}
   cleanShootCanvas: {fileID: 3223929226563402317}
   aimCanvas: {fileID: 3284216052248679964}
   areaObject: {fileID: 4646657968551755057}
@@ -413,7 +414,6 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -422,6 +422,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 99999
@@ -438,6 +439,7 @@ MonoBehaviour:
     isOverMin: 1
     isMin: 0
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 99999
@@ -467,6 +469,7 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0
 --- !u!1 &8624964009659259095
 GameObject:
   m_ObjectHideFlags: 0

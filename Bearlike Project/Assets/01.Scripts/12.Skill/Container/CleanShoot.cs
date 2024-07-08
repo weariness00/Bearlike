@@ -7,6 +7,7 @@ using Manager;
 using Monster;
 using Photon;
 using Player;
+using UI.Status;
 using UnityEngine;
 using UnityEngine.VFX;
 using Util;
@@ -34,8 +35,6 @@ namespace Skill.Container
 
         private Animation _aimAnimation;
         private WaitForSeconds _aimTargetingAniTime;
-
-        private LayerMask _layerMask;
 
         private TickTimer _cancelTimer; // 스킬을 취소 할 수 있게 하는데 바로 하지 않고 스킬 발동후 일정 시간 이후에 하게 하기 위해 사용
         private WaitForSeconds _findTime; // 몇초를 주기로 영역내에 몬스터 포착 업데이트를 하게 할지
@@ -72,7 +71,6 @@ namespace Skill.Container
                 _trajectoryVFXDestroyTime = 3f;
             }
 
-            _layerMask = LayerMask.GetMask("Default");
 
             _findTime = new WaitForSeconds(0.2f);
         }
@@ -116,7 +114,7 @@ namespace Skill.Container
                     
                     cleanShootCanvas.gameObject.SetActive(true);
                     aimCanvas.gameObject.SetActive(true);
-                    ownerPlayer.cameraController.SetLensDistortion(-0.2f, 1f, 1f, null, 1.05f, _aniAreaOpenTime);
+                    ownerPlayer.cameraController.SetLensDistortion(-0.35f, 1f, 1f, null, 1.05f, _aniAreaOpenTime);
                     StartCoroutine(AreaOpenSetting(ownerPlayer.gameObject));
                 }
 
@@ -142,22 +140,15 @@ namespace Skill.Container
             }
         }
 
-        public override void LevelUp()
-        {
-            base.LevelUp();
-
-            ExplainUpdate();
-        }
-
         public override void ExplainUpdate()
         {
             base.ExplainUpdate();
             if (explain.Contains("(현재 공격력)"))
-                explain = explain.Replace("(현재 공격력)", $"({status.CalDamage()})");
+                explain = explain.Replace("(현재 공격력)", $"({status.CalDamage(out bool isCritical)})");
             if (explain.Contains("(Level)"))
                 explain = explain.Replace("(Level)", $"{level.Current}");
             
-            explain = StringExtension.Replace(explain);
+            explain = StringExtension.CalculateNumber(explain);
         }
         
         #endregion
@@ -172,7 +163,7 @@ namespace Skill.Container
                 {
                     // 스킬을 사용했으면 초기화 해야됨
                     isInvoke = false;
-                    SetSkillCoolTimerRPC(coolTime);
+                    SetSkillCoolTimerRPC(GetCoolTime());
                     cleanShootCanvas.gameObject.SetActive(false);
                     aimCanvas.gameObject.SetActive(false);
 
@@ -187,7 +178,7 @@ namespace Skill.Container
                         foreach (var monster in _monsterList)
                         {
                             var targetStatus = monster.GetComponent<MonsterStatus>();
-                            targetStatus.PlayerApplyDamage(status.CalDamage(), ownerPlayer.Object.Id, CrowdControl.Normality);
+                            targetStatus.ApplyDamageRPC(status.CalDamage(out var isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, ownerPlayer.Object.Id, CrowdControl.Normality);
 
                             // 총알 궤적 VFX 생성
                             var monsterNetworkId = monster.GetComponent<NetworkObject>().Id;
@@ -209,12 +200,15 @@ namespace Skill.Container
             var screenHalf = screen / 2f;
             var areaMin = (screenHalf - rangeHalf) / screen;
             var areaMax = (screenHalf + rangeHalf) / screen;
+            var pc = runObject.GetComponent<PlayerController>();
+            runObject = pc.cameraController.targetCamera.gameObject;
 
             // 영역 여는 애니메이션 길이만큼 대기
             areaAnimation.Play("Open Clean Shoot Area");
             yield return _areaOpenWaiter;
 
-            DebugManager.ToDo("영역에 잡힌 Monster들의 위치를 UI로 띄어주기");
+            var hitOptions = HitOptions.IncludePhysX | HitOptions.IgnoreInputAuthority; // 이 옵션을 포함하지 않으면 일반적인 물리 객체와 ray충돌 체크를 안함
+            var includeRayMask = 1 << LayerMask.NameToLayer("Default") | 1 << LayerMask.NameToLayer("DeadBody");
 
             while (true)
             {
@@ -227,10 +221,11 @@ namespace Skill.Container
                 var monsters = FindObjectsOfType<MonsterBase>();
 
                 _monsterList.Clear();
-                var runPosition = Camera.main.transform.position;
+                var runPosition = runObject.transform.position;
                 foreach (var monster in monsters)
                 {
-                    Vector3 monsterViewportPosition = Camera.main.WorldToViewportPoint(monster.transform.position);
+                    if(_aimDictionary.ContainsKey(monster.gameObject)) continue;
+                    Vector3 monsterViewportPosition = Camera.main.WorldToViewportPoint(monster.pivot.position);
 
                     // monsterViewportPosition의 값이 areaMin, areaMax 값 사이에 있으면 객체가 UI 영역 내에 있다고 판단할 수 있습니다.
                     if (monsterViewportPosition.x >= areaMin.x && monsterViewportPosition.x <= areaMax.x &&
@@ -241,13 +236,18 @@ namespace Skill.Container
                         var dir = (monsterPosition - runPosition);
 
                         // ray를 발사해 앞에 장애물이 있는지 확인
-                        DebugManager.DrawRay(monsterPosition, dir, Color.blue, 3f);
-                        if (Physics.Raycast(monsterPosition, dir, out var hit, _layerMask) == false)
+                        DebugManager.DrawRay(runPosition, dir.normalized * dir.magnitude, Color.blue, 3f);
+                        if (Runner.LagCompensation.Raycast(runPosition, dir.normalized, dir.magnitude, Runner.LocalPlayer, out var lagHit, includeRayMask, hitOptions))
+                        {
+                            // 그 무엇과도 충돌하면 안됨
+                            // 연산 효율화를 위해 여기는 빈공간으로 둠//
+                        }
+                        else
                         {
                             _monsterList.Add(monster);
-                            if (_aimDictionary.ContainsKey(monster.gameObject) == false)
+                            if (_aimDictionary.ContainsKey(monster.pivot.gameObject) == false)
                             {
-                                StartCoroutine(AimSetting(runObject, monster.gameObject));
+                                StartCoroutine(AimSetting(runObject, monster.pivot.gameObject));
                             }
                         }
                     }
@@ -289,26 +289,36 @@ namespace Skill.Container
 
             var aimRect = aim.GetComponent<RectTransform>();
             var camera = ownerPlayer.cameraController.targetCamera;
+            
+            var hitOptions = HitOptions.IncludePhysX | HitOptions.IgnoreInputAuthority;
+            var includeRayMask = 1 << LayerMask.NameToLayer("Default") | 1 << LayerMask.NameToLayer("DeadBody");
 
             while (true)
             {
                 yield return null;
-                if (isInvoke == false)
-                {
+                if (isInvoke == false || !target || !aim)
                     break;
-                }
-
+                
                 Vector3 monsterViewportPosition = camera.WorldToViewportPoint(target.transform.position);
+                
                 if (monsterViewportPosition.x >= areaMin.x && monsterViewportPosition.x <= areaMax.x &&
                     monsterViewportPosition.y >= areaMin.y && monsterViewportPosition.y <= areaMax.y &&
                     monsterViewportPosition.z > 0)
                 {
-                    var dir = (target.transform.position - runObject.transform.position);
+                    var runPosition = runObject.transform.position;
+                    var dir = (target.transform.position - runPosition);
                     var aimPos = monsterViewportPosition * screen - (Vector2)aimCanvas.transform.position;
                     var dirMagnitudeNormalize = Mathf.Clamp((50 - dir.magnitude) / 50, 0, 1);
                     var aimScale = new Vector3(dirMagnitudeNormalize, dirMagnitudeNormalize, 1f);
                     aimRect.anchoredPosition = aimPos;
                     aimRect.localScale = aimScale;
+                    
+                    if (Runner.LagCompensation.Raycast(runPosition, dir.normalized, dir.magnitude, Runner.LocalPlayer, out var lagHit, includeRayMask, hitOptions))
+                    {
+                        _aimDictionary.Remove(target);
+                        Destroy(aim);
+                        break;
+                    }
                 }
                 else
                 {

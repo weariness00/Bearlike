@@ -63,7 +63,6 @@ MonoBehaviour:
     isMin: 1
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -72,6 +71,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 99999
@@ -88,6 +88,7 @@ MonoBehaviour:
     isOverMin: 1
     isMin: 1
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 99999
@@ -104,6 +105,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  attackSpeedMultiple: 1
   attackRange:
     _min: 0
     _max: 99999
@@ -116,6 +118,7 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0
 --- !u!114 &7103463454318358188
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136,7 +139,7 @@ MonoBehaviour:
   skillName: 
   explain: 
   type: 0
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: be16236e91730b14597ef33988ab0fef, type: 3}
   coolTime: 0
   isInvoke: 0
   status: {fileID: 5880179037907059105}
@@ -148,10 +151,13 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  effectVFX: {fileID: 0}
   gravityFieldPrefab:
     RawGuidValue: 822713fe49e08c941ab0a93cc502d22b
   gravityPower: 10
+  positionStrength: 1
   rotateStrength: 1
+  explodeStrength: 10
   gravityFieldDuration: 10
 --- !u!114 &4089173174490926313
 MonoBehaviour:
@@ -167,7 +173,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SortKey: 1403073324
   ObjectInterest: 1
-  Flags: 1
+  Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 5880179037907059105}

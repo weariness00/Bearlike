@@ -28,12 +28,24 @@ namespace Test
 
         private NetworkRunner _runner;
         public SceneReference s;
+        public SceneReference addScene;
         public int sceneIndex;
         public NetworkPrefabRef playerRef;
 
         private void Start()
         {
             Matching(GameMode.AutoHostOrClient, "aa");
+        }
+
+        private void Update()
+        {
+            if(Input.GetKeyDown(KeyCode.F1))
+                AdditionalScene();
+        }
+
+        void AdditionalScene()
+        {
+            _runner.LoadScene(SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(addScene)), LoadSceneMode.Additive);
         }
 
         void Matching(GameMode mode, string sessionName)

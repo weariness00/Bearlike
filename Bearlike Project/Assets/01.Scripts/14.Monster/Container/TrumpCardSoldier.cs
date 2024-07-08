@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using BehaviorTree.Base;
-using DG.Tweening.Core.Enums;
 using Fusion;
 using Manager;
 using Status;
+using UI.Status;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -11,14 +11,10 @@ namespace Monster.Container
 {
     public class TrumpCardSoldier : MonsterBase
     {
-        private BehaviorTreeRunner _behaviorTreeRunner;
-        private NetworkObject[] _playerObjects;
-
         public Transform weaponTransform;
         public CrowdControl crowdControlType;
 
         [Header("VFX")] 
-        [SerializeField] private GameObject dieEffectObject;
         public VisualEffect prickVFX; // 찌르는 VFX
 
         [Header("Animation Clip")] 
@@ -40,11 +36,6 @@ namespace Monster.Container
         {
             base.Start();
 
-            DieAction += () =>
-            {
-                dieEffectObject.SetActive(true);
-            };
-            
             DebugManager.ToDo("CC 타입 별로 기본 스텟에서 차별을 두기");
             // Spade => 취약
             // Hart => 화상
@@ -68,19 +59,6 @@ namespace Monster.Container
             }
         }
 
-        public override void Spawned()
-        {
-            base.Spawned();
-            _behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
-        }
-
-        public override void FixedUpdateNetwork()
-        {
-            base.FixedUpdateNetwork();
-
-            _behaviorTreeRunner.Operator();
-        }
-        
         #region Animation Event Function
 
         public void AniAttackRayEvent()
@@ -100,7 +78,7 @@ namespace Monster.Container
                     if (hit.GameObject.TryGetComponent(out targetStatus) || hit.GameObject.transform.root.TryGetComponent(out targetStatus))
                     {
                         DebugManager.Log($"{hit.GameObject.name}");
-                        targetStatus.PlayerApplyDamage(status.CalDamage(), Object.Id, crowdControlType);
+                        targetStatus.ApplyDamageRPC(status.CalDamage(out var isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, Object.Id, crowdControlType);
                     }
                 }
             }
@@ -110,7 +88,7 @@ namespace Monster.Container
 
         #region BT Function
 
-        private INode InitBT()
+        public override INode InitBT()
         {
             var findTarget = new ActionNode(FindTarget);
             var idle = new ActionNode(Idle);
@@ -133,8 +111,8 @@ namespace Monster.Container
                 findTarget,
                 new SelectorNode(
                     false,
-                    new Detector(() => targetPlayer, onTarget),
-                    new Detector(() => !targetPlayer, offTarget)
+                    new Detector(() => aggroController.HasTarget(), onTarget),
+                    new Detector(() => !aggroController.HasTarget(), offTarget)
                     )
                 );
             return loop;
@@ -176,13 +154,14 @@ namespace Monster.Container
 
                 AniWalkTimer = TickTimer.CreateFromSeconds(Runner, walkClip.length);
                 navMeshAgent.isStopped = !navMeshAgent.isActiveAndEnabled;
-                if (targetPlayer)
+                if (aggroController.HasTarget())
                 {
-                    if (IsIncludeLink(targetPlayer.transform.position))
+                    var target = aggroController.GetTarget();
+                    if (IsIncludeLink(target.transform.position))
                         navMeshAgent.stoppingDistance = 0;
                     else
                         navMeshAgent.stoppingDistance = status.attackRange.Current - 0.2f;
-                    navMeshAgent.SetDestination(targetPlayer.transform.position);
+                    navMeshAgent.SetDestination(target.transform.position);
                 }
                 else
                 {
@@ -233,7 +212,7 @@ namespace Monster.Container
 
             if (AniAttackTimer.Expired(Runner) == false)
             {
-                RotateTarget();
+                RotateToTarget();
                 return INode.NodeState.Running;
             }
 

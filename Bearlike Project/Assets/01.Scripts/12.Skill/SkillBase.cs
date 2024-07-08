@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
 using Data;
 using Fusion;
+using Manager;
 using Photon;
 using Player;
 using Status;
 using UI.Inventory;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.VFX;
 
 namespace Skill
@@ -26,7 +23,6 @@ namespace Skill
     /// 레벨업 & 다운은 가능하다 버리기는 불가능
     /// </summary>
     [System.Serializable]
-    [RequireComponent(typeof(StatusBase))]
     public abstract class SkillBase : NetworkBehaviourEx, IJsonData<SkillJsonData>, IInventoryItemAdd
     {
         #region Static
@@ -57,8 +53,9 @@ namespace Skill
         public string explain; // 텍스트로 보여줄 설명
         public SKillType type;
         public Sprite icon;
-        public float coolTime;
-
+        [SerializeField] private float coolTime;
+        [SerializeField] private float coolTimeReductionRate = 0; // 쿨타임 감소율
+        
         public bool isInvoke; // 현재 스킬이 발동 중인지
 
         public StatusBase status;
@@ -75,11 +72,10 @@ namespace Skill
 
         public virtual void Awake()
         {
-            status = GetComponent<StatusBase>();
-            
             SetJsonData(GetInfoData(id));
             var statusData = GetStatusData(id);
-            status.SetJsonData(statusData);
+            
+            if (TryGetComponent(out status)) status.SetJsonData(statusData);
             if(statusData.HasInt("Level Max")) level.Max = statusData.GetInt("Level Max");
             if(effectVFX) effectVFX.gameObject.SetActive(false);
         }
@@ -97,6 +93,14 @@ namespace Skill
 
         #region Member Function
 
+        public void SetCoolTime(float value) => coolTime = value;
+        public float GetCoolTime() => coolTime * (1f - coolTimeReductionRate);
+        
+        public void SetCoolTimeReductionRate(float rate) => coolTimeReductionRate = rate;
+        public float GetCoolTimeReductionRate() => coolTimeReductionRate;
+
+        public void StartCoolTimer(float time) => CoolTimeTimer = TickTimer.CreateFromSeconds(Runner, time);
+
         /// <summary>
         /// 스킬을 습득 했을때 발동하도록 하는 함수
         /// </summary>
@@ -111,18 +115,20 @@ namespace Skill
         /// <summary>
         /// 레벨업 (스킬 강화) 할시 동작하는 함수
         /// </summary>
-        public virtual void LevelUp()
+        public virtual void LevelUp(int upAmount = 1, bool isAddInventory = true)
         {
-            level.Current += 1;
-            ownerPlayer.skillInventory.AddItem(this);
-            explain = _originExplain;
+            level.Current += upAmount;
+            if(isAddInventory) ownerPlayer.skillInventory.AddItem(this);
+            ExplainUpdate();
+            
+            EventBusManager.Publish(EventBusType.SkillLevelUp, this);
         }
 
         public virtual void ExplainUpdate()
         {
             explain = _originExplain;
         }
-        
+ 
         #endregion
         
         #region Inventory Interface
@@ -169,6 +175,9 @@ namespace Skill
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void SetSkillCoolTimerRPC(float time) => CoolTimeTimer = TickTimer.CreateFromSeconds(Runner, time);
 
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void SetCoolTimeReductionRateRPC(float rate) => coolTimeReductionRate = rate;
+        
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void SetIsInvokeRPC(NetworkBool value) => isInvoke = value;
 
