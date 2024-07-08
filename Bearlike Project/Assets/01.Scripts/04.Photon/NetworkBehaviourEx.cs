@@ -43,6 +43,14 @@ namespace Photon
         }
         [Rpc(RpcSources.All, RpcTargets.StateAuthority, Channel = RpcChannel.Reliable)]
         public void DestroyRPC(NetworkId id, float time = 0f) => Destroy(Runner.FindObject(id), time);
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void SetParentRPC(NetworkId parentId)
+        {
+            var parentObj = Runner.FindObject(parentId);
+            if (parentObj)
+                transform.parent = parentObj.transform;
+        }
         
         [Rpc(RpcSources.All, RpcTargets.All, Channel = RpcChannel.Reliable)]
         public void SetActiveRPC(NetworkBool value) => gameObject.SetActive(value);

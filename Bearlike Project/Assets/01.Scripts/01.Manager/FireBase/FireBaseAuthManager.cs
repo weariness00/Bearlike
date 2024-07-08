@@ -67,7 +67,7 @@ namespace Manager.FireBase
                 _user = _auth.CurrentUser;
                 if (signed)
                 {
-                    DebugManager.Log("로그인");
+                        DebugManager.Log("로그인");
                     LoginState?.Invoke(true);
                 }
             }
@@ -130,8 +130,11 @@ namespace Manager.FireBase
 
         private void FireBaseLogOut()
         {
-            _auth.SignOut();
-            Debug.Log("로그아웃");
+            if (_auth != null)
+            {
+                _auth.SignOut();
+                Debug.Log("로그아웃");
+            }
         }
         
         private void HandleAuthError(AuthError errorCode)

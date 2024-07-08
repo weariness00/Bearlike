@@ -27,21 +27,11 @@ namespace SceneExtension
                     {
                         o.SetActive(true);
                     }
+                    UIManager.AddActiveUI(activeFalseObjectList.ToArray());
                 });
             }
 
             CottonCoinInit();
-        }
-
-        public void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                foreach (var o in activeFalseObjectList)
-                {
-                    o.SetActive(false);
-                }
-            }
         }
 
         private void CottonCoinInit()

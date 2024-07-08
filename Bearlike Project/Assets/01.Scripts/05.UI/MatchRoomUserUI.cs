@@ -2,116 +2,119 @@
 using Data;
 using Fusion;
 using Photon;
-using Script.Util;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MatchRoomUserUI : NetworkBehaviour
+namespace UI
 {
-    public TMP_Text[] users_Text;
-    public Button startButton;
-    public Button exitButton;
+    public class MatchRoomUserUI : NetworkBehaviourEx
+    {
+        public TMP_Text[] users_Text;
+        public Button startButton;
+        public Button exitButton;
 
-    [SerializeField] private TMP_Dropdown difficultDropdown;
+        [SerializeField] private TMP_Dropdown difficultDropdown;
 
-    #region Unity Event Function
+        #region Unity Event Function
     
-    private void Awake()
-    {
-        exitButton.onClick.AddListener(OnExit);
-        difficultDropdown.onValueChanged.AddListener((value) =>
+        protected void Awake()
         {
-            PlayerPrefs.SetInt("Difficult", value);
-            if (HasStateAuthority)
-                SetDifficultRPC(value);
-        });
-    }
-
-    private void Start()
-    {
-        UserData.Instance.UserJoinAction += UserActionToDataUpdate;
-        UserData.Instance.UserLeftAction += UserActionToDataUpdate;
-    }
-
-    private void Update()
-    {   
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            OnExit();
+            exitButton.onClick.AddListener(OnExit);
+            difficultDropdown.onValueChanged.AddListener((value) =>
+            {
+                PlayerPrefs.SetInt("Difficult", value);
+                if (HasStateAuthority)
+                    SetDifficultRPC(value);
+            });
         }
-    }
 
-    private void OnDestroy()
-    {
-        UserData.Instance.UserJoinAction -= UserActionToDataUpdate;
-        UserData.Instance.UserLeftAction -= UserActionToDataUpdate;
-    }
+        private void Start()
+        {
+            UserData.Instance.UserJoinAction += UserActionToDataUpdate;
+            UserData.Instance.UserLeftAction += UserActionToDataUpdate;
+            UserData.Instance.NameUpdateAfterAction += DataUpdateRPC;
+        }
 
-    public override void Spawned()
-    {
-        base.Spawned();
-        DataUpdate();
+        private void Update()
+        {   
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                OnExit();
+            }
+        }
+
+        private void OnDestroy()
+        {
+            UserData.Instance.UserJoinAction -= UserActionToDataUpdate;
+            UserData.Instance.UserLeftAction -= UserActionToDataUpdate;
+        }
+
+        public override void Spawned()
+        {
+            base.Spawned();
+            DataUpdate();
         
-        if (HasStateAuthority)
-        {
-            difficultDropdown.interactable = true;
-            difficultDropdown.value  = PlayerPrefs.GetInt("Difficult");
+            if (HasStateAuthority)
+            {
+                difficultDropdown.interactable = true;
+                difficultDropdown.value  = PlayerPrefs.GetInt("Difficult");
+            }
+            else
+            {
+                startButton.gameObject.SetActive(false);
+                difficultDropdown.interactable = false;
+                RequestSetDifficultRPC();
+            }
         }
-        else
-        {
-            startButton.gameObject.SetActive(false);
-            difficultDropdown.interactable = false;
-            RequestSetDifficultRPC();
-        }
-    }
     
-    #endregion
+        #endregion
 
-    // UserData의 Action들에 넣고 뺼 용으로 사용하는 함수
-    private void UserActionToDataUpdate(PlayerRef playerRef) => DataUpdateRPC();
-    [Rpc(RpcSources.All,RpcTargets.All)]
-    public void DataUpdateRPC() => DataUpdate();
-    public void DataUpdate()
-    {
-        try
+        // UserData의 Action들에 넣고 뺼 용으로 사용하는 함수
+        private void UserActionToDataUpdate(PlayerRef playerRef) => DataUpdateRPC();
+        [Rpc(RpcSources.All,RpcTargets.All)]
+        public void DataUpdateRPC() => DataUpdate();
+        public void DataUpdate()
         {
-            var items = NetworkUtil.DictionaryItems(UserData.Instance.UserDictionary);
-            UpdateData(items);
+            try
+            {
+                var items = NetworkUtil.DictionaryItems(UserData.Instance.UserDictionary);
+                UpdateData(items);
+            }
+            catch (Exception e)
+            {
+                UserData.Instance.AfterSpawnedAction += DataUpdateRPC;
+            }
         }
-        catch (Exception e)
-        {
-            UserData.Instance.AfterSpawnedAction += DataUpdateRPC;
-        }
-    }
     
-    public void UpdateData(UserDataStruct[] dataList)
-    {
-        for (int i = 0; i < 3; i++)
+        public void UpdateData(UserDataStruct[] dataList)
         {
-            users_Text[i].text = "Unknown";
+            for (int i = 0; i < 3; i++)
+            {
+                users_Text[i].text = "Unknown";
+            }
+
+            for (int i = 0; i < dataList.Length; i++)
+            {
+                users_Text[i].text = dataList[i].Name.ToString();
+            }
         }
 
-        for (int i = 0; i < dataList.Length; i++)
+        public void OnExit()
         {
-            users_Text[i].text = dataList[i].Name.ToString();
+            NetworkManager.Runner.Shutdown();
         }
+
+        public string GetDifficult()
+        {
+            var option = difficultDropdown.options[difficultDropdown.value];
+            return option.text;
+        }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        public void SetDifficultRPC(int value) => difficultDropdown.value = value;
+
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void RequestSetDifficultRPC() => SetDifficultRPC(difficultDropdown.value);
     }
-
-    public void OnExit()
-    {
-        NetworkManager.Runner.Shutdown();
-    }
-
-    public string GetDifficult()
-    {
-        var option = difficultDropdown.options[difficultDropdown.value];
-        return option.text;
-    }
-
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    public void SetDifficultRPC(int value) => difficultDropdown.value = value;
-
-    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void RequestSetDifficultRPC() => SetDifficultRPC(difficultDropdown.value);
 }

@@ -101,7 +101,6 @@ namespace Photon
                 var data = new UserDataStruct
                 {
                     PlayerRef = player,
-                    Name = snapshot.ValueString(),
                 };
                 
                 UserData.Instance.InsertUserDataRPC(player, data);
@@ -114,6 +113,7 @@ namespace Photon
             {
                 if (parameters.loadSceneMode == LoadSceneMode.Single)
                 {
+                    UIManager.QueueClear();
                     Instance._runner.LoadScene(sceneRef, parameters, setActiveOnLoad);
                 }
                 else
@@ -161,8 +161,6 @@ namespace Photon
                               "누군가가 세션을 나가면 정보 업데이트 해줘야함\n" +
                               "세션에 한명도 없으면 json에 세션 지워줘야함");
 
-            LoadingManager.Initialize();
-            
             // Create the NetworkSceneInfo from the current scene
             var scene = SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(matchingScene));
             var sceneInfo = new NetworkSceneInfo();
@@ -367,6 +365,8 @@ namespace Photon
                 playerInputData.SkillSelect = trueValue;
             if (KeyManager.InputAction(KeyToAction.Interact) || KeyManager.InputActionDown(KeyToAction.Interact))
                 playerInputData.Interact = trueValue;
+            if (KeyManager.InputActionDown(KeyToAction.GameProgress))
+                playerInputData.GameProgress = trueValue;
             
             playerInputData.MouseAxis.x = Input.GetAxis("Mouse X");
             playerInputData.MouseAxis.y = Input.GetAxis("Mouse Y");

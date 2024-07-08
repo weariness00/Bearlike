@@ -2,6 +2,7 @@
 using GamePlay.StageLevel.Container;
 using TMPro;
 using UnityEngine;
+using Util;
 
 namespace UI
 {
@@ -13,22 +14,13 @@ namespace UI
 
         public void Update()
         {
-            timeText.text = TimeString((int)stage.surviveTime - (int)stage.currentTime);
+            timeText.text = (stage.surviveTime - (int)stage.currentTime).TimeString();
 
             if (stage.isStageClear)
             {
                 timeText.text = "00:00";
                 Destroy(gameObject);
             }
-        }
-
-        string TimeString(int minute)
-        {
-            int hour = minute / 60;
-            minute %= 60;
-            
-            // 시간과 분을 "00:00" 형식의 문자열로 포맷팅
-            return $"{hour}:{minute:00}";
         }
     }
 }

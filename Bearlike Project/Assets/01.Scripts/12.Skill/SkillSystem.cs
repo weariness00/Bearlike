@@ -41,6 +41,8 @@ namespace Skill
         {
             skillList.Add(skill);
             skill.SetCoolTimeReductionRate(coolTimeReductionRate);
+            
+            EventBusManager.Publish(EventBusType.AddSkill, skill);
         }
 
         public SkillBase GetSkillFromId(int id)
@@ -102,6 +104,18 @@ namespace Skill
             return activeSkillList;
         }
 
+        public int GetMaxLevelSkillCount()
+        {
+            int count = 0;
+            foreach (var skill in skillList)
+            {
+                if (skill.level.isMax)
+                    ++count;
+            }
+
+            return count;
+        }
+        
         public void SetCoolTimeReductionRate(float rate)
         {
             var activeSkillList = GetActiveSkills();

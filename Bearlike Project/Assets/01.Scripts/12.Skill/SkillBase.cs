@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Data;
 using Fusion;
+using Manager;
 using Photon;
 using Player;
 using Status;
@@ -119,6 +120,8 @@ namespace Skill
             level.Current += upAmount;
             if(isAddInventory) ownerPlayer.skillInventory.AddItem(this);
             ExplainUpdate();
+            
+            EventBusManager.Publish(EventBusType.SkillLevelUp, this);
         }
 
         public virtual void ExplainUpdate()

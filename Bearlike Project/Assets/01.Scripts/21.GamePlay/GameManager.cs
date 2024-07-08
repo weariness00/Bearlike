@@ -4,12 +4,15 @@ using Data;
 using Fusion;
 using GamePlay.Stage;
 using GamePlay.StageLevel;
+using GamePlay.UI;
 using Loading;
 using Manager;
 using Photon;
+using SceneExtension;
 using Script.Data;
 using Script.GamePlay;
 using Status;
+using UI.Status;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using User.MagicCotton;
@@ -37,6 +40,7 @@ namespace GamePlay
 
         [Header("유저 정보")] 
         [SerializeField] private NetworkPrefabRef networkMagicCottonContainerRef;
+        [SerializeField] private GameObject playerHPObject;
 
         [Header("스테이지")]
         public StageBase defaultStage;
@@ -70,6 +74,9 @@ namespace GamePlay
             
             if (Runner.IsServer == false)
             {
+                LoadingManager.AddWait();
+                PlayerHpCanvasInit();
+                LoadingManager.EndWait();
                 return;
             }
             
@@ -81,16 +88,6 @@ namespace GamePlay
 
         public override void FixedUpdateNetwork()
         {
-            if (isGameClear)
-            {
-                DebugManager.ToDo("게임을 완전 클리어하면 로비로 돌아가는 포탈 생성해주기");
-                gameClearPortal.gameObject.SetActive(true);
-                gameClearPortal.InteractKeyDownAction = async (obj) =>
-                {
-                    await NetworkManager.LoadScene(NetworkManager.Instance.lobbyScene);
-                };
-            }
-            
             PlayTimer += Runner.DeltaTime;
         }
         #endregion
@@ -116,9 +113,25 @@ namespace GamePlay
                     AlivePlayerCount++;
                 }
             }
+
+            PlayerHpCanvasInit();
             LoadingManager.EndWait();
         }
 
+        public void PlayerHpCanvasInit()
+        {
+            foreach (var (playerRef, data) in UserData.Instance.UserDictionary)
+            {
+                if(playerRef == Runner.LocalPlayer) continue;
+                var obj = Instantiate(playerHPObject, playerHPObject.transform.parent);
+                var playerHP = obj.GetComponent<PlayerHP>();
+                var otherPlayer=  Runner.FindObject(data.NetworkId);
+                playerHP.statusBase = otherPlayer.GetComponent<StatusBase>();
+                playerHP.nameText.text = data.Name.ToString();
+                playerHP.gameObject.SetActive(true);
+            }
+        }
+        
         #endregion
         
         #region Stage Logic Function
@@ -160,6 +173,22 @@ namespace GamePlay
         public void SetStage(int index) => SetStage(stageList.Count < index ? null : stageList[index]);
         
         #endregion
+
+        public void GameClear()
+        {
+            gameClearPortal.portalVFXList[0].gameObject.SetActive(true);
+            gameClearPortal.InteractKeyDownAction = (obj) =>
+            {
+                NetworkManager.LoadScene(SceneList.GetScene("Game Result"), LoadSceneMode.Additive);
+                gameClearPortal.gameObject.SetActive(false);
+                
+                gameClearPortal.IsConnect = false;
+            };
+            
+            isGameClear = true;
+
+            gameClearPortal.IsConnect = true;
+        }
     }
 }
 

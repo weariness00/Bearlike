@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Manager;
 using TMPro;
-using UI;
 using UnityEngine;
 using UnityEngine.UI;
 using Util;
@@ -54,7 +53,7 @@ namespace GamePlay
                 _instanceBlockList.Add(obj);
             }
             
-            GameUIManager.AddActiveUI(gameObject);
+            UIManager.AddActiveUI(gameObject);
         }
     }
 }

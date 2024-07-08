@@ -322,6 +322,17 @@ namespace Status
                 var realDamage = (int)(damageRate * applyDamage);
                 hp.Current -= realDamage;
                 DamageText(realDamage, damageType);
+
+                { // 대미지를 입고 난 후에 이벤트 OwnerId에 해당하는 Object가 소지한 이벤트를 발동시킨다.
+                    var ownerObj = Runner.FindObject(ownerId);
+                    if (ownerObj)
+                    {
+                        if (ownerObj.TryGetComponent(out IAfterApplyDamage afterApplyDamage))
+                        {
+                            afterApplyDamage.AfterApplyDamageAction?.Invoke(realDamage);
+                        }
+                    }
+                }
                 
                 DebugManager.Log(
                     $"{gameObject.name}에게 {damageRate * applyDamage}만큼 데미지\n" +

@@ -7,8 +7,10 @@ using ExitGames.Client.Photon.StructWrapping;
 using Fusion;
 using Loading;
 using Manager;
+using Manager.FireBase;
 using Photon;
 using Player;
+using UI;
 using UnityEngine;
 
 namespace Data
@@ -27,10 +29,12 @@ namespace Data
     public class UserData : NetworkSingleton<UserData>
     {
         [Networked, Capacity(3)] public NetworkDictionary<PlayerRef, UserDataStruct> UserDictionary { get; }
+        [Networked] public NetworkBool IsSpawnPlayer { get; private set; }
 
         public Action AfterSpawnedAction;
         public Action<PlayerRef> UserJoinAction;
         public Action<PlayerRef> UserLeftAction;
+        public Action NameUpdateAfterAction;
 
         public static int ClientNumber => HasClientData(Instance.Runner.LocalPlayer) ? Instance.UserDictionary.Get(Instance.Runner.LocalPlayer).ClientNumber : -1;
         
@@ -85,6 +89,9 @@ namespace Data
         {
             Runner.MakeDontDestroyOnLoad(gameObject);
             AfterSpawnedAction?.Invoke();
+
+            if (HasStateAuthority == false) 
+                SendUserIdRPC(Runner.LocalPlayer, FireBaseAuthManager.UserId);
         }
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
@@ -114,6 +121,7 @@ namespace Data
 
                 UserDictionary.Add(playerRef, userData);
                 UserJoinAction?.Invoke(playerRef);
+                if(HasStateAuthority) SendUserIdRPC(playerRef, FireBaseAuthManager.UserId);
                 DebugManager.Log($"Add Player Data : {userData.Name}");
                 LoadingManager.EndWait($"{userData.Name} 접속완료");
             }
@@ -156,6 +164,8 @@ namespace Data
 
                     Runner.SetPlayerObject(playerRef, spawnObject);
                 }
+
+                IsSpawnPlayer = true;
             }
 
             return true;
@@ -164,8 +174,24 @@ namespace Data
         #region Rpc Function
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void SetPlayerDataRPC(PlayerRef playerRef, UserDataStruct data) => UserDictionary.Set(playerRef, data);
+        
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void ChangePlayerRefRPC(PlayerRef playerRef, NetworkPrefabRef prefabRef, PlayerCharacterType playerType) => ChangePlayerRef(playerRef, prefabRef, playerType);
 
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void SendUserIdRPC(PlayerRef playerRef, string userId)
+        {
+            FireBaseDataBaseManager.RootReference.GetChild($"UserData/{userId}/Name").SnapShot(snapshot =>
+            {
+                var data = UserDictionary.Get(playerRef);
+                data.Name = snapshot.ValueString();
+
+                UserDictionary.Set(playerRef, data);
+                NameUpdateAfterAction?.Invoke();
+            });
+        }
+        
         #endregion
     }
 }

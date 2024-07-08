@@ -52,10 +52,10 @@ namespace GamePlay.Stage.Container
         {
             if (isStageClear)
                 return;
-            
             base.StageClear();
-            
-            nextStagePortal.InteractKeyDownAction = (obj) => NetworkManager.Runner.Shutdown();
+
+            GameManager.Instance.GameClear();
+            nextStagePortal.otherPortal = GameManager.Instance.gameClearPortal;
             if(nextStagePortal.portalVFXList.Count >= 5) nextStagePortal.portalVFXList[0].gameObject.SetActive(true);
             nextStagePortal.IsConnect = true; // 현재 진행중인 스테이지의 포탙 개방
         }

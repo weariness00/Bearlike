@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Manager;
 using Script.Data;
 using UnityEngine;
 using Util;
@@ -10,6 +11,8 @@ namespace UI
     {
         Setting,
         Sound,
+        Performance,
+        All,
     }
 
     [DefaultExecutionOrder((int)DefaultExecutionOrderType.LobbySceneEnd)]
@@ -30,22 +33,25 @@ namespace UI
             gameObject.SetActive(false);
         }
 
-        public static void SetActive(SettingCanvasType type) => Instance.SetActiveCanvas(type);
+        public static void Active(SettingCanvasType type) => Instance.SetActiveCanvas(type);
         public void SetActiveCanvas(SettingCanvasType type)
         {
-            if (type == SettingCanvasType.Setting)
-            {
-                gameObject.SetActive(!gameObject.activeSelf);
-                return;
-            }
+            gameObject.SetActive(true);
+            UIManager.AddActiveUI(gameObject);
             
             foreach (var o in _settingCanvasObjectList)
                 o.SetActive(false);
 
             switch (type)
             {
+                case SettingCanvasType.Setting:
+                    break;
                 case SettingCanvasType.Sound:
                     soundCanvas.gameObject.SetActive(true);
+                    break;
+                case SettingCanvasType.All:
+                    foreach (var o in _settingCanvasObjectList)
+                        o.SetActive(true);
                     break;
             }
         }
