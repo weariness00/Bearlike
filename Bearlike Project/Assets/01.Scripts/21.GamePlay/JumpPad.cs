@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using DG.Tweening;
 using Manager;
 using Monster;
 using Photon;
@@ -27,15 +29,16 @@ namespace GamePlay
                 rb.isKinematic = true;
             }
         }
-
+        
         private void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag("Player"))
+            if (other.transform.root.CompareTag("Player"))
             {
                 PlayerController pc;
+                
                 if (other.TryGetComponent(out pc) || other.transform.parent.TryGetComponent(out pc))
                 {
-                    pc.simpleKcc.Move(default, jumpPower * 100f * Vector3.up);//
+                    pc.simpleKcc.Move(Vector3.zero, jumpPower * 10f * Vector3.up);
                 }
             }
             else

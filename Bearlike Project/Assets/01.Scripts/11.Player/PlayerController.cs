@@ -139,6 +139,7 @@ namespace Player
             Cursor.lockState = CursorLockMode.Locked;
             simpleKcc = gameObject.GetOrAddComponent<SimpleKCC>();
             simpleKcc.Collider.tag = "Player";
+            // simpleKcc.SetGravity(new Vector3(0, -9.8f, 0));
             
             // 무기 초기화
             weaponSystem.equipment?.EquipAction?.Invoke(gameObject);
