@@ -11,6 +11,7 @@ using Fusion.Sockets;
 using Loading;
 using Manager;
 using Manager.FireBase;
+using SceneExtension;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -30,8 +31,6 @@ namespace Photon
     {
         public static NetworkRunner Runner => Instance._runner;
         public static int PlayerCount => Runner.ActivePlayers.ToArray().Length;
-
-        public bool isTest = true; // 현재 테스트 상황인지
 
         public SceneReference matchingScene;
         public SceneReference lobbyScene;
@@ -387,7 +386,8 @@ namespace Photon
             else if(shutdownReason == ShutdownReason.Error)
                 DebugManager.LogError($"비정상 서버 종료\n {runner}");
 
-            SceneManager.LoadScene(lobbyScene.ScenePath);
+            if(runner.IsRunning) SceneManager.LoadScene(lobbyScene.ScenePath);
+            else SceneManager.LoadScene(SceneList.GetScene("Login"));
         }
 
         public void OnConnectedToServer(NetworkRunner runner)

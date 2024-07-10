@@ -60,14 +60,12 @@ namespace Manager.FireBase
                 bool signed = (_auth.CurrentUser != _user && _auth.CurrentUser != null);
                 if (!signed && _user != null)
                 {
-                    DebugManager.Log("로그아웃");
                     LoginState?.Invoke(false);
                 }
 
                 _user = _auth.CurrentUser;
                 if (signed)
                 {
-                        DebugManager.Log("로그인");
                     LoginState?.Invoke(true);
                 }
             }

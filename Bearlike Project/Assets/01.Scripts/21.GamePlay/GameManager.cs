@@ -66,11 +66,12 @@ namespace GamePlay
 
         public override void Spawned()
         {
-            if (NetworkManager.Instance.isTest)
+            if (Managers.Instance.isTest)
             {
                 NetworkManager.LoadScene(gmModeScene, LoadSceneMode.Additive);
-                NetworkManager.LoadScene(modelUIScene, LoadSceneMode.Additive);
             }
+            
+            NetworkManager.LoadScene(modelUIScene, LoadSceneMode.Additive);
             
             if (Runner.IsServer == false)
             {

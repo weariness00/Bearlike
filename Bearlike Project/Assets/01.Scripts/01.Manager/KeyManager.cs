@@ -57,6 +57,8 @@ namespace Manager
         Dictionary<KeyToAction, MouseButton> mouseDictionary = new Dictionary<KeyToAction, MouseButton>();
         public bool isDebug;
 
+        private bool isLoad = false;
+
         private void Awake()
         { 
             if(Instance == null) Instance = this;
@@ -76,6 +78,8 @@ namespace Manager
 
         public void Save()
         {
+            if (isLoad == false) return;
+            
             Dictionary<KeyToAction, string> keyDictData = new Dictionary<KeyToAction, string>();
             foreach (var (key, value) in keyDictionary)
             {
@@ -117,10 +121,12 @@ namespace Manager
                         }
                     }
                 }
+
+                isLoad = true;
             }));
         }
 
-        void DefaultLoad() => Load("DefaultKeyData");
+        public void DefaultLoad() => Load("DefaultKeyData");
 
         #endregion
 

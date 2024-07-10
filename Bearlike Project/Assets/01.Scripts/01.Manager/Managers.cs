@@ -4,11 +4,7 @@ namespace Manager
 {
     public class Managers : Singleton<Managers>
     {
-        protected override void Awake()
-        {
-            base.Awake();
-            DontDestroyOnLoad(gameObject);
-        }
+        public bool isTest; // 현재 테스트 상황인지
     }
 }
 
