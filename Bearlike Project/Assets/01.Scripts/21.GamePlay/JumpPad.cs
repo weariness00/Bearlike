@@ -5,6 +5,7 @@ using Manager;
 using Monster;
 using Photon;
 using Player;
+using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -13,6 +14,8 @@ namespace GamePlay
     [RequireComponent(typeof(Rigidbody))]
     public class JumpPad : NetworkBehaviourEx
     {
+        private NavMeshLink _navMeshLink;
+        
         public float jumpPower = 1f; // 점프에 얼마만큼에 힘을 줄지
         public float jumpDirectionPower = 1f; // 점프 전에 움직이고 있다면 해당 방향으로는 얼마만큼에 힘을 줄지
 
@@ -20,6 +23,8 @@ namespace GamePlay
 
         private void Awake()
         {
+            _navMeshLink = GetComponent<NavMeshLink>();
+            
             if(TryGetComponent(out Collider c))
                 c.isTrigger = true;
 
@@ -49,22 +54,30 @@ namespace GamePlay
                     var monsterObj = monster.gameObject;
                     var monsterAgent = monsterObj.GetComponent<NavMeshAgent>();
 
-                    StartCoroutine(ParabolicMove(monsterAgent));
+                    if(monsterAgent != null)    // navmeshagent로 움직임을 관리하는 몬스터일경우
+                        StartCoroutine(ParabolicMove(monsterAgent));
+                    else
+                    {
+                        // 아닐 경우 => 주사위
+                        
+                    }
                 }
             }
         }
         
         IEnumerator ParabolicMove(NavMeshAgent agent)
         {
-            var agentObj = agent.gameObject;
-            
-            OffMeshLinkData data = agent.currentOffMeshLinkData;
-            Vector3 startPos = agent.transform.position;
-            Vector3 endPos = data.endPos + Vector3.up * agent.baseOffset;
-            float duration = (endPos - startPos).magnitude / agent.speed;
-            float height = agentObj.transform.position.y + 2.0f; // 포물선의 최고점 높이
-            float t = 0.0f;
+            var agentPosition = agent.transform.position;
 
+            Vector3 startPos = agentPosition;
+            Vector3 endPos = agentPosition + _navMeshLink.endPoint + Vector3.up * (agent.baseOffset + 1);
+            
+            float duration = (endPos - startPos).magnitude / agent.speed;
+            float height = 10.0f; // 포물선의 최고점 높이
+            float t = 0.0f; 
+
+            agent.updatePosition = false;
+            
             while (t < 1.0f)
             {
                 t += Time.deltaTime / duration;
@@ -76,6 +89,7 @@ namespace GamePlay
             }
 
             agent.CompleteOffMeshLink();
+            agent.updatePosition = true;
         }
     }
 }
