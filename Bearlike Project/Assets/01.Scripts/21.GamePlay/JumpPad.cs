@@ -43,28 +43,39 @@ namespace GamePlay
             }
             else
             {
-                // var monster = other.GetComponentInParent<MonsterBase>();
-                // if (monster)
-                // {
-                //     Vector3 dir = Vector3.zero;
-                //     if (monster.navMeshAgent)
-                //     {
-                //         dir = monster.navMeshAgent.velocity.normalized;
-                //         monster.DisableNavMeshAgent();
-                //         monster.EnableNavMeshAgent();
-                //     }
-                //     else if(monster.rigidbody)
-                //     {
-                //         dir = monster.rigidbody.velocity;
-                //         dir.y = 0;
-                //         dir = dir.normalized;
-                //     }
-                //
-                //     var force = jumpPower * 50f * monster.rigidbody.mass * Vector3.up  + dir * 100f * jumpDirectionPower;
-                //     monster.rigidbody.AddForce(force);
-                //     return;
-                // }
+                var monster = other.GetComponentInParent<MonsterBase>();
+                if (monster)
+                {
+                    var monsterObj = monster.gameObject;
+                    var monsterAgent = monsterObj.GetComponent<NavMeshAgent>();
+
+                    StartCoroutine(ParabolicMove(monsterAgent));
+                }
             }
+        }
+        
+        IEnumerator ParabolicMove(NavMeshAgent agent)
+        {
+            var agentObj = agent.gameObject;
+            
+            OffMeshLinkData data = agent.currentOffMeshLinkData;
+            Vector3 startPos = agent.transform.position;
+            Vector3 endPos = data.endPos + Vector3.up * agent.baseOffset;
+            float duration = (endPos - startPos).magnitude / agent.speed;
+            float height = agentObj.transform.position.y + 2.0f; // 포물선의 최고점 높이
+            float t = 0.0f;
+
+            while (t < 1.0f)
+            {
+                t += Time.deltaTime / duration;
+                float parabolicT = t * 2 - 1;
+                Vector3 currentPos = Vector3.Lerp(startPos, endPos, t);
+                currentPos.y += height * (1 - parabolicT * parabolicT);
+                agent.transform.position = currentPos;
+                yield return null;
+            }
+
+            agent.CompleteOffMeshLink();
         }
     }
 }
