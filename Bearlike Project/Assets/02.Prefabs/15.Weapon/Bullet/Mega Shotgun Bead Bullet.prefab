@@ -93,6 +93,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 822895457929123213, guid: 3082942e7cd6985479d37f169a13a663,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 3082942e7cd6985479d37f169a13a663,
         type: 3}
       propertyPath: m_Name
@@ -221,6 +226,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -264,7 +270,7 @@ MonoBehaviour:
     Raw: 0
   status: {fileID: 0}
   destination: {x: 0, y: 0, z: 0}
-  penetrateCount: 0
+  _PenetrateCount: 0
   _KnockBack: 0
 --- !u!65 &450886478733690220
 BoxCollider:
@@ -412,6 +418,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Revolver_Animation
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 300a180ad27f7454fa5e227c6bd73336,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8074919436733938216, guid: 300a180ad27f7454fa5e227c6bd73336,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
