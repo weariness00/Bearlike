@@ -16,6 +16,7 @@ namespace GamePlay
 
         private void Awake()
         {
+            if (!originalStatus) originalStatus = GetComponentInParent<MonsterStatus>();
             status = GetComponent<StatusBase>();
         }
     }

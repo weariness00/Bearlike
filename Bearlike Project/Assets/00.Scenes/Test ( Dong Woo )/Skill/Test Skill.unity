@@ -142,7 +142,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &220308818
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -412,7 +412,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &451682514
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -672,7 +672,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7e8f4f3d3b74949aea7c5f5c96354a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isEnable: 1
 --- !u!1 &1030370206
 GameObject:
   m_ObjectHideFlags: 0
@@ -887,7 +886,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7e8f4f3d3b74949aea7c5f5c96354a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isEnable: 0
 --- !u!1 &1253515243
 GameObject:
   m_ObjectHideFlags: 0
@@ -903,7 +901,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1253515244
 Transform:
   m_ObjectHideFlags: 0
@@ -1058,7 +1056,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1524605910
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1163,7 +1161,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &1748312921
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1270,7 +1268,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1862080718
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1403,7 +1401,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1926906907
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1663,7 +1661,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7e8f4f3d3b74949aea7c5f5c96354a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isEnable: 0
 --- !u!1 &2037676446
 GameObject:
   m_ObjectHideFlags: 0
@@ -1684,7 +1681,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2037676447
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1830,7 +1827,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &2101559896
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1925,10 +1922,20 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 434177945949688506, guid: a9c1c3cdb4b47494fb59beb3d07b47a1,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4125270710712885114, guid: a9c1c3cdb4b47494fb59beb3d07b47a1,
         type: 3}
       propertyPath: m_Name
       value: Boost Flag
+      objectReference: {fileID: 0}
+    - target: {fileID: 4125270710712885114, guid: a9c1c3cdb4b47494fb59beb3d07b47a1,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4418030543940025827, guid: a9c1c3cdb4b47494fb59beb3d07b47a1,
         type: 3}
@@ -2033,6 +2040,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3312774714701310608, guid: 00baa6de1d2c10044bdc63389b7e33c2,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4195923504090262782, guid: 00baa6de1d2c10044bdc63389b7e33c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2087,6 +2099,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Miracle Orb
+      objectReference: {fileID: 0}
+    - target: {fileID: 6157271142792823940, guid: 00baa6de1d2c10044bdc63389b7e33c2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7140084029167980122, guid: 00baa6de1d2c10044bdc63389b7e33c2,
         type: 3}

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Fusion;
 using GamePlay;
+using Manager;
 using Monster;
 using Photon;
 using Status;
@@ -21,6 +22,7 @@ namespace Skill.Support
         [SerializeField] private GameObject collisionEffectObject;
         private Animator _animator;
         [SerializeField] private AnimationClip downClip;
+        [SerializeField] private AudioSource wallDownAudio;
 
         private readonly HashSet<GameObject> _damageMonsterSet = new HashSet<GameObject>(); // 이미 대미지를 입은 대상은 대미지를 다시 입으면 안됨으로 사용
         
@@ -38,6 +40,7 @@ namespace Skill.Support
 
         private void OnTriggerEnter(Collider other)
         {
+            DebugManager.Log("충돌 도미노");
             if (other.TryGetComponent(out ColliderStatus cs))
             {
                 StatusBase otherStatus = cs.originalStatus;
@@ -51,20 +54,11 @@ namespace Skill.Support
             }
         }
 
-        private void OnDestroy()
-        {
-            foreach (var component in GetComponents<Component>())
-            {
-                Destroy(component);
-            }
-            
-            Destroy(collisionEffectObject, 2f);
-            Destroy(damageDominoObject);
-        }
-
         public override void Spawned()
         {
             base.Spawned();
+            transform.position -= transform.forward * transform.localScale.magnitude * 2f;
+            
             var skill = Runner.FindObject(SkillId);
             if (skill && 
                 skill.TryGetComponent(out _status))
@@ -79,13 +73,16 @@ namespace Skill.Support
 
         private IEnumerator UpdateCoroutine()
         {
-            yield return new WaitForSeconds(downClip.length);
             _animator.enabled = true;
+            wallDownAudio.Play();
+            yield return new WaitForSeconds(downClip.length * 2f);
 
             collisionEffectObject.SetActive(true);
             damageDominoObject.SetActive(true);
             
-            Destroy(this);
+            yield return new WaitForSeconds(2f);
+            
+            Destroy(gameObject);
         }
     }
 }
