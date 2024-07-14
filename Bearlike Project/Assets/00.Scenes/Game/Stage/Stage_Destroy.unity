@@ -213,6 +213,32 @@ MonoBehaviour:
   m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &313210703 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1884662009805893590, guid: b843c6f547b283847b736fb09f48e586,
+    type: 3}
+  m_PrefabInstance: {fileID: 655891457}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &313210704
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 313210703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eeb5dc026fdf4b488bc7ae0138ab719, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AgentTypeID: 0
+  m_StartPoint: {x: 9.297702, y: 5.877385, z: 5.482771}
+  m_EndPoint: {x: 12.589533, y: -0.06478493, z: 4.4071712}
+  m_Width: 1.8195897
+  m_CostModifier: -1
+  m_Bidirectional: 0
+  m_AutoUpdatePosition: 0
+  m_Area: 0
 --- !u!1 &485359499
 GameObject:
   m_ObjectHideFlags: 0
@@ -283,6 +309,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7630067077364074783}
     m_Modifications:
+    - target: {fileID: 901893414061615533, guid: b843c6f547b283847b736fb09f48e586,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1069901329509329927, guid: b843c6f547b283847b736fb09f48e586,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -336,7 +367,7 @@ PrefabInstance:
     - target: {fileID: 4206884561550827832, guid: b843c6f547b283847b736fb09f48e586,
         type: 3}
       propertyPath: m_Intensity
-      value: 0.3
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 5906395504822117545, guid: b843c6f547b283847b736fb09f48e586,
         type: 3}
@@ -372,7 +403,19 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1129711827}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7862071186147953521, guid: b843c6f547b283847b736fb09f48e586,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 655891462}
+    - targetCorrespondingSourceObject: {fileID: 1864312844391994182, guid: b843c6f547b283847b736fb09f48e586,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 769089899}
+    - targetCorrespondingSourceObject: {fileID: 1884662009805893590, guid: b843c6f547b283847b736fb09f48e586,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 313210704}
   m_SourcePrefab: {fileID: 100100000, guid: b843c6f547b283847b736fb09f48e586, type: 3}
 --- !u!4 &655891458 stripped
 Transform:
@@ -398,6 +441,32 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 655891457}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &655891461 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7862071186147953521, guid: b843c6f547b283847b736fb09f48e586,
+    type: 3}
+  m_PrefabInstance: {fileID: 655891457}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &655891462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 655891461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eeb5dc026fdf4b488bc7ae0138ab719, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AgentTypeID: 0
+  m_StartPoint: {x: 2.6352656, y: 10.031908, z: -3.6942155}
+  m_EndPoint: {x: 4.643974, y: 6.4280953, z: -7.089698}
+  m_Width: 0.8648291
+  m_CostModifier: -1
+  m_Bidirectional: 0
+  m_AutoUpdatePosition: 0
+  m_Area: 0
 --- !u!114 &655891464 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5740508828295799852, guid: b843c6f547b283847b736fb09f48e586,
@@ -840,6 +909,32 @@ MonoBehaviour:
   - 3
   _IsSpawn:
     _value: 0
+--- !u!1 &769089898 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1864312844391994182, guid: b843c6f547b283847b736fb09f48e586,
+    type: 3}
+  m_PrefabInstance: {fileID: 655891457}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &769089899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 769089898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eeb5dc026fdf4b488bc7ae0138ab719, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AgentTypeID: 0
+  m_StartPoint: {x: -6.1978254, y: 27.786453, z: -1.5060089}
+  m_EndPoint: {x: -9.008868, y: 0, z: 0.084489256}
+  m_Width: 2.5676744
+  m_CostModifier: -1
+  m_Bidirectional: 0
+  m_AutoUpdatePosition: 0
+  m_Area: 0
 --- !u!1 &787986977
 GameObject:
   m_ObjectHideFlags: 0
@@ -1161,7 +1256,7 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 0.3
+  m_Intensity: 0.2
   m_Range: 60
   m_SpotAngle: 179
   m_InnerSpotAngle: 12.546722
@@ -1533,6 +1628,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Jump Pad (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7191168731272466656, guid: f0d2e7aaf2f20d241adf580cedceb7e2,
+        type: 3}
+      propertyPath: jumpPower
+      value: 250
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1580,7 +1680,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_AgentTypeID: 0
   m_StartPoint: {x: 0, y: 0, z: 0}
-  m_EndPoint: {x: 7.8425264, y: 27.915821, z: 2.5}
+  m_EndPoint: {x: 8.434516, y: 27.80379, z: -0.98487663}
   m_Width: 4.0112653
   m_CostModifier: -1
   m_Bidirectional: 1
@@ -1839,6 +1939,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Jump Pad
+      objectReference: {fileID: 0}
+    - target: {fileID: 753602754433991517, guid: f0d2e7aaf2f20d241adf580cedceb7e2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2509,7 +2614,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_AgentTypeID: 0
   m_StartPoint: {x: 0, y: 0, z: 0}
-  m_EndPoint: {x: -3.9033718, y: 6.0062013, z: -8.536095}
+  m_EndPoint: {x: -3.9033718, y: 5.6278014, z: -8.536095}
   m_Width: 2.8753502
   m_CostModifier: -1
   m_Bidirectional: 0

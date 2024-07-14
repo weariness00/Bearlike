@@ -72,7 +72,7 @@ namespace GamePlay
             Vector3 startPos = agentPosition;
             Vector3 endPos = agentPosition + _navMeshLink.endPoint + Vector3.up * (agent.baseOffset + 1);
             
-            float duration = (endPos - startPos).magnitude / agent.speed;
+            float duration = (endPos - startPos).magnitude / (agent.speed + 2);
             float height = 10.0f; // 포물선의 최고점 높이
             float t = 0.0f; 
 
@@ -84,7 +84,7 @@ namespace GamePlay
                 float parabolicT = t * 2 - 1;
                 Vector3 currentPos = Vector3.Lerp(startPos, endPos, t);
                 currentPos.y += height * (1 - parabolicT * parabolicT);
-                agent.transform.position = currentPos;
+                agent.transform.position = currentPos;//
                 yield return null;
             }
 
