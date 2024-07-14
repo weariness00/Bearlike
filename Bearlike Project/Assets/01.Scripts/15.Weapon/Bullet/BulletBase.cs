@@ -81,7 +81,8 @@ namespace Weapon.Bullet
         private void OnTriggerEnter(Collider other)
         {
             if (!HasStateAuthority) return;
-
+            if (other.gameObject.CompareTag("Volume")) return;
+            
             if (_aggroTarget)
             {
                 var point = other.ClosestPoint(transform.position);
