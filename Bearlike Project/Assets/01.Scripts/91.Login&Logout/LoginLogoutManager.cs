@@ -1,3 +1,4 @@
+using Firebase.Auth;
 using Manager.FireBase;
 using SceneExtension;
 using TMPro;
@@ -15,6 +16,7 @@ namespace Login_Logout
         public Button accountCreateButton;
         public Toggle idMemoryToggle;
         [SerializeField] private Button exitButton; // 게임 종료 버튼
+        [SerializeField] private TMP_Text loginErrorText;
         
         #region Unity Event Function
 
@@ -34,6 +36,8 @@ namespace Login_Logout
 
             FireBaseAuthManager.LoginState -= ChangeLoginState;
             FireBaseAuthManager.LoginState += ChangeLoginState;
+            FireBaseAuthManager.AuthErrorAction -= LoginError;
+            FireBaseAuthManager.AuthErrorAction += LoginError;
 
             if (PlayerPrefs.HasKey("IDMemory")) idMemoryToggle.isOn = PlayerPrefs.GetInt("IDMemory") == 1;
             if (idMemoryToggle.isOn && PlayerPrefs.HasKey("ID")) idInputFiled.text = PlayerPrefs.GetString("ID");
@@ -76,6 +80,12 @@ namespace Login_Logout
                 
                 SceneManager.LoadScene(SceneList.GetScene("Lobby"));
             }
+        }
+
+        private void LoginError(AuthError e, string massage)
+        {
+            loginErrorText.text = massage;
+            loginErrorText.transform.parent.gameObject.SetActive(true);
         }
 
         public void AccountCreate()

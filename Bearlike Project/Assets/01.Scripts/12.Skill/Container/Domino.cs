@@ -4,6 +4,7 @@ using Skill.Support;
 using Status;
 using UnityEngine;
 using Util;
+using Random = UnityEngine.Random;
 
 namespace Skill.Container
 {
@@ -32,21 +33,9 @@ namespace Skill.Container
         {
             if (spawnProbability.IsProbability(1f))
             {
-                var hitOptions = HitOptions.IncludePhysX | HitOptions.IgnoreInputAuthority; // 이 옵션을 포함하지 않으면 일반적인 물리 객체와 ray충돌 체크를 안함
-                var includeRayMask = 1 << LayerMask.NameToLayer("Default");
-
-                var spawnPosition = monsterObj.transform.position;
+                var rotate = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
                 
-                if (Runner.LagCompensation.Raycast(spawnPosition, Vector3.up, 10f, Runner.LocalPlayer, out var lagHit, includeRayMask, hitOptions))
-                {
-                    spawnPosition = lagHit.Point;
-                }
-                else
-                {
-                    spawnPosition += Vector3.up * 10f;
-                }
-                
-                Runner.SpawnAsync(dominoPrefab, spawnPosition, null, null, (runner, o) =>
+                Runner.SpawnAsync(dominoPrefab, monsterObj.transform.position, rotate, null, (runner, o) =>
                 {
                     var dominoObject = o.GetComponent<DominoObject>();
                     dominoObject.SkillId = Object.Id;

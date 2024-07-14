@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: afa710b23b6b8d74d8a75c52591f6be4
+guid: 76257eadd27f4a2409d2a56d3907e77c
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -33,11 +33,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: ToySolider_Saber_Attack
-      takeName: Bone|Bone|Bone|Attack
-      internalID: 9005879863974645250
+      name: ToySolider_Gun_Attack
+      takeName: Bone|Attack
+      internalID: 7742422787416621025
       firstFrame: 0
-      lastFrame: 19
+      lastFrame: 29
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -62,9 +62,67 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: ToySolider_Saber_Death
-      takeName: Bone|Bone|Bone|Death
-      internalID: 4406668403038942208
+      name: ToySolider_Gun_Death
+      takeName: Bone|Death
+      internalID: 1731985086339500742
+      firstFrame: 0
+      lastFrame: 34
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: ToySolider_Gun_Falling
+      takeName: Bone|Falling
+      internalID: 9008979529368628903
+      firstFrame: 0
+      lastFrame: 29
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: ToySolider_Gun_Idle
+      takeName: Bone|Idle
+      internalID: 2196951601380653438
       firstFrame: 0
       lastFrame: 49
       wrapMode: 0
@@ -91,11 +149,11 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: ToySolider_Saber_Idle
-      takeName: Bone|Bone|Bone|Idle
-      internalID: 6502710776952731769
+      name: ToySolider_Gun_Landing
+      takeName: Bone|Landing
+      internalID: -6900058574040310256
       firstFrame: 0
-      lastFrame: 44
+      lastFrame: 14
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -120,9 +178,67 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Bone|Bone|Bone|model
-      takeName: Bone|Bone|Bone|model
-      internalID: -3598840093245713086
+      name: ToySolider_Gun_Look Under
+      takeName: Bone|Look Under
+      internalID: -6318934307230874451
+      firstFrame: 0
+      lastFrame: 4
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: ToySolider_Gun_Look UpSide
+      takeName: Bone|Look UpSide
+      internalID: 5115460953274340402
+      firstFrame: 0
+      lastFrame: 4
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: ToySolider_Gun_model
+      takeName: Bone|model
+      internalID: 8652133497982589141
       firstFrame: 0
       lastFrame: 1
       wrapMode: 0
@@ -149,9 +265,9 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: ToySolider_Saber_Walk
-      takeName: Bone|Bone|Bone|Walk
-      internalID: -8100331813404699970
+      name: ToySolider_Gun_Walk
+      takeName: Bone|Walk
+      internalID: -1098847954737581102
       firstFrame: 0
       lastFrame: 29
       wrapMode: 0
@@ -177,7 +293,7 @@ ModelImporter:
       maskType: 3
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
-    isReadable: 1
+    isReadable: 0
   meshes:
     lODScreenPercentages: []
     globalScale: 1

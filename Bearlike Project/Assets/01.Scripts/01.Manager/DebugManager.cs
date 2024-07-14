@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using Util;
+using Object = UnityEngine.Object;
 
 namespace Manager
 {
@@ -20,6 +22,14 @@ namespace Manager
         public bool drawRay = true;
         public bool drawBoxRay = true;
 
+        private void Start()
+        {
+#if UNITY_EDITOR
+            isDebug = true;
+#else
+            isDebug = false;
+#endif
+        }
 
         #region Log
 

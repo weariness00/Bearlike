@@ -80,7 +80,10 @@ namespace ProjectUpdate
                 LoadingManager.EndWait("서버 정보 불러오기 성공");
             });
             
-            WebManager.DownloadJson("KeySetting/Default", "DefaultKeyData", null, true, true);
+            WebManager.DownloadJson("KeySetting/Default", "DefaultKeyData", json =>
+            {
+                KeyManager.Instance.DefaultLoad();
+            }, true, true);
                   
             // Difficult 업데이트
             Difficult.ClearSDifficultData();

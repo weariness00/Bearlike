@@ -158,7 +158,7 @@ namespace UI
                 {
                     stageData = GameManager.Instance.GetBossStage();
                 }
-                else if (NetworkManager.Instance.isTest)
+                else if (Managers.Instance.isTest)
                 {
                     stageData = GameManager.Instance.GetStageIndex(i);
                 }

@@ -26,7 +26,7 @@ namespace GamePlay.DeadBodyObstacle
 
         private void Awake()
         {
-            _networkAnimator = GetComponent<NetworkMecanimAnimator>();
+            _networkAnimator = GetComponentInChildren<NetworkMecanimAnimator>();
             if(gameObject.TryGetComponent(out _status) == false) _status = GetComponent<StatusBase>();
             _rigidbody = GetComponent<Rigidbody>();
             _ragdollRigidBodies = GetComponentsInChildren<Rigidbody>().Where(c => c.gameObject != gameObject).ToArray();

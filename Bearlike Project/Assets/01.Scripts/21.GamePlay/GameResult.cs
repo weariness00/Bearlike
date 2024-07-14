@@ -17,6 +17,8 @@ namespace GamePlay
 {
     public class GameResult : NetworkBehaviourEx
     {
+        [Networked] private NetworkBool IsInit { get; set; }
+        
         public Button lobbyButton;
 
         public Image backgroundImage;
@@ -57,6 +59,8 @@ namespace GamePlay
                         block.ParentId = networkObjectPlayerResultGrid.Id;
                     });
                 }
+
+                IsInit = true;
             }
         }
 
@@ -86,7 +90,11 @@ namespace GamePlay
             gameClearImage.rectTransform.DOPunchScale(Vector3.one, 1f);
 
             yield return new WaitForSeconds(1f);
-            
+
+            while (IsInit == false)
+                yield return null;
+
+            InitPlayerResult();
             ButtonInit();
         }
 
