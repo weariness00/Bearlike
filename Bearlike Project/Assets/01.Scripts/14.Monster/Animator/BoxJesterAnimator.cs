@@ -185,5 +185,10 @@ namespace Monster.Container
             CloneTimer = TickTimer.CreateFromSeconds(Runner, tpClip.length);
             networkAnimator.SetTrigger(tTeleport);
         }
+
+        public void PlayDieAction()
+        {
+            networkAnimator.SetTrigger(tDeath);
+        }
     }
 }

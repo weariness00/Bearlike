@@ -96,6 +96,9 @@ namespace Monster.Container
             _masks[0] = boxJester.Find("Smile_Face").gameObject;
             _masks[1] = boxJester.Find("Sad_Face").gameObject;
             _masks[2] = boxJester.Find("Angry_Face").gameObject;
+
+            DieAction += () => animator.PlayDieAction();
+            DieAction += () => Destroy(gameObject, 3);
         }
         
         #endregion
