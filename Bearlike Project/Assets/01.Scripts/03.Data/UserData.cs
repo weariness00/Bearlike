@@ -29,7 +29,6 @@ namespace Data
     public class UserData : NetworkSingleton<UserData>
     {
         [Networked, Capacity(3)] public NetworkDictionary<PlayerRef, UserDataStruct> UserDictionary { get; }
-        [Networked] public NetworkBool IsSpawnPlayer { get; private set; }
 
         public Action AfterSpawnedAction;
         public Action<PlayerRef> UserJoinAction;
@@ -121,7 +120,7 @@ namespace Data
 
                 UserDictionary.Add(playerRef, userData);
                 UserJoinAction?.Invoke(playerRef);
-                if(HasStateAuthority) SendUserIdRPC(playerRef, FireBaseAuthManager.UserId);
+                if(playerRef == Runner.LocalPlayer) SendUserIdRPC(playerRef, FireBaseAuthManager.UserId);
                 DebugManager.Log($"Add Player Data : {userData.Name}");
                 LoadingManager.EndWait($"{userData.Name} 접속완료");
             }
@@ -164,8 +163,6 @@ namespace Data
 
                     Runner.SetPlayerObject(playerRef, spawnObject);
                 }
-
-                IsSpawnPlayer = true;
             }
 
             return true;

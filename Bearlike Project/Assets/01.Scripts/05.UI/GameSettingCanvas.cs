@@ -25,7 +25,7 @@ namespace UI
 #endif
             settingButton.onClick.AddListener(() =>
             {
-                SettingCanvas.Active(SettingCanvasType.Setting);
+                SettingCanvas.Active(SettingCanvasType.All);
                 UIManager.AddActiveUI(SettingCanvas.Instance.gameObject);
             });
             

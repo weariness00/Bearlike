@@ -90,7 +90,7 @@ namespace GamePlay
             gameClearImage.rectTransform.DOPunchScale(Vector3.one, 1f);
 
             yield return new WaitForSeconds(1f);
-
+    
             while (IsInit == false)
                 yield return null;
 

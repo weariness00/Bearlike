@@ -35,7 +35,7 @@ namespace GamePlay.UI
         public override void Spawned()
         {
             base.Spawned();
-
+            
             { // 플레이어가 정상적으로 존재하는지 확인
                 var obj = Runner.FindObject(PlayerId);
                 if (obj) obj.TryGetComponent(out _playerController);

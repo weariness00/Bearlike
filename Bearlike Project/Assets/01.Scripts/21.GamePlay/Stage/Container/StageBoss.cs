@@ -44,7 +44,7 @@ namespace GamePlay.Stage.Container
             base.StageUpdate();
             if (bossMonsterCount.isMin)
             {
-                isStageClear = true;
+                StageClear();
             }
         }
 
