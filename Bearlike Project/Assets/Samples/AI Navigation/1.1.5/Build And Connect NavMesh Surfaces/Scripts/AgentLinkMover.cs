@@ -54,17 +54,20 @@ namespace Unity.AI.Navigation.Samples
             }
         }
 
-        IEnumerator Parabola(NavMeshAgent agent, float height, float duration)
+        IEnumerator Parabola(NavMeshAgent agent, float height, float d)
         {
             OffMeshLinkData data = agent.currentOffMeshLinkData;
             Vector3 startPos = agent.transform.position;
             Vector3 endPos = data.endPos + Vector3.up * agent.baseOffset;
+            
+            float duration = (endPos - startPos).magnitude / (agent.speed + 2);
+            
             float normalizedTime = 0.0f;
             while (normalizedTime < 1.0f)
             {
                 float yOffset = height * 4.0f * (normalizedTime - normalizedTime * normalizedTime);
                 agent.transform.position = Vector3.Lerp(startPos, endPos, normalizedTime) + yOffset * Vector3.up;
-                normalizedTime += Time.deltaTime / duration;
+                normalizedTime += Time.deltaTime / duration; 
                 yield return null;
             }
         }
