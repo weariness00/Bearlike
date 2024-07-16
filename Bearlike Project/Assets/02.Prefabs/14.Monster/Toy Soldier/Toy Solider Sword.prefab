@@ -16,6 +16,8 @@ GameObject:
   - component: {fileID: 1580780098385274765}
   - component: {fileID: 8556177119854256475}
   - component: {fileID: 2135163297048063234}
+  - component: {fileID: -8683055528297394235}
+  - component: {fileID: 7330354157756967231}
   m_Layer: 0
   m_Name: Toy Solider Sword
   m_TagString: Untagged
@@ -256,6 +258,49 @@ MonoBehaviour:
   target: {fileID: 0}
   targetScore: 0
   aggroRange: 0
+--- !u!195 &-8683055528297394235
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7813672697647692536}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &7330354157756967231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7813672697647692536}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03bc8063c9e95401f9a8a38bc716750d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Method: 2
+  m_Curve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  height: 10
+  speed: 5
 --- !u!1 &8258796028905635726
 GameObject:
   m_ObjectHideFlags: 0
@@ -1153,6 +1198,7 @@ MonoBehaviour:
     type: 3}
   stabbingAttackClip: {fileID: -3413565181374331669, guid: 2f17930bc425c6d4a8e7b2be8f8cd6ad,
     type: 3}
+  defaultAttackVFX: {fileID: 0}
 --- !u!114 &5464236164536527559
 MonoBehaviour:
   m_ObjectHideFlags: 0

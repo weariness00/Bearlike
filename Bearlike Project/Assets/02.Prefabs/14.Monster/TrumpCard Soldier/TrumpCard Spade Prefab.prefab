@@ -20,6 +20,8 @@ GameObject:
   - component: {fileID: 5260587215463507880}
   - component: {fileID: 6428751882085770480}
   - component: {fileID: 6263376413905320852}
+  - component: {fileID: 7276000729036327553}
+  - component: {fileID: -1949347738820940486}
   m_Layer: 0
   m_Name: TrumpCard Spade Prefab
   m_TagString: Untagged
@@ -65,12 +67,12 @@ MonoBehaviour:
   status: {fileID: 0}
   lootingTable: {fileID: 0}
   pivot: {fileID: 8097056274592144546}
+  aggroController: {fileID: 0}
   navMeshAgent: {fileID: 0}
   id: 3
   explain: 
   type: 
   crowdControlType: 2
-  targetPlayer: {fileID: 0}
   targetMask:
     serializedVersion: 2
     m_Bits: 4096
@@ -354,6 +356,42 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 2, z: 0.2}
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &7276000729036327553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1040485191303670858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6ca09b699fa07047ac0ec6c26b43509, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  targetScore: 0
+  aggroRange: 0
+--- !u!114 &-1949347738820940486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1040485191303670858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03bc8063c9e95401f9a8a38bc716750d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Method: 2
+  m_Curve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  height: 10
+  speed: 5
 --- !u!1 &8295033506061732416
 GameObject:
   m_ObjectHideFlags: 0

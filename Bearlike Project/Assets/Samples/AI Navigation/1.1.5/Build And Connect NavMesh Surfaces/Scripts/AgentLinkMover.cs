@@ -23,7 +23,8 @@ namespace Unity.AI.Navigation.Samples
 
         [Header("Properties")] 
         [SerializeField] private float height = 10.0f;
-
+        [SerializeField] private float speed = 5.0f;
+        
         IEnumerator Start()
         {
             NavMeshAgent agent = GetComponent<NavMeshAgent>();
@@ -63,7 +64,7 @@ namespace Unity.AI.Navigation.Samples
             Vector3 startPos = agent.transform.position;
             Vector3 endPos = data.endPos + Vector3.up * agent.baseOffset;
             
-            float duration = (endPos - startPos).magnitude / (agent.speed + 10);
+            float duration = (endPos - startPos).magnitude / (agent.speed + speed);
             
             float normalizedTime = 0.0f;
             while (normalizedTime < 1.0f)
