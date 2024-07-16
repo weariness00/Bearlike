@@ -49,14 +49,15 @@ namespace GamePlay
             else
             {
                 var monster = other.GetComponentInParent<MonsterBase>();
-                if (monster)
+                if (monster != null)
                 {
                     var monsterObj = monster.gameObject;
                     var monsterAgent = monsterObj.GetComponent<NavMeshAgent>();
 
-                    if(monsterAgent != null)    // navmeshagent로 움직임을 관리하는 몬스터일경우
-                        StartCoroutine(ParabolicMove(monsterAgent));
-                    else
+                    if(monsterAgent != null)    // navmeshagent로 움직임을 관리하는 몬스터일경우 ==> agentmover script에서 처리하자
+                        // if(monsterAgent.isOnOffMeshLink)
+                            // StartCoroutine(ParabolicMove(monsterAgent));
+                    if(monsterAgent == null)
                     {
                         // 아닐 경우 => 주사위
                         
@@ -67,12 +68,14 @@ namespace GamePlay
         
         IEnumerator ParabolicMove(NavMeshAgent agent)
         {
+            // agent.autoTraverseOffMeshLink = false;
+            
             var agentPosition = agent.transform.position;
             
             Vector3 startPos = agentPosition;
             Vector3 endPos = agentPosition + _navMeshLink.endPoint + Vector3.up * agent.baseOffset;
             
-            DebugManager.Log($"{agent.gameObject.name}endPos : {endPos}");
+            DebugManager.Log($"_navMeshLink.endPoint : {_navMeshLink.endPoint}, endPos : {endPos}");
             
             float duration = (endPos - startPos).magnitude / (agent.speed + 2);
             float height = 10.0f; // 포물선의 최고점 높이
@@ -95,8 +98,10 @@ namespace GamePlay
                 yield return null;
             }
 
-            agent.CompleteOffMeshLink();
+            // agent.CompleteOffMeshLink();
             agent.updatePosition = true;
+            
+            Debug.Log($"agent.transform.position : {agent.transform.position}");
         }
     }
 }
