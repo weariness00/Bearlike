@@ -64,7 +64,6 @@ namespace Skill.Container
             {
                 StartVFXRPC();
                 isInvoke = true;
-                // TODO : VFX도 넣어보자(너무 티가 안남)
 
                 status.attackSpeedMultiple += 1.0f;
                 
