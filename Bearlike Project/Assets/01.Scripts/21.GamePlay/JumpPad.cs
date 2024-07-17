@@ -68,7 +68,7 @@ namespace GamePlay
             Vector3 startPos = monsterObj.transform.position;
             Vector3 endPos = transform.position + _navMeshLink.endPoint;
             
-            float duration = (endPos - startPos).magnitude / 5;
+            float duration = (endPos - startPos).magnitude / 5; // 길이의 따라 시간이 달라져야함
             float height = 10f;
             
             float normalizedTime = 0.0f;
