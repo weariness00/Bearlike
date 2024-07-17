@@ -433,6 +433,79 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 4.0049977, y: 4.868645, z: 42.737465}
   m_Center: {x: -0.008661509, y: 0.47442755, z: 20.13942}
+--- !u!1001 &435299250
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2538191614351826596, guid: 2efc81bd5525b6446863c0ecc8bd8f49,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2538191614351826596, guid: 2efc81bd5525b6446863c0ecc8bd8f49,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2538191614351826596, guid: 2efc81bd5525b6446863c0ecc8bd8f49,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.722
+      objectReference: {fileID: 0}
+    - target: {fileID: 2538191614351826596, guid: 2efc81bd5525b6446863c0ecc8bd8f49,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2538191614351826596, guid: 2efc81bd5525b6446863c0ecc8bd8f49,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2538191614351826596, guid: 2efc81bd5525b6446863c0ecc8bd8f49,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2538191614351826596, guid: 2efc81bd5525b6446863c0ecc8bd8f49,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2538191614351826596, guid: 2efc81bd5525b6446863c0ecc8bd8f49,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2538191614351826596, guid: 2efc81bd5525b6446863c0ecc8bd8f49,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2538191614351826596, guid: 2efc81bd5525b6446863c0ecc8bd8f49,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2914576076319523870, guid: 2efc81bd5525b6446863c0ecc8bd8f49,
+        type: 3}
+      propertyPath: m_Name
+      value: Mega Shotgun Bead Bullet
+      objectReference: {fileID: 0}
+    - target: {fileID: 3769068154407846890, guid: 2efc81bd5525b6446863c0ecc8bd8f49,
+        type: 3}
+      propertyPath: SortKey
+      value: 1917010074
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2efc81bd5525b6446863c0ecc8bd8f49, type: 3}
 --- !u!1 &857092160
 GameObject:
   m_ObjectHideFlags: 0
@@ -2039,6 +2112,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: BlockWall
       objectReference: {fileID: 0}
+    - target: {fileID: 1347418039413576038, guid: b1c5fe2af7482c544afc560e43d30af3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2284564813215676178, guid: b1c5fe2af7482c544afc560e43d30af3,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2183,3 +2261,4 @@ SceneRoots:
   - {fileID: 1609948515}
   - {fileID: 1325060987}
   - {fileID: 4753463192082785638}
+  - {fileID: 435299250}
