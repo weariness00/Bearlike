@@ -6923,7 +6923,10 @@ VisualEffect:
     m_NamedObject:
       m_Array: []
     m_Bool:
-      m_Array: []
+      m_Array:
+      - m_Value: 0
+        m_Name: IsShotgun
+        m_Overridden: 1
 --- !u!73398921 &3523994050864446218
 VFXRenderer:
   serializedVersion: 1
@@ -12037,6 +12040,11 @@ PrefabInstance:
       propertyPath: SortKey
       value: 706084546
       objectReference: {fileID: 0}
+    - target: {fileID: 7054352895572623144, guid: 0f1b1844c83e1944e9eded47132bc861,
+        type: 3}
+      propertyPath: shotsmoke
+      value: 
+      objectReference: {fileID: 1255476793299921261}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -13208,8 +13216,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2373384962119832521, guid: 87e73c929ac63b14a85194db11dcb2f7,
         type: 3}
+      propertyPath: m_PropertySheet.m_Bool.m_Array.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2373384962119832521, guid: 87e73c929ac63b14a85194db11dcb2f7,
+        type: 3}
       propertyPath: m_PropertySheet.m_Float.m_Array.Array.size
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2373384962119832521, guid: 87e73c929ac63b14a85194db11dcb2f7,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Bool.m_Array.Array.data[0].m_Name
+      value: IsShotgun
       objectReference: {fileID: 0}
     - target: {fileID: 2373384962119832521, guid: 87e73c929ac63b14a85194db11dcb2f7,
         type: 3}
@@ -13230,6 +13248,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_PropertySheet.m_Float.m_Array.Array.data[1].m_Value
       value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 2373384962119832521, guid: 87e73c929ac63b14a85194db11dcb2f7,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Bool.m_Array.Array.data[0].m_Overridden
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2373384962119832521, guid: 87e73c929ac63b14a85194db11dcb2f7,
         type: 3}

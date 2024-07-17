@@ -56,7 +56,7 @@ namespace GamePlay
 
                     if(monsterAgent != null)    // navmeshagent로 움직임을 관리하는 몬스터일경우 ==> agentmover script에서 처리하자
                         // if(monsterAgent.isOnOffMeshLink)
-                            // StartCoroutine(ParabolicMove(monsterAgent));
+                            // StartCoroutine(ParabolicMove(monsterAgent));//
                     if(monsterAgent == null)
                     {
                         // 아닐 경우 => 주사위
