@@ -58,7 +58,14 @@ ModelImporter:
       curves: []
       events:
       - time: 0.617801
-        functionName: AniAttackRayEvent
+        functionName: AttackEndEvent
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.42307693
+        functionName: AttackStartEvent
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
