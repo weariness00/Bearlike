@@ -14,13 +14,12 @@ namespace BehaviorTree.Base
         public SequenceNode(List<INode> childs) => _childs = childs;
         public SequenceNode(params INode[] children) => _childs = children.ToList();
         
-        public INode.NodeState Evaluate()   
+        public INode.NodeState Evaluate()
         {
             if (_childs == null || _childs.Count == 0)
             {
                 return INode.NodeState.Failure;
             }
-
             foreach (var child in _childs)
             {
                 if (_checkPointChild != null)
@@ -30,6 +29,20 @@ namespace BehaviorTree.Base
                         continue;
                     }
                     _checkPointChild = null;
+
+                    if (child is Detector detector)
+                    {
+                        switch (detector.GetChild().Evaluate())
+                        {
+                            case INode.NodeState.Running:
+                                _checkPointChild = child;
+                                return INode.NodeState.Running;
+                            case INode.NodeState.Success:
+                                continue;
+                            case INode.NodeState.Failure:
+                                return INode.NodeState.Failure;
+                        }
+                    }
                 }
                 switch (child.Evaluate())
                 {
@@ -42,7 +55,7 @@ namespace BehaviorTree.Base
                         return INode.NodeState.Failure;
                 }
             }
-
+            
             return INode.NodeState.Success;
         }
     }

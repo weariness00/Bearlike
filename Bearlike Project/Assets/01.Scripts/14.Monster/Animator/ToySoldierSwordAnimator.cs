@@ -1,4 +1,8 @@
-﻿using Fusion;
+﻿using System.Collections;
+using Fusion;
+using Manager;
+using Status;
+using UI.Status;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -21,7 +25,13 @@ namespace Monster.Container
         [SerializeField] private AnimationClip defaultAttackClip;
         [SerializeField] private AnimationClip stabbingAttackClip;
 
+        [Header("VFX")]
         [SerializeField] private VisualEffect defaultAttackVFX;
+        [SerializeField] private VisualEffect stabbingAttackVFX;
+        [SerializeField] private VisualEffect gatherEnergyVFX;
+
+        [Header("ETC Component")] 
+        [SerializeField] private Transform stabbingVFXTransform; // 찌르는 VFX가 생성될 위치
         
         private TickTimer AniIdleTimer { get; set; }
         private TickTimer AniMoveTimer { get; set; }
@@ -77,15 +87,94 @@ namespace Monster.Container
 
         #region Animation Clip Event Function
 
-        private void DefaultAttackEvent()
+        private void DefaultAttackStartEvent()
         {
-            toySoldierSword.DefaultAttackEvent();
+            gatherEnergyVFX.transform.position = toySoldierSword.weaponTransform.position;
+            gatherEnergyVFX.transform.rotation = toySoldierSword.weaponTransform.rotation;
+
+            gatherEnergyVFX.Play();
+        }
+        
+        private void DefaultAttackEndEvent()
+        {
+            defaultAttackVFX.transform.position = toySoldierSword.weaponTransform.position;
+            defaultAttackVFX.transform.rotation = toySoldierSword.weaponTransform.rotation;
+            
+            defaultAttackVFX.Play();
+            gatherEnergyVFX.Stop();
+
+            var pivot = toySoldierSword.pivot;
+            var status = toySoldierSword.status;
+
+            DebugManager.DrawBoxRay(pivot.position, Vector3.one, pivot.forward, Quaternion.identity, status.attackRange.Current, Color.yellow);
+            if (Physics.BoxCast(pivot.position, Vector3.one, pivot.forward, out var hit, Quaternion.identity, status.attackRange.Current, LayerMask.NameToLayer("Player")))
+            {
+                StatusBase targetStatus;
+                if (hit.collider.TryGetComponent(out targetStatus) || hit.collider.transform.root.TryGetComponent(out targetStatus))
+                {
+                    targetStatus.ApplyDamageRPC(status.CalDamage(out var isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, Object.Id, toySoldierSword.crowdControlType);
+                }
+            }
+            
         }
 
-        private void StabbingAttackEvent()
+        #region Stabbing Attack
+
+        private void StabbingAttackStartEvent()
         {
-            toySoldierSword.StabbingAttackEvent();
+            stabbingAttackVFX.transform.position = stabbingVFXTransform.position;
+            stabbingAttackVFX.transform.rotation = stabbingVFXTransform.rotation;
+            
+            // stabbingAttackVFX.SetFloat("Speed", toySoldierSword.status.attackSpeed.Current);
+            stabbingAttackVFX.SetVector3("Velocity", Vector3.zero);
+            stabbingAttackVFX.Play();
+
+            StartCoroutine(StabbingMove());
         }
+        
+        private void StabbingAttackEndEvent()
+        {
+            stabbingAttackVFX.Stop();
+            
+            StopCoroutine(StabbingMove());
+            
+            toySoldierSword.rigidbody.velocity = Vector3.zero;
+            toySoldierSword.rigidbody.angularVelocity = Vector3.zero;
+        }
+
+        // 찌르기 할때 장난감 병정을 이동시키는 로직
+        private IEnumerator StabbingMove()
+        {
+            var frame = 0.1f / toySoldierSword.status.attackSpeed.Current;
+            var acc = toySoldierSword.stabbingDistance / frame;
+            var force = toySoldierSword.rigidbody.mass * acc;
+            while (frame > 0)
+            {
+                frame -= Time.deltaTime;
+                
+                toySoldierSword.rigidbody.AddForce(10f * force * toySoldierSword.pivot.forward);
+                
+                stabbingAttackVFX.transform.position = stabbingVFXTransform.position;
+                stabbingAttackVFX.transform.rotation = stabbingVFXTransform.rotation;
+                    
+                yield return null;
+            }
+        }
+
+        private void GatherEnergyStartEvent()
+        {
+            gatherEnergyVFX.transform.position = toySoldierSword.weaponTransform.position;
+            gatherEnergyVFX.transform.rotation = Quaternion.identity;
+            
+            gatherEnergyVFX.Play();
+        }
+        
+        private void GatherEnergyEndEvent()
+        {
+            gatherEnergyVFX.Stop();
+        }
+        
+        #endregion
 
         #endregion
     }

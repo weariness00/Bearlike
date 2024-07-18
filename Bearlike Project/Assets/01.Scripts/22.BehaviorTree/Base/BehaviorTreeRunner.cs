@@ -7,7 +7,7 @@ namespace BehaviorTree.Base
 {
     public struct BehaviorTreeRunner
     {
-        public readonly INode RootNode;
+        private readonly INode RootNode;
 
         public BehaviorTreeRunner(INode rootNode) => RootNode = rootNode;
 

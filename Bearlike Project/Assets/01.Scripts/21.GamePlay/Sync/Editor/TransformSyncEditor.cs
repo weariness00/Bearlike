@@ -17,6 +17,7 @@ namespace GamePlay.Sync.Editor
         private SerializedProperty IsPositionLocal;
         private SerializedProperty IsPositionX, IsPositionY, IsPositionZ;
         private SerializedProperty IsRotate;
+        private SerializedProperty IsRotateLocal;
         private SerializedProperty IsRotateX, IsRotateY, IsRotateZ;
         private SerializedProperty IsScale;
 
@@ -36,6 +37,7 @@ namespace GamePlay.Sync.Editor
             IsPositionZ = serializedObject.FindProperty("isPositionZ");
             
             IsRotate = serializedObject.FindProperty("isRotate");
+            IsRotateLocal = serializedObject.FindProperty("isRotateLocal");
             IsRotateX = serializedObject.FindProperty("isRotateX");
             IsRotateY = serializedObject.FindProperty("isRotateY");
             IsRotateZ = serializedObject.FindProperty("isRotateZ");
@@ -85,8 +87,12 @@ namespace GamePlay.Sync.Editor
                 EditorGUILayout.BeginHorizontal();
                 // X 토글
                 Rect rect = EditorGUILayout.GetControlRect(true, EditorGUIUtility.singleLineHeight);
-                rect.x = 100;
+                rect.width = 80; // 라벨 너비 + 체크박스 너비
+                rect.x = 40;
+                IsRotateLocal.boolValue = EditorGUI.ToggleLeft(rect, "Local", IsRotateLocal.boolValue);
+                
                 rect.width = 40; // 라벨 너비 + 체크박스 너비
+                rect.x += 30 + rect.width; // 라벨 너비 + 체크박스 너비
                 IsRotateX.boolValue = EditorGUI.ToggleLeft(rect, "X", IsRotateX.boolValue);
         
                 // Y 토글

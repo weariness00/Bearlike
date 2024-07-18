@@ -7,6 +7,8 @@ namespace BehaviorTree.Base
         private INode _child;
         private Func<bool> _detectFunc;
 
+        public INode GetChild() => _child;
+
         public Detector(Func<bool> func, INode child)
         {
             _detectFunc = func;

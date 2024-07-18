@@ -30,7 +30,22 @@ namespace BehaviorTree.Base
                         continue;
                     }
                     _checkPointChild = null;
+                    
+                    if (child is Detector detector)
+                    {
+                        switch (detector.GetChild().Evaluate())
+                        {
+                            case INode.NodeState.Running:
+                                _checkPointChild = child;
+                                return INode.NodeState.Running;
+                            case INode.NodeState.Success:
+                                continue;
+                            case INode.NodeState.Failure:
+                                return INode.NodeState.Failure;
+                        }
+                    }
                 }
+
                 switch (child.Evaluate())
                 {
                     case INode.NodeState.Running:

@@ -331,11 +331,12 @@ namespace Monster
             
             LayerMask mask = 1 << LayerMask.NameToLayer("Default");
             var originPivot = new Vector3(0, 0.1f, 0);
+            var hitOptions = HitOptions.IncludePhysX | HitOptions.IgnoreInputAuthority;
             while (true)
             {
                 yield return null;
                 DebugManager.DrawRay(transform.position + originPivot, -transform.up * 0.3f, Color.blue, 1f);
-                if (Runner.LagCompensation.Raycast(transform.position + originPivot, -transform.up, 0.3f, Runner.LocalPlayer, out var hit) || 
+                if (Runner.LagCompensation.Raycast(transform.position + originPivot, -transform.up, 0.3f, Runner.LocalPlayer, out var hit, Int32.MaxValue, hitOptions) || 
                     Physics.Raycast(transform.position + originPivot, -transform.up, out var phit, 0.3f))
                 {
                     navMeshAgent.enabled = true;

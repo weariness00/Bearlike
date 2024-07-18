@@ -11,7 +11,7 @@ namespace GamePlay.DeadBodyObstacle
 {
     public class DeadBodyObstacleObject : NetworkBehaviourEx
     {
-        public bool isOnStart = true;
+        public bool isOnStart = false;
         
         private NetworkMecanimAnimator _networkAnimator;
         private StatusBase _status;
@@ -40,11 +40,6 @@ namespace GamePlay.DeadBodyObstacle
         {
             base.Spawned();
             if(isOnStart) OnDeadBodyRPC();
-        }
-
-        public override void FixedUpdateNetwork()
-        {
-
         }
 
         #endregion

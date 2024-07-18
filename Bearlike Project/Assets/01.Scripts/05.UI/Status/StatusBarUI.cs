@@ -32,16 +32,20 @@ namespace UI.Status
             foreach (var meshFilter in meshFilters)
             {
                 var bound = meshFilter.sharedMesh.bounds;
-                height = (bound.max.y - bound.min.y);
-                if (headPosition.y > height)
+                var meshHeight = (bound.max.y - bound.min.y);
+                if (headPosition.y > meshHeight)
                     height = headPosition.y;
+                else if (meshHeight > height)
+                    height = meshHeight;
             }
             foreach (var skinnedMesh in skinnedMeshes)
             {
                 var bound = skinnedMesh.bounds;
-                height = (bound.max.y - bound.min.y) + 0.2f;
+                var meshHeight = (bound.max.y - bound.min.y) + 0.2f;
                 if (headPosition.y > height)
                     height = headPosition.y;
+                else if (meshHeight > height)
+                    height = meshHeight;
             }
             headPosition = new Vector3(0, height, 0) * transform.localScale.y;
         }
