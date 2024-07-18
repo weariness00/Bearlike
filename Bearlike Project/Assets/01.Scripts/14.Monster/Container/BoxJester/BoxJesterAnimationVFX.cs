@@ -14,8 +14,7 @@ namespace Monster.Container
 
         private void Awake()
         {
-            tpEffect.SendEvent("StopPlay");
-            HandLazerEffect.gameObject.SetActive(false);
+            StopLazerVFXRPC();
         }
 
         [Rpc(RpcSources.All, RpcTargets.All)]

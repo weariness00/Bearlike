@@ -10,6 +10,7 @@ using Status;
 using UI.Status;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.VFX;
 using DebugManager = Manager.DebugManager;
 using Random = UnityEngine.Random;
@@ -42,7 +43,7 @@ namespace Monster.Container
         [Header("VFX Properties")]
         [SerializeField] private VisualEffect tpEffect;
         [SerializeField] private VisualEffect darknessAttackEffect;
-        [SerializeField] private VisualEffect HandLazerEffect;
+        [SerializeField] private VisualEffect handLazerEffect;
 
         [Header("Effect")] 
         [SerializeField] private Material bloodShieldMat;
@@ -110,7 +111,7 @@ namespace Monster.Container
             base.Spawned();
             tpEffect.SendEvent("StopPlay");
             darknessAttackEffect.SendEvent("StopPlay");
-            HandLazerEffect.gameObject.SetActive(false);
+            handLazerEffect.gameObject.SetActive(false);
 
             // TP Position 넣기
             // Transform rootTrans = transform.root.Find("TPPosition"); // pool에 들어가는 경우
@@ -337,7 +338,7 @@ namespace Monster.Container
         {
             if (false == _animationing)
             {
-                tpEffect.SendEvent("OnPlay");
+                StartVFXRPC(tpEffect);
                 animator.PlayTeleport();
                 _animationing = true;
             }
@@ -384,7 +385,7 @@ namespace Monster.Container
             if (false == _animationing)
             {
                 animator.PlaySmokingAttack();
-                darknessAttackEffect.SendEvent("OnPlay");
+                StartVFXRPC(darknessAttackEffect);
                 _animationing = true;
                 
                 Runner.SpawnAsync(breath, transform.position, transform.rotation, null,
@@ -964,6 +965,12 @@ namespace Monster.Container
 
         #region RPC Fuction
 
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void StartVFXRPC(VisualEffect vfx)
+        {
+            vfx?.SendEvent("OnPlay");
+        }
+        
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void TPPositionRPC()
         {
