@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
@@ -20,10 +21,6 @@ namespace Unity.AI.Navigation.Samples
     {
         public OffMeshLinkMoveMethod m_Method = OffMeshLinkMoveMethod.Parabola;
         public AnimationCurve m_Curve = new AnimationCurve();
-
-        [Header("Properties")] 
-        [SerializeField] private float height = 10.0f;
-        [SerializeField] private float speed = 5.0f;
         
         IEnumerator Start()
         {
@@ -64,7 +61,19 @@ namespace Unity.AI.Navigation.Samples
             Vector3 startPos = agent.transform.position;
             Vector3 endPos = data.endPos + Vector3.up * agent.baseOffset;
             
-            float duration = (endPos - startPos).magnitude / (agent.speed + speed);
+            float duration = (endPos - startPos).magnitude / (agent.speed + 2);
+
+            if (duration > 2)
+                duration = 2.0f;//
+
+            var len = Math.Abs(data.endPos.y - startPos.y);
+
+            var height = 0.0f;
+            
+            if (len > 5)
+                height = 10.0f;
+            else
+                height = 5.0f; 
             
             float normalizedTime = 0.0f;
             while (normalizedTime < 1.0f)
