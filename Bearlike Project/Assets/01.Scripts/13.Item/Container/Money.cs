@@ -39,7 +39,7 @@ namespace Item.Container
             base.AddItem(addItem);
 
             var goodsCanvas = FindObjectOfType<GoodsCanvas>();
-            goodsCanvas.CoinUpdate(Amount.Current);
+            goodsCanvas.BearCoinUpdate(Amount.Current);
             
             return addItem;
         }
@@ -51,7 +51,7 @@ namespace Item.Container
             {
                 Amount.Current -= item.Amount.Current;
                 var goodsCanvas = FindObjectOfType<GoodsCanvas>();
-                goodsCanvas.CoinUpdate(Amount.Current);
+                goodsCanvas.BearCoinUpdate(Amount.Current);
 
                 if (Amount.isMin)
                 {

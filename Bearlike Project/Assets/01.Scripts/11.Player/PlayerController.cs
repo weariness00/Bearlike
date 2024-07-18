@@ -18,6 +18,7 @@ using UI.Weapon;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using User;
 using Weapon;
 using Weapon.Gun;
 
@@ -174,6 +175,8 @@ namespace Player
                 status.RecoveryFromReviveAction += () => cameraController.ChangeCameraMode(CameraMode.FirstPerson);
 
                 CanvasActive(true);
+                
+                goodsCanvas.CottonCoinUpdate(UserInformation.Instance.cottonInfo.GetCoin());
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
             }
             else
