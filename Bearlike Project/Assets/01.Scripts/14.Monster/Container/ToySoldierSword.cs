@@ -1,9 +1,6 @@
 ﻿using BehaviorTree.Base;
 using Fusion;
-using Status;
-using UI.Status;
 using UnityEngine;
-using UnityEngine.VFX;
 
 namespace Monster.Container
 {
@@ -12,6 +9,7 @@ namespace Monster.Container
         public Transform weaponTransform;
 
         // 찌르기 공격 딜레이
+        [HideInInspector] public float stabbingAttackDamageMultiple = 1f; // 찌르기 공격의 대미지 배율
         private float stabbingAttackLate;
         private TickTimer stabbingAttackTimer;
         [HideInInspector] public float stabbingDistance; // 찌르기를 할때 나아가는 거리
@@ -32,6 +30,7 @@ namespace Monster.Container
         {
             base.Start();
             var stateData = GetStatusData(id);
+            stabbingAttackDamageMultiple = stateData.GetFloat("Stabbing Attack Damage Multiple");
             stabbingAttackLate = stateData.GetFloat("Stabbing Attack Late");
             stabbingDistance = stateData.GetFloat("Stabbing Distance");
         }

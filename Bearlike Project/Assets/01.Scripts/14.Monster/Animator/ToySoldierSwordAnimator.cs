@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using Fusion;
-using Manager;
+using Player;
 using Status;
 using UI.Status;
 using UnityEngine;
 using UnityEngine.VFX;
+using Util.UnityEventComponent;
 
 namespace Monster.Container
 {
@@ -32,6 +33,8 @@ namespace Monster.Container
 
         [Header("ETC Component")] 
         [SerializeField] private Transform stabbingVFXTransform; // 찌르는 VFX가 생성될 위치
+        [SerializeField] private Collider defaultCollider;
+        [SerializeField] private Collider stabbingCollider;
         
         private TickTimer AniIdleTimer { get; set; }
         private TickTimer AniMoveTimer { get; set; }
@@ -55,11 +58,38 @@ namespace Monster.Container
             set => networkAnimator.Animator.SetFloat(AniAttackSpeed, value);
         }
 
+        #region Unity Evenet Function
+
         private void Awake()
         {
             toySoldierSword = GetComponentInParent<ToySoldierSword>();
             networkAnimator = GetComponent<NetworkMecanimAnimator>();
         }
+
+        private void Start()
+        {
+            // Collider 초기화
+            // Deadbody로 인해 무조건 Start에서 초기화 해야된다.
+            {
+                var util = defaultCollider.gameObject.AddComponent<UnityEventUtil>();
+                util.AddOnTriggerEnter(DefaultAttackOnTriggerEnter);
+            }
+            {
+                var util = stabbingCollider.gameObject.AddComponent<UnityEventUtil>();
+                util.AddOnTriggerEnter(StabbingAttackOnTriggerEnter);
+            }
+            
+            defaultCollider.gameObject.layer = 0;
+            defaultCollider.gameObject.tag = "Default";
+            stabbingCollider.gameObject.layer = 0;
+            stabbingCollider.gameObject.tag = "Default";
+            
+            defaultCollider.enabled = false;
+            stabbingCollider.enabled = false;
+        }
+
+        #endregion
+        
 
         public void PlayIdle()
         {
@@ -87,12 +117,16 @@ namespace Monster.Container
 
         #region Animation Clip Event Function
 
+        #region Default Attack
+
         private void DefaultAttackStartEvent()
         {
             gatherEnergyVFX.transform.position = toySoldierSword.weaponTransform.position;
             gatherEnergyVFX.transform.rotation = toySoldierSword.weaponTransform.rotation;
 
             gatherEnergyVFX.Play();
+
+            defaultCollider.enabled = true;
         }
         
         private void DefaultAttackEndEvent()
@@ -103,20 +137,38 @@ namespace Monster.Container
             defaultAttackVFX.Play();
             gatherEnergyVFX.Stop();
 
-            var pivot = toySoldierSword.pivot;
-            var status = toySoldierSword.status;
+            // var pivot = toySoldierSword.pivot;
+            // var status = toySoldierSword.status;
 
-            DebugManager.DrawBoxRay(pivot.position, Vector3.one, pivot.forward, Quaternion.identity, status.attackRange.Current, Color.yellow);
-            if (Physics.BoxCast(pivot.position, Vector3.one, pivot.forward, out var hit, Quaternion.identity, status.attackRange.Current, LayerMask.NameToLayer("Player")))
+            // DebugManager.DrawBoxRay(pivot.position, Vector3.one, pivot.forward, Quaternion.identity, status.attackRange.Current, Color.yellow);
+            // if (Physics.BoxCast(pivot.position, Vector3.one, pivot.forward, out var hit, Quaternion.identity, status.attackRange.Current, LayerMask.NameToLayer("Player")))
+            // {
+            //     StatusBase targetStatus;
+            //     if (hit.collider.TryGetComponent(out targetStatus) || hit.collider.transform.root.TryGetComponent(out targetStatus))
+            //     {
+            //         targetStatus.ApplyDamageRPC(status.CalDamage(out var isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, Object.Id, toySoldierSword.crowdControlType);
+            //     }
+            // }
+            
+            defaultCollider.enabled = false;
+        }
+
+        private void DefaultAttackOnTriggerEnter(Collider other)
+        {
+            if (defaultCollider.enabled)
             {
-                StatusBase targetStatus;
-                if (hit.collider.TryGetComponent(out targetStatus) || hit.collider.transform.root.TryGetComponent(out targetStatus))
+                var otherStatus = other.GetComponentInParent<StatusBase>();
+                if (otherStatus is PlayerStatus)
                 {
-                    targetStatus.ApplyDamageRPC(status.CalDamage(out var isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, Object.Id, toySoldierSword.crowdControlType);
+                    otherStatus.ApplyDamageRPC(
+                        toySoldierSword.status.CalDamage(out bool isCritical),
+                        isCritical ? DamageTextType.Critical : DamageTextType.Normal,
+                        Object.Id);
                 }
             }
-            
         }
+
+        #endregion
 
         #region Stabbing Attack
 
@@ -125,9 +177,12 @@ namespace Monster.Container
             stabbingAttackVFX.transform.position = stabbingVFXTransform.position;
             stabbingAttackVFX.transform.rotation = stabbingVFXTransform.rotation;
             
-            // stabbingAttackVFX.SetFloat("Speed", toySoldierSword.status.attackSpeed.Current);
+            var frame = 0.1f / toySoldierSword.status.attackSpeed.Current;
+            stabbingAttackVFX.SetFloat("Speed", frame);
             stabbingAttackVFX.SetVector3("Velocity", Vector3.zero);
             stabbingAttackVFX.Play();
+
+            stabbingCollider.enabled = true;
 
             StartCoroutine(StabbingMove());
         }
@@ -137,6 +192,8 @@ namespace Monster.Container
             stabbingAttackVFX.Stop();
             
             StopCoroutine(StabbingMove());
+            
+            stabbingCollider.enabled = false;
             
             toySoldierSword.rigidbody.velocity = Vector3.zero;
             toySoldierSword.rigidbody.angularVelocity = Vector3.zero;
@@ -172,6 +229,21 @@ namespace Monster.Container
         private void GatherEnergyEndEvent()
         {
             gatherEnergyVFX.Stop();
+        }
+
+        private void StabbingAttackOnTriggerEnter(Collider other)
+        {
+            if (stabbingCollider.enabled)
+            {
+                var otherStatus = other.GetComponentInParent<StatusBase>();
+                if (otherStatus is PlayerStatus)
+                {
+                    otherStatus.ApplyDamageRPC(
+                        (int)(toySoldierSword.stabbingAttackDamageMultiple * toySoldierSword.status.CalDamage(out bool isCritical)),
+                        isCritical ? DamageTextType.Critical : DamageTextType.Normal,
+                        Object.Id);
+                }
+            }
         }
         
         #endregion
