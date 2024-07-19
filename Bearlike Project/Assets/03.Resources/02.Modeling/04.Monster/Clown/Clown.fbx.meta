@@ -362,7 +362,15 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 1
+        functionName: StartBreathVFXRPC
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 90921e2381d24c69b876ada8f92bbd0a,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
@@ -420,7 +428,15 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.43389714
+        functionName: StartTPVFXRPC
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 90921e2381d24c69b876ada8f92bbd0a,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}

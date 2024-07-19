@@ -338,7 +338,6 @@ namespace Monster.Container
         {
             if (false == _animationing)
             {
-                StartVFXRPC(tpEffect);
                 animator.PlayTeleport();
                 _animationing = true;
             }
@@ -385,7 +384,6 @@ namespace Monster.Container
             if (false == _animationing)
             {
                 animator.PlaySmokingAttack();
-                StartVFXRPC(darknessAttackEffect);
                 _animationing = true;
                 
                 Runner.SpawnAsync(breath, transform.position, transform.rotation, null,
@@ -964,12 +962,6 @@ namespace Monster.Container
         #endregion
 
         #region RPC Fuction
-
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void StartVFXRPC(VisualEffect vfx)
-        {
-            vfx?.SendEvent("OnPlay");
-        }
         
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void TPPositionRPC()

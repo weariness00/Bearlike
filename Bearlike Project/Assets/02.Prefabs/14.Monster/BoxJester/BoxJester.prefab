@@ -120,7 +120,7 @@ MonoBehaviour:
     type: 3}
   tpEffect: {fileID: 1387068177130579636}
   darknessAttackEffect: {fileID: 1016838274745269282}
-  HandLazerEffect: {fileID: 7589194478115487134}
+  handLazerEffect: {fileID: 0}
   bloodShieldMat: {fileID: 0}
   _OwnerId:
     Raw: 0
@@ -356,7 +356,7 @@ VisualEffect:
       - m_Value: 5
         m_Name: Size
         m_Overridden: 1
-      - m_Value: 2
+      - m_Value: 1
         m_Name: Time
         m_Overridden: 1
     m_Vector2f:
@@ -2323,7 +2323,7 @@ MonoBehaviour:
   _IsSpawnSuccess:
     _value: 0
   tpEffect: {fileID: 1387068177130579636}
-  darknessAttackEffect: {fileID: 0}
+  darknessAttackEffect: {fileID: 1016838274745269282}
   HandLazerEffect: {fileID: 7589194478115487134}
 --- !u!1 &7869048783781719431 stripped
 GameObject:
