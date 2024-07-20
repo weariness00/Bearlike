@@ -70,15 +70,6 @@ namespace Monster.Container
         {
             // Collider 초기화
             // Deadbody로 인해 무조건 Start에서 초기화 해야된다.
-            {
-                var util = defaultCollider.gameObject.AddComponent<UnityEventUtil>();
-                util.AddOnTriggerEnter(DefaultAttackOnTriggerEnter);
-            }
-            {
-                var util = stabbingCollider.gameObject.AddComponent<UnityEventUtil>();
-                util.AddOnTriggerEnter(StabbingAttackOnTriggerEnter);
-            }
-            
             defaultCollider.gameObject.layer = 0;
             defaultCollider.gameObject.tag = "Default";
             stabbingCollider.gameObject.layer = 0;
@@ -88,8 +79,24 @@ namespace Monster.Container
             stabbingCollider.enabled = false;
         }
 
-        #endregion
+        public override void Spawned()
+        {
+            base.Spawned();
+            if (HasStateAuthority)
+            {
+                {
+                    var util = defaultCollider.gameObject.AddComponent<UnityEventUtil>();
+                    util.AddOnTriggerEnter(DefaultAttackOnTriggerEnter);
+                }
+                {
+                    var util = stabbingCollider.gameObject.AddComponent<UnityEventUtil>();
+                    util.AddOnTriggerEnter(StabbingAttackOnTriggerEnter);
+                }
+            }
+        }
         
+
+        #endregion
 
         public void PlayIdle()
         {
@@ -136,19 +143,6 @@ namespace Monster.Container
             
             defaultAttackVFX.Play();
             gatherEnergyVFX.Stop();
-
-            // var pivot = toySoldierSword.pivot;
-            // var status = toySoldierSword.status;
-
-            // DebugManager.DrawBoxRay(pivot.position, Vector3.one, pivot.forward, Quaternion.identity, status.attackRange.Current, Color.yellow);
-            // if (Physics.BoxCast(pivot.position, Vector3.one, pivot.forward, out var hit, Quaternion.identity, status.attackRange.Current, LayerMask.NameToLayer("Player")))
-            // {
-            //     StatusBase targetStatus;
-            //     if (hit.collider.TryGetComponent(out targetStatus) || hit.collider.transform.root.TryGetComponent(out targetStatus))
-            //     {
-            //         targetStatus.ApplyDamageRPC(status.CalDamage(out var isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, Object.Id, toySoldierSword.crowdControlType);
-            //     }
-            // }
             
             defaultCollider.enabled = false;
         }
