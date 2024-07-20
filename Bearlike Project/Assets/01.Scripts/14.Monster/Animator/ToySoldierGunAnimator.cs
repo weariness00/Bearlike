@@ -1,7 +1,9 @@
-﻿using System;
+﻿using System.Collections;
 using Fusion;
 using Photon;
+using Status;
 using UnityEngine;
+using UnityEngine.VFX;
 
 namespace Monster.Container
 {
@@ -10,6 +12,8 @@ namespace Monster.Container
         // 애니메이터 프로퍼티
         private static readonly int AniMoveSpeed = Animator.StringToHash("f Move Speed");
         private static readonly int AniAttack = Animator.StringToHash("tAttack");
+
+        private ToySoldierGun toySoldierGun;
         
         [Header("Animator")]
         [SerializeField] private NetworkMecanimAnimator networkAnimator;
@@ -18,6 +22,10 @@ namespace Monster.Container
         [SerializeField] private AnimationClip idleClip;
         [SerializeField] private AnimationClip moveClip;
         [SerializeField] private AnimationClip longAttackClip;
+
+        [Header("ETC Component")]
+        [SerializeField] private Transform gatherEnergyTransform;
+        [SerializeField] private VisualEffect gatherEnergyVFX;
         
         private TickTimer AniIdleTimer { get; set; }
         private TickTimer AniMoveTimer { get; set; }
@@ -35,6 +43,7 @@ namespace Monster.Container
 
         private void Awake()
         {
+            toySoldierGun = GetComponentInParent<ToySoldierGun>();
             networkAnimator = GetComponent<NetworkMecanimAnimator>();
         }
 
@@ -52,8 +61,30 @@ namespace Monster.Container
 
         public void PlayLongAttack()
         {
-            AniLongAttackTimer = TickTimer.CreateFromSeconds(Runner, longAttackClip.length);
+            var lateTime = 0.5f;
+
+            AniLongAttackTimer = TickTimer.CreateFromSeconds(Runner, longAttackClip.length + lateTime * 2);
+            StartCoroutine(GunFireCoroutine(lateTime));
+        }
+
+        private IEnumerator GunFireCoroutine(float lateTime)
+        {
+            gatherEnergyVFX.transform.position = gatherEnergyTransform.position;
+            gatherEnergyVFX.transform.rotation = gatherEnergyTransform.rotation;
+            gatherEnergyVFX.SetFloat("Life Time", lateTime);
+            gatherEnergyVFX.SetFloat("Circle Spawn Interval", lateTime / 3);
+            gatherEnergyVFX.Play();
+            
+            var waitTime = new WaitForSeconds(lateTime);
+            yield return waitTime;
+            gatherEnergyVFX.Stop();
+            yield return waitTime;
+            
             networkAnimator.SetTrigger(AniAttack);
+
+            toySoldierGun.gun.FireBullet(false);
+            toySoldierGun.gun.SetMagazineRPC(StatusValueType.Current, 10);
+            toySoldierGun.gun.FireLateTimer = TickTimer.CreateFromSeconds(Runner, 0);
         }
     }
 }
