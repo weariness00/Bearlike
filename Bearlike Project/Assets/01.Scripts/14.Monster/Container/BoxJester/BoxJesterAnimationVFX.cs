@@ -15,6 +15,11 @@ namespace Monster.Container
         private void Awake()
         {
             StopLazerVFXRPC();
+            StopTPVFXRPC();
+            StopBreathVFXRPC();
+            
+            tpEffect.SetFloat("Time", 1.0f);
+            darknessAttackEffect.SetFloat("Time", 1.0f);
         }
         
         // [Rpc(RpcSources.All, RpcTargets.All)]
@@ -22,6 +27,12 @@ namespace Monster.Container
         {
             tpEffect.gameObject.SetActive(true);
             tpEffect.SendEvent("OnPlay");
+        }
+        
+        public void StopTPVFXRPC()
+        {
+            tpEffect.SendEvent("StopPlay");
+            tpEffect.gameObject.SetActive(false);
         }
 
         // [Rpc(RpcSources.All, RpcTargets.All)]
@@ -43,6 +54,12 @@ namespace Monster.Container
         {
             darknessAttackEffect.gameObject.SetActive(true);
             darknessAttackEffect.SendEvent("OnPlay");
+        }
+        
+        public void StopBreathVFXRPC()
+        {
+            darknessAttackEffect.SendEvent("StopPlay");
+            darknessAttackEffect.gameObject.SetActive(false);
         }
     }
 }

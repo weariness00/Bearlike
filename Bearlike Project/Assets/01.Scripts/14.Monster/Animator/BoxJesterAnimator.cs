@@ -131,6 +131,8 @@ namespace Monster.Container
         public void PlayPunchAction()
         {
             PunchTimer = TickTimer.CreateFromSeconds(Runner, 3);
+            networkAnimator.Animator.SetFloat(Attack, 1);
+            networkAnimator.SetTrigger(tAttack);
         }
         
         public void PlayShieldAction()
@@ -163,14 +165,14 @@ namespace Monster.Container
         public void PlayHandLazerAction()
         {
             HandLazerTimer = TickTimer.CreateFromSeconds(Runner, handLazerClip.length);
-            networkAnimator.Animator.SetFloat(Attack, 1);
+            networkAnimator.Animator.SetFloat(Attack, 2);
             networkAnimator.SetTrigger(tAttack);
         }
 
         public void PlayThrowBoomAction()
         {
             ThrowBoomTimer = TickTimer.CreateFromSeconds(Runner, throwBoomClip.length);
-            networkAnimator.Animator.SetFloat(Attack, 2);
+            networkAnimator.Animator.SetFloat(Attack, 3);
             networkAnimator.SetTrigger(tAttack);
         }
         

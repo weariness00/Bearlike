@@ -109,6 +109,7 @@ MonoBehaviour:
   hands:
   - {fileID: 648449446432300868}
   - {fileID: 7869048783781719431}
+  hand: {fileID: 1015369568376401257, guid: bb106e7461adc964da18955a5e4257ca, type: 3}
   hat:
   - {fileID: 8067623198459055109, guid: 5a9a603ca03d6194eb5be04de1cec419, type: 3}
   - {fileID: 4814253299813407196, guid: 95aa714e9094723479b7aaffde870c6f, type: 3}
@@ -118,9 +119,6 @@ MonoBehaviour:
   breath: {fileID: 3796282657938861686, guid: 245d8beb23c7e284792d30634d14d90d, type: 3}
   cloneObject: {fileID: 5002494238381799181, guid: 240fa7f573a9ef841832ca5bec702522,
     type: 3}
-  tpEffect: {fileID: 1387068177130579636}
-  darknessAttackEffect: {fileID: 1016838274745269282}
-  handLazerEffect: {fileID: 0}
   bloodShieldMat: {fileID: 0}
   _OwnerId:
     Raw: 0
@@ -747,6 +745,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: -8371147059731152379, guid: 44e027b201d0de442ba1d19b500130f4,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8326896905954881705, guid: 44e027b201d0de442ba1d19b500130f4,
         type: 3}
@@ -1712,6 +1715,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 14
       objectReference: {fileID: 0}
+    - target: {fileID: 7933105455197941958, guid: 44e027b201d0de442ba1d19b500130f4,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8206445221387538529, guid: 44e027b201d0de442ba1d19b500130f4,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1769,8 +1777,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8728581043947121825, guid: 44e027b201d0de442ba1d19b500130f4,
         type: 3}
+      propertyPath: m_Name
+      value: Hand
+      objectReference: {fileID: 0}
+    - target: {fileID: 8728581043947121825, guid: 44e027b201d0de442ba1d19b500130f4,
+        type: 3}
       propertyPath: m_Layer
       value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8728581043947121825, guid: 44e027b201d0de442ba1d19b500130f4,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1815,7 +1833,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7933105455197941958, guid: 44e027b201d0de442ba1d19b500130f4,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7610009915659689250}
+      addedObject: {fileID: 2859442011175133615}
     - targetCorrespondingSourceObject: {fileID: -8371147059731152379, guid: 44e027b201d0de442ba1d19b500130f4,
         type: 3}
       insertIndex: -1
@@ -1831,7 +1849,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8371147059731152379, guid: 44e027b201d0de442ba1d19b500130f4,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 4017696963753550253}
+      addedObject: {fileID: 6436466573788317187}
     - targetCorrespondingSourceObject: {fileID: -259972160606440404, guid: 44e027b201d0de442ba1d19b500130f4,
         type: 3}
       insertIndex: -1
@@ -1972,7 +1990,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   originalStatus: {fileID: 3950356254066584260}
   status: {fileID: 0}
---- !u!114 &7610009915659689250
+--- !u!114 &2859442011175133615
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1981,7 +1999,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 648449446432300868}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a91dbaf13af4b81b33401549126a433, type: 3}
+  m_Script: {fileID: 11500000, guid: 1bad66063b521d440bb41dc8c2e2e325, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   status: {fileID: 3950356254066584260}
@@ -2452,7 +2470,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   originalStatus: {fileID: 3950356254066584260}
   status: {fileID: 0}
---- !u!114 &4017696963753550253
+--- !u!114 &6436466573788317187
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2461,7 +2479,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7869048783781719431}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a91dbaf13af4b81b33401549126a433, type: 3}
+  m_Script: {fileID: 11500000, guid: 1bad66063b521d440bb41dc8c2e2e325, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   status: {fileID: 3950356254066584260}

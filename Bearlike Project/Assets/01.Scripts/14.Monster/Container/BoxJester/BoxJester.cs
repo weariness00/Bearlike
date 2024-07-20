@@ -29,6 +29,7 @@ namespace Monster.Container
 
         [Header("HandAttack Properties")] 
         [SerializeField] private GameObject[] hands;
+        [SerializeField] private GameObject hand;
         
         [Header("Hat")]
         [SerializeField] private GameObject[] hat;
@@ -40,10 +41,10 @@ namespace Monster.Container
         [SerializeField] private GameObject breath;
         [SerializeField] private GameObject cloneObject;
         
-        [Header("VFX Properties")]
-        [SerializeField] private VisualEffect tpEffect;
-        [SerializeField] private VisualEffect darknessAttackEffect;
-        [SerializeField] private VisualEffect handLazerEffect;
+        // [Header("VFX Properties")]
+        // [SerializeField] private VisualEffect tpEffect;
+        // [SerializeField] private VisualEffect darknessAttackEffect;
+        // [SerializeField] private VisualEffect handLazerEffect;
 
         [Header("Effect")] 
         [SerializeField] private Material bloodShieldMat;
@@ -56,6 +57,7 @@ namespace Monster.Container
         private BehaviorTreeRunner _behaviorTreeRunner;
         private GameObject[] _players;
         private GameObject[] _masks;
+        private GameObject _hand;
         
         enum MaskType
         {
@@ -85,7 +87,7 @@ namespace Monster.Container
             
             animator = GetComponentInChildren<BoxJesterAnimator>();
             
-            tpEffect.SetFloat("Time", animator.tpClip.length);
+            // tpEffect.SetFloat("Time", animator.tpClip.length);
 
             var bloodShieldRenderer = transform.Find("ShieldEffect").GetComponent<Renderer>();
             bloodShieldMat = bloodShieldRenderer.material;
@@ -100,6 +102,8 @@ namespace Monster.Container
 
             DieAction += () => animator.PlayDieAction();
             DieAction += () => Destroy(gameObject, 3);
+
+            _hand = transform.Find("Hand").gameObject;
         }
         
         #endregion
@@ -109,9 +113,6 @@ namespace Monster.Container
         public override void Spawned()
         {
             base.Spawned();
-            tpEffect.SendEvent("StopPlay");
-            darknessAttackEffect.SendEvent("StopPlay");
-            handLazerEffect.gameObject.SetActive(false);
 
             // TP Position 넣기
             // Transform rootTrans = transform.root.Find("TPPosition"); // pool에 들어가는 경우
@@ -271,8 +272,8 @@ namespace Monster.Container
 
             var AttackPattern = new SelectorNode(
                 true, 
-                TP,
-                Hide,
+                // TP,
+                // Hide,
                 Attack
             );
         
@@ -300,6 +301,8 @@ namespace Monster.Container
                 }
             }
 
+            DebugManager.Log($"playerPosition : {playerPosition}");
+            
             float time = 0.0f;
             
             while (true)
@@ -536,6 +539,16 @@ namespace Monster.Container
             
             if (false == _animationing)
             {
+                _hand.SetActive(false);
+                
+                Runner.SpawnAsync(hand, _hand.transform.position, _hand.transform.rotation, null,
+                    (runner, o) =>
+                    {
+                        var h = o.GetComponent<BoxJesterAttackHand>();
+
+                        h.targetPosition = targetPosition;
+                    });
+                
                 // dotween으로 주먹 이동 및 충돌 처리
                 PunchAttackRPC(type, targetPosition);
                 animator.PlayPunchAction();
