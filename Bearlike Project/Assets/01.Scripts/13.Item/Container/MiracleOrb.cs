@@ -13,6 +13,7 @@ namespace Item.Container
     public class MiracleOrb : ItemBase, IInteract
     {
         private int _skillBlockSpawnCount = 3;
+        private OrbType _orbType;
         
         #region Unity Event Function
 
@@ -34,9 +35,19 @@ namespace Item.Container
             PlayerController pc;
             if (targetObject.TryGetComponent(out pc) || targetObject.transform.root.TryGetComponent(out pc))
             {
-                if(pc.skillSelectUI.GetSelectCount() <= 0)
-                    pc.skillSelectUI.SpawnSkillBlocks(_skillBlockSpawnCount);
-                pc.skillSelectUI.AddSelectCount();
+                switch (_orbType)
+                {
+                    case OrbType.Random:
+                        if(pc.skillSelectUI.GetSelectCount() <= 0)
+                            pc.skillSelectUI.SpawnRandomSkillBlocks(_skillBlockSpawnCount);
+                        pc.skillSelectUI.AddSelectCount();
+                        break;
+                    case OrbType.HasRandom:
+                        pc.skillSelectUI.SpawnHasRandomSkillBlock(_skillBlockSpawnCount);
+                        break;
+                    case OrbType.Has:
+                        break;
+                }
                 Destroy(gameObject);   
             }
         }
@@ -62,10 +73,18 @@ namespace Item.Container
         public override void SetJsonData(StatusJsonData json)
         {
             base.SetJsonData(json);
-            // _skillBlockSpawnCount = json.GetInt("Skill Block Spawn Count");
+            _skillBlockSpawnCount = json.GetInt("Skill Block Spawn Count");
+            _orbType = (OrbType)json.GetInt("Orb Type");
         }
 
         #endregion
+        
+        private enum OrbType
+        {
+            Random, // 만렙이 아닌 스킬들 중에서 랜덤 선택
+            HasRandom, // 가지고 있는 것들 중에 랜덤
+            Has, // 가지고 있는 것들 중에 선택
+        }
     }
 }
 

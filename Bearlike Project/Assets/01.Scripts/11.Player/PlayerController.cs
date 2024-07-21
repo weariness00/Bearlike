@@ -125,7 +125,7 @@ namespace Player
                 if (HasInputAuthority)
                 {
                     if (skillSelectUI.GetSelectCount() <= 0)
-                        skillSelectUI.SpawnSkillBlocks(3);
+                        skillSelectUI.SpawnRandomSkillBlocks(3);
                     skillSelectUI.AddSelectCount();
                 }
             };

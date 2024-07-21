@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Fusion;
 using Manager;
 using Photon;
@@ -30,7 +31,7 @@ namespace UI.Skill
         public void RemoveSelectCount() => --_selectCount;
         
         // Select UI를 초반 셋팅 해주는 함수
-        public void SpawnSkillBlocks(int count)
+        public void SpawnRandomSkillBlocks(int count)
         {
             gameObject.SetActive(true);
             UIManager.AddActiveUI(gameObject);
@@ -91,6 +92,46 @@ namespace UI.Skill
             }
         }
 
+        // 가지고 있는 스킬 중 랜덤하게 1개를 강화
+        // 가지고 있는 스킬 중에 SpawnCount만큼 선택지를 제공
+        public void SpawnHasRandomSkillBlock(int spawnCount)
+        {
+            DebugManager.ToDo("아직 미완 이 함수를 실행한 뒤에 이미 오른 레벨 등으로 인해 선택지가 제공된 것들을 원상복귀 해주어야함");
+            
+            gameObject.SetActive(true);
+            
+            // 이미 있는 스킬들 삭제
+            var handles = toggleGroup.GetComponentsInChildren<SkillSelectBlockHandle>().ToList();
+            foreach (var handle in handles)
+                Destroy(handle.gameObject);
+            
+            // 가지고 있는 스킬 중 만렙이 아닌 것들만 선택
+            List<SkillBase> spawnSkillIdList = new List<SkillBase>();
+            foreach (var skill in playerController.skillSystem.skillList)
+            {
+                if (skill.level.isMax == false)
+                {
+                    spawnSkillIdList.Add(skill);
+                }
+            }
+            UniqueRandom uniqueRandom = new UniqueRandom(0, spawnSkillIdList.Count);
+
+            // 스킬 UI 생성
+            for (int i = 0; i < spawnCount; i++)
+            {
+                if (uniqueRandom.Length == 0) break;
+                
+                var randomInt = uniqueRandom.RandomInt();
+                SkillBase skill = spawnSkillIdList[randomInt];
+                
+                var obj = Instantiate(selectUIBlockObject, toggleGroup.transform);
+                var handle = obj.GetComponent<SkillSelectBlockHandle>();
+                obj.SetActive(true);
+                handle.SettingBlock(skill);
+                handle.button.onClick.AddListener(() => SelectSkill(skill.id));
+            }
+        }
+
         private async void SelectSkill(int id)
         {
             if (!playerController.skillSystem.TryGetSkillFromID(id, out var skill))
@@ -104,7 +145,7 @@ namespace UI.Skill
 
             RemoveSelectCount();
             if (_selectCount > 0)
-                SpawnSkillBlocks(3);
+                SpawnRandomSkillBlocks(3);
             else
             {
                 var handles = toggleGroup.GetComponentsInChildren<SkillSelectBlockHandle>().ToList();
