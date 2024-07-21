@@ -4823,7 +4823,7 @@ GameObject:
   - component: {fileID: 2677067955916545857}
   - component: {fileID: 4384581159391793847}
   - component: {fileID: 4270915685797659717}
-  m_Layer: 12
+  m_Layer: 29
   m_Name: UI Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4838,13 +4838,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3033799469877523493}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: 0.652145, z: -0, w: 0.7580943}
+  m_LocalPosition: {x: 0, y: 1.32, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8875764649507591473}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 81.407, z: 0}
 --- !u!20 &4384581159391793847
 Camera:
   m_ObjectHideFlags: 0
@@ -6588,7 +6588,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1812758714330219959
 Transform:
   m_ObjectHideFlags: 0
@@ -6656,7 +6656,7 @@ VFXRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4530770258830762298}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -7030,7 +7030,10 @@ VisualEffect:
     m_NamedObject:
       m_Array: []
     m_Bool:
-      m_Array: []
+      m_Array:
+      - m_Value: 0
+        m_Name: IsShotgun
+        m_Overridden: 1
 --- !u!73398921 &3523994050864446218
 VFXRenderer:
   serializedVersion: 1
@@ -11876,6 +11879,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6870720589237129253, guid: 0243d90e774983344936053f3db5cb2f,
         type: 3}
+      propertyPath: m_Layer
+      value: 29
+      objectReference: {fileID: 0}
+    - target: {fileID: 6870720589237129253, guid: 0243d90e774983344936053f3db5cb2f,
+        type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -12076,6 +12084,11 @@ PrefabInstance:
       propertyPath: SortKey
       value: 706084546
       objectReference: {fileID: 0}
+    - target: {fileID: 7054352895572623144, guid: 0f1b1844c83e1944e9eded47132bc861,
+        type: 3}
+      propertyPath: shotsmoke
+      value: 
+      objectReference: {fileID: 1255476793299921261}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -12704,10 +12717,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5522146054485170645, guid: a38095a11104b47498ee9eb6b3ba9cf1,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6404765444542248799, guid: a38095a11104b47498ee9eb6b3ba9cf1,
         type: 3}
       propertyPath: m_Name
       value: SniperConti
+      objectReference: {fileID: 0}
+    - target: {fileID: 6404765444542248799, guid: a38095a11104b47498ee9eb6b3ba9cf1,
+        type: 3}
+      propertyPath: m_Layer
+      value: 29
+      objectReference: {fileID: 0}
+    - target: {fileID: 6404765444542248799, guid: a38095a11104b47498ee9eb6b3ba9cf1,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -12734,10 +12762,65 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3894390410395096859}
     m_Modifications:
+    - target: {fileID: 237261685372079285, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -89.98021
+      objectReference: {fileID: 0}
+    - target: {fileID: 237261685372079285, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 8.59299e-31
+      objectReference: {fileID: 0}
     - target: {fileID: 354496408801352614, guid: fb0375b9d4667184885fa46e6c1de475,
         type: 3}
       propertyPath: SortKey
       value: 2888086079
+      objectReference: {fileID: 0}
+    - target: {fileID: 679163916123740482, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 15.04921
+      objectReference: {fileID: 0}
+    - target: {fileID: 679163916123740482, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0.022356112
+      objectReference: {fileID: 0}
+    - target: {fileID: 679163916123740482, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -0.027004028
+      objectReference: {fileID: 0}
+    - target: {fileID: 753113792084179685, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 15.0491495
+      objectReference: {fileID: 0}
+    - target: {fileID: 753113792084179685, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -180
+      objectReference: {fileID: 0}
+    - target: {fileID: 753113792084179685, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 843243507824672144, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 15.0027075
+      objectReference: {fileID: 0}
+    - target: {fileID: 843243507824672144, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -0.00001414242
+      objectReference: {fileID: 0}
+    - target: {fileID: 843243507824672144, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -0.0000036609727
       objectReference: {fileID: 0}
     - target: {fileID: 4178817022005290950, guid: fb0375b9d4667184885fa46e6c1de475,
         type: 3}
@@ -12798,6 +12881,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Mega Shotgun
+      objectReference: {fileID: 0}
+    - target: {fileID: 7776061882137731731, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 15.065391
+      objectReference: {fileID: 0}
+    - target: {fileID: 7776061882137731731, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -0.000028293274
+      objectReference: {fileID: 0}
+    - target: {fileID: 7776061882137731731, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -0.000007354022
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -13177,8 +13275,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2373384962119832521, guid: 87e73c929ac63b14a85194db11dcb2f7,
         type: 3}
+      propertyPath: m_PropertySheet.m_Bool.m_Array.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2373384962119832521, guid: 87e73c929ac63b14a85194db11dcb2f7,
+        type: 3}
       propertyPath: m_PropertySheet.m_Float.m_Array.Array.size
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2373384962119832521, guid: 87e73c929ac63b14a85194db11dcb2f7,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Bool.m_Array.Array.data[0].m_Name
+      value: IsShotgun
       objectReference: {fileID: 0}
     - target: {fileID: 2373384962119832521, guid: 87e73c929ac63b14a85194db11dcb2f7,
         type: 3}
@@ -13199,6 +13307,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_PropertySheet.m_Float.m_Array.Array.data[1].m_Value
       value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 2373384962119832521, guid: 87e73c929ac63b14a85194db11dcb2f7,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Bool.m_Array.Array.data[0].m_Overridden
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2373384962119832521, guid: 87e73c929ac63b14a85194db11dcb2f7,
         type: 3}

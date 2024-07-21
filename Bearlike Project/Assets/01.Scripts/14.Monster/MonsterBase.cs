@@ -396,7 +396,7 @@ namespace Monster
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void DieRPC()
         {
-            DieAction?.Invoke();//
+            DieAction?.Invoke();
             DebugManager.Log($"몬스터[{name}]이 사망했습니다.");
         }
         

@@ -10,6 +10,7 @@ using Status;
 using UI.Status;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.VFX;
 using DebugManager = Manager.DebugManager;
 using Random = UnityEngine.Random;
@@ -28,6 +29,8 @@ namespace Monster.Container
 
         [Header("HandAttack Properties")] 
         [SerializeField] private GameObject[] hands;
+        [SerializeField] private GameObject hand;
+        [SerializeField] private float punchTime;
         
         [Header("Hat")]
         [SerializeField] private GameObject[] hat;
@@ -39,10 +42,10 @@ namespace Monster.Container
         [SerializeField] private GameObject breath;
         [SerializeField] private GameObject cloneObject;
         
-        [Header("VFX Properties")]
-        [SerializeField] private VisualEffect tpEffect;
-        [SerializeField] private VisualEffect darknessAttackEffect;
-        [SerializeField] private VisualEffect HandLazerEffect;
+        // [Header("VFX Properties")]
+        // [SerializeField] private VisualEffect tpEffect;
+        // [SerializeField] private VisualEffect darknessAttackEffect;
+        // [SerializeField] private VisualEffect handLazerEffect;
 
         [Header("Effect")] 
         [SerializeField] private Material bloodShieldMat;
@@ -55,6 +58,7 @@ namespace Monster.Container
         private BehaviorTreeRunner _behaviorTreeRunner;
         private GameObject[] _players;
         private GameObject[] _masks;
+        private GameObject _handModel;
         
         enum MaskType
         {
@@ -84,7 +88,7 @@ namespace Monster.Container
             
             animator = GetComponentInChildren<BoxJesterAnimator>();
             
-            tpEffect.SetFloat("Time", animator.tpClip.length);
+            // tpEffect.SetFloat("Time", animator.tpClip.length);
 
             var bloodShieldRenderer = transform.Find("ShieldEffect").GetComponent<Renderer>();
             bloodShieldMat = bloodShieldRenderer.material;
@@ -96,6 +100,11 @@ namespace Monster.Container
             _masks[0] = boxJester.Find("Smile_Face").gameObject;
             _masks[1] = boxJester.Find("Sad_Face").gameObject;
             _masks[2] = boxJester.Find("Angry_Face").gameObject;
+
+            DieAction += () => animator.PlayDieAction();
+            DieAction += () => Destroy(gameObject, 3);
+
+            _handModel = transform.Find("Clown").Find("Hand").gameObject;
         }
         
         #endregion
@@ -105,9 +114,6 @@ namespace Monster.Container
         public override void Spawned()
         {
             base.Spawned();
-            tpEffect.SendEvent("StopPlay");
-            darknessAttackEffect.SendEvent("StopPlay");
-            HandLazerEffect.gameObject.SetActive(false);
 
             // TP Position 넣기
             // Transform rootTrans = transform.root.Find("TPPosition"); // pool에 들어가는 경우
@@ -296,6 +302,8 @@ namespace Monster.Container
                 }
             }
 
+            DebugManager.Log($"playerPosition : {playerPosition}");
+            
             float time = 0.0f;
             
             while (true)
@@ -334,7 +342,6 @@ namespace Monster.Container
         {
             if (false == _animationing)
             {
-                tpEffect.SendEvent("OnPlay");
                 animator.PlayTeleport();
                 _animationing = true;
             }
@@ -381,7 +388,6 @@ namespace Monster.Container
             if (false == _animationing)
             {
                 animator.PlaySmokingAttack();
-                darknessAttackEffect.SendEvent("OnPlay");
                 _animationing = true;
                 
                 Runner.SpawnAsync(breath, transform.position, transform.rotation, null,
@@ -485,7 +491,7 @@ namespace Monster.Container
                     if (minDistance > distance)
                     {
                         minDistance = distance;
-                        targetPosition = player.transform.position + new Vector3(0, 0.75f, 0);
+                        targetPosition = player.transform.position + new Vector3(0, 2f, 0);
                         fakeTargetPosition = targetPosition;
                     }
                 }
@@ -502,9 +508,9 @@ namespace Monster.Container
                 {
                     if (_players.Length < 2)
                     {
-                        fakeTargetPosition = transform.position + new Vector3(0, 10, 0);
+                        fakeTargetPosition = transform.position + new Vector3(0, 20, 0);
                     }
-                    else if (player.transform.position != targetPosition)
+                    else if (player.transform.position != targetPosition - new Vector3(0, 2f, 0))
                     {
                         fakeTargetPosition = (player.transform.position + targetPosition) / 2;
                         break;
@@ -526,23 +532,30 @@ namespace Monster.Container
         
         private INode.NodeState Punching()
         {
-            // TODO : 코루틴으로 시간 맞춰서 주먹을 움직여야함
-            // TODO : 아니면 애니메이션을 두개로 쪼개야함
-            
-            // TODO : 먼저 몸을 돌려야 자연스럽지 않을까?
-            
-            
             if (false == _animationing)
             {
-                // dotween으로 주먹 이동 및 충돌 처리
-                PunchAttackRPC(type, targetPosition);
+                _handModel.SetActive(false);
+                
+                Runner.SpawnAsync(hand, _handModel.transform.position, transform.rotation, null,
+                    (runner, o) =>
+                    {
+                        var h = o.GetComponent<BoxJesterAttackHand>();
+
+                        h.targetPosition = targetPosition;
+                        h.handType = type;
+                        h.isFake = false;
+                        h.time = punchTime;
+                    });
+                
                 animator.PlayPunchAction();
                 _animationing = true;
             }
 
             if (false == animator.PunchTimerExpired)
                 return INode.NodeState.Running;
-
+            
+            _handModel.SetActive(true);
+            
             _animationing = false;
             DebugManager.Log($"Punching");
             
@@ -551,16 +564,22 @@ namespace Monster.Container
         
         private INode.NodeState FakePunching()
         {
-            // TODO : 코루틴으로 시간 맞춰서 주먹을 움직여야함
-            // TODO : 아니면 애니메이션을 두개로 쪼개야함
-            
-            // TODO : 먼저 몸을 돌려야 자연스럽지 않을까?
-            
-            
             if (false == _animationing)
             {
-                // dotween으로 주먹 절반 이동 및 다른 방향으로 다시 이동 및 충돌 처리
-                FakePunchAttackRPC(type, targetPosition, fakeTargetPosition);
+                _handModel.SetActive(false);
+                
+                Runner.SpawnAsync(hand, _handModel.transform.position, transform.rotation, null,
+                    (runner, o) =>
+                    {
+                        var h = o.GetComponent<BoxJesterAttackHand>();
+
+                        h.targetPosition = targetPosition;
+                        h.fakeTargetPosition = fakeTargetPosition;
+                        h.handType = type;
+                        h.isFake = true;
+                        h.time = punchTime;
+                    });
+                
                 animator.PlayPunchAction();
                 _animationing = true;
             }
@@ -568,6 +587,8 @@ namespace Monster.Container
             if (false == animator.PunchTimerExpired)
                 return INode.NodeState.Running;
 
+            _handModel.SetActive(true);
+            
             _animationing = false;
             DebugManager.Log($"Fake Punching");
             
@@ -960,7 +981,7 @@ namespace Monster.Container
         #endregion
 
         #region RPC Fuction
-
+        
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void TPPositionRPC()
         {

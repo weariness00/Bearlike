@@ -37,6 +37,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 3890094690102764804}
   - {fileID: 7020396353973995625}
   - {fileID: 6030188988761829948}
   - {fileID: 7328226088550664021}
@@ -92,7 +93,7 @@ MonoBehaviour:
   networkAnimator: {fileID: 0}
   status: {fileID: 0}
   lootingTable: {fileID: 0}
-  pivot: {fileID: 0}
+  pivot: {fileID: 3890094690102764804}
   aggroController: {fileID: 0}
   navMeshAgent: {fileID: 0}
   id: 5
@@ -109,6 +110,8 @@ MonoBehaviour:
   hands:
   - {fileID: 648449446432300868}
   - {fileID: 7869048783781719431}
+  hand: {fileID: 1015369568376401257, guid: bb106e7461adc964da18955a5e4257ca, type: 3}
+  punchTime: 3
   hat:
   - {fileID: 8067623198459055109, guid: 5a9a603ca03d6194eb5be04de1cec419, type: 3}
   - {fileID: 4814253299813407196, guid: 95aa714e9094723479b7aaffde870c6f, type: 3}
@@ -118,9 +121,6 @@ MonoBehaviour:
   breath: {fileID: 3796282657938861686, guid: 245d8beb23c7e284792d30634d14d90d, type: 3}
   cloneObject: {fileID: 5002494238381799181, guid: 240fa7f573a9ef841832ca5bec702522,
     type: 3}
-  tpEffect: {fileID: 1387068177130579636}
-  darknessAttackEffect: {fileID: 1016838274745269282}
-  HandLazerEffect: {fileID: 7589194478115487134}
   bloodShieldMat: {fileID: 0}
   _OwnerId:
     Raw: 0
@@ -302,6 +302,37 @@ MonoBehaviour:
   target: {fileID: 0}
   targetScore: 0
   aggroRange: 0
+--- !u!1 &2682432865161394215
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3890094690102764804}
+  m_Layer: 14
+  m_Name: Pivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3890094690102764804
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2682432865161394215}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 10.27, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6037321028231066071}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2915606249845561228
 GameObject:
   m_ObjectHideFlags: 0
@@ -356,7 +387,7 @@ VisualEffect:
       - m_Value: 5
         m_Name: Size
         m_Overridden: 1
-      - m_Value: 2
+      - m_Value: 1
         m_Name: Time
         m_Overridden: 1
     m_Vector2f:
@@ -747,6 +778,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: -8371147059731152379, guid: 44e027b201d0de442ba1d19b500130f4,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8326896905954881705, guid: 44e027b201d0de442ba1d19b500130f4,
         type: 3}
@@ -1712,6 +1748,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 14
       objectReference: {fileID: 0}
+    - target: {fileID: 7933105455197941958, guid: 44e027b201d0de442ba1d19b500130f4,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8206445221387538529, guid: 44e027b201d0de442ba1d19b500130f4,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1769,8 +1810,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8728581043947121825, guid: 44e027b201d0de442ba1d19b500130f4,
         type: 3}
+      propertyPath: m_Name
+      value: Hand
+      objectReference: {fileID: 0}
+    - target: {fileID: 8728581043947121825, guid: 44e027b201d0de442ba1d19b500130f4,
+        type: 3}
       propertyPath: m_Layer
       value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8728581043947121825, guid: 44e027b201d0de442ba1d19b500130f4,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1815,7 +1866,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7933105455197941958, guid: 44e027b201d0de442ba1d19b500130f4,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7610009915659689250}
+      addedObject: {fileID: 2859442011175133615}
     - targetCorrespondingSourceObject: {fileID: -8371147059731152379, guid: 44e027b201d0de442ba1d19b500130f4,
         type: 3}
       insertIndex: -1
@@ -1831,7 +1882,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8371147059731152379, guid: 44e027b201d0de442ba1d19b500130f4,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 4017696963753550253}
+      addedObject: {fileID: 6436466573788317187}
     - targetCorrespondingSourceObject: {fileID: -259972160606440404, guid: 44e027b201d0de442ba1d19b500130f4,
         type: 3}
       insertIndex: -1
@@ -1972,7 +2023,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   originalStatus: {fileID: 3950356254066584260}
   status: {fileID: 0}
---- !u!114 &7610009915659689250
+--- !u!114 &2859442011175133615
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1981,7 +2032,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 648449446432300868}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a91dbaf13af4b81b33401549126a433, type: 3}
+  m_Script: {fileID: 11500000, guid: 1bad66063b521d440bb41dc8c2e2e325, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   status: {fileID: 3950356254066584260}
@@ -2137,8 +2188,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.4127698, y: 5.073418, z: 1.9185741}
-  m_Center: {x: -0.03085494, y: 6.650572, z: -0.0000021457672}
+  m_Size: {x: 4.7381554, y: 7.0022926, z: 4.3018675}
+  m_Center: {x: 0.060042858, y: 14.1916065, z: 0.1403333}
 --- !u!114 &5535264684174923091
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2323,7 +2374,7 @@ MonoBehaviour:
   _IsSpawnSuccess:
     _value: 0
   tpEffect: {fileID: 1387068177130579636}
-  darknessAttackEffect: {fileID: 0}
+  darknessAttackEffect: {fileID: 1016838274745269282}
   HandLazerEffect: {fileID: 7589194478115487134}
 --- !u!1 &7869048783781719431 stripped
 GameObject:
@@ -2452,7 +2503,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   originalStatus: {fileID: 3950356254066584260}
   status: {fileID: 0}
---- !u!114 &4017696963753550253
+--- !u!114 &6436466573788317187
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2461,7 +2512,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7869048783781719431}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a91dbaf13af4b81b33401549126a433, type: 3}
+  m_Script: {fileID: 11500000, guid: 1bad66063b521d440bb41dc8c2e2e325, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   status: {fileID: 3950356254066584260}

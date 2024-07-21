@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 6428751882085770480}
   - component: {fileID: 6263376413905320852}
   - component: {fileID: 7276000729036327553}
+  - component: {fileID: 822692764875084863}
   m_Layer: 0
   m_Name: TrumpCard Spade Prefab
   m_TagString: Untagged
@@ -371,6 +372,25 @@ MonoBehaviour:
   target: {fileID: 0}
   targetScore: 0
   aggroRange: 0
+--- !u!114 &822692764875084863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1040485191303670858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03bc8063c9e95401f9a8a38bc716750d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Method: 2
+  m_Curve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &2852946466373637369
 GameObject:
   m_ObjectHideFlags: 0
