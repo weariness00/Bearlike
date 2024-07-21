@@ -57,7 +57,7 @@ namespace Monster.Container
                     status.AddAdditionalStatus(otherStatus);
                     // otherStatus.ApplyDamageRPC(status.CalDamage(out bool isCritical),
                     //     isCritical ? DamageTextType.Critical : DamageTextType.Normal, OwnerId);
-                    otherStatus.ApplyDamageRPC(status.damage.Current, DamageTextType.Normal, OwnerId);
+                    otherStatus.ApplyDamageRPC(10, DamageTextType.Normal, OwnerId);
                     status.RemoveAdditionalStatus(otherStatus);
                 }
             }
@@ -68,9 +68,11 @@ namespace Monster.Container
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void PunchAttackRPC(int type, Vector3 targetPosition)
         {
-            hands[type].transform.DOMove(targetPosition, time / 2).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
+            // TODO : Coroutine으로 해야하나
+            hands[type].transform.LookAt(targetPosition);
+            hands[type].transform.Rotate(90.0f, 0, 0);
             
-            DebugManager.Log($"targetPosition : {targetPosition}");
+            hands[type].transform.DOMove(targetPosition, time / 2).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
             
             StartCoroutine(ComeBackPunchCoroutine(type));
         }
@@ -78,6 +80,9 @@ namespace Monster.Container
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void FakePunchAttackRPC(int type, Vector3 targetPosition, Vector3 fakeTargetPosition)
         {
+            hands[type].transform.LookAt(fakeTargetPosition);
+            hands[type].transform.Rotate(90.0f, 0, 0);
+            
             hands[type].transform.DOMove(fakeTargetPosition, time / 4).SetEase(Ease.OutCirc); // TODO : 공격 속도를 변수처리 해야함
 
             StartCoroutine(RealTartgetMoveCoroutine(type, targetPosition));
@@ -93,6 +98,9 @@ namespace Monster.Container
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void RealPunchAttackRPC(int type, Vector3 targetPosition)
         {
+            hands[type].transform.LookAt(targetPosition);
+            hands[type].transform.Rotate(90.0f, 0, 0);
+            
             hands[type].transform.DOMove(targetPosition, time / 4).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
         }
 
@@ -107,11 +115,11 @@ namespace Monster.Container
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void ComeBackPunchRPC(int type)
         {
-            float tmp = 3f;
+            float tmp = 5.5f;
             if (type == 0)
-                tmp = -3f;
+                tmp = -5.5f;
             
-            hands[type].transform.DOLocalMove(new Vector3(tmp, 4f, 3f), time / 2).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
+            hands[type].transform.DOLocalMove(new Vector3(tmp, -6.5f, 7.9f), time / 2).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
         }
 
         #endregion

@@ -491,7 +491,7 @@ namespace Monster.Container
                     if (minDistance > distance)
                     {
                         minDistance = distance;
-                        targetPosition = player.transform.position + new Vector3(0, 0.75f, 0);
+                        targetPosition = player.transform.position + new Vector3(0, 2f, 0);
                         fakeTargetPosition = targetPosition;
                     }
                 }
@@ -508,9 +508,9 @@ namespace Monster.Container
                 {
                     if (_players.Length < 2)
                     {
-                        fakeTargetPosition = transform.position + new Vector3(0, 10, 0);
+                        fakeTargetPosition = transform.position + new Vector3(0, 20, 0);
                     }
-                    else if (player.transform.position != targetPosition)
+                    else if (player.transform.position != targetPosition - new Vector3(0, 2f, 0))
                     {
                         fakeTargetPosition = (player.transform.position + targetPosition) / 2;
                         break;
@@ -536,7 +536,7 @@ namespace Monster.Container
             {
                 _handModel.SetActive(false);
                 
-                Runner.SpawnAsync(hand, _handModel.transform.position, new Quaternion(0, 0, 0, 0), null,
+                Runner.SpawnAsync(hand, _handModel.transform.position, transform.rotation, null,
                     (runner, o) =>
                     {
                         var h = o.GetComponent<BoxJesterAttackHand>();
@@ -544,7 +544,7 @@ namespace Monster.Container
                         h.targetPosition = targetPosition;
                         h.handType = type;
                         h.isFake = false;
-                        h.time = time;
+                        h.time = punchTime;
                     });
                 
                 animator.PlayPunchAction();
@@ -568,7 +568,7 @@ namespace Monster.Container
             {
                 _handModel.SetActive(false);
                 
-                Runner.SpawnAsync(hand, _handModel.transform.position, new Quaternion(0, 0, 0, 0), null,
+                Runner.SpawnAsync(hand, _handModel.transform.position, transform.rotation, null,
                     (runner, o) =>
                     {
                         var h = o.GetComponent<BoxJesterAttackHand>();
