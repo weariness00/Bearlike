@@ -30,6 +30,7 @@ namespace Monster.Container
         [Header("HandAttack Properties")] 
         [SerializeField] private GameObject[] hands;
         [SerializeField] private GameObject hand;
+        [SerializeField] private float punchTime;
         
         [Header("Hat")]
         [SerializeField] private GameObject[] hat;
@@ -57,7 +58,7 @@ namespace Monster.Container
         private BehaviorTreeRunner _behaviorTreeRunner;
         private GameObject[] _players;
         private GameObject[] _masks;
-        private GameObject _hand;
+        private GameObject _handModel;
         
         enum MaskType
         {
@@ -103,7 +104,7 @@ namespace Monster.Container
             DieAction += () => animator.PlayDieAction();
             DieAction += () => Destroy(gameObject, 3);
 
-            _hand = transform.Find("Hand").gameObject;
+            _handModel = transform.Find("Clown").Find("Hand").gameObject;
         }
         
         #endregion
@@ -531,33 +532,30 @@ namespace Monster.Container
         
         private INode.NodeState Punching()
         {
-            // TODO : 코루틴으로 시간 맞춰서 주먹을 움직여야함
-            // TODO : 아니면 애니메이션을 두개로 쪼개야함
-            
-            // TODO : 먼저 몸을 돌려야 자연스럽지 않을까?
-            
-            
             if (false == _animationing)
             {
-                _hand.SetActive(false);
+                _handModel.SetActive(false);
                 
-                Runner.SpawnAsync(hand, _hand.transform.position, _hand.transform.rotation, null,
+                Runner.SpawnAsync(hand, _handModel.transform.position, new Quaternion(0, 0, 0, 0), null,
                     (runner, o) =>
                     {
                         var h = o.GetComponent<BoxJesterAttackHand>();
 
                         h.targetPosition = targetPosition;
+                        h.handType = type;
+                        h.isFake = false;
+                        h.time = time;
                     });
                 
-                // dotween으로 주먹 이동 및 충돌 처리
-                PunchAttackRPC(type, targetPosition);
                 animator.PlayPunchAction();
                 _animationing = true;
             }
 
             if (false == animator.PunchTimerExpired)
                 return INode.NodeState.Running;
-
+            
+            _handModel.SetActive(true);
+            
             _animationing = false;
             DebugManager.Log($"Punching");
             
@@ -566,16 +564,22 @@ namespace Monster.Container
         
         private INode.NodeState FakePunching()
         {
-            // TODO : 코루틴으로 시간 맞춰서 주먹을 움직여야함
-            // TODO : 아니면 애니메이션을 두개로 쪼개야함
-            
-            // TODO : 먼저 몸을 돌려야 자연스럽지 않을까?
-            
-            
             if (false == _animationing)
             {
-                // dotween으로 주먹 절반 이동 및 다른 방향으로 다시 이동 및 충돌 처리
-                FakePunchAttackRPC(type, targetPosition, fakeTargetPosition);
+                _handModel.SetActive(false);
+                
+                Runner.SpawnAsync(hand, _handModel.transform.position, new Quaternion(0, 0, 0, 0), null,
+                    (runner, o) =>
+                    {
+                        var h = o.GetComponent<BoxJesterAttackHand>();
+
+                        h.targetPosition = targetPosition;
+                        h.fakeTargetPosition = fakeTargetPosition;
+                        h.handType = type;
+                        h.isFake = true;
+                        h.time = punchTime;
+                    });
+                
                 animator.PlayPunchAction();
                 _animationing = true;
             }
@@ -583,6 +587,8 @@ namespace Monster.Container
             if (false == animator.PunchTimerExpired)
                 return INode.NodeState.Running;
 
+            _handModel.SetActive(true);
+            
             _animationing = false;
             DebugManager.Log($"Fake Punching");
             
