@@ -308,7 +308,7 @@ GameObject:
   - component: {fileID: 1456493517147007326}
   - component: {fileID: 1867202893997585719}
   - component: {fileID: 2465595668671191795}
-  - component: {fileID: -8590868935567122585}
+  - component: {fileID: 5868938334061884039}
   m_Layer: 0
   m_Name: Toy Solider Gun
   m_TagString: Untagged
@@ -637,6 +637,25 @@ MonoBehaviour:
   target: {fileID: 0}
   targetScore: 0
   aggroRange: 0
+--- !u!114 &5868938334061884039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6303898161483548060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03bc8063c9e95401f9a8a38bc716750d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Method: 2
+  m_Curve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &8948631129590595426
 GameObject:
   m_ObjectHideFlags: 0
@@ -680,7 +699,7 @@ VisualEffect:
   m_Enabled: 1
   m_Asset: {fileID: 8926484042661614526, guid: 8aeb72656eb89ab4aab49b31a19d72d9, type: 3}
   m_InitialEventName: 
-  m_InitialEventNameOverriden: 0
+  m_InitialEventNameOverriden: 1
   m_StartSeed: 0
   m_ResetSeedOnPlay: 1
   m_AllowInstancing: 1
