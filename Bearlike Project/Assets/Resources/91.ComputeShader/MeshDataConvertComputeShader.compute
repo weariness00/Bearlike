@@ -1,0 +1,276 @@
+#pragma kernel CSMeshSlice
+#pragma kernel CSMakeCap
+#pragma kernel CSOptimizeSliceData
+
+struct DotData
+{
+    // pad란 더미 데이터 GPU는 16바이트 단위로 읽을 수록 효율이 좋기에 더미를 넣어두는것
+    float3 Vertex;
+    float pad0;
+
+    float3 Normal;
+    float pad1;
+
+    float2 UV;
+    int Index;
+    float pad2;
+};
+
+struct PolygonData
+{
+    DotData Dot0;
+    DotData Dot1;
+    DotData Dot2;
+};
+
+// slice에 필요한 정보
+float3 slicePoint;
+float3 sliceNormal;
+int polygonLength;
+
+StructuredBuffer<float3> vertices;
+StructuredBuffer<float3> normals;
+StructuredBuffer<float2> uvs;
+StructuredBuffer<int> triangles;
+RWStructuredBuffer<uint> dotLength; // 정점 개수
+
+RWStructuredBuffer<PolygonData> sliceData0;
+RWStructuredBuffer<PolygonData> sliceData1;
+RWStructuredBuffer<DotData> newDotData;
+
+RWStructuredBuffer<uint> sliceCount0;
+RWStructuredBuffer<uint> sliceCount1;
+RWStructuredBuffer<uint> newDotCount;
+
+[numthreads(32,1,1)]
+void CSMeshSlice(uint3 id : SV_DispatchThreadID)
+{
+    const int idx = id.x;
+    if (idx >= polygonLength)
+        return;
+
+    int indices[3];
+    float dots[3]; // 단면이 바라보는 방향인지 판단하기 위한 내적
+    DotData polygon[3];
+    int i = 0;
+    for (i = 0; i < 3; ++i)
+    {
+        polygon[i] = (DotData)0;
+        indices[i] = triangles[idx * 3 + i];
+        polygon[i].Vertex = vertices[indices[i]];
+        polygon[i].Normal = normals[indices[i]];
+        polygon[i].UV = uvs[indices[i]];
+        polygon[i].Index = indices[i];
+
+        dots[i] = dot(sliceNormal, polygon[i].Vertex - slicePoint);
+    }
+
+    // 단면의 바라보는 반대 방향에 있을떄
+    if (dots[0] < 0 && dots[1] < 0 && dots[2] < 0)
+    {
+        uint sliceIndex;
+        InterlockedAdd(sliceCount0[0], 1, sliceIndex);
+        sliceData0[sliceIndex].Dot0 = polygon[0];
+        sliceData0[sliceIndex].Dot1 = polygon[1];
+        sliceData0[sliceIndex].Dot2 = polygon[2];
+    }
+    // 단면 바라보는 방향에 있을떄
+    else if (dots[0] >= 0 && dots[1] >= 0 && dots[2] >= 0)
+    {
+        uint sliceIndex;
+        InterlockedAdd(sliceCount1[0], 1, sliceIndex);
+        sliceData1[sliceIndex].Dot0 = polygon[0];
+        sliceData1[sliceIndex].Dot1 = polygon[1];
+        sliceData1[sliceIndex].Dot2 = polygon[2];
+    }
+    // 각 정점이 한 방향에 있지 않을때
+    else
+    {
+        // 1 : 2 로 정점이 나뉜다.
+        // 혼자 있는 정점 Index : 0
+        // 같이 있는 정점 Index : 1, 2
+        const float epsilon = 1e-5f;
+        const int otherVertexIndices[3] =
+        {
+            abs(sign(dots[0]) - sign(dots[1])) < epsilon ? indices[2] : (abs(sign(dots[0]) - sign(dots[2])) < epsilon ? indices[1] : indices[0]),
+            abs(sign(dots[0]) - sign(dots[1])) < epsilon ? indices[0] : (abs(sign(dots[0]) - sign(dots[2])) < epsilon ? indices[2] : indices[1]),
+            abs(sign(dots[0]) - sign(dots[1])) < epsilon ? indices[1] : (abs(sign(dots[0]) - sign(dots[2])) < epsilon ? indices[0] : indices[2]),
+        };
+
+        DotData otherPolygonData[3];
+        float otherToPlaneDistances[3];
+        float ratios[3]; // 0번째 원소는 의미 없는 값이다.
+        for (i = 0; i < 3; ++i)
+        {
+            otherPolygonData[i] = (DotData) 0;
+            otherPolygonData[i].Vertex = vertices[otherVertexIndices[i]];
+            otherPolygonData[i].Normal = normals[otherVertexIndices[i]];
+            otherPolygonData[i].UV = uvs[otherVertexIndices[i]];
+            otherPolygonData[i].Index = otherVertexIndices[i];
+            otherToPlaneDistances[i] = abs(dot(sliceNormal, otherPolygonData[i].Vertex - slicePoint));
+            ratios[i] = otherToPlaneDistances[0] / (otherToPlaneDistances[0] + otherToPlaneDistances[i]);
+        }
+
+        // 새로운 버텍스 추가   
+        uint newDotIndex;
+        uint dotIndex;
+        InterlockedAdd(newDotCount[0], 2, newDotIndex);
+        InterlockedAdd(dotLength[0],2,dotIndex);
+        for (i = 1; i < 3; ++i)
+        {
+            newDotData[newDotIndex + i - 1].Vertex = lerp(otherPolygonData[0].Vertex, otherPolygonData[i].Vertex, ratios[i]);
+            newDotData[newDotIndex + i - 1].Normal = otherPolygonData[0].Normal;
+            newDotData[newDotIndex + i - 1].UV = lerp(otherPolygonData[0].UV, otherPolygonData[i].UV, ratios[i]);
+            newDotData[newDotIndex + i - 1].Index = dotIndex + i - 1;
+            // Index는 모든 계산이 끝난 후 C# 코드에서 넣어준다.
+        }
+
+        // 혼자 있는 정점 위치에 따라 메쉬 정보에 추가
+        const float sideDot = dot(sliceNormal, otherPolygonData[0].Vertex - slicePoint);
+        if (sideDot < 0)
+        {
+            uint sliceIndex;
+
+            // 0번 슬라이스
+            InterlockedAdd(sliceCount0[0], 1, sliceIndex);
+            sliceData0[sliceIndex].Dot0 = otherPolygonData[0];
+            sliceData0[sliceIndex].Dot1 = newDotData[newDotIndex];
+            sliceData0[sliceIndex].Dot2 = newDotData[newDotIndex + 1];
+
+            // 1번 슬라이스
+            InterlockedAdd(sliceCount1[0], 2, sliceIndex);
+            sliceData1[sliceIndex].Dot0 = otherPolygonData[1];
+            sliceData1[sliceIndex].Dot1 = otherPolygonData[2];
+            sliceData1[sliceIndex].Dot2 = newDotData[newDotIndex];
+
+            sliceData1[sliceIndex + 1].Dot0 = otherPolygonData[2];
+            sliceData1[sliceIndex + 1].Dot1 = newDotData[newDotIndex + 1];
+            sliceData1[sliceIndex + 1].Dot2 = newDotData[newDotIndex];
+        }
+        else
+        {
+            uint sliceIndex;
+
+            // 0번 슬라이스
+            InterlockedAdd(sliceCount1[0], 1, sliceIndex);
+            sliceData1[sliceIndex].Dot0 = otherPolygonData[0];
+            sliceData1[sliceIndex].Dot1 = newDotData[newDotIndex];
+            sliceData1[sliceIndex].Dot2 = newDotData[newDotIndex + 1];
+
+            // 1번 슬라이스
+            InterlockedAdd(sliceCount0[0], 2, sliceIndex);
+            sliceData0[sliceIndex].Dot0 = otherPolygonData[1];
+            sliceData0[sliceIndex].Dot1 = otherPolygonData[2];
+            sliceData0[sliceIndex].Dot2 = newDotData[newDotIndex];
+
+            sliceData0[sliceIndex + 1].Dot0 = otherPolygonData[2];
+            sliceData0[sliceIndex + 1].Dot1 = newDotData[newDotIndex + 1];
+            sliceData0[sliceIndex + 1].Dot2 = newDotData[newDotIndex];
+        }
+    }
+}
+
+// Cap 만들때 필요한 정보
+float3 uvForward;
+float3 uvLeft;
+StructuredBuffer<DotData> newDotCenter;
+
+[numthreads(32,1,1)]
+void CSMakeCap(uint3 id : SV_DispatchThreadID)
+{
+    const uint idx = id.x;
+    if (idx >= newDotCount[0])
+        return;
+
+    uint capIndex0;
+    uint capIndex1;
+    InterlockedAdd(sliceCount0[0], 1, capIndex0);
+    InterlockedAdd(sliceCount1[0], 1, capIndex1);
+    
+    // Vertex & Triangle
+    const float face = dot(sliceNormal, cross(newDotData[idx].Vertex - newDotCenter[0].Vertex, newDotData[idx + 1].Vertex - newDotData[idx].Vertex));
+    const int faceIndex0 = face < 0 ? idx + 1 : idx;
+    const int faceIndex1 = face < 0 ? idx : idx + 1;
+    sliceData0[capIndex0].Dot0 = newDotCenter[0];
+    sliceData0[capIndex0].Dot1 = newDotData[faceIndex0];
+    sliceData0[capIndex0].Dot2 = newDotData[faceIndex1];
+
+    sliceData1[capIndex1].Dot0 = newDotCenter[0];
+    sliceData1[capIndex1].Dot1 = newDotData[faceIndex1];
+    sliceData1[capIndex1].Dot2 = newDotData[faceIndex0];
+
+    // Normal
+    sliceData0[capIndex0].Dot0.Normal = sliceNormal;
+    sliceData0[capIndex0].Dot1.Normal = sliceNormal;
+    sliceData0[capIndex0].Dot2.Normal = sliceNormal;
+
+    sliceData1[capIndex1].Dot0.Normal = -sliceNormal;
+    sliceData1[capIndex1].Dot1.Normal = -sliceNormal;
+    sliceData1[capIndex1].Dot2.Normal = -sliceNormal;
+
+    // UV
+    const float3 dir0 = newDotData[idx].Vertex - newDotCenter[0].Vertex;
+    const float3 dir1 = newDotData[idx + 1].Vertex - newDotCenter[0].Vertex;
+    sliceData0[capIndex0].Dot1.UV.x = 0.5f + dot(dir0, uvLeft);
+    sliceData0[capIndex0].Dot1.UV.y = 0.5f + dot(dir0, uvForward);
+    sliceData0[capIndex0].Dot2.UV.x = 0.5f + dot(dir1, uvLeft);
+    sliceData0[capIndex0].Dot2.UV.y = 0.5f + dot(dir1, uvForward);
+
+    sliceData1[capIndex1].Dot1.UV.x = 0.5f + dot(dir0, uvLeft);
+    sliceData1[capIndex1].Dot1.UV.y = 0.5f + dot(dir0, uvForward);
+    sliceData1[capIndex1].Dot2.UV.x = 0.5f + dot(dir1, uvLeft);
+    sliceData1[capIndex1].Dot2.UV.y = 0.5f + dot(dir1, uvForward);
+}
+
+// Slice된 Polygon은 triangle의 index가 기존 Mesh의 순서대로 되있어 이를 다시 정리해주어야함.
+
+uint slicePolygonLength;
+int sliceDotDataLength;
+
+RWStructuredBuffer<PolygonData> slicePolygon;
+StructuredBuffer<DotData> sliceDotData;
+
+bool CompareDotData(DotData dot_data, DotData dot_data1);
+
+[numthreads(32,1,1)]
+void CSOptimizeSliceData(uint3 id : SV_DispatchThreadID)
+{
+    const uint idx = id.x;
+    if(idx >= slicePolygonLength) return;
+
+    PolygonData polygon = slicePolygon[idx];
+    DotData dot[3];
+    dot[0] = polygon.Dot0;
+    dot[1] = polygon.Dot1;
+    dot[2] = polygon.Dot2;
+
+    for (int i = 0; i < 3; ++i)
+    {
+        for (int sliceDotIndex = 0; sliceDotIndex < sliceDotDataLength; ++sliceDotIndex)
+        {
+            if (CompareDotData(sliceDotData[sliceDotIndex], dot[i]))
+            {
+                dot[i].Index = sliceDotIndex;
+                break;
+            }
+        }
+    }
+
+    polygon.Dot0 = dot[0];
+    polygon.Dot1 = dot[1];
+    polygon.Dot2 = dot[2];
+
+    slicePolygon[idx] = polygon;
+}
+
+bool CompareDotData(DotData a, DotData b)
+{
+    const float epsilon = 1e-5f;
+
+    if(distance(a.Vertex, b.Vertex) < epsilon &&
+        distance(a.Normal, b.Normal) < epsilon)
+    {
+        return  true;
+    }
+    return false;
+}

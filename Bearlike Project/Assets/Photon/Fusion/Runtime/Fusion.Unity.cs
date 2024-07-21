@@ -2333,7 +2333,7 @@ namespace Fusion {
       // has been thrown, not where it has been logged
       var edi = ExceptionDispatchInfo.Capture(ex);
       var thread = new Thread(() => {
-        edi.Throw();
+          edi.Throw();
       });
       thread.Start();
       thread.Join();
