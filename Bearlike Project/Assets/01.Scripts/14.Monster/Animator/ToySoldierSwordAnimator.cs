@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using Fusion;
+using Manager;
 using Player;
 using Status;
 using UI.Status;
@@ -196,8 +197,16 @@ namespace Monster.Container
         // 찌르기 할때 장난감 병정을 이동시키는 로직
         private IEnumerator StabbingMove()
         {
+            var maxDistance = toySoldierSword.stabbingDistance;
+            var hitOptions = HitOptions.IncludePhysX | HitOptions.IgnoreInputAuthority;
+            var layerMaks = 1 << LayerMask.NameToLayer("Default") | 1 << LayerMask.NameToLayer("DeadBody");
+            DebugManager.DrawRay(transform.position, transform.forward * maxDistance, Color.red, 1.0f);
+            if (Runner.LagCompensation.Raycast(transform.position, transform.forward, maxDistance, Object.InputAuthority, out var hit, layerMaks, hitOptions))
+            {
+                maxDistance = Vector3.Distance(transform.position, hit.GameObject.transform.position);
+            }
             var frame = 0.1f / toySoldierSword.status.attackSpeed.Current;
-            var acc = toySoldierSword.stabbingDistance / frame;
+            var acc = maxDistance / frame;
             var force = toySoldierSword.rigidbody.mass * acc;
             while (frame > 0)
             {

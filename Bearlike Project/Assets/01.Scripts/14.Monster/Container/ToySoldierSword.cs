@@ -195,7 +195,7 @@ namespace Monster.Container
                 animator.AttackSpeed = status.attackSpeed.Current;
                 animator.PlayStabbingAttack();
                 
-                DisableNavMeshAgent(true, true);
+                DisableNavMeshAgent(false, true);
                 rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
             }
             
