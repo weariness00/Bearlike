@@ -72,11 +72,7 @@ namespace Status
         {
             AttackLateTimer = TickTimer.CreateFromSeconds(Runner, 0);
         }
-
-        public override void FixedUpdateNetwork()
-        {
-        }
-
+        
         #endregion
 
         #region Member Function

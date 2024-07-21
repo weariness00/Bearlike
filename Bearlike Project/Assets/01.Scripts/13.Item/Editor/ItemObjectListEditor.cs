@@ -41,7 +41,7 @@ namespace Item.Editor
                 });
 
 
-                script.itemList = itemList;
+                script.SetList(itemList);
             }
         }
     }

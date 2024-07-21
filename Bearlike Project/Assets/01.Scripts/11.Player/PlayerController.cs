@@ -6,6 +6,7 @@ using Fusion.Addons.SimpleKCC;
 using GamePlay;
 using GamePlay.UI;
 using Item;
+using Loading;
 using Manager;
 using Photon;
 using Skill;
@@ -17,6 +18,7 @@ using UI.Weapon;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using User;
 using Weapon;
 using Weapon.Gun;
 
@@ -69,7 +71,7 @@ namespace Player
         private HitboxRoot _hitboxRoot;
         private Rig _headRig;
         private StageSelectUI _stageSelectUI;
-
+        
         [Tooltip("마우스 움직임에 따라 회전할 오브젝트")] public GameObject mouseRotateObject;
 
         public Action<GameObject> MonsterKillAction;
@@ -77,6 +79,8 @@ namespace Player
 
         [Networked] public float W { get; set; } = 1f;
         private TickTimer _uiKeyDownTimer;
+        
+        private ChangeDetector _changeDetector;
         
         #region Animation Parametar
 
@@ -96,6 +100,8 @@ namespace Player
         #region Unity Event Function
         private void Awake()
         {
+            LoadingManager.AddWait();
+            
             // 임시로 장비 착용
             // 상호작용으로 착요하게 바꿀 예정
             status = gameObject.GetComponent<PlayerStatus>();
@@ -119,7 +125,7 @@ namespace Player
                 if (HasInputAuthority)
                 {
                     if (skillSelectUI.GetSelectCount() <= 0)
-                        skillSelectUI.SpawnSkillBlocks(3);
+                        skillSelectUI.SpawnRandomSkillBlocks(3);
                     skillSelectUI.AddSelectCount();
                 }
             };
@@ -129,6 +135,8 @@ namespace Player
 
         public override void Spawned()
         {
+            _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
+
             DebugManager.LogWarning("headRig를 Update에서 계속 바꿔주고 있는거고치기");
             
             _gunLayer = animator.GetLayerIndex("Gun Layer");
@@ -152,6 +160,8 @@ namespace Player
                 skill.Earn(gameObject);
             }
             
+            progressCanvas = FindObjectOfType<GameProgressCanvas>();
+            
             // 권한에 따른 초기화
             if (HasInputAuthority)
             {
@@ -164,20 +174,18 @@ namespace Player
                 status.ReviveAction += () => cameraController.ChangeCameraMode(CameraMode.Free);
                 status.RecoveryFromReviveAction += () => cameraController.ChangeCameraMode(CameraMode.FirstPerson);
 
-                gunUI.gameObject.SetActive(true);
-                hpUI.gameObject.SetActive(true);
-                levelCanvas.gameObject.SetActive(true);
-                buffCanvas.gameObject.SetActive(true);
-                goodsCanvas.gameObject.SetActive(true);
-
-                progressCanvas = FindObjectOfType<GameProgressCanvas>();
+                CanvasActive(true);
                 
+                goodsCanvas.CottonCoinUpdate(UserInformation.Instance.cottonInfo.GetCoin());
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
             }
             else
             {
+                CanvasActive(false);
                 name = "Remote Player";
             }
+
+            SpawnedSuccessRPC(UserData.ClientNumber, true);
         }
 
         public override void FixedUpdateNetwork()
@@ -218,9 +226,34 @@ namespace Player
                     UISetting(data);
             }
         }
+
+        public override void Render()
+        {
+            base.Render();
+            foreach (var change in _changeDetector.DetectChanges(this))
+            {
+                switch (change)
+                {
+                    case nameof(IsSpawnSuccess):
+                        if(IsSpawnSuccess) LoadingManager.EndWait();
+                        break;
+                }
+            }
+        }
+
         #endregion
         
         #region Member Function
+
+        private void CanvasActive(bool value)
+        {
+            gunUI.gameObject.SetActive(value);
+            hpUI.gameObject.SetActive(value);
+            levelCanvas.gameObject.SetActive(value);
+            buffCanvas.gameObject.SetActive(value);
+            goodsCanvas.gameObject.SetActive(value);
+            skillCanvas.gameObject.SetActive(value);
+        }
         
         private void StatusInit()
         {

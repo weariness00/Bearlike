@@ -149,12 +149,8 @@ namespace Monster.Container
             // 처음 진입 초기화
             if (_isInitAnimation == false)
             {
-                gun.FireBullet(false);
-                gun.SetMagazineRPC(StatusValueType.Current, 10);
                 _isInitAnimation = true;
                 animator.PlayLongAttack();
-
-                gun.FireLateTimer = TickTimer.CreateFromSeconds(Runner, 0);
             }
             
             if (animator.LongAttackTimerExpired == false)

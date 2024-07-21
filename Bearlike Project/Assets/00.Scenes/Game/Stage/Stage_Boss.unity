@@ -857,6 +857,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Basement_Shell
       objectReference: {fileID: 0}
+    - target: {fileID: 1114416276010310282, guid: 3d0b2520abcc4944cbadaa519a2fa8d9,
+        type: 3}
+      propertyPath: m_AdditionalLightsShadowResolutionTier
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1260662057394261097, guid: 3d0b2520abcc4944cbadaa519a2fa8d9,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -912,18 +917,24 @@ PrefabInstance:
       propertyPath: SortKey
       value: 4038878209
       objectReference: {fileID: 0}
+    - target: {fileID: 7983999563840613164, guid: 3d0b2520abcc4944cbadaa519a2fa8d9,
+        type: 3}
+      propertyPath: m_AdditionalLightsShadowResolutionTier
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8333953675923391304, guid: 3d0b2520abcc4944cbadaa519a2fa8d9,
         type: 3}
-      propertyPath: m_Intensity
-      value: 0.5
+      propertyPath: m_Shadows.m_Resolution
+      value: 2048
       objectReference: {fileID: 0}
     - target: {fileID: 8878242992364286039, guid: 3d0b2520abcc4944cbadaa519a2fa8d9,
         type: 3}
-      propertyPath: m_Intensity
-      value: 0.5
+      propertyPath: m_Shadows.m_Resolution
+      value: 2048
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 1947715911385290956, guid: 3d0b2520abcc4944cbadaa519a2fa8d9, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3d0b2520abcc4944cbadaa519a2fa8d9, type: 3}

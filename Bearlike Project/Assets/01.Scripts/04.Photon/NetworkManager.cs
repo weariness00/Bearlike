@@ -95,15 +95,12 @@ namespace Photon
             while (UserData.Instance == null)
                 yield return null;
             
-            FireBaseDataBaseManager.RootReference.GetChild($"UserData/{FireBaseAuthManager.UserId}/Name").SnapShot(snapshot =>
+            var data = new UserDataStruct
             {
-                var data = new UserDataStruct
-                {
-                    PlayerRef = player,
-                };
+                PlayerRef = player,
+            };
                 
-                UserData.Instance.InsertUserDataRPC(player, data);
-            });
+            UserData.Instance.InsertUserDataRPC(player, data);
         }
         
         public static async Task LoadScene(SceneRef sceneRef, LoadSceneParameters parameters, bool setActiveOnLoad = false)

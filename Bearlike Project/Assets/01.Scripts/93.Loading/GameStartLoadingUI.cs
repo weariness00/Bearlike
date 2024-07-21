@@ -13,6 +13,8 @@ namespace Loading
     {
         public Slider loadingBar;
         private RectTransform _barHandle;
+
+        private Coroutine loadingCoroutine;
         
         private void Awake()
         {
@@ -23,8 +25,16 @@ namespace Loading
             _barHandle = loadingBar.handleRect;
             
             LoadingManager.Initialize();
-
-            StartCoroutine(LoadingCoroutine());
+            LoadingManager.StartAction += () =>
+            {
+                loadingCoroutine ??= StartCoroutine(LoadingCoroutine());
+            };
+            LoadingManager.EndAction += () =>
+            {
+                if(loadingCoroutine != null) StopCoroutine(loadingCoroutine);
+                GameManager.Instance.isControl = true;
+                SceneManager.UnloadSceneAsync(gameObject.scene.path);
+            };
         }
 
         private void Update()
@@ -36,25 +46,14 @@ namespace Loading
         {
             GameManager.Instance.isControl = false;
             
-            yield return new WaitForSeconds(1);
-
             var refValue = LoadingManager.Instance.refValue;
             
             while (true)
             {
-                if (refValue.isMax)
-                    break;
-                
                 loadingBar.value = (float)refValue.Current / refValue.Max;
 
                 yield return null;
             }
-
-            loadingBar.value = 1;
-            yield return new WaitForSeconds(0.5f);
-
-            GameManager.Instance.isControl = true;
-            SceneManager.UnloadSceneAsync(gameObject.scene.path);
         }
     }
 }

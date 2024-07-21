@@ -28,7 +28,7 @@ namespace GamePlay.GM
             
             _player = Runner.FindObject(UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).NetworkId).GetComponent<PlayerController>();
             
-            foreach (var item in ItemObjectList.Instance.itemList)
+            foreach (var item in ItemObjectList.Instance.GetList())
             {
                 var itemInfo = ItemBase.GetInfoData(item.Id);
                 

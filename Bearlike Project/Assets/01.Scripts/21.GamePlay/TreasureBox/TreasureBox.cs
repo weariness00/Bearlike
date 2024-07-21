@@ -9,6 +9,7 @@ using Player;
 using UI;
 using UnityEngine;
 using UnityEngine.Serialization;
+using User;
 using Util;
 
 namespace GamePlay
@@ -90,18 +91,33 @@ namespace GamePlay
         // 조건을 만족하는 경우
         public bool ConditionSatisfaction(TreasureBoxOpenCondition condition)
         {
-            if (_playerController && 
-                _playerController.itemInventory.TryGetItem(1, out var coin) &&
-                coin.Amount.Current >= condition.MoneyAmount)
+            switch (condition.ConditionType)
             {
-                _playerController.itemInventory.UseItemRPC(new NetworkItemInfo(){Id =  1, amount = condition.MoneyAmount});
-                var spawnItem = ItemObjectList.GetFromId(condition.ItemID);
-                if (spawnItem)
-                    Instantiate(spawnItem, itemDropTransform.position, itemDropTransform.rotation);
-
-                return true;
+                case TreasureBoxOpenConditionType.Money:
+                    if (_playerController && 
+                        _playerController.itemInventory.TryGetItem(1, out var coin) &&
+                        coin.Amount.Current >= condition.MoneyAmount)
+                    {
+                        _playerController.itemInventory.UseItemRPC(new NetworkItemInfo(){Id =  1, amount = condition.MoneyAmount});
+                        var spawnItem = ItemObjectList.GetFromId(condition.ItemID);
+                        if (spawnItem) Instantiate(spawnItem, itemDropTransform.position, itemDropTransform.rotation);
+                        return true;
+                    }
+                    break;
+                case TreasureBoxOpenConditionType.CottonCoin:
+                    var cottonCoinInfo = UserInformation.Instance.cottonInfo;
+                    var cottonCoinAmount = cottonCoinInfo.GetCoin();
+                    if (cottonCoinAmount > condition.MoneyAmount)
+                    {
+                        cottonCoinInfo.AddCoin(-condition.MoneyAmount);
+                        if (_playerController) _playerController.goodsCanvas.CottonCoinUpdate(cottonCoinAmount - condition.MoneyAmount);
+                        var spawnItem = ItemObjectList.GetFromId(condition.ItemID);
+                        if (spawnItem) Instantiate(spawnItem, itemDropTransform.position, itemDropTransform.rotation);
+                        return true;
+                    }
+                    break;
             }
-
+            
             return false;
         }
 
@@ -166,7 +182,9 @@ namespace GamePlay
     // 상자 개방 조건중에 사용되는 타입은 무엇인지
     public enum TreasureBoxOpenConditionType
     {
+        None,
         Money,
+        CottonCoin,
     }
     
     // 상자 개방 조건
@@ -179,8 +197,8 @@ namespace GamePlay
 
         public string GetExplain()
         {
-            if (Explain.Contains("(Money)"))
-                Explain = Explain.Replace("(Money)", $"{MoneyAmount}");
+            Explain = Explain.TryReplace("(Money)", $"{MoneyAmount}");
+            Explain = Explain.TryReplace("(Cotton Coin)", $"{MoneyAmount}");
             
             return StringExtension.CalculateNumber(Explain);
         }

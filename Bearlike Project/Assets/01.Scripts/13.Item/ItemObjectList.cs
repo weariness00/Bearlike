@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Manager;
+using UnityEngine;
 using Util;
 
 namespace Item
@@ -41,9 +43,13 @@ namespace Item
             return null;
         }
 
+        public static int Length => Instance.itemIdArray.Length;
+        public static int[] ItemIDArray() => Instance.itemIdArray;
+        
         #endregion
         
-        public List<ItemBase> itemList = new List<ItemBase>();
+        [SerializeField] private List<ItemBase> itemList = new List<ItemBase>();
+        private int[] itemIdArray;
         private bool _isInit = false;
         
         protected override void Awake()
@@ -56,12 +62,18 @@ namespace Item
         {
             if (_isInit == false)
             {
+                itemIdArray = new int[itemList.Count];
                 foreach (var item in itemList)
                 {
                     item.info.SetJsonData(ItemBase.GetInfoData(item.Id));
                 }
+
+                itemIdArray = itemList.Select(item => item.Id).ToArray();
             }
         }
+
+        public void SetList(List<ItemBase> list) => itemList = list;
+        public List<ItemBase> GetList() => itemList;
     }
 }
 

@@ -75,5 +75,12 @@ namespace Util
             var result = Regex.Replace(value, Pattern, ComputeAndCalculateNumber);
             return result;
         }
+
+        public static string TryReplace(this string value, string replaceTarget, string replaceValue)
+        {
+            if (value.Contains(replaceTarget))
+                return value.Replace(replaceTarget, replaceValue);
+            return value;
+        }
     }
 }

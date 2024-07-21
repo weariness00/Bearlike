@@ -1,20 +1,15 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Manager;
 using Status;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Util;
 
 namespace Loading
 {
     public class LoadingManager : Singleton<LoadingManager>
     {
-        [HideInInspector] public StatusValue<int> refValue;
-        [SerializeField] private int _waitCount; // 현재 로딩되어야 할 카운트
-        [SerializeField] private StatusValue<int> _downByte = new StatusValue<int>(); // 로딩에 필요한게 용량 부분인지
-        [SerializeField] private HashSet<string> endWaitStringSet; // loading이 완료된 것에 이름을 담아주는 Set
-
         // 로딩 시작시 호출
         // _waitCount = 0에서 1로 바뀌면 호출됨
         public static Action StartAction 
@@ -38,11 +33,8 @@ namespace Loading
             set => Instance._loadingProcessSuccess = value;
         }
         
-        private Action _startAction;
-        private Action _endAction;
-        private Action<string> _loadingProcessSuccess;
-        
-        public static bool IsLoading => Instance._waitCount > 0; // 로딩 카운트가 0 이상이면 현재 로딩중이라는 소리
+
+        public static bool IsLoading => Instance.isLoading; 
 
         // 초기화
         public static void Initialize()
@@ -66,35 +58,18 @@ namespace Loading
         }
 
         // 로딩 추가
-        public static void AddWait(int downByte = 0)
-        {
-            if (Instance._waitCount <= 0)
-            {
-                DebugManager.Log($"Loading 시작");
-                
-                Instance._waitCount = 0;
-                Instance._downByte.Max = 0;
-                
-                StartAction?.Invoke();
-            }
-
-            ++Instance.refValue.Max;
-            ++Instance._waitCount;
-            Instance._downByte.Max += downByte;
-        }
-
+        public static void AddWait(int downByte = 0) => Instance.AddWaitDownByte(downByte);
         // 로딩 끝
         public static void EndWait(string processName = null, int downByte = 0)
         {
+            if(Instance.isDebug) DebugManager.Log("Loading 제거");
+            
             --Instance._waitCount;
             Instance._downByte.Current += downByte;
 
             if (Instance._waitCount <= 0)
             {
-                DebugManager.Log($"Loading 완료");
-
-                EndAction?.Invoke();
-                ++Instance.refValue.Current;
+                Instance.EndWaitActionEvent();
             }
             
             if(processName != null) LoadingProcessSuccess?.Invoke(processName);
@@ -102,5 +77,56 @@ namespace Loading
 
         public static bool HasWaitName(string waitName) => Instance.endWaitStringSet.Contains(waitName);
         public static void EndWaitName(string waitName) => Instance.endWaitStringSet.Add(waitName);
+
+        [HideInInspector] public StatusValue<int> refValue;
+        [SerializeField] private int _waitCount; // 현재 로딩되어야 할 카운트
+        [SerializeField] private StatusValue<int> _downByte = new StatusValue<int>(); // 로딩에 필요한게 용량 부분인지
+        [SerializeField] private HashSet<string> endWaitStringSet; // loading이 완료된 것에 이름을 담아주는 Set
+        [SerializeField] private bool isDebug;
+
+        private Action _startAction;
+        private Action _endAction;
+        private Action<string> _loadingProcessSuccess;
+        private bool isLoading; // 로딩중인지
+
+        private void AddWaitDownByte(int downByte = 0)
+        {
+            if(isDebug) DebugManager.Log("Loading 추가");
+            
+            if (isLoading == false)
+            {
+                DebugManager.Log($"Loading 시작");
+                
+                _waitCount = 0;
+                _downByte.Max = 0;
+                
+                StartAction?.Invoke();
+
+                isLoading = true;
+            }
+
+            ++refValue.Max;
+            ++_waitCount;
+            _downByte.Max += downByte;
+        }
+        
+        private void EndWaitActionEvent()
+        {
+            StopCoroutine(EndWaitCoroutine());
+            StartCoroutine(EndWaitCoroutine());
+        }
+        private IEnumerator EndWaitCoroutine()
+        {
+            yield return new WaitForSeconds(1f);
+
+            if (_waitCount <= 0)
+            {
+                DebugManager.Log($"Loading 완료");
+
+                EndAction?.Invoke();
+                ++refValue.Current;
+                isLoading = false;
+            }
+        }
     }
 }

@@ -13,6 +13,7 @@ namespace GamePlay.Sync
         public bool isPositionLocal = false;
         public bool isPositionX = true, isPositionY = true, isPositionZ = true;
         public bool isRotate = true;
+        public bool isRotateLocal = true;
         public bool isRotateX = true, isRotateY = true, isRotateZ = true;
         public bool isScale = false;
 
@@ -45,7 +46,11 @@ namespace GamePlay.Sync
             if (isRotate)
             {
                 var rotate = transform.rotation;
-                var targetRotate = targetTransform.rotation;
+                var targetRotate = Quaternion.identity;
+
+                if (isRotateLocal) targetRotate = targetTransform.localRotation;
+                else targetRotate = targetTransform.rotation;
+                
                 if (isRotateX) rotate.x = targetRotate.x;
                 if (isRotateY) rotate.y = targetRotate.y;
                 if (isRotateZ) rotate.z = targetRotate.z;

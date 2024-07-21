@@ -1,20 +1,18 @@
 ﻿using BehaviorTree.Base;
 using Fusion;
 using UnityEngine;
-using UnityEngine.VFX;
 
 namespace Monster.Container
 {
     public class ToySoldierSword : MonsterBase
     {
         public Transform weaponTransform;
-        
-        [Header("VFX")] 
-        [SerializeField] private VisualEffect stabbingVFX; // 찌르는 VFX
 
         // 찌르기 공격 딜레이
-        private float stabbingAttackLate; 
+        [HideInInspector] public float stabbingAttackDamageMultiple = 1f; // 찌르기 공격의 대미지 배율
+        private float stabbingAttackLate;
         private TickTimer stabbingAttackTimer;
+        [HideInInspector] public float stabbingDistance; // 찌르기를 할때 나아가는 거리
         
         // 애니메이터
         private ToySoldierSwordAnimator animator;
@@ -26,9 +24,15 @@ namespace Monster.Container
         {
             base.Awake();
             animator = GetComponentInChildren<ToySoldierSwordAnimator>();
+        }
 
+        public override void Start()
+        {
+            base.Start();
             var stateData = GetStatusData(id);
+            stabbingAttackDamageMultiple = stateData.GetFloat("Stabbing Attack Damage Multiple");
             stabbingAttackLate = stateData.GetFloat("Stabbing Attack Late");
+            stabbingDistance = stateData.GetFloat("Stabbing Distance");
         }
 
         public override void Spawned()
@@ -191,34 +195,22 @@ namespace Monster.Container
                 animator.AttackSpeed = status.attackSpeed.Current;
                 animator.PlayStabbingAttack();
                 
-                DisableNavMeshAgent(false);
+                DisableNavMeshAgent(false, true);
+                rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
             }
             
-            if (animator.DefaultAttackTimerExpired == false)
+            if (animator.StabbingAttackTimerExpired == false)
             {
                 return INode.NodeState.Running;
             }
 
             EnableNavMeshAgent();
+            rigidbody.constraints = RigidbodyConstraints.None;
             stabbingAttackTimer = TickTimer.CreateFromSeconds(Runner, stabbingAttackLate);
             isInitAnimation = false;
             return INode.NodeState.Success;
         }
         
-        #endregion
-
-        #region Animation Clip Evenet Function
-
-        public void DefaultAttackEvent()
-        {
-            
-        }
-
-        public void StabbingAttackEvent()
-        {
-            
-        }
-
         #endregion
     }
 }

@@ -37,7 +37,7 @@ namespace Script.Photon
 
         public float[] spawnIntervals; // 스폰 간격, 1개일 경우 반복 여러개일 경우 순차적으로 실행
         private int _spawnIntervalCount;
-        [Networked] private TickTimer CurrentSpawnInterval { get; set; } // 현재 스폰 간격
+        [Networked] private TickTimer CurrentSpawnInterval { get;set; } // 현재 스폰 간격
         [Networked] public NetworkBool IsSpawn { get; set; } // 현재 스폰중인지
         
         public Action<GameObject> SpawnSuccessAction; // 스폰 되면 실행하는 이벤트

@@ -1,19 +1,28 @@
 ﻿using System;
+using System.Collections;
 using Fusion;
 using Photon;
 using UnityEngine;
+using UnityEngine.VFX;
 
 namespace Monster.Container
 {
     public class TrumpCardSoldierAnimator : NetworkBehaviourEx
     {
-        public TrumpCardSoldier monster;
+        public TrumpCardSoldier trumpCardSoldier;
 
         private Animator _animator;
 
         [Header("Aniamtion Clip")] 
         [SerializeField] private AnimationClip jump;
 
+        [Header("VFX")] 
+        [SerializeField] private VisualEffect stabbingVFX;
+
+        [Header("ETC Component")] 
+        [SerializeField] private Transform stabbingVFXTransform;
+        
+        
         private TickTimer _jumpTimer;
         
         private static readonly int AniJump = Animator.StringToHash("t Jump");
@@ -24,7 +33,7 @@ namespace Monster.Container
 
         private void Awake()
         {
-            _animator = monster.networkAnimator.Animator;
+            _animator = trumpCardSoldier.networkAnimator.Animator; 
         }
 
         public override void Spawned()
@@ -39,10 +48,38 @@ namespace Monster.Container
             _animator.SetTrigger(AniJump);
             _jumpTimer = TickTimer.CreateFromSeconds(Runner, jump.length);
         }
-        
-        public void AniAttackRayEvent()
+
+        #region Animation Clip Event Function
+
+        private void AttackStartEvent()
         {
-            monster.AniAttackRayEvent();
+            StartCoroutine(AttackVFXCoroutine());
         }
+
+        private IEnumerator AttackVFXCoroutine()
+        {
+            var frame = 0.1f / trumpCardSoldier.status.attackSpeed.Current;
+            
+            stabbingVFX.SetFloat("Speed", frame);
+            stabbingVFX.Play();
+            while (frame > 0)
+            {
+                frame -= Time.deltaTime;
+                
+                stabbingVFX.transform.position = stabbingVFXTransform.position;
+                stabbingVFX.transform.rotation = stabbingVFXTransform.rotation;
+                    
+                yield return null;
+            }
+        }
+        
+        private void AttackEndEvent()
+        {
+            StopCoroutine(AttackVFXCoroutine());
+
+            trumpCardSoldier.AniAttackRayEvent();
+        }
+        
+        #endregion
     }
 }

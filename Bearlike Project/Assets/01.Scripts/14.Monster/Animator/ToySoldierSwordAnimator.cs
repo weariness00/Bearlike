@@ -1,6 +1,12 @@
-﻿using Fusion;
+﻿using System.Collections;
+using Fusion;
+using Manager;
+using Player;
+using Status;
+using UI.Status;
 using UnityEngine;
 using UnityEngine.VFX;
+using Util.UnityEventComponent;
 
 namespace Monster.Container
 {
@@ -21,7 +27,15 @@ namespace Monster.Container
         [SerializeField] private AnimationClip defaultAttackClip;
         [SerializeField] private AnimationClip stabbingAttackClip;
 
+        [Header("VFX")]
         [SerializeField] private VisualEffect defaultAttackVFX;
+        [SerializeField] private VisualEffect stabbingAttackVFX;
+        [SerializeField] private VisualEffect gatherEnergyVFX;
+
+        [Header("ETC Component")] 
+        [SerializeField] private Transform stabbingVFXTransform; // 찌르는 VFX가 생성될 위치
+        [SerializeField] private Collider defaultCollider;
+        [SerializeField] private Collider stabbingCollider;
         
         private TickTimer AniIdleTimer { get; set; }
         private TickTimer AniMoveTimer { get; set; }
@@ -45,11 +59,45 @@ namespace Monster.Container
             set => networkAnimator.Animator.SetFloat(AniAttackSpeed, value);
         }
 
+        #region Unity Evenet Function
+
         private void Awake()
         {
             toySoldierSword = GetComponentInParent<ToySoldierSword>();
             networkAnimator = GetComponent<NetworkMecanimAnimator>();
         }
+
+        private void Start()
+        {
+            // Collider 초기화
+            // Deadbody로 인해 무조건 Start에서 초기화 해야된다.
+            defaultCollider.gameObject.layer = 0;
+            defaultCollider.gameObject.tag = "Default";
+            stabbingCollider.gameObject.layer = 0;
+            stabbingCollider.gameObject.tag = "Default";
+            
+            defaultCollider.enabled = false;
+            stabbingCollider.enabled = false;
+        }
+
+        public override void Spawned()
+        {
+            base.Spawned();
+            if (HasStateAuthority)
+            {
+                {
+                    var util = defaultCollider.gameObject.AddComponent<UnityEventUtil>();
+                    util.AddOnTriggerEnter(DefaultAttackOnTriggerEnter);
+                }
+                {
+                    var util = stabbingCollider.gameObject.AddComponent<UnityEventUtil>();
+                    util.AddOnTriggerEnter(StabbingAttackOnTriggerEnter);
+                }
+            }
+        }
+        
+
+        #endregion
 
         public void PlayIdle()
         {
@@ -77,15 +125,131 @@ namespace Monster.Container
 
         #region Animation Clip Event Function
 
-        private void DefaultAttackEvent()
+        #region Default Attack
+
+        private void DefaultAttackStartEvent()
         {
-            toySoldierSword.DefaultAttackEvent();
+            gatherEnergyVFX.transform.position = toySoldierSword.weaponTransform.position;
+            gatherEnergyVFX.transform.rotation = toySoldierSword.weaponTransform.rotation;
+
+            gatherEnergyVFX.Play();
+
+            defaultCollider.enabled = true;
+        }
+        
+        private void DefaultAttackEndEvent()
+        {
+            defaultAttackVFX.transform.position = toySoldierSword.weaponTransform.position;
+            defaultAttackVFX.transform.rotation = toySoldierSword.weaponTransform.rotation;
+            
+            defaultAttackVFX.Play();
+            gatherEnergyVFX.Stop();
+            
+            defaultCollider.enabled = false;
         }
 
-        private void StabbingAttackEvent()
+        private void DefaultAttackOnTriggerEnter(Collider other)
         {
-            toySoldierSword.StabbingAttackEvent();
+            if (defaultCollider.enabled)
+            {
+                var otherStatus = other.GetComponentInParent<StatusBase>();
+                if (otherStatus is PlayerStatus)
+                {
+                    otherStatus.ApplyDamageRPC(
+                        toySoldierSword.status.CalDamage(out bool isCritical),
+                        isCritical ? DamageTextType.Critical : DamageTextType.Normal,
+                        Object.Id);
+                }
+            }
         }
+
+        #endregion
+
+        #region Stabbing Attack
+
+        private void StabbingAttackStartEvent()
+        {
+            stabbingAttackVFX.transform.position = stabbingVFXTransform.position;
+            stabbingAttackVFX.transform.rotation = stabbingVFXTransform.rotation;
+            
+            var frame = 0.1f / toySoldierSword.status.attackSpeed.Current;
+            stabbingAttackVFX.SetFloat("Speed", frame);
+            stabbingAttackVFX.SetVector3("Velocity", Vector3.zero);
+            stabbingAttackVFX.Play();
+
+            stabbingCollider.enabled = true;
+
+            StartCoroutine(StabbingMove());
+        }
+        
+        private void StabbingAttackEndEvent()
+        {
+            stabbingAttackVFX.Stop();
+            
+            StopCoroutine(StabbingMove());
+            
+            stabbingCollider.enabled = false;
+            
+            toySoldierSword.rigidbody.velocity = Vector3.zero;
+            toySoldierSword.rigidbody.angularVelocity = Vector3.zero;
+        }
+
+        // 찌르기 할때 장난감 병정을 이동시키는 로직
+        private IEnumerator StabbingMove()
+        {
+            var maxDistance = toySoldierSword.stabbingDistance;
+            var hitOptions = HitOptions.IncludePhysX | HitOptions.IgnoreInputAuthority;
+            var layerMaks = 1 << LayerMask.NameToLayer("Default") | 1 << LayerMask.NameToLayer("DeadBody");
+            DebugManager.DrawRay(transform.position, transform.forward * maxDistance, Color.red, 1.0f);
+            if (Runner.LagCompensation.Raycast(transform.position, transform.forward, maxDistance, Object.InputAuthority, out var hit, layerMaks, hitOptions))
+            {
+                maxDistance = Vector3.Distance(transform.position, hit.GameObject.transform.position);
+            }
+            var frame = 0.1f / toySoldierSword.status.attackSpeed.Current;
+            var acc = maxDistance / frame;
+            var force = toySoldierSword.rigidbody.mass * acc;
+            while (frame > 0)
+            {
+                frame -= Time.deltaTime;
+                
+                toySoldierSword.rigidbody.AddForce(10f * force * toySoldierSword.pivot.forward);
+                
+                stabbingAttackVFX.transform.position = stabbingVFXTransform.position;
+                stabbingAttackVFX.transform.rotation = stabbingVFXTransform.rotation;
+                    
+                yield return null;
+            }
+        }
+
+        private void GatherEnergyStartEvent()
+        {
+            gatherEnergyVFX.transform.position = toySoldierSword.weaponTransform.position;
+            gatherEnergyVFX.transform.rotation = Quaternion.identity;
+            
+            gatherEnergyVFX.Play();
+        }
+        
+        private void GatherEnergyEndEvent()
+        {
+            gatherEnergyVFX.Stop();
+        }
+
+        private void StabbingAttackOnTriggerEnter(Collider other)
+        {
+            if (stabbingCollider.enabled)
+            {
+                var otherStatus = other.GetComponentInParent<StatusBase>();
+                if (otherStatus is PlayerStatus)
+                {
+                    otherStatus.ApplyDamageRPC(
+                        (int)(toySoldierSword.stabbingAttackDamageMultiple * toySoldierSword.status.CalDamage(out bool isCritical)),
+                        isCritical ? DamageTextType.Critical : DamageTextType.Normal,
+                        Object.Id);
+                }
+            }
+        }
+        
+        #endregion
 
         #endregion
     }
