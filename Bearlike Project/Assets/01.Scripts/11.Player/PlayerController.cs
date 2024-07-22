@@ -388,6 +388,8 @@ namespace Player
             Vector3 dir = Vector3.zero;
             Vector3 jumpImpulse = Vector3.zero;
             bool isMoveX = false, isMoveY = false;
+            bool isDash = false;
+            
             if (data.MoveFront)
             {
                 dir += transform.forward;
@@ -410,6 +412,13 @@ namespace Player
                 dir += transform.right;
                 isMoveY = true;
             }
+            DebugManager.Log($"data : {data}, data.Dash : {data.Dash}");
+            if (data.Dash)
+            {
+                dir += -transform.forward * 2;
+                // isDash = true;
+                isMoveX = true;
+            }
 
             animator.SetFloat(AniFainMove, isMoveX || isMoveY ? 1 : 0);
             animator.SetFloat(AniMovement, isMoveX || isMoveY ? 1 : 0);
@@ -417,6 +426,9 @@ namespace Player
             
             dir *= Runner.DeltaTime * status.GetMoveSpeed() * 110f;
 
+            // if (isDash)
+            //     dir *= 2;
+            
             if (data.Jump)
             {
                 var hitOptions = HitOptions.IncludePhysX | HitOptions.IgnoreInputAuthority;

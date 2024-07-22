@@ -283,23 +283,23 @@ namespace Monster.Container
 
             var Attack = new SelectorNode(
                     false,
-                    // Smile,
-                    Cry
-                    // Angry
+                    Smile,
+                    Cry,
+                    Angry
                 );
             
             #endregion
 
             var AttackPattern = new SelectorNode(
                 true, 
-                // TP,
-                // Hide,
+                TP,
+                Hide,
                 Attack
             );
         
             var loop = new SequenceNode(
-                Idle,
-                AttackPattern
+                Idle
+                // AttackPattern
             );
 
             return loop;

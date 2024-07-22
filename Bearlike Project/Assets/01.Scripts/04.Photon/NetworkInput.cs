@@ -14,6 +14,8 @@ namespace Photon
         public NetworkBool MoveBack;
         public NetworkBool MoveFront;
 
+        public NetworkBool Dash;
+        
         public NetworkBool Jump;
 
         public NetworkBool StageSelect;
