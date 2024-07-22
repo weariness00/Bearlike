@@ -26,6 +26,7 @@ namespace Monster.Container
         
         [Header("Teleport Properties")]
         [SerializeField] private Transform[] tpPlaces;
+        [SerializeField] private Transform[] cloneTPPlaces;
 
         [Header("HandAttack Properties")] 
         [SerializeField] private GameObject[] hands;
@@ -132,6 +133,24 @@ namespace Monster.Container
             else
             {
                 DebugManager.LogError($"BoxJester의 TPPosition이 NULL입니다.");
+            }
+            
+            // Clone TP
+            rootTrans = GameObject.Find("Boss Stage").transform.Find("CloneTPPosition"); // 안들어가는 경우
+
+            if (rootTrans != null)
+            {
+                cloneTPPlaces = new Transform[rootTrans.childCount];
+
+                for (int i = 0; i < rootTrans.childCount; ++i)
+                {
+                    DebugManager.Log($"tpPlaces[i] : {tpPlaces[i]}, rootTrans.GetChild(i) : {rootTrans.GetChild(i)}");
+                    cloneTPPlaces[i] = rootTrans.GetChild(i);
+                }
+            }
+            else
+            {
+                DebugManager.LogError($"BoxJester의 CloneTPPosition이 NULL입니다.");
             }
 
             
@@ -240,7 +259,7 @@ namespace Monster.Container
                 );
 
             var Cry = new SequenceNode(
-                    new ActionNode(IsCry),
+                    // new ActionNode(IsCry),
                     CryPattern
                 );
             
@@ -264,17 +283,17 @@ namespace Monster.Container
 
             var Attack = new SelectorNode(
                     false,
-                    Smile,
-                    Cry,
-                    Angry
+                    // Smile,
+                    Cry
+                    // Angry
                 );
             
             #endregion
 
             var AttackPattern = new SelectorNode(
                 true, 
-                TP,
-                Hide,
+                // TP,
+                // Hide,
                 Attack
             );
         
@@ -534,7 +553,7 @@ namespace Monster.Container
         {
             if (false == _animationing)
             {
-                _handModel.SetActive(false);
+                HandActiveRPC(false);
                 
                 Runner.SpawnAsync(hand, _handModel.transform.position, transform.rotation, null,
                     (runner, o) =>
@@ -554,7 +573,7 @@ namespace Monster.Container
             if (false == animator.PunchTimerExpired)
                 return INode.NodeState.Running;
             
-            _handModel.SetActive(true);
+            HandActiveRPC(true);
             
             _animationing = false;
             DebugManager.Log($"Punching");
@@ -566,7 +585,7 @@ namespace Monster.Container
         {
             if (false == _animationing)
             {
-                _handModel.SetActive(false);
+                HandActiveRPC(false);
                 
                 Runner.SpawnAsync(hand, _handModel.transform.position, transform.rotation, null,
                     (runner, o) =>
@@ -587,7 +606,7 @@ namespace Monster.Container
             if (false == animator.PunchTimerExpired)
                 return INode.NodeState.Running;
 
-            _handModel.SetActive(true);
+            HandActiveRPC(true);
             
             _animationing = false;
             DebugManager.Log($"Fake Punching");
@@ -609,12 +628,9 @@ namespace Monster.Container
             _animationing = false;
             DebugManager.Log($"Clone Pattern");
 
-            int randomPlace = Random.Range(0, tpPlaces.Length);
+            int randomPlace = Random.Range(0, cloneTPPlaces.Length);
             
-            while(randomPlace == _tpPlaceIndex)
-                randomPlace = Random.Range(0, tpPlaces.Length);
-            
-            Runner.SpawnAsync(cloneObject, tpPlaces[randomPlace].position, transform.rotation, null,
+            Runner.SpawnAsync(cloneObject, cloneTPPlaces[randomPlace].position, transform.rotation, null,
                 (runner, o) =>
                 {
                     var h = o.GetComponent<BoxJesterClone>();
@@ -1009,6 +1025,12 @@ namespace Monster.Container
 
         #region Punch Attack
 
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void HandActiveRPC(bool value)
+        {
+            _handModel.SetActive(value);
+        }
+        
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void PunchAttackRPC(int type, Vector3 targetPosition)
         {

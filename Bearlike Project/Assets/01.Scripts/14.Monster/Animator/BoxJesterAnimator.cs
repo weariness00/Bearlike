@@ -84,6 +84,7 @@ namespace Monster.Container
             // SlapTimer = TickTimer.CreateFromTicks(Runner, 0);
         }
         
+        // [Rpc(RpcSources.All, RpcTargets.All)]
         public void PlayIdle()
         {
             IdleTimer = TickTimer.CreateFromSeconds(Runner, idleClip.length * 2);

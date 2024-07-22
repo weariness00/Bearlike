@@ -113,7 +113,8 @@ namespace Monster
                 navMeshAgent.enabled = true;
             }
 
-            lootingTable.CalLootingItem(GetLootingData(id).LootingItems);
+            if(lootingTable)
+                lootingTable.CalLootingItem(GetLootingData(id).LootingItems);
             DieAction += OnDieAction;
 
             var statusData = GetStatusData(id);
