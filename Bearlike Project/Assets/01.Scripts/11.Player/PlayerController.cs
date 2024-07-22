@@ -82,18 +82,35 @@ namespace Player
         
         private ChangeDetector _changeDetector;
         
-        #region Animation Parametar
+        #region Animation
+        private int OneHandGunLayer = 1;
+        private int TwoHandGunLayer = 2;
 
-        private int _gunLayer;
-
-        private static readonly int AniShoot = Animator.StringToHash("isShoot");
-        private static readonly int AniFrontMove = Animator.StringToHash("fFrontMove");
-        private static readonly int AniSideMove = Animator.StringToHash("fSideMove");
+        private static readonly int AniMovement = Animator.StringToHash("f Movement");
+        private static readonly int AniFainMove = Animator.StringToHash("f Faint Move");
+        private static readonly int AniShoot = Animator.StringToHash("tShoot");
         private static readonly int AniJump = Animator.StringToHash("tJump");
         private static readonly int AniInjury = Animator.StringToHash("tInJury");
-        private static readonly int AniRevive = Animator.StringToHash("tRevive");
-        private static readonly int AniInjuryMove = Animator.StringToHash("Faint");
         private static readonly int AniDie = Animator.StringToHash("tDead");
+        private static readonly int AniRevive = Animator.StringToHash("tRevive");
+
+        public void SetLayer(float weight = 1)
+        {
+            animator.SetLayerWeight(OneHandGunLayer, 0);
+            animator.SetLayerWeight(TwoHandGunLayer, 0);
+            if (weaponSystem.TryGetEquipGun(out GunBase gun))
+            {
+                switch (gun.handType)
+                {
+                    case GunBase.GunHandType.OneHand:
+                        animator.SetLayerWeight(OneHandGunLayer, weight);
+                        break;
+                    case GunBase.GunHandType.TwoHand:
+                        animator.SetLayerWeight(TwoHandGunLayer, weight);
+                        break;
+                }
+            }
+        }
         
         #endregion
 
@@ -115,7 +132,11 @@ namespace Player
 
             _hitboxRoot = GetComponent<HitboxRoot>();
             rigBuilder = GetComponentInChildren<RigBuilder>();
-            _headRig = rigBuilder.layers.Find(rig => rig.name == "Head Rig").rig;
+            _headRig = rigBuilder.layers.Find(rig => rig.name == "Rig").rig;
+            
+            // 애니메이터
+            OneHandGunLayer = animator.GetLayerIndex("One Hand Gun");
+            TwoHandGunLayer = animator.GetLayerIndex("Two Hand Gun");
         }
 
         private void Start()
@@ -139,8 +160,6 @@ namespace Player
 
             DebugManager.LogWarning("headRig를 Update에서 계속 바꿔주고 있는거고치기");
             
-            _gunLayer = animator.GetLayerIndex("Gun Layer");
-
             StatusInit();
 
             _uiKeyDownTimer = TickTimer.CreateFromTicks(Runner, 1);
@@ -151,7 +170,7 @@ namespace Player
             
             // 무기 초기화
             weaponSystem.equipment?.EquipAction?.Invoke(gameObject);
-            animator.SetLayerWeight(_gunLayer, 1);
+            SetLayer();
             
             // 스킬 초기화
             foreach (var skill in skillSystem.skillList)
@@ -262,8 +281,8 @@ namespace Player
             {
                 GameManager.Instance.AlivePlayerCount--;
 
-                animator.SetTrigger(AniInjury); 
-                animator.SetLayerWeight(_gunLayer, 0);
+                animator.SetTrigger(AniInjury);
+                SetLayer();
                 // _headRig.weight = 0;
                 W = 0;
                 simpleKcc.Collider.transform.localPosition = new Vector3(0.05f, 0.33f, -0.44f);
@@ -282,7 +301,7 @@ namespace Player
                 GameManager.Instance.AlivePlayerCount++;
                 
                 animator.SetTrigger(AniRevive);
-                animator.SetLayerWeight(_gunLayer, 1);
+                SetLayer();
                 W = 1;
                 simpleKcc.Collider.transform.localPosition = Vector3.zero;
                 simpleKcc.Collider.transform.localRotation = Quaternion.identity;
@@ -304,7 +323,7 @@ namespace Player
                 GameManager.Instance.AlivePlayerCount++;
                 
                 animator.SetTrigger(AniRevive);
-                animator.SetLayerWeight(_gunLayer, 1);
+                SetLayer();
                 W = 1;
                 simpleKcc.Collider.transform.localPosition = Vector3.zero;
                 simpleKcc.Collider.transform.localRotation = Quaternion.identity;
@@ -392,9 +411,9 @@ namespace Player
                 isMoveY = true;
             }
 
-            animator.SetFloat(AniInjuryMove, isMoveX || isMoveY ? 1 : 0);
-            animator.SetFloat(AniFrontMove, isMoveX ? 1 : 0);
-            animator.SetFloat(AniSideMove, isMoveY ? 1 : 0);
+            animator.SetFloat(AniFainMove, isMoveX || isMoveY ? 1 : 0);
+            animator.SetFloat(AniMovement, isMoveX || isMoveY ? 1 : 0);
+            // animator.SetFloat(AniSideMove, isMoveY ? 1 : 0);
             
             dir *= Runner.DeltaTime * status.GetMoveSpeed() * 110f;
 
@@ -525,9 +544,7 @@ namespace Player
                 DebugManager.Log($"{name}이 총을 [ {index} ]로 변경");
                 
                 // 장비에 맞는 애니메이터 Layer Weight 주기
-                animator.SetLayerWeight(_gunLayer, 0);
-                if (weaponSystem.equipment.IsGun)
-                    animator.SetLayerWeight(_gunLayer, 1);
+                SetLayer();
                 
                 // 변경된 장비에 스킬이 적용되도록 스킬 초기화
                 foreach (var skillBase in skillSystem.skillList)

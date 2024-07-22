@@ -1,4 +1,5 @@
-﻿using GamePlay;
+﻿using System.Collections.Generic;
+using GamePlay;
 using Photon;
 using Skill;
 using Skill.Container;
@@ -9,6 +10,10 @@ namespace Player.Container
 {
     public class FirstBear : PlayerController
     {
+        [Header("Skinned Mesh")]
+        [SerializeField] private GameObject armMehs;
+        [SerializeField] private List<GameObject> otherMeshes;
+        
         private SkillBase FlippingCoin;
         private SkillBase tmpSkill;
         private SkillBase ultimateSkill;
@@ -17,6 +22,13 @@ namespace Player.Container
         {
             base.Spawned();
             SkillInit();
+
+            if (HasInputAuthority)
+            {
+                armMehs.layer = LayerMask.NameToLayer("Weapon");
+                foreach (var otherMesh in otherMeshes)
+                    otherMesh.layer = LayerMask.NameToLayer("Volum");
+            }
         }
 
         public override void FixedUpdateNetwork()

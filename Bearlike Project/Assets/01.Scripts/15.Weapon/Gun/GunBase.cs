@@ -41,6 +41,7 @@ namespace Weapon.Gun
         [Header("총 정보")] 
         public int id;
         public string explain;
+        public GunHandType handType;
 
         [Header("총 이펙트")] 
         public VisualEffect shootEffect; // 발사 이펙트
@@ -391,5 +392,11 @@ namespace Weapon.Gun
         }
         
         #endregion
+
+        public enum GunHandType
+        {
+            OneHand,
+            TwoHand,
+        }
     }
 }
