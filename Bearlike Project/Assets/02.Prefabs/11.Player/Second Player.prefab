@@ -189,6 +189,7 @@ MonoBehaviour:
   statusBase: {fileID: 3119487648565583453}
   hpText: {fileID: 3365843249276926160}
   hpImage: {fileID: 1454855871765611107}
+  nameText: {fileID: 0}
   damageAnimation: {fileID: 0}
 --- !u!1 &304682903761836192
 GameObject:
@@ -1002,6 +1003,7 @@ MonoBehaviour:
   isPositionY: 1
   isPositionZ: 1
   isRotate: 0
+  isRotateLocal: 1
   isRotateX: 1
   isRotateY: 1
   isRotateZ: 1
@@ -3525,6 +3527,7 @@ MonoBehaviour:
   _IsSpawnSuccess:
     _value: 0
   playerType: 1
+  icon: {fileID: 0}
   status: {fileID: 3119487648565583453}
   cameraController: {fileID: 4111289363253553492}
   soundController: {fileID: 0}
@@ -3539,12 +3542,16 @@ MonoBehaviour:
   levelCanvas: {fileID: 0}
   buffCanvas: {fileID: 0}
   goodsCanvas: {fileID: 0}
+  progressCanvas: {fileID: 0}
+  aggroTarget: {fileID: 0}
   animator: {fileID: 0}
   simpleKcc: {fileID: 0}
   rigBuilder: {fileID: 0}
   mouseRotateObject: {fileID: 1801531898679229535}
   _W: 0
   rotateSpeed: 500
+  armMehs: {fileID: 0}
+  otherMeshes: []
 --- !u!114 &4111289363253553492
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3562,9 +3569,7 @@ MonoBehaviour:
   targetCamera: {fileID: 8451841307542792475}
   weaponCamera: {fileID: 6128144320921080608}
   uiCamera: {fileID: 0}
-  skillCamera: {fileID: 0}
   fullScreenCamera: {fileID: 0}
-  outlineCamera: {fileID: 0}
   firstOffset: {x: 0, y: 0, z: 0.27}
   thirdOffset: {x: 0, y: 0, z: -2}
   movement: 0.01
@@ -4182,7 +4187,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4993374481024402353}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.001901316, y: -0.042724285, z: 0.006153367, w: 0.9990662}
+  m_LocalRotation: {x: -0.0018942151, y: -0.027800173, z: 0.0061601405, w: 0.9995927}
   m_LocalPosition: {x: -0.2841402, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4437,6 +4442,8 @@ MonoBehaviour:
   weaponList:
   - {fileID: 76385481893508708}
   smokeObject: {fileID: 0}
+  oneHandGunTransform: {fileID: 0}
+  twoHandGunTransform: {fileID: 0}
 --- !u!114 &3711483062211508347
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4458,6 +4465,7 @@ MonoBehaviour:
   isPositionY: 1
   isPositionZ: 1
   isRotate: 1
+  isRotateLocal: 1
   isRotateX: 1
   isRotateY: 1
   isRotateZ: 1

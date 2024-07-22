@@ -66,7 +66,7 @@ namespace Player
             TargetCameraAddOverlay(1,fullScreenCamera);
             TargetCameraAddOverlay(2,uiCamera);
 
-            StartCoroutine(WeaponCameraShake());
+            // StartCoroutine(WeaponCameraShake());
         }
 
         public void ChangeCameraMode(CameraMode mode)

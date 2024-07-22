@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Fusion;
+using GamePlay.Sync;
 using UnityEngine;
 using Weapon.Gun;
 
@@ -14,10 +15,16 @@ namespace Weapon
         public List<WeaponBase> weaponList;
         public GameObject smokeObject;
 
+        [SerializeField] private Transform oneHandGunTransform;
+        [SerializeField] private Transform twoHandGunTransform;
+        private TransformSync _transformSync;
+        
         private void Awake()
         {
             var equipWeapon = GetComponentInChildren<WeaponBase>();
             equipment = equipWeapon;
+
+            _transformSync = GetComponent<TransformSync>();
         }
 
         private void Start()
@@ -67,7 +74,18 @@ namespace Weapon
             // 변경한 장비를 착용
             equipment.EquipAction?.Invoke(equipTargetObject);
             if (equipment.IsGun && equipment is GunBase gun)
+            {
                 gun.OverHeatCal();
+                switch (gun.handType)
+                {
+                    case GunBase.GunHandType.OneHand:
+                        _transformSync.targetTransform = oneHandGunTransform;
+                        break;
+                    case GunBase.GunHandType.TwoHand:
+                        _transformSync.targetTransform = twoHandGunTransform;
+                        break;
+                }
+            }
             
             return true;
         }
