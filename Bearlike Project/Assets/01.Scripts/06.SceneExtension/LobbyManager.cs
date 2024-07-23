@@ -18,8 +18,9 @@ namespace SceneExtension
         public AudioClip BGM;
         public TMP_InputField userID;
 
-        [SerializeField] private Button logoutButton;
         public Button magicCottonSceneButton;
+        [SerializeField] private Button settingButton;
+        [SerializeField] private Button logoutButton;
         [SerializeField] private TMP_InputField nickNameInput;
 
         private SceneReference _lobbyLoading;
@@ -27,6 +28,11 @@ namespace SceneExtension
 
         private void Awake()
         {
+            settingButton.onClick.AddListener(() =>
+            {
+                SettingCanvas.Active(SettingCanvasType.All);
+            });
+            
             logoutButton.onClick.AddListener(() =>
             {
                 FireBaseAuthManager.LogOut();
@@ -64,14 +70,6 @@ namespace SceneExtension
                     
                 LoadingManager.EndWait("닉네임 불러오기 성공");
             });
-        }
-
-        private void Update()
-        {
-            if (UIManager.HasActiveUI() == false && Input.GetKeyDown(KeyCode.Escape))
-            {
-                SettingCanvas.Active(SettingCanvasType.All);
-            }
         }
     }
 }
