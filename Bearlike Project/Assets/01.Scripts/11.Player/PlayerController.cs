@@ -79,6 +79,9 @@ namespace Player
 
         [Networked] public float W { get; set; } = 1f;
         private TickTimer _uiKeyDownTimer;
+        private TickTimer _dashTimer;
+
+        public float _dashAmount = 100.0f;
         
         private ChangeDetector _changeDetector;
         
@@ -205,6 +208,7 @@ namespace Player
             }
 
             SpawnedSuccessRPC(UserData.ClientNumber, true);
+            _dashTimer = TickTimer.CreateFromTicks(Runner, 0);
         }
 
         public override void FixedUpdateNetwork()
@@ -412,12 +416,15 @@ namespace Player
                 dir += transform.right;
                 isMoveY = true;
             }
-            DebugManager.Log($"data : {data}, data.Dash : {data.Dash}");
+            
             if (data.Dash)
             {
-                dir += -transform.forward * 2;
-                // isDash = true;
-                isMoveX = true;
+                if (_dashTimer.Expired(Runner))
+                {
+                    _dashTimer = TickTimer.CreateFromSeconds(Runner, 1.0f);                
+                    dir += transform.forward * _dashAmount;
+                    isMoveX = true;
+                }
             }
 
             animator.SetFloat(AniFainMove, isMoveX || isMoveY ? 1 : 0);

@@ -325,6 +325,9 @@ namespace Photon
                 playerInputData.MoveLeft = trueValue;
             if (KeyManager.InputAction(KeyToAction.MoveRight))
                 playerInputData.MoveRight = trueValue;
+
+            if (KeyManager.InputAction(KeyToAction.Dash))
+                playerInputData.Dash = trueValue;
             
             if (KeyManager.InputAction(KeyToAction.Jump))
             {

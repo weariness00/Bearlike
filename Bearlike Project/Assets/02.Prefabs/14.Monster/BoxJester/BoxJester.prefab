@@ -351,7 +351,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7328226088550664021
 Transform:
   m_ObjectHideFlags: 0
@@ -419,7 +419,7 @@ VFXRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2915606249845561228}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -490,6 +490,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6037321028231066071}
     m_Modifications:
+    - target: {fileID: 3941310505116450348, guid: 650c9d00beba13e46a34685aa27ec121,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6635764407264499861, guid: 650c9d00beba13e46a34685aa27ec121,
         type: 3}
       propertyPath: m_Name
@@ -499,6 +504,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6635764407264499861, guid: 650c9d00beba13e46a34685aa27ec121,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8375466905762486367, guid: 650c9d00beba13e46a34685aa27ec121,
         type: 3}
@@ -589,6 +599,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1036461688273761181, guid: a36d478d29c9cda4e9e2bed7cced33cb,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2592247472775995148, guid: a36d478d29c9cda4e9e2bed7cced33cb,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7226102189014365529, guid: a36d478d29c9cda4e9e2bed7cced33cb,
         type: 3}
