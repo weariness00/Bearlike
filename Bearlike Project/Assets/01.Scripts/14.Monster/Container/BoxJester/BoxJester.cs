@@ -184,6 +184,23 @@ namespace Monster.Container
             OwnerId = gameObject.GetComponent<NetworkObject>().Id;
         }
         
+        private void OnCollisionEnter(Collision other)
+        {
+            StatusBase otherStatus = null;
+
+            if (true == other.gameObject.CompareTag("Player"))
+            {
+                if (other.gameObject.TryGetComponent(out otherStatus) ||
+                    other.transform.root.gameObject.TryGetComponent(out otherStatus))
+                {
+                    status.AddAdditionalStatus(otherStatus);
+                    // otherStatus.ApplyDamageRPC(status.CalDamage(out bool isCritical),
+                    //     isCritical ? DamageTextType.Critical : DamageTextType.Normal, OwnerId);
+                    otherStatus.ApplyDamageRPC(5, DamageTextType.Normal, OwnerId);
+                    status.RemoveAdditionalStatus(otherStatus);
+                }
+            }
+        }
         
         #endregion
 
