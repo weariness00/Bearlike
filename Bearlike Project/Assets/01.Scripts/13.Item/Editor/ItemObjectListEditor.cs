@@ -38,8 +38,8 @@ namespace Item.Editor
                     {
                         itemBase.info.SetJsonData( data.FirstOrDefault(i => i.id == itemBase.Id));
                     }
+                    EditorUtility.SetDirty(target);
                 });
-
 
                 script.SetList(itemList);
             }

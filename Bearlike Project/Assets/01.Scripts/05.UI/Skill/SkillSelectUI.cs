@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Fusion;
 using Manager;
@@ -6,23 +7,45 @@ using Photon;
 using Player;
 using Skill;
 using Status;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Util;
+using Util.UnityEventComponent;
 
 namespace UI.Skill
 {
     public class SkillSelectUI : NetworkBehaviourEx
     {
         public Canvas canvas;
-        public ToggleGroup toggleGroup;
-        
-        public GameObject selectUIBlockObject;
-
         [Header("Player")]
         public PlayerController playerController;
-
+        
+        [Header("Random Select View")]
+        [SerializeField] private ScrollRect randomSelectScroll;
+        [SerializeField] private Toggle randomViewToggle;
+        public ToggleGroup toggleGroup;
+        public GameObject selectUIBlockObject;
+        
         private int _selectCount = 0; // 횟수가 남아있다면 스킬을 선택후 다시 스킬 선택창 리롤
+
+        [Header("All Select View")] 
+        [SerializeField] private ScrollRect allSelectScroll;
+        [SerializeField] private Toggle allViewToggle;
+        [SerializeField] private ToggleGroup allSelectToggleGroup;
+        [SerializeField] private GameObject allSelectUIBlockObject;
+        [SerializeField] private RectTransform allSelectSkillExplainPanelRectTransform; // 스킬 설명 패널
+        [SerializeField] private TMP_Text allSelectSkillExplainText;
+
+        public int AllSelectCount { get; set; }
+        
+        private void Awake()
+        {
+            selectUIBlockObject.SetActive(false);
+            allSelectUIBlockObject.SetActive(false);
+            allSelectSkillExplainPanelRectTransform.gameObject.SetActive(false);
+        }
 
         #region Member Funtion
 
@@ -30,10 +53,18 @@ namespace UI.Skill
         public void AddSelectCount() => ++_selectCount;
         public void RemoveSelectCount() => --_selectCount;
         
+        private void SetAllScrollActive(bool value)
+        {
+            randomSelectScroll.gameObject.SetActive(value);
+            allSelectScroll.gameObject.SetActive(value);
+        }
+        
         // Select UI를 초반 셋팅 해주는 함수
         public void SpawnRandomSkillBlocks(int count)
         {
             gameObject.SetActive(true);
+            SetAllScrollActive(false);
+            randomSelectScroll.gameObject.SetActive(true);
             UIManager.AddActiveUI(gameObject);
             
             // 이미 있는 스킬들 삭제
@@ -154,6 +185,92 @@ namespace UI.Skill
                 gameObject.SetActive(false);
             }
         }
+
+        #region All Select Function
+
+        // 모든 스킬들 중 1개를 선택하여 레벨업 할 수 있게 한다.
+        public void SpawnAllSkillBlock()
+        {
+            DebugManager.ToDo("아직 미완 이 함수를 실행한 뒤에 이미 오른 레벨 등으로 인해 선택지가 제공된 것들을 원상복귀 해주어야함");
+            
+            gameObject.SetActive(true);
+            SetAllScrollActive(false);
+            allSelectSkillExplainPanelRectTransform.gameObject.SetActive(false);
+            allSelectScroll.gameObject.SetActive(true);
+            allViewToggle.isOn = true;
+            UIManager.AddActiveUI(gameObject);
+            
+            // 이미 있는 스킬들 삭제
+            {
+                var handles = allSelectToggleGroup.GetComponentsInChildren<SkillSelectBlockHandle>().ToList();
+                foreach (var handle in handles)
+                    Destroy(handle.gameObject);
+            }
+            
+            // UI 생성
+            foreach (var skillBase in SkillObjectList.SkillList)
+            {
+                SkillBase skill = skillBase;
+                if (playerController.skillSystem.TryGetSkillFromID(skill.id, out var hasSkill))
+                {
+                    // 스킬레벨이 최대치이면 제외
+                    if(hasSkill.level.isMax) continue;
+                    skill = hasSkill;
+                }
+                else
+                {   
+                    skill.SetJsonData(SkillBase.GetInfoData(skill.id));
+                    skill.status = skill.GetComponent<StatusBase>();
+                    skill.Awake();
+                }
+                
+                var obj = Instantiate(allSelectUIBlockObject, allSelectToggleGroup.transform);
+                var handle = obj.GetComponent<SkillSelectBlockHandle>();
+                obj.SetActive(true);
+                obj.AddOnPointerEnter(data =>
+                {
+                    skill.LevelUp(1, false);
+
+                    allSelectSkillExplainText.text = skill.explain.WrapText(20);
+                    allSelectSkillExplainPanelRectTransform.gameObject.SetActive(true);
+                    
+                    // TMP_Text의 GetPreferredValues를 사용하여 텍스트의 크기를 계산
+                    Vector2 textSize = allSelectSkillExplainText.GetPreferredValues(allSelectSkillExplainText.text);
+                    Vector4 margin = allSelectSkillExplainText.margin;
+                    Vector2 padding = new Vector2(margin.x + margin.z, margin.y + margin.w);
+                    
+                    // 이미지 크기를 텍스트 크기에 패딩을 더한 크기로 설정
+                    allSelectSkillExplainPanelRectTransform.sizeDelta = textSize + padding;
+                    
+                    skill.LevelUp(-1, false);
+                });
+                obj.AddOnPointerMove(data =>
+                {
+                    allSelectSkillExplainPanelRectTransform.transform.position = data.position;
+                });
+                obj.AddOnPointerExit(data =>
+                {
+                    allSelectSkillExplainPanelRectTransform.gameObject.SetActive(false);
+                });
+                handle.SettingBlock(skill);
+                handle.button.onClick.AddListener(() =>
+                {
+                    if (hasSkill == null) SpawnSkillRPC(skill.id);
+                    else skill.LevelUpRPC(); 
+
+                    if (--AllSelectCount > 0) SpawnAllSkillBlock();
+                    else
+                    {
+                        var handles = allSelectToggleGroup.GetComponentsInChildren<SkillSelectBlockHandle>().ToList();
+                        foreach (var h in handles)
+                            Destroy(h.gameObject); 
+                        gameObject.SetActive(false);
+                    }
+                });
+            }
+        }
+
+        #endregion
         
         #endregion
 

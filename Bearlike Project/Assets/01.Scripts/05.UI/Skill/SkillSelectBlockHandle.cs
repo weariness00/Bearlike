@@ -21,9 +21,9 @@ namespace UI.Skill
         {
             skill.LevelUp(1, false);
             
-            if(skill.icon) icon.texture = skill.icon.texture;
-            titleText.text = skill.skillName;
-            explainText.text = skill.explain;
+            if(icon && skill.icon) icon.texture = skill.icon.texture;
+            if(titleText) titleText.text = skill.skillName;
+            if(explainText) explainText.text = skill.explain;
             
             skill.LevelUp(-1, false);
             

@@ -2,6 +2,7 @@
 using Player;
 using Status;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Util;
 
 namespace Item.Container
@@ -12,8 +13,8 @@ namespace Item.Container
     /// </summary>
     public class MiracleOrb : ItemBase, IInteract
     {
-        private int _skillBlockSpawnCount = 3;
-        private OrbType _orbType;
+        [SerializeField] private int skillBlockSpawnCount = 3;
+        [SerializeField] private OrbType orbType;
         
         #region Unity Event Function
 
@@ -35,17 +36,22 @@ namespace Item.Container
             PlayerController pc;
             if (targetObject.TryGetComponent(out pc) || targetObject.transform.root.TryGetComponent(out pc))
             {
-                switch (_orbType)
+                switch (orbType)
                 {
                     case OrbType.Random:
                         if(pc.skillSelectUI.GetSelectCount() <= 0)
-                            pc.skillSelectUI.SpawnRandomSkillBlocks(_skillBlockSpawnCount);
+                            pc.skillSelectUI.SpawnRandomSkillBlocks(skillBlockSpawnCount);
                         pc.skillSelectUI.AddSelectCount();
                         break;
                     case OrbType.HasRandom:
-                        pc.skillSelectUI.SpawnHasRandomSkillBlock(_skillBlockSpawnCount);
+                        pc.skillSelectUI.SpawnHasRandomSkillBlock(skillBlockSpawnCount);
                         break;
                     case OrbType.Has:
+                        break;
+                    case OrbType.All:
+                        if(pc.skillSelectUI.AllSelectCount <= 0)
+                            pc.skillSelectUI.SpawnAllSkillBlock();
+                        pc.skillSelectUI.AllSelectCount++;
                         break;
                 }
                 Destroy(gameObject);   
@@ -73,17 +79,19 @@ namespace Item.Container
         public override void SetJsonData(StatusJsonData json)
         {
             base.SetJsonData(json);
-            _skillBlockSpawnCount = json.GetInt("Skill Block Spawn Count");
-            _orbType = (OrbType)json.GetInt("Orb Type");
+            skillBlockSpawnCount = json.GetInt("Skill Block Spawn Count");
+            orbType = (OrbType)json.GetInt("Orb Type");
         }
 
         #endregion
         
+        [System.Serializable]
         private enum OrbType
         {
             Random, // 만렙이 아닌 스킬들 중에서 랜덤 선택
             HasRandom, // 가지고 있는 것들 중에 랜덤
             Has, // 가지고 있는 것들 중에 선택
+            All, // 모든 스킬 중에 선택
         }
     }
 }
