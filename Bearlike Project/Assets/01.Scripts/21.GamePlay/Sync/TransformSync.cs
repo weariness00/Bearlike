@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.ComponentModel;
+using UnityEngine;
 
 namespace GamePlay.Sync
 {
@@ -8,16 +9,20 @@ namespace GamePlay.Sync
 
         public Vector3 positionOffset;
         public float positionMultiple = 1f;
-
+        
         public bool isPosition = true;
         public bool isPositionLocal = false;
         public bool isPositionX = true, isPositionY = true, isPositionZ = true;
         public bool isRotate = true;
-        public bool isRotateLocal = true;
+        public bool isRotateLocal = false;
         public bool isRotateX = true, isRotateY = true, isRotateZ = true;
         public bool isScale = false;
 
-        private void Update()
+        private Vector3 sourceForward = Vector3.forward; // 소스 오브젝트의 Forward 축
+        private Vector3 sourceUp = Vector3.up; // 소스 오브젝트의 Up 축
+        private Vector3 targetForward = Vector3.up; // 타겟 오브젝트의 Forward 축 (예: Y)
+        private Vector3 targetUp = Vector3.forward; // 타겟 오브젝트의 Up 축 (예: Z)
+        private void LateUpdate()
         {
             TransformSyncUpdate();
         }
@@ -54,7 +59,7 @@ namespace GamePlay.Sync
                 if (isRotateX) rotate.x = targetRotate.x;
                 if (isRotateY) rotate.y = targetRotate.y;
                 if (isRotateZ) rotate.z = targetRotate.z;
-
+                
                 transform.rotation = rotate;
             }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Aggro;
 using Data;
 using Fusion;
@@ -47,12 +48,15 @@ namespace Player
         public Sprite icon;
         
         // public Status status;
-        [Header("컴포넌트")] 
+        [Header("Player Related")] 
         public PlayerStatus status;
         public PlayerCameraController cameraController;
         public PlayerSoundController soundController;
+        public PlayerRigController rigController;
         public SkillSystem skillSystem;
         public WeaponSystem weaponSystem;
+        
+        [Header("UI")]
         public Canvas gunUI;
         public Canvas hpUI;
         public ItemInventory itemInventory;
@@ -67,12 +71,10 @@ namespace Player
         
         public Animator animator;
         [HideInInspector] public SimpleKCC simpleKcc;
-        [HideInInspector] public RigBuilder rigBuilder;
         private HitboxRoot _hitboxRoot;
-        private Rig _headRig;
         private StageSelectUI _stageSelectUI;
         
-        [Tooltip("마우스 움직임에 따라 회전할 오브젝트")] public GameObject mouseRotateObject;
+        [Tooltip("마우스 움직임에 따라 회전할 오브젝트")] public List<GameObject> mouseRotateObjects;
 
         public Action<GameObject> MonsterKillAction;
         public Action<int> AfterApplyDamageAction { get; set; }
@@ -124,6 +126,7 @@ namespace Player
             status = gameObject.GetComponent<PlayerStatus>();
             cameraController = GetComponent<PlayerCameraController>();
             soundController = GetComponent<PlayerSoundController>();
+            rigController = GetComponentInChildren<PlayerRigController>();
             weaponSystem = gameObject.GetComponentInChildren<WeaponSystem>();
             animator = GetComponentInChildren<Animator>();
             aggroTarget = GetComponent<AggroTarget>();
@@ -131,8 +134,6 @@ namespace Player
             _stageSelectUI = FindObjectOfType<StageSelectUI>();
 
             _hitboxRoot = GetComponent<HitboxRoot>();
-            rigBuilder = GetComponentInChildren<RigBuilder>();
-            _headRig = rigBuilder.layers.Find(rig => rig.name == "Rig").rig;
             
             // 애니메이터
             OneHandGunLayer = animator.GetLayerIndex("One Hand Gun");
@@ -156,6 +157,7 @@ namespace Player
 
         public override void Spawned()
         {
+            base.Spawned();
             _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
 
             DebugManager.LogWarning("headRig를 Update에서 계속 바꿔주고 있는거고치기");
@@ -169,7 +171,7 @@ namespace Player
             // simpleKcc.SetGravity(new Vector3(0, -9.8f, 0));
             
             // 무기 초기화
-            weaponSystem.equipment?.EquipAction?.Invoke(gameObject);
+            ChangeWeaponRPC(0);
             SetLayer();
             
             // 스킬 초기화
@@ -210,7 +212,7 @@ namespace Player
         public override void FixedUpdateNetwork()
         {
             // 임시
-            _headRig.weight = W;
+            rigController.RigWeight = W;
             
             if(!GameManager.Instance.isControl)
                 return;
@@ -449,7 +451,8 @@ namespace Player
 
             xRotate = Mathf.Clamp(xRotate, -45, 45); // 위, 아래 제한 
             simpleKcc.SetLookRotation(new Vector3(-xRotate, yRotate, 0));
-            mouseRotateObject.transform.rotation = Quaternion.Euler(-xRotate, transform.localRotation.eulerAngles.y, transform.localRotation.eulerAngles.z);
+            foreach (var mouseRotateObject in mouseRotateObjects)
+                mouseRotateObject.transform.rotation = Quaternion.Euler(-xRotate, transform.localRotation.eulerAngles.y, transform.localRotation.eulerAngles.z);
         }
 
         void WeaponControl(PlayerInputData data)
@@ -551,6 +554,24 @@ namespace Player
                 {
                     skillBase.Earn(gameObject);
                 }
+
+                // ik 설정
+                var ik = weaponSystem.equipment as IWeaponIK;
+                if (ik.LeftIK)
+                {
+                    rigController.LeftArmWeight = 1;
+                    rigController.SetLeftArmIK(ik.LeftIK);
+                }
+                else
+                    rigController.LeftArmWeight = 0;
+
+                if (ik.RightIK)
+                {
+                    rigController.RightArmWeight = 1;
+                    rigController.SetRightArmIK(ik.RightIK);
+                }
+                else
+                    rigController.RightArmWeight = 0;
             }
         }
         
