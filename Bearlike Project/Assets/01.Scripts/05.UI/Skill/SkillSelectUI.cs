@@ -65,12 +65,14 @@ namespace UI.Skill
             gameObject.SetActive(true);
             SetAllScrollActive(false);
             randomSelectScroll.gameObject.SetActive(true);
+            randomViewToggle.isOn = true;
             UIManager.AddActiveUI(gameObject);
-            
-            // 이미 있는 스킬들 삭제
-            var handles = toggleGroup.GetComponentsInChildren<SkillSelectBlockHandle>().ToList();
-            foreach (var handle in handles)
-                Destroy(handle.gameObject);
+
+            {  // 이미 있는 스킬들 삭제
+                var handles = toggleGroup.GetComponentsInChildren<SkillSelectBlockHandle>().ToList();
+                foreach (var handle in handles)
+                    Destroy(handle.gameObject);
+            }
 
             // 스킬 UI 생성
             bool isSuccessSelectSkillSpawn = false;
@@ -119,7 +121,22 @@ namespace UI.Skill
                 var handle = obj.GetComponent<SkillSelectBlockHandle>();
                 obj.SetActive(true);
                 handle.SettingBlock(skill);
-                handle.button.onClick.AddListener(() => SelectSkill(skill.id));
+                handle.button.onClick.AddListener(() =>
+                {
+                    if (hasSkill == null) SpawnSkillRPC(skill.id);
+                    else skill.LevelUpRPC(); 
+
+                    RemoveSelectCount();
+                    UIManager.Dequeue();
+                    if (_selectCount > 0) SpawnRandomSkillBlocks(count);
+                    else
+                    {
+                        var handles = toggleGroup.GetComponentsInChildren<SkillSelectBlockHandle>().ToList();
+                        foreach (var h in handles)
+                            Destroy(h.gameObject); 
+                        gameObject.SetActive(false);
+                    }
+                });
             }
         }
 
@@ -159,30 +176,7 @@ namespace UI.Skill
                 var handle = obj.GetComponent<SkillSelectBlockHandle>();
                 obj.SetActive(true);
                 handle.SettingBlock(skill);
-                handle.button.onClick.AddListener(() => SelectSkill(skill.id));
-            }
-        }
-
-        private async void SelectSkill(int id)
-        {
-            if (!playerController.skillSystem.TryGetSkillFromID(id, out var skill))
-            {
-                SpawnSkillRPC(id);
-            }
-            else
-            {
-                skill.LevelUpRPC(); 
-            }
-
-            RemoveSelectCount();
-            if (_selectCount > 0)
-                SpawnRandomSkillBlocks(3);
-            else
-            {
-                var handles = toggleGroup.GetComponentsInChildren<SkillSelectBlockHandle>().ToList();
-                foreach (var h in handles)
-                    Destroy(h.gameObject); 
-                gameObject.SetActive(false);
+                // handle.button.onClick.AddListener(() => SelectSkill(skill.id));
             }
         }
 
@@ -231,18 +225,46 @@ namespace UI.Skill
                 {
                     skill.LevelUp(1, false);
 
-                    allSelectSkillExplainText.text = skill.explain.WrapText(20);
+                    allSelectSkillExplainText.text = skill.explain.WrapText(30);
                     allSelectSkillExplainPanelRectTransform.gameObject.SetActive(true);
                     
                     // TMP_Text의 GetPreferredValues를 사용하여 텍스트의 크기를 계산
-                    Vector2 textSize = allSelectSkillExplainText.GetPreferredValues(allSelectSkillExplainText.text);
-                    Vector4 margin = allSelectSkillExplainText.margin;
-                    Vector2 padding = new Vector2(margin.x + margin.z, margin.y + margin.w);
-                    
-                    // 이미지 크기를 텍스트 크기에 패딩을 더한 크기로 설정
-                    allSelectSkillExplainPanelRectTransform.sizeDelta = textSize + padding;
-                    
+                    allSelectSkillExplainPanelRectTransform.sizeDelta = new Vector2(allSelectSkillExplainText.preferredWidth + 150, allSelectSkillExplainText.preferredHeight + 150);
                     skill.LevelUp(-1, false);
+                    
+                    Vector2 anchor = new Vector2(0.5f, 0.5f); // 기본 앵커와 피봇을 중앙으로 설정
+                    Vector2 pivot = new Vector2(0.5f, 0.5f);
+                    var halfWidth = Screen.width / 2;
+                    var halfHeight = Screen.height / 2;
+                    // 왼쪽 위 사분면
+                    if (data.position.x < halfWidth && data.position.y > halfHeight)
+                    {
+                        anchor = new Vector2(0, 1);
+                        pivot = new Vector2(0, 1);
+                    }
+                    // 오른쪽 위 사분면
+                    else if (data.position.x > halfWidth && data.position.y > halfHeight)
+                    {
+                        anchor = new Vector2(1, 1);
+                        pivot = new Vector2(1, 1);
+                    }
+                    // 왼쪽 아래 사분면
+                    else if (data.position.x < halfWidth && data.position.y < halfHeight)
+                    {
+                        anchor = new Vector2(0, 0);
+                        pivot = new Vector2(0, 0);
+                    }
+                    // 오른쪽 아래 사분면
+                    else if (data.position.x > halfWidth && data.position.y < halfHeight)
+                    {
+                        anchor = new Vector2(1, 0);
+                        pivot = new Vector2(1, 0);
+                    }
+
+                    // UI 요소의 앵커와 피봇 설정
+                    allSelectSkillExplainPanelRectTransform.anchorMin = anchor;
+                    allSelectSkillExplainPanelRectTransform.anchorMax = anchor;
+                    allSelectSkillExplainPanelRectTransform.pivot = pivot;
                 });
                 obj.AddOnPointerMove(data =>
                 {
@@ -258,6 +280,8 @@ namespace UI.Skill
                     if (hasSkill == null) SpawnSkillRPC(skill.id);
                     else skill.LevelUpRPC(); 
 
+                    UIManager.Dequeue();
+                    allSelectSkillExplainPanelRectTransform.gameObject.SetActive(false);
                     if (--AllSelectCount > 0) SpawnAllSkillBlock();
                     else
                     {

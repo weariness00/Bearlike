@@ -17,6 +17,8 @@ namespace Manager
             Instance._isAdd = true;
         }
 
+        public static GameObject[] Dequeue() => Instance._ActiveUIQueue.Dequeue();
+        
         public static bool HasActiveUI() => Instance._ActiveUIQueue.IsEmpty() == false || Instance._isAdd;
 
         #endregion

@@ -33,6 +33,8 @@ namespace Item.Container
         /// <param name="targetObject"></param>
         public override void GetItem(GameObject targetObject)
         {
+            IsInteract = false;
+            
             PlayerController pc;
             if (targetObject.TryGetComponent(out pc) || targetObject.transform.root.TryGetComponent(out pc))
             {
@@ -51,7 +53,7 @@ namespace Item.Container
                     case OrbType.All:
                         if(pc.skillSelectUI.AllSelectCount <= 0)
                             pc.skillSelectUI.SpawnAllSkillBlock();
-                        pc.skillSelectUI.AllSelectCount++;
+                        ++pc.skillSelectUI.AllSelectCount;
                         break;
                 }
                 Destroy(gameObject);   
