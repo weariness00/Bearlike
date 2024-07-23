@@ -10,6 +10,7 @@ using Photon;
 using Status;
 using UI.Status;
 using UnityEngine;
+using Util.UnityEventComponent;
 
 namespace Skill.Support
 {
@@ -32,26 +33,26 @@ namespace Skill.Support
 
         private void Awake()
         {
+            damageDominoObject.AddOnTriggerEnter(other =>
+            {
+                DebugManager.Log("충돌 도미노");
+                var ms = other.GetComponentInParent<MonsterStatus>();
+                if (ms)
+                {
+                    // 타격을 입은 몬스터인지 확인
+                    if (_damageMonsterSet.Contains(ms.gameObject) == false)
+                    {
+                        ms.ApplyDamageRPC(_status.CalDamage(out bool isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, Object.Id);
+
+                        _damageMonsterSet.Add(ms.gameObject);
+                    }
+                }
+            });
+            
             damageDominoObject.SetActive(false);
             collisionEffectObject.SetActive(false);
             _animator = GetComponent<Animator>();
             _animator.enabled = false;
-        }
-
-        private void OnTriggerEnter(Collider other)
-        {
-            DebugManager.Log("충돌 도미노");
-            if (other.TryGetComponent(out ColliderStatus cs))
-            {
-                StatusBase otherStatus = cs.originalStatus;
-                // 타격을 입은 몬스터인지 확인
-                if (_damageMonsterSet.Contains(otherStatus.gameObject) == false)
-                {
-                    otherStatus.ApplyDamageRPC(_status.CalDamage(out bool isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, Object.Id);
-
-                    _damageMonsterSet.Add(otherStatus.gameObject);
-                }
-            }
         }
 
         public override void Spawned()
@@ -63,7 +64,8 @@ namespace Skill.Support
             if (skill && 
                 skill.TryGetComponent(out _status))
             {
-                StartCoroutine(UpdateCoroutine());
+                _animator.enabled = true;
+                wallDownAudio.Play();
             }
             else
             {
@@ -71,18 +73,20 @@ namespace Skill.Support
             }
         }
 
-        private IEnumerator UpdateCoroutine()
-        {
-            _animator.enabled = true;
-            wallDownAudio.Play();
-            yield return new WaitForSeconds(downClip.length * 2f);
+        #region Animation Clip Event Function
 
-            collisionEffectObject.SetActive(true);
+        private void AttackStart()
+        {
             damageDominoObject.SetActive(true);
-            
-            yield return new WaitForSeconds(2f);
-            
-            Destroy(gameObject);
         }
+
+        private void AttackEnd()
+        {
+            damageDominoObject.SetActive(false);
+            collisionEffectObject.SetActive(true);
+            Destroy(gameObject, 2f);
+        }
+        
+        #endregion
     }
 }

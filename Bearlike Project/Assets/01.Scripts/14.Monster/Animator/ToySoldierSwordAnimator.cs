@@ -85,14 +85,8 @@ namespace Monster.Container
             base.Spawned();
             if (HasStateAuthority)
             {
-                {
-                    var util = defaultCollider.gameObject.AddComponent<UnityEventUtil>();
-                    util.AddOnTriggerEnter(DefaultAttackOnTriggerEnter);
-                }
-                {
-                    var util = stabbingCollider.gameObject.AddComponent<UnityEventUtil>();
-                    util.AddOnTriggerEnter(StabbingAttackOnTriggerEnter);
-                }
+                defaultCollider.gameObject.AddOnTriggerEnter(DefaultAttackOnTriggerEnter);
+                stabbingCollider.gameObject.AddOnTriggerEnter(StabbingAttackOnTriggerEnter);
             }
         }
         

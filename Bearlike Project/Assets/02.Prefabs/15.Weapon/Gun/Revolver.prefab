@@ -344,6 +344,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -384,9 +385,12 @@ MonoBehaviour:
   includeCollide:
     serializedVersion: 2
     m_Bits: 0
+  leftIK: {fileID: 0}
+  rightIK: {fileID: 4114088635311029107}
   playerCameraController: {fileID: 0}
   id: 0
   explain: 
+  handType: 0
   shootEffect: {fileID: 6398042660322630052}
   shotsmoke: {fileID: 0}
   shotOverHeatingPropertyBlock: {fileID: 5262812431355071371}
@@ -404,6 +408,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 1
+  penetrateCount: 0
   bulletFirePerMinute: 0
   fireLateSecond: 0
   reloadLateSecond: 0
@@ -458,6 +463,38 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7187653998392947337}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2691173087656984028
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3526546933308941487}
+  m_Layer: 1
+  m_Name: IK
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3526546933308941487
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2691173087656984028}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.60990286, y: -0.35779688, z: -0.60990274, w: 0.35779694}
+  m_LocalPosition: {x: -0.0641208, y: 0.17297103, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3789561630435416600}
+  m_Father: {fileID: 4273867169627364086}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4011487864350264815
 GameObject:
@@ -588,6 +625,37 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!1 &4114088635311029107
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3789561630435416600}
+  m_Layer: 1
+  m_Name: Right Arm
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3789561630435416600
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4114088635311029107}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.002656013, y: 0.045313127, z: -0.9974955, w: -0.054244712}
+  m_LocalPosition: {x: 0.018, y: 0.184, z: -0.084}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3526546933308941487}
+  m_LocalEulerAnglesHint: {x: 5.17, y: -0.58766234, z: -186.252}
 --- !u!1 &6015718188454524569
 GameObject:
   m_ObjectHideFlags: 0
@@ -857,7 +925,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -6077918700668423503, guid: 300a180ad27f7454fa5e227c6bd73336,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3526546933308941487}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 300a180ad27f7454fa5e227c6bd73336,
         type: 3}
@@ -937,6 +1009,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   renderer: {fileID: 8309844755560932226}
   material: {fileID: 2100000, guid: 6d9473d7960e7de4bab4709a5c99c493, type: 2}
+--- !u!4 &4273867169627364086 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -6077918700668423503, guid: 300a180ad27f7454fa5e227c6bd73336,
+    type: 3}
+  m_PrefabInstance: {fileID: 1218565300067477575}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4603693173404269989 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -5833661098405571102, guid: 300a180ad27f7454fa5e227c6bd73336,

@@ -3,6 +3,7 @@ using Status;
 using Fusion;
 using Player;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Weapon
 {
@@ -27,6 +28,12 @@ namespace Weapon
         public Action<GameObject, GameObject> BeforeHitAction { get; set; } 
         public Action<GameObject, GameObject> AfterHitAction { get; set; } 
     }
+
+    public interface IWeaponIK
+    {
+        public GameObject LeftIK { get; set; }
+        public GameObject RightIK { get; set; }
+    }
     
     #endregion
     
@@ -41,11 +48,17 @@ namespace Weapon
     }
 
     [RequireComponent(typeof(StatusBase))]
-    public class WeaponBase : NetworkBehaviour, IEquipment
+    public class WeaponBase : NetworkBehaviour, IEquipment, IWeaponIK
     {
         [Networked] public NetworkId OwnerId { get; set; }
         public StatusBase status;
         public LayerMask includeCollide;
+        
+        [Header("IK")]
+        [SerializeField] private GameObject leftIK;
+        [SerializeField] private GameObject rightIK;
+        public GameObject LeftIK { get => leftIK; set => leftIK = value; }
+        public GameObject RightIK { get => rightIK; set => rightIK = value; }
         
         [HideInInspector] public PlayerCameraController playerCameraController;
         
@@ -70,8 +83,6 @@ namespace Weapon
         
         public void SetEquip(GameObject equipObject)
         {
-            gameObject.SetActive(true);
-            
             // 카메라 셋팅
             playerCameraController = equipObject.GetComponent<PlayerCameraController>();
             
