@@ -113,8 +113,6 @@ namespace UI
         public void Ready(bool value)
         {
             ReadyRPC(clientNumber, value);
-            
-            DebugManager.ToDo("투표 관련 UI도 만들어주고 업데이트 해줘야한다.");
         }
 
         public void SettingStageInfo()
@@ -125,7 +123,6 @@ namespace UI
                 return;
             }
 
-            // 스테이지 최대치이면 보스 스테이지로 가도록 하기
             NetworkStages.Clear();
             for (int i = 0; i < NetworkStages.Length; i++)
             {
@@ -154,6 +151,7 @@ namespace UI
             for (int i = 0; i < NetworkStages.Length; i++)
             {
                 StageData stageData;
+                // 스테이지 최대치이면 보스 스테이지로 가도록 하기
                 if (GameManager.Instance.stageCount.isMax)
                 {
                     stageData = GameManager.Instance.GetBossStage();

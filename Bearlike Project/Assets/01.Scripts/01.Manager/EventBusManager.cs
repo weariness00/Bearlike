@@ -6,6 +6,8 @@ namespace Manager
 {
     public enum EventBusType
     {
+        MonsterKill,
+        
         AddSkill,
         SkillLevelUp,
     }

@@ -9,6 +9,7 @@ using GamePlay.UI;
 using Item;
 using Loading;
 using Manager;
+using Monster;
 using Photon;
 using Skill;
 using Status;
@@ -154,7 +155,15 @@ namespace Player
                     skillSelectUI.AddSelectCount();
                 }
             };
-                
+            
+            // EventBusManager.Subscribe(EventBusType.MonsterKill, (Tuple<PlayerController, MonsterBase> info) =>
+            // {
+            //     var player = info.Item1;
+            //     var monster = info.Item2;
+            //     
+            //     player.
+            // });
+            
             aggroTarget.AddCondition(AggroCondition);
         }
 

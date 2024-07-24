@@ -20,6 +20,7 @@ namespace GamePlay.UI
 
         private PlayerController _playerController;
 
+        [SerializeField] private Image playerIcon;
         [SerializeField] private TMP_Text nameText;
         [SerializeField] private TMP_Text levelText;
         [SerializeField] private TMP_Text killCountText;
@@ -61,14 +62,23 @@ namespace GamePlay.UI
 
             _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
 
+            playerIcon.sprite = _playerController.icon;
             nameText.text = UserData.Instance.UserDictionary.Get(_playerController.PlayerRef).Name.ToString();
             levelText.text = _playerController.status.level.Current.ToString();
             killCountText.text = KillCount.ToString();
             damageCountText.text = DamageCount.ToString();
             
             foreach (var skill in _playerController.skillSystem.skillList) AddSkillBlock(skill);
-            _playerController.MonsterKillAction += (obj) => SetKillCountRPC(KillCount + 1);
-            _playerController.AfterApplyDamageAction += (value) => SetDamageCountRPC(DamageCount + value);
+            _playerController.MonsterKillAction += (obj) =>
+            {
+                if (HasStateAuthority)
+                    ++KillCount;
+            };
+            _playerController.AfterApplyDamageAction += (value) =>
+            {
+                if (HasStateAuthority)
+                    DamageCount += value;
+            };
             _playerController.status.LevelUpAction += () => levelText.text = _playerController.status.level.Current.ToString();
         }
 
@@ -116,22 +126,6 @@ namespace GamePlay.UI
             {
                 block.LevelText.text = skill.level.Current.ToString();
             }
-        }
-
-        #endregion
-
-        #region RPC Function
-
-        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-        public void SetKillCountRPC(int value)
-        {
-            KillCount = value;
-        }
-
-        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-        public void SetDamageCountRPC(int value)
-        {
-            DamageCount = value;
         }
 
         #endregion
