@@ -387,10 +387,9 @@ namespace Player
             {
                 UIActive(skillSelectUI.canvas.gameObject);
             }
-            else if (data.GameProgress)
-            {
-                UIActive(progressCanvas.gameObject);
-            }
+
+            if (KeyManager.InputActionDown(KeyToAction.GameProgress)) progressCanvas.gameObject.SetActive(true);
+            else if(KeyManager.InputActionUp(KeyToAction.GameProgress)) progressCanvas.gameObject.SetActive(false);
         }
         
         private void MoveControl(PlayerInputData data = default)
@@ -560,9 +559,6 @@ namespace Player
         public new void SetPositionRPC(Vector3 pos) => simpleKcc.SetPosition(pos);
         [Rpc(RpcSources.All,RpcTargets.StateAuthority)]
         public void SetLookRotationRPC(Vector2 look) => simpleKcc.SetLookRotation(look);
-
-        [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
-        private void UISettingRPC(PlayerInputData data) => UISetting(data);
 
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void ChangeWeaponRPC(int index)

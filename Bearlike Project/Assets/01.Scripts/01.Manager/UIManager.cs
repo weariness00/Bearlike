@@ -38,8 +38,6 @@ namespace Manager
             {
                 if (_ActiveUIQueue.IsEmpty() == false)
                 {
-                    Cursor.lockState = CursorLockMode.None;
-
                     var queue = _ActiveUIQueue.Dequeue();
                     foreach (var o in queue)
                         if(o) o.SetActive(false);
