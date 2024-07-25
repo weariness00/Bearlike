@@ -266,7 +266,7 @@ namespace Player
             base.Render();
             foreach (var change in _changeDetector.DetectChanges(this))
             {
-                switch (change)
+                switch (change) 
                 {
                     case nameof(IsSpawnSuccess):
                         if(IsSpawnSuccess) LoadingManager.EndWait();

@@ -28,6 +28,7 @@ namespace Manager.FireBase
         public static void Login(string email, string password, Action<bool> successAction = null) => Instance.FireBaseLogin(email, password, successAction);
         public static void LogOut() => Instance.FireBaseLogOut();
 
+        public static Action<string> AccountCreateAction { get; set; }
         public static Action<AuthError, string> AuthErrorAction { get; set; }
         public static Action<bool> LoginState { get; set; }
 
@@ -78,6 +79,7 @@ namespace Manager.FireBase
                 if (task.IsCanceled)
                 {
                     DebugManager.LogWarning("회원가입 취소");
+                    AccountCreateAction?.Invoke("회원가입 취소");
                     return;
                 }
 
@@ -94,6 +96,7 @@ namespace Manager.FireBase
 
                 FirebaseUser newUser = task.Result.User;
                 DebugManager.Log($"계정 생성 [{newUser.Email}]");
+                AccountCreateAction?.Invoke("계정 생성 성공");
             });
         }
 
