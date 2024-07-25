@@ -81,7 +81,7 @@ namespace Weapon.Bullet
         private void OnTriggerEnter(Collider other)
         {
             if (!HasStateAuthority) return;
-            if (other.gameObject.CompareTag("Volume")) return;
+            if (other.gameObject.CompareTag("Volume") || other.gameObject.CompareTag("Stage")) return;
             
             if (_aggroTarget)
             {
