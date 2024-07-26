@@ -956,7 +956,7 @@ namespace Monster.Container
         {
             if (false == _animationing)
             {
-                animator.networkAnimator.Animator.enabled = false;
+                animator.enabled = false;
                 animator.PlaySlapAction();
                 _animationing = true;
                 
@@ -967,7 +967,7 @@ namespace Monster.Container
                 return INode.NodeState.Running;
 
             _animationing = false;
-            animator.networkAnimator.Animator.enabled = true;
+            animator.enabled = true;
             DebugManager.Log($"Slap Attack");
             
             return INode.NodeState.Success;
@@ -1043,64 +1043,6 @@ namespace Monster.Container
         private void HandActiveRPC(bool value)
         {
             _handModel.SetActive(value);
-        }
-        
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void PunchAttackRPC(int type, Vector3 targetPosition)
-        {
-            animator.networkAnimator.Animator.enabled = false;
-            hands[type].transform.DOMove(targetPosition, 2).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
-            
-            DebugManager.Log($"targetPosition : {targetPosition}");
-            
-            StartCoroutine(ComeBackPunchCoroutine(2, type));
-        }
-            
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void FakePunchAttackRPC(int type, Vector3 targetPosition, Vector3 fakeTargetPosition)
-        {
-            animator.networkAnimator.Animator.enabled = false;
-            hands[type].transform.DOMove(fakeTargetPosition, 1).SetEase(Ease.OutCirc); // TODO : 공격 속도를 변수처리 해야함
-
-            StartCoroutine(RealTartgetMoveCoroutine(1.0f, type, targetPosition));
-            StartCoroutine(ComeBackPunchCoroutine(2, type));
-        }
-
-        private IEnumerator RealTartgetMoveCoroutine(float waitTime, int type, Vector3 targetPosition)
-        {
-            yield return new WaitForSeconds(waitTime);
-            RealPunchAttackRPC(type, targetPosition);
-        }
-        
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void RealPunchAttackRPC(int type, Vector3 targetPosition)
-        {
-            hands[type].transform.DOMove(targetPosition, 1).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
-        }
-
-        private IEnumerator ComeBackPunchCoroutine(float waitTime, int type)
-        {
-            yield return new WaitForSeconds(waitTime);
-
-            ComeBackPunchRPC(type);
-            yield return new WaitForSeconds(1.0f);
-            AnimatorOnRPC();
-        }
-        
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void ComeBackPunchRPC(int type)
-        {
-            float tmp = 3f;
-            if (type == 0)
-                tmp = -3f;
-            
-            hands[type].transform.DOLocalMove(new Vector3(tmp, 4f, 3f), 1).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
-        }
-        
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void AnimatorOnRPC()
-        {
-            animator.networkAnimator.Animator.enabled = true;
         }
 
         #endregion
