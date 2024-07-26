@@ -512,6 +512,7 @@ namespace Monster.Container
         {
             if (false == _animationing)
             {
+                GameObject playerObject = _players[0];
                 // Calculation
                 targetPosition = new Vector3(0, 0, 0);
                 fakeTargetPosition = new Vector3(0, 0, 0);
@@ -523,6 +524,7 @@ namespace Monster.Container
                     var distance = (int)(math.distance(player.transform.position, transform.position));
                     if (minDistance > distance)
                     {
+                        playerObject = player;
                         minDistance = distance;
                         targetPosition = player.transform.position + new Vector3(0, 2f, 0);
                         fakeTargetPosition = targetPosition;
@@ -539,7 +541,7 @@ namespace Monster.Container
                     {
                         fakeTargetPosition = transform.position + new Vector3(0, 20, 0);
                     }
-                    else if (player.transform.position != targetPosition - new Vector3(0, 2f, 0))
+                    else if (playerObject != player)
                     {
                         fakeTargetPosition = (player.transform.position + targetPosition) / 2;
                         break;
@@ -574,6 +576,9 @@ namespace Monster.Container
                     {
                         var h = o.GetComponent<BoxJesterAttackHand>();
 
+                        h.position = _handModel.transform.position;
+                        h.rotation = transform.rotation;
+                        
                         h.targetPosition = targetPosition;
                         h.handType = type;
                         h.isFake = false;
@@ -606,6 +611,9 @@ namespace Monster.Container
                     {
                         var h = o.GetComponent<BoxJesterAttackHand>();
 
+                        h.position = _handModel.transform.position;
+                        h.rotation = transform.rotation;
+                        
                         h.targetPosition = targetPosition;
                         h.fakeTargetPosition = fakeTargetPosition;
                         h.handType = type;

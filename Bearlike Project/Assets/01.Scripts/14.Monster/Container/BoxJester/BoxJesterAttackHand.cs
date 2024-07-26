@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using DG.Tweening;
 using Fusion;
 using Manager;
@@ -16,10 +17,13 @@ namespace Monster.Container
         [SerializeField] private StatusBase status;
         [SerializeField]private GameObject[] hands;
 
-        public Vector3 targetPosition;
-        public Vector3 fakeTargetPosition;
-        public int handType;
-        public bool isFake;
+        [Networked] public Vector3 position { get; set; }
+        [Networked] public Quaternion rotation { get; set; }
+
+        [Networked] public Vector3 targetPosition { get; set; }
+        [Networked] public Vector3 fakeTargetPosition { get; set; }
+        [Networked] public int handType { get; set; }
+        [Networked] public bool isFake { get; set; }
 
         // Test용으로 이렇게 만든거임
         // 실제는 여기서 시간 설정해야함
@@ -28,9 +32,6 @@ namespace Monster.Container
         
         private void Awake()
         {
-            var root = transform.root.gameObject.GetComponent<NetworkObject>();
-            OwnerId = root.Id;
-
             status.damage.Max = 10;
             status.damage.Current = 10;
         }
@@ -40,11 +41,24 @@ namespace Monster.Container
             base.Spawned();
             Destroy(gameObject, 3.0f);
             
+            var root = transform.root.gameObject.GetComponent<NetworkObject>();
+            OwnerId = root.Id;
+
+            DebugManager.Log($"position : {position}, rotation : {rotation}");
+            
+            transform.position = position;
+            transform.rotation = rotation;
+            
             _time = time - 0.5f;
             
-            PunchStartRPC();
+            PunchStart();
         }
-        
+
+        private void Update()
+        {
+            DebugManager.Log($"position : {hands[handType].transform.position}");
+        }
+
         private void OnTriggerEnter(Collider other)
         {
             StatusBase otherStatus = null;
@@ -65,10 +79,9 @@ namespace Monster.Container
         
         #region Punch Attack
 
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void PunchStartRPC()
+        private void PunchStart()
         {
-            hands[handType].transform.DOLocalMove(hands[handType].transform.localPosition - hands[handType].transform.up * 3, 0.5f).SetEase(Ease.Linear);
+            hands[handType].transform.DOMove(hands[handType].transform.position - hands[handType].transform.up * 3, 0.5f).SetEase(Ease.Linear);
             
             StartCoroutine(PunchCoroutine());
         }
@@ -78,13 +91,12 @@ namespace Monster.Container
             yield return new WaitForSeconds(0.5f);
             
             if(isFake)
-                FakePunchAttackRPC();
+                FakePunchAttack();
             else
-                PunchAttackRPC();
+                PunchAttack();
         }
 
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void PunchAttackRPC()
+        private void PunchAttack()
         {
             hands[handType].transform.LookAt(targetPosition);
             hands[handType].transform.Rotate(90.0f, 0, 0);
@@ -94,8 +106,7 @@ namespace Monster.Container
             StartCoroutine(ComeBackPunchCoroutine());
         }
             
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void FakePunchAttackRPC()
+        private void FakePunchAttack()
         {
             hands[handType].transform.LookAt(fakeTargetPosition);
             hands[handType].transform.Rotate(90.0f, 0, 0);
@@ -109,11 +120,10 @@ namespace Monster.Container
         private IEnumerator RealTartgetMoveCoroutine()
         {
             yield return new WaitForSeconds(_time / 4);
-            RealPunchAttackRPC();
+            RealPunchAttack();
         }
         
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void RealPunchAttackRPC()
+        private void RealPunchAttack()
         {
             hands[handType].transform.LookAt(targetPosition);
             hands[handType].transform.Rotate(90.0f, 0, 0);
@@ -125,12 +135,10 @@ namespace Monster.Container
         {
             yield return new WaitForSeconds(_time / 2);
 
-            ComeBackPunchRPC();
-            yield return new WaitForSeconds(1.0f);
+            ComeBackPunch();
         }
         
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void ComeBackPunchRPC()
+        private void ComeBackPunch()
         {
             float tmp = 5.5f;
             if (handType == 0)
