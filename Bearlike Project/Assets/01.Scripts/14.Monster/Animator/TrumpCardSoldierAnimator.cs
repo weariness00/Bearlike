@@ -11,7 +11,7 @@ namespace Monster.Container
     {
         public TrumpCardSoldier trumpCardSoldier;
 
-        private Animator _animator;
+        private NetworkMecanimAnimator networkAnimator;
 
         [Header("Aniamtion Clip")] 
         [SerializeField] private AnimationClip jump;
@@ -33,7 +33,7 @@ namespace Monster.Container
 
         private void Awake()
         {
-            _animator = trumpCardSoldier.networkAnimator.Animator; 
+            networkAnimator = trumpCardSoldier.networkAnimator; 
         }
 
         public override void Spawned()
@@ -45,7 +45,7 @@ namespace Monster.Container
         
         public void PlayJump()
         {
-            _animator.SetTrigger(AniJump);
+            networkAnimator.SetTrigger(AniJump);
             _jumpTimer = TickTimer.CreateFromSeconds(Runner, jump.length);
         }
 
