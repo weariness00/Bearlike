@@ -36,6 +36,8 @@ namespace UI
         {
             if (UIManager.HasActiveUI() == false && Input.GetKeyDown(KeyCode.Escape))
             {
+                Cursor.lockState = CursorLockMode.None;
+                
                 parentObject.SetActive(true);
                 UIManager.AddActiveUI(parentObject);
             }

@@ -9,6 +9,7 @@ using GamePlay.UI;
 using Item;
 using Loading;
 using Manager;
+using Monster;
 using Photon;
 using Skill;
 using Status;
@@ -51,6 +52,7 @@ namespace Player
         [Header("Player Related")] 
         public PlayerStatus status;
         public PlayerCameraController cameraController;
+        public PlayerWeaponCameraController weaponCameraController;
         public PlayerSoundController soundController;
         public PlayerRigController rigController;
         public SkillSystem skillSystem;
@@ -128,6 +130,7 @@ namespace Player
             // 상호작용으로 착요하게 바꿀 예정
             status = gameObject.GetComponent<PlayerStatus>();
             cameraController = GetComponent<PlayerCameraController>();
+            weaponCameraController = GetComponentInChildren<PlayerWeaponCameraController>();
             soundController = GetComponent<PlayerSoundController>();
             rigController = GetComponentInChildren<PlayerRigController>();
             weaponSystem = gameObject.GetComponentInChildren<WeaponSystem>();
@@ -154,7 +157,15 @@ namespace Player
                     skillSelectUI.AddSelectCount();
                 }
             };
-                
+            
+            // EventBusManager.Subscribe(EventBusType.MonsterKill, (Tuple<PlayerController, MonsterBase> info) =>
+            // {
+            //     var player = info.Item1;
+            //     var monster = info.Item2;
+            //     
+            //     player.
+            // });
+            
             aggroTarget.AddCondition(AggroCondition);
         }
 
@@ -257,7 +268,7 @@ namespace Player
             base.Render();
             foreach (var change in _changeDetector.DetectChanges(this))
             {
-                switch (change)
+                switch (change) 
                 {
                     case nameof(IsSpawnSuccess):
                         if(IsSpawnSuccess) LoadingManager.EndWait();
@@ -378,10 +389,9 @@ namespace Player
             {
                 UIActive(skillSelectUI.canvas.gameObject);
             }
-            else if (data.GameProgress)
-            {
-                UIActive(progressCanvas.gameObject);
-            }
+
+            if (KeyManager.InputActionDown(KeyToAction.GameProgress)) progressCanvas.gameObject.SetActive(true);
+            else if(KeyManager.InputActionUp(KeyToAction.GameProgress)) progressCanvas.gameObject.SetActive(false);
         }
         
         private void MoveControl(PlayerInputData data = default)
@@ -552,9 +562,6 @@ namespace Player
         [Rpc(RpcSources.All,RpcTargets.StateAuthority)]
         public void SetLookRotationRPC(Vector2 look) => simpleKcc.SetLookRotation(look);
 
-        [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
-        private void UISettingRPC(PlayerInputData data) => UISetting(data);
-
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void ChangeWeaponRPC(int index)
         {
@@ -591,6 +598,9 @@ namespace Player
                 }
                 else
                     rigController.RightArmWeight = 0;
+                
+                // Weapon Type에 따른 Camera 위치 변경
+                weaponCameraController.ChangeType(weaponSystem.equipment);
             }
         }
         
