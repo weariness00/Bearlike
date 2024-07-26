@@ -1271,6 +1271,7 @@ MonoBehaviour:
   - {fileID: 7370251092920483002}
   - {fileID: 8616392239538830113}
   - {fileID: 8922906238709016310}
+  - {fileID: 2458927021225622304}
   - {fileID: 4455405409920210872}
   - {fileID: 7586985216783297566}
   - {fileID: 7232534934634824343}
@@ -10599,6 +10600,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2407523340412611011}
+  - component: {fileID: 2458927021225622304}
   m_Layer: 12
   m_Name: Aim
   m_TagString: Untagged
@@ -10622,6 +10624,22 @@ Transform:
   - {fileID: 8839223025893821285}
   m_Father: {fileID: 2295367705590454408}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2458927021225622304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7761160962150664091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0
 --- !u!1 &7863856972818538308
 GameObject:
   m_ObjectHideFlags: 0
@@ -14038,6 +14056,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5790657245716143695, guid: 8ed94518c1619a741972dd13911be3ce,
+        type: 3}
+      propertyPath: TotalWords
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5790657245716143695, guid: 8ed94518c1619a741972dd13911be3ce,
+        type: 3}
+      propertyPath: SyncSettings
+      value: 79
       objectReference: {fileID: 0}
     - target: {fileID: 6012949488795889630, guid: 8ed94518c1619a741972dd13911be3ce,
         type: 3}

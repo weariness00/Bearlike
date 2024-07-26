@@ -71,7 +71,7 @@ namespace Player
         public GoodsCanvas goodsCanvas;
         public GameProgressCanvas progressCanvas;
         public AggroTarget aggroTarget;
-        
+
         public Animator animator;
         [HideInInspector] public SimpleKCC simpleKcc;
         private HitboxRoot _hitboxRoot;
@@ -91,6 +91,9 @@ namespace Player
         private ChangeDetector _changeDetector;
         
         #region Animation
+        
+        [Networked] private NetworkBool IsMove { get; set; }
+        
         private int OneHandGunLayer = 1;
         private int TwoHandGunLayer = 2;
 
@@ -127,8 +130,6 @@ namespace Player
         {
             LoadingManager.AddWait();
             
-            // 임시로 장비 착용
-            // 상호작용으로 착요하게 바꿀 예정
             status = gameObject.GetComponent<PlayerStatus>();
             cameraController = GetComponent<PlayerCameraController>();
             weaponCameraController = GetComponentInChildren<PlayerWeaponCameraController>();
@@ -269,6 +270,9 @@ namespace Player
                         break;
                 }
             }
+            
+            animator.SetFloat(AniFainMove, IsMove ? 1 : 0);
+            animator.SetFloat(AniMovement, IsMove ? 1 : 0);
         }
 
         #endregion
@@ -453,9 +457,7 @@ namespace Player
                 }
             }
 
-            animator.SetFloat(AniFainMove, isMoveX || isMoveY ? 1 : 0);
-            animator.SetFloat(AniMovement, isMoveX || isMoveY ? 1 : 0);
-            // animator.SetFloat(AniSideMove, isMoveY ? 1 : 0);
+            IsMove = isMoveX || isMoveY;
             
             dir *= Runner.DeltaTime * status.GetMoveSpeed() * 110f;
 
