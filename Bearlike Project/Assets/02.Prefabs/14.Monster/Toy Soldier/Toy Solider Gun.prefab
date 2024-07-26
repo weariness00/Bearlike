@@ -138,9 +138,12 @@ MonoBehaviour:
   includeCollide:
     serializedVersion: 2
     m_Bits: 266241
+  leftIK: {fileID: 0}
+  rightIK: {fileID: 0}
   playerCameraController: {fileID: 0}
   id: 1000
   explain: 
+  handType: 0
   shootEffect: {fileID: 0}
   shotsmoke: {fileID: 0}
   shotOverHeatingPropertyBlock: {fileID: 0}
@@ -297,18 +300,18 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6831913940448254236}
-  - component: {fileID: 1326746115929638593}
   - component: {fileID: 3173287629988651953}
   - component: {fileID: 4854486632741455185}
+  - component: {fileID: 2465595668671191795}
+  - component: {fileID: 1326746115929638593}
   - component: {fileID: 4502984420150019297}
   - component: {fileID: 2967954220686134632}
   - component: {fileID: 4385394217357682011}
   - component: {fileID: 6882891109429115379}
+  - component: {fileID: 5868938334061884039}
   - component: {fileID: -3147515602916452630}
   - component: {fileID: 1456493517147007326}
   - component: {fileID: 1867202893997585719}
-  - component: {fileID: 2465595668671191795}
-  - component: {fileID: 5868938334061884039}
   m_Layer: 0
   m_Name: Toy Solider Gun
   m_TagString: Untagged
@@ -336,40 +339,6 @@ Transform:
   - {fileID: 8527340871944649815}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1326746115929638593
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6303898161483548060}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 229bb55798ef33648afbeca6e10b2fb1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _IsAsyncClient: []
-  _IsSpawnSuccess:
-    _value: 0
-  rigidbody: {fileID: 0}
-  collider: {fileID: 0}
-  networkAnimator: {fileID: 0}
-  status: {fileID: 0}
-  lootingTable: {fileID: 0}
-  pivot: {fileID: 4103758611438689336}
-  aggroController: {fileID: 0}
-  navMeshAgent: {fileID: 0}
-  id: 1
-  explain: 
-  type: 
-  crowdControlType: 0
-  targetMask:
-    serializedVersion: 2
-    m_Bits: 4096
-  dieEffectRef:
-    RawGuidValue: f14573c9eef1b524a9ec2d47dcdd0255
-  animator: {fileID: 2066719331226944068}
-  gun: {fileID: 8442329718651968294}
 --- !u!114 &3173287629988651953
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -471,6 +440,55 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isDrop: 0
   _dropItems: []
+--- !u!114 &2465595668671191795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6303898161483548060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6ca09b699fa07047ac0ec6c26b43509, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  targetScore: 0
+  aggroRange: 0
+--- !u!114 &1326746115929638593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6303898161483548060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 229bb55798ef33648afbeca6e10b2fb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
+  rigidbody: {fileID: 0}
+  collider: {fileID: 0}
+  networkAnimator: {fileID: 0}
+  status: {fileID: 0}
+  lootingTable: {fileID: 0}
+  pivot: {fileID: 4103758611438689336}
+  aggroController: {fileID: 0}
+  navMeshAgent: {fileID: 0}
+  id: 1
+  explain: 
+  type: 
+  crowdControlType: 0
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 4096
+  dieEffectRef:
+    RawGuidValue: f14573c9eef1b524a9ec2d47dcdd0255
+  animator: {fileID: 2066719331226944068}
+  gun: {fileID: 8442329718651968294}
 --- !u!114 &4502984420150019297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -489,8 +507,8 @@ MonoBehaviour:
   NestedObjects:
   - {fileID: 284067326382795728}
   NetworkedBehaviours:
-  - {fileID: 1326746115929638593}
   - {fileID: 3173287629988651953}
+  - {fileID: 1326746115929638593}
   - {fileID: 2967954220686134632}
   - {fileID: 4385394217357682011}
   - {fileID: 2066719331226944068}
@@ -562,6 +580,25 @@ NavMeshAgent:
   m_BaseOffset: 0.02
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &5868938334061884039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6303898161483548060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03bc8063c9e95401f9a8a38bc716750d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Method: 2
+  m_Curve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &-3147515602916452630
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -622,40 +659,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.5, y: 2, z: 0.1}
   m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &2465595668671191795
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6303898161483548060}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6ca09b699fa07047ac0ec6c26b43509, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 0}
-  targetScore: 0
-  aggroRange: 0
---- !u!114 &5868938334061884039
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6303898161483548060}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03bc8063c9e95401f9a8a38bc716750d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Method: 2
-  m_Curve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!1 &8948631129590595426
 GameObject:
   m_ObjectHideFlags: 0
