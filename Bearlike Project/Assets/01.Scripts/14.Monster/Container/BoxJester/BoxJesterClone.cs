@@ -25,6 +25,8 @@ namespace Monster.Container
 
         [Header("HandAttack Properties")] 
         [SerializeField] private GameObject[] hands;
+        [SerializeField] private GameObject hand;
+        [SerializeField] private float punchTime;
         
         [Header("AttackObject")] 
         [SerializeField] private GameObject boom;
@@ -42,6 +44,7 @@ namespace Monster.Container
         private BehaviorTreeRunner _behaviorTreeRunner;
         private GameObject[] _players;
         private GameObject[] _masks;
+        private GameObject _handModel;
         
         enum MaskType
         {
@@ -82,6 +85,8 @@ namespace Monster.Container
             
             DieAction += () => animator.PlayDieAction();
             DieAction += () => Destroy(gameObject, 3);
+            
+            _handModel = transform.Find("Clown").Find("Hand").gameObject;
         }
         
         #endregion
@@ -345,16 +350,13 @@ namespace Monster.Container
 
         #region Smile
 
-        private Vector3 targetPosition = new Vector3(0, 0, 0);
+         private Vector3 targetPosition = new Vector3(0, 0, 0);
         private Vector3 fakeTargetPosition = new Vector3(0, 0, 0);
         private int minDistance = int.MaxValue;
         private int type = 0;
 
         private INode.NodeState PunchReady()
         {
-            // TODO : 코루틴으로 시간 맞춰서 주먹을 움직여야함
-            // TODO : 아니면 애니메이션을 두개로 쪼개야함
-            // 주먹질 애니메이션 실행
             if (false == _animationing)
             {
                 // Calculation
@@ -369,7 +371,7 @@ namespace Monster.Container
                     if (minDistance > distance)
                     {
                         minDistance = distance;
-                        targetPosition = player.transform.position + new Vector3(0, 0.75f, 0);
+                        targetPosition = player.transform.position + new Vector3(0, 2f, 0);
                         fakeTargetPosition = targetPosition;
                     }
                 }
@@ -378,24 +380,24 @@ namespace Monster.Container
                 // if (attackDistance < minDistance)
                 //     return INode.NodeState.Failure;
                 
-                // Animation Play
-                animator.PlayPunchReadyAction();
-                _animationing = true;
-
                 foreach(var player in _players)
                 {
                     if (_players.Length < 2)
                     {
-                        fakeTargetPosition = transform.position + new Vector3(0, 10, 0);
+                        fakeTargetPosition = transform.position + new Vector3(0, 20, 0);
                     }
-                    else if (player.transform.position != targetPosition)
+                    else if (player.transform.position != targetPosition - new Vector3(0, 2f, 0))
                     {
                         fakeTargetPosition = (player.transform.position + targetPosition) / 2;
                         break;
-                    }        
+                    }
                 }
 
                 type = Random.Range(0, 2);
+                
+                // Animation Play
+                animator.PlayPunchReadyAction();
+                _animationing = true;
             }
 
             if (false == animator.PunchReadyTimerExpired)
@@ -410,23 +412,30 @@ namespace Monster.Container
         
         private INode.NodeState Punching()
         {
-            // TODO : 코루틴으로 시간 맞춰서 주먹을 움직여야함
-            // TODO : 아니면 애니메이션을 두개로 쪼개야함
-            
-            // TODO : 먼저 몸을 돌려야 자연스럽지 않을까?
-            
-            
             if (false == _animationing)
             {
-                // dotween으로 주먹 이동 및 충돌 처리
-                PunchAttackRPC(type, targetPosition);
+                HandActiveRPC(false);
+                
+                Runner.SpawnAsync(hand, _handModel.transform.position, transform.rotation, null,
+                    (runner, o) =>
+                    {
+                        var h = o.GetComponent<BoxJesterAttackHand>();
+
+                        h.targetPosition = targetPosition;
+                        h.handType = type;
+                        h.isFake = false;
+                        h.time = punchTime;
+                    });
+                
                 animator.PlayPunchAction();
                 _animationing = true;
             }
 
             if (false == animator.PunchTimerExpired)
                 return INode.NodeState.Running;
-
+            
+            HandActiveRPC(true);
+            
             _animationing = false;
             DebugManager.Log($"Punching");
             
@@ -435,16 +444,22 @@ namespace Monster.Container
         
         private INode.NodeState FakePunching()
         {
-            // TODO : 코루틴으로 시간 맞춰서 주먹을 움직여야함
-            // TODO : 아니면 애니메이션을 두개로 쪼개야함
-            
-            // TODO : 먼저 몸을 돌려야 자연스럽지 않을까?
-            
-            
             if (false == _animationing)
             {
-                // dotween으로 주먹 절반 이동 및 다른 방향으로 다시 이동 및 충돌 처리
-                FakePunchAttackRPC(type, targetPosition, fakeTargetPosition);
+                HandActiveRPC(false);
+                
+                Runner.SpawnAsync(hand, _handModel.transform.position, transform.rotation, null,
+                    (runner, o) =>
+                    {
+                        var h = o.GetComponent<BoxJesterAttackHand>();
+
+                        h.targetPosition = targetPosition;
+                        h.fakeTargetPosition = fakeTargetPosition;
+                        h.handType = type;
+                        h.isFake = true;
+                        h.time = punchTime;
+                    });
+                
                 animator.PlayPunchAction();
                 _animationing = true;
             }
@@ -452,6 +467,8 @@ namespace Monster.Container
             if (false == animator.PunchTimerExpired)
                 return INode.NodeState.Running;
 
+            HandActiveRPC(true);
+            
             _animationing = false;
             DebugManager.Log($"Fake Punching");
             
@@ -689,63 +706,11 @@ namespace Monster.Container
         }
 
         #region Punch Attack
-
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void PunchAttackRPC(int type, Vector3 targetPosition)
-        {
-            animator.networkAnimator.Animator.enabled = false;
-            hands[type].transform.DOMove(targetPosition, 2).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
-            
-            DebugManager.Log($"targetPosition : {targetPosition}");
-            
-            StartCoroutine(ComeBackPunchCoroutine(2, type));
-        }
-            
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void FakePunchAttackRPC(int type, Vector3 targetPosition, Vector3 fakeTargetPosition)
-        {
-            animator.networkAnimator.Animator.enabled = false;
-            hands[type].transform.DOMove(fakeTargetPosition, 1).SetEase(Ease.OutCirc); // TODO : 공격 속도를 변수처리 해야함
-
-            StartCoroutine(RealTartgetMoveCoroutine(1.0f, type, targetPosition));
-            StartCoroutine(ComeBackPunchCoroutine(2, type));
-        }
-
-        private IEnumerator RealTartgetMoveCoroutine(float waitTime, int type, Vector3 targetPosition)
-        {
-            yield return new WaitForSeconds(waitTime);
-            RealPunchAttackRPC(type, targetPosition);
-        }
         
         [Rpc(RpcSources.All, RpcTargets.All)]
-        private void RealPunchAttackRPC(int type, Vector3 targetPosition)
+        private void HandActiveRPC(bool value)
         {
-            hands[type].transform.DOMove(targetPosition, 1).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
-        }
-
-        private IEnumerator ComeBackPunchCoroutine(float waitTime, int type)
-        {
-            yield return new WaitForSeconds(waitTime);
-
-            ComeBackPunchRPC(type);
-            yield return new WaitForSeconds(1.0f);
-            AnimatorOnRPC();
-        }
-        
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void ComeBackPunchRPC(int type)
-        {
-            float tmp = 3f;
-            if (type == 0)
-                tmp = -3f;
-            
-            hands[type].transform.DOLocalMove(new Vector3(tmp, 4f, 3f), 1).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
-        }
-        
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void AnimatorOnRPC()
-        {
-            animator.networkAnimator.Animator.enabled = true;
+            _handModel.SetActive(value);
         }
 
         #endregion

@@ -242,8 +242,8 @@ namespace Monster.Container
                     new SequenceNode(
                         new ActionNode(PunchReady),
                         new ActionNode(FakePunching)
-                    )
-                    // new ActionNode(ClonePattern)
+                    ),
+                    new ActionNode(ClonePattern)
                 );
 
             var Smile = new SequenceNode(

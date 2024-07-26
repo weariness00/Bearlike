@@ -8,6 +8,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 909476862914970855, guid: 7e83b49d50c24824299f9638f474eaaa,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2169112673862639238, guid: 7e83b49d50c24824299f9638f474eaaa,
         type: 3}
       propertyPath: m_Name
@@ -294,6 +299,8 @@ MonoBehaviour:
   hands:
   - {fileID: 6019504179577059023}
   - {fileID: 3909731751165510668}
+  hand: {fileID: 6613269977434323961, guid: 8895df04f8d90a049b1e305a13fdc4cc, type: 3}
+  punchTime: 3
   boom: {fileID: 2660829121576087624, guid: 79a615f49cd155f47ad33ed304076bfd, type: 3}
   tpEffect: {fileID: 5208845442729889599}
   bloodShieldMat: {fileID: 2100000, guid: bb7ca1637408fda499a1d8e0170ab79f, type: 2}
