@@ -72,9 +72,9 @@ namespace Monster.Container
             // Collider 초기화
             // Deadbody로 인해 무조건 Start에서 초기화 해야된다.
             defaultCollider.gameObject.layer = 0;
-            defaultCollider.gameObject.tag = "Default";
+            defaultCollider.gameObject.tag = "Untagged";
             stabbingCollider.gameObject.layer = 0;
-            stabbingCollider.gameObject.tag = "Default";
+            stabbingCollider.gameObject.tag = "Untagged";
             
             defaultCollider.enabled = false;
             stabbingCollider.enabled = false;

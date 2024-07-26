@@ -165,7 +165,7 @@ namespace Monster
             Destroy(this);
 
             // Effect
-            if (dieEffectRef != NetworkPrefabRef.Empty)
+            if (HasStateAuthority && dieEffectRef != NetworkPrefabRef.Empty)
             {
                 var obj = await Runner.SpawnAsync(dieEffectRef, pivot.position, pivot.rotation);
                 Destroy(obj.gameObject, 2f);
