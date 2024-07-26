@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Aggro;
 using Data;
@@ -158,14 +159,6 @@ namespace Player
                 }
             };
             
-            // EventBusManager.Subscribe(EventBusType.MonsterKill, (Tuple<PlayerController, MonsterBase> info) =>
-            // {
-            //     var player = info.Item1;
-            //     var monster = info.Item2;
-            //     
-            //     player.
-            // });
-            
             aggroTarget.AddCondition(AggroCondition);
         }
 
@@ -187,7 +180,7 @@ namespace Player
             // 무기 초기화
             ChangeWeaponRPC(0);
             SetLayer();
-            
+
             // 스킬 초기화
             foreach (var skill in skillSystem.skillList)
             {
@@ -219,8 +212,9 @@ namespace Player
                 CanvasActive(false);
                 name = "Remote Player";
             }
+            
+            StartCoroutine(InitCoroutine());
 
-            SpawnedSuccessRPC(UserData.ClientNumber, true);
             _dashTimer = TickTimer.CreateFromTicks(Runner, 0);
         }
 
@@ -289,6 +283,26 @@ namespace Player
             buffCanvas.gameObject.SetActive(value);
             goodsCanvas.gameObject.SetActive(value);
             skillCanvas.gameObject.SetActive(value);
+        }
+
+        private IEnumerator InitCoroutine()
+        {
+            LoadingManager.AddWait();
+            
+            GameManager.Instance.isControl = false;
+            float t = 0;
+            while (t < 1)
+            {
+                t += Time.deltaTime;
+
+                simpleKcc.SetLookRotation(Vector3.Lerp(Vector3.zero, new Vector3(0,720,0), t));
+                yield return null;
+            }
+
+            GameManager.Instance.isControl = true;
+            
+            LoadingManager.EndWait();
+            SpawnedSuccessRPC(UserData.ClientNumber, true);
         }
         
         private void StatusInit()
