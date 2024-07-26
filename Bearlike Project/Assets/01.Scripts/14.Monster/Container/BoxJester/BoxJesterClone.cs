@@ -626,7 +626,7 @@ namespace Monster.Container
         {
             if (false == _animationing)
             {
-                animator.networkAnimator.Animator.enabled = false;
+                animator.enabled = false;
                 animator.PlaySlapAction();
                 _animationing = true;
                 
@@ -637,7 +637,7 @@ namespace Monster.Container
                 return INode.NodeState.Running;
 
             _animationing = false;
-            animator.networkAnimator.Animator.enabled = true;
+            animator.enabled = true;
             DebugManager.Log($"Slap Attack");
             
             return INode.NodeState.Success;
