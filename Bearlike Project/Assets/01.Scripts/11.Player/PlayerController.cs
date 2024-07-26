@@ -52,6 +52,7 @@ namespace Player
         [Header("Player Related")] 
         public PlayerStatus status;
         public PlayerCameraController cameraController;
+        public PlayerWeaponCameraController weaponCameraController;
         public PlayerSoundController soundController;
         public PlayerRigController rigController;
         public SkillSystem skillSystem;
@@ -129,6 +130,7 @@ namespace Player
             // 상호작용으로 착요하게 바꿀 예정
             status = gameObject.GetComponent<PlayerStatus>();
             cameraController = GetComponent<PlayerCameraController>();
+            weaponCameraController = GetComponentInChildren<PlayerWeaponCameraController>();
             soundController = GetComponent<PlayerSoundController>();
             rigController = GetComponentInChildren<PlayerRigController>();
             weaponSystem = gameObject.GetComponentInChildren<WeaponSystem>();
@@ -596,6 +598,9 @@ namespace Player
                 }
                 else
                     rigController.RightArmWeight = 0;
+                
+                // Weapon Type에 따른 Camera 위치 변경
+                weaponCameraController.ChangeType(weaponSystem.equipment);
             }
         }
         

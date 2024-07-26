@@ -3913,14 +3913,15 @@ MonoBehaviour:
   roomUserUI: {fileID: 1969137341}
   gameScene:
     sceneAsset: {fileID: 102900000, guid: e7baadc751a3c7842a48433dc69d5b99, type: 3}
-    scenePath: Assets/00.Scenes/Game/Game.unity
+    scenePath: Assets/00.Scenes/Game/Game/Game.unity
   playerJoinLoadingScene:
     sceneAsset: {fileID: 102900000, guid: 83f46abdc7eccb64ba3fdd680d947509, type: 3}
-    scenePath: Assets/00.Scenes/Game/Loading.unity
+    scenePath: Assets/00.Scenes/Game/Lobby/Lobby Loading.unity
   magicCotton:
     sceneAsset: {fileID: 102900000, guid: fd2c72e28e9f3ce4482fa026113da181, type: 3}
     scenePath: Assets/00.Scenes/Game/Lobby/Magic Cotton.unity
   PlayerPrefabRefs:
+  - RawGuidValue: 47e5cbd256e36be40b45381ed7145ae5
   - RawGuidValue: 09e6f7f05e1dad548a1cf26be7540626
   - RawGuidValue: cb2434b185489e8449a19bbc7904aa8e
   currenPlayerCharacterType: 0
@@ -8898,6 +8899,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38a8bf10f25947adbc8980fb18faf9bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
   users_Text:
   - {fileID: 1690135258}
   - {fileID: 1072580394}
