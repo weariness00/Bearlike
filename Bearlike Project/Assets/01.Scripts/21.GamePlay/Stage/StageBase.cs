@@ -311,6 +311,7 @@ namespace GamePlay.Stage
             isStageClear = true;
 
             lootingTable.SpawnDropItem();
+            ;
 
             if (destructObject != null) destructObject.tag = "Destruction";
 

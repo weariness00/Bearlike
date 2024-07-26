@@ -197,18 +197,20 @@ namespace UI
             if (Runner.IsServer)
             {
                 int bicSelectIndex = 0;
+                int index = 0;
                 for (int i = 0; i < StageVoteCount.Length; i++)
                 {
                     int vote = StageVoteCount.Get(i);
                     if (bicSelectIndex < vote)
                     {
-                        bicSelectIndex = i;
+                        bicSelectIndex = vote;
+                        index = i;
                     }
                 }
 
                 IsSettingUI = false;
 
-                GameManager.Instance.SetStage(nextStageList[bicSelectIndex]);
+                GameManager.Instance.SetStage(nextStageList[index]);
             }
 
             foreach (var stageSelectUIHandler in stageSelectUIHandlerList)

@@ -1,12 +1,14 @@
 ﻿using System;
+using Fusion;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Monster.Container
 {
     public class DiceAnimator : MonoBehaviour
     {
         public Dice dice;
-        [HideInInspector] public Animator animator;
+        [HideInInspector] public NetworkMecanimAnimator networkAnimator;
 
         public AnimationClip attackClip;
         
@@ -16,10 +18,10 @@ namespace Monster.Container
 
         private void Awake()
         {
-            animator = GetComponent<Animator>();
+            networkAnimator = GetComponent<NetworkMecanimAnimator>();
         }
 
-        public void PlayAttack() => animator.SetTrigger(AniAttack);
+        public void PlayAttack() => networkAnimator.SetTrigger(AniAttack);
 
         #region Event Function
 

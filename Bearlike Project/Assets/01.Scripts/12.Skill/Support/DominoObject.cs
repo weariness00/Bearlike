@@ -37,12 +37,12 @@ namespace Skill.Support
             {
                 DebugManager.Log("충돌 도미노");
                 var ms = other.GetComponentInParent<MonsterStatus>();
-                if (ms)
+                if (ms.gameObject.layer != LayerMask.NameToLayer("DeadBody"))
                 {
                     // 타격을 입은 몬스터인지 확인
                     if (_damageMonsterSet.Contains(ms.gameObject) == false)
                     {
-                        ms.ApplyDamageRPC(_status.CalDamage(out bool isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, Object.Id);
+                        ms.ApplyDamageRPC(_status.AddAllDamage(), DamageTextType.Normal, Object.Id);
 
                         _damageMonsterSet.Add(ms.gameObject);
                     }
