@@ -109,11 +109,12 @@ namespace Loading
             ++_waitCount;
             _downByte.Max += downByte;
         }
-        
+
+        private Coroutine _endWaitCoroutine;
         private void EndWaitActionEvent()
         {
-            StopCoroutine(EndWaitCoroutine());
-            StartCoroutine(EndWaitCoroutine());
+            if(_endWaitCoroutine != null) StopCoroutine(_endWaitCoroutine); 
+            _endWaitCoroutine = StartCoroutine(EndWaitCoroutine());
         }
         private IEnumerator EndWaitCoroutine()
         {
