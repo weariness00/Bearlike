@@ -412,20 +412,20 @@ namespace Status
 
         public virtual void SetJsonData(StatusJsonData json)
         {
-            hp.Max = json.GetInt("Hp Max");
-            hp.Current = json.GetInt("Hp Current");
+            if(json.HasInt("Hp Max")) hp.Max = json.GetInt("Hp Max");
+            if(json.HasInt("Hp Max")) hp.Current = json.GetInt("Hp Current");
             
-            damage.Max = json.GetInt("Damage Max");
-            damage.Min = json.GetInt("Damage Min");
-            damage.Current = json.GetInt("Damage Current");
+            if(json.HasInt("Damage Max")) damage.Max = json.GetInt("Damage Max");
+            if(json.HasInt("Damage Min")) damage.Min = json.GetInt("Damage Min");
+            if(json.HasInt("Damage Current")) damage.Current = json.GetInt("Damage Current");
 
             if(json.HasFloat("Damage Multiple")) damageMultiple = json.GetFloat("Damage Multiple");
             if(json.HasFloat("CriticalHit Multiple")) damageMultiple = json.GetFloat("CriticalHit Multiple");
             criticalHitChance.Current = json.GetFloat("CriticalHit Chance");
             
-            defence.Max = json.GetInt("Defence Max");
-            defence.Min = json.GetInt("Defence Min");
-            defence.Current = json.GetInt("Defence Current");
+            if(json.HasInt("Defence Max")) defence.Max = json.GetInt("Defence Max");
+            if(json.HasInt("Defence Min")) defence.Min = json.GetInt("Defence Min");
+            if(json.HasInt("Defence Current")) defence.Current = json.GetInt("Defence Current");
             
             avoid.Current = json.GetFloat("Avoid Current");
             
