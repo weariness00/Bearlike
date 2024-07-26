@@ -24,6 +24,7 @@ namespace Monster.Container
         // Test용으로 이렇게 만든거임
         // 실제는 여기서 시간 설정해야함
         public float time;
+        private float _time;
         
         private void Awake()
         {
@@ -37,12 +38,11 @@ namespace Monster.Container
         public override void Spawned()
         {
             base.Spawned();
-            Destroy(gameObject, time);
+            Destroy(gameObject, 3.0f);
             
-            if(isFake)
-                FakePunchAttackRPC(handType, targetPosition, fakeTargetPosition);
-            else
-                PunchAttackRPC(handType, targetPosition);
+            _time = time - 0.5f;
+            
+            PunchStartRPC();
         }
         
         private void OnTriggerEnter(Collider other)
@@ -66,60 +66,77 @@ namespace Monster.Container
         #region Punch Attack
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        private void PunchAttackRPC(int type, Vector3 targetPosition)
+        private void PunchStartRPC()
         {
-            // TODO : Coroutine으로 해야하나
-            hands[type].transform.LookAt(targetPosition);
-            hands[type].transform.Rotate(90.0f, 0, 0);
+            hands[handType].transform.DOLocalMove(hands[handType].transform.localPosition - hands[handType].transform.up * 3, 0.5f).SetEase(Ease.Linear);
             
-            hands[type].transform.DOMove(targetPosition, time / 2).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
+            StartCoroutine(PunchCoroutine());
+        }
+
+        IEnumerator PunchCoroutine()
+        {
+            yield return new WaitForSeconds(0.5f);
             
-            StartCoroutine(ComeBackPunchCoroutine(type));
+            if(isFake)
+                FakePunchAttackRPC();
+            else
+                PunchAttackRPC();
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void PunchAttackRPC()
+        {
+            hands[handType].transform.LookAt(targetPosition);
+            hands[handType].transform.Rotate(90.0f, 0, 0);
+
+            hands[handType].transform.DOMove(targetPosition, _time / 2).SetEase(Ease.InCirc);
+            
+            StartCoroutine(ComeBackPunchCoroutine());
         }
             
         [Rpc(RpcSources.All, RpcTargets.All)]
-        private void FakePunchAttackRPC(int type, Vector3 targetPosition, Vector3 fakeTargetPosition)
+        private void FakePunchAttackRPC()
         {
-            hands[type].transform.LookAt(fakeTargetPosition);
-            hands[type].transform.Rotate(90.0f, 0, 0);
-            
-            hands[type].transform.DOMove(fakeTargetPosition, time / 4).SetEase(Ease.OutCirc); // TODO : 공격 속도를 변수처리 해야함
+            hands[handType].transform.LookAt(fakeTargetPosition);
+            hands[handType].transform.Rotate(90.0f, 0, 0);
 
-            StartCoroutine(RealTartgetMoveCoroutine(type, targetPosition));
-            StartCoroutine(ComeBackPunchCoroutine(type));
+            hands[handType].transform.DOMove(fakeTargetPosition, _time / 4).SetEase(Ease.OutCirc);
+
+            StartCoroutine(RealTartgetMoveCoroutine());
+            StartCoroutine(ComeBackPunchCoroutine());
         }
 
-        private IEnumerator RealTartgetMoveCoroutine(int type, Vector3 targetPosition)
+        private IEnumerator RealTartgetMoveCoroutine()
         {
-            yield return new WaitForSeconds(time / 4);
-            RealPunchAttackRPC(type, targetPosition);
+            yield return new WaitForSeconds(_time / 4);
+            RealPunchAttackRPC();
         }
         
         [Rpc(RpcSources.All, RpcTargets.All)]
-        private void RealPunchAttackRPC(int type, Vector3 targetPosition)
+        private void RealPunchAttackRPC()
         {
-            hands[type].transform.LookAt(targetPosition);
-            hands[type].transform.Rotate(90.0f, 0, 0);
+            hands[handType].transform.LookAt(targetPosition);
+            hands[handType].transform.Rotate(90.0f, 0, 0);
             
-            hands[type].transform.DOMove(targetPosition, time / 4).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
+            hands[handType].transform.DOMove(targetPosition, _time / 4).SetEase(Ease.InCirc);
         }
 
-        private IEnumerator ComeBackPunchCoroutine(int type)
+        private IEnumerator ComeBackPunchCoroutine()
         {
-            yield return new WaitForSeconds(time / 2);
+            yield return new WaitForSeconds(_time / 2);
 
-            ComeBackPunchRPC(type);
+            ComeBackPunchRPC();
             yield return new WaitForSeconds(1.0f);
         }
         
         [Rpc(RpcSources.All, RpcTargets.All)]
-        private void ComeBackPunchRPC(int type)
+        private void ComeBackPunchRPC()
         {
             float tmp = 5.5f;
-            if (type == 0)
+            if (handType == 0)
                 tmp = -5.5f;
             
-            hands[type].transform.DOLocalMove(new Vector3(tmp, 7.9f, 6.5f), time / 2).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
+            hands[handType].transform.DOLocalMove(new Vector3(tmp, 6.5f, -8.1f), _time / 2).SetEase(Ease.InCirc);
         }
 
         #endregion
