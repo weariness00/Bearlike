@@ -119,7 +119,7 @@ namespace Monster.Container
             if (type == 0)
                 tmp = -5.5f;
             
-            hands[type].transform.DOLocalMove(new Vector3(tmp, -6.5f, 7.9f), time / 2).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
+            hands[type].transform.DOLocalMove(new Vector3(tmp, 7.9f, 6.5f), time / 2).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
         }
 
         #endregion

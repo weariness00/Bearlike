@@ -242,8 +242,8 @@ namespace Monster.Container
                     new SequenceNode(
                         new ActionNode(PunchReady),
                         new ActionNode(FakePunching)
-                    ),
-                    new ActionNode(ClonePattern)
+                    )
+                    // new ActionNode(ClonePattern)
                 );
 
             var Smile = new SequenceNode(
@@ -300,23 +300,23 @@ namespace Monster.Container
 
             var Attack = new SelectorNode(
                     false,
-                    Smile,
-                    Cry,
-                    Angry
+                    Smile
+                    // Cry,
+                    // Angry
                 );
             
             #endregion
 
             var AttackPattern = new SelectorNode(
                 true, 
-                TP,
-                Hide,
+                // TP,
+                // Hide,
                 Attack
             );
         
             var loop = new SequenceNode(
-                Idle
-                // AttackPattern
+                Idle,
+                AttackPattern
             );
 
             return loop;
@@ -510,9 +510,6 @@ namespace Monster.Container
 
         private INode.NodeState PunchReady()
         {
-            // TODO : 코루틴으로 시간 맞춰서 주먹을 움직여야함
-            // TODO : 아니면 애니메이션을 두개로 쪼개야함
-            // 주먹질 애니메이션 실행
             if (false == _animationing)
             {
                 // Calculation
@@ -536,10 +533,6 @@ namespace Monster.Container
                 // if (attackDistance < minDistance)
                 //     return INode.NodeState.Failure;
                 
-                // Animation Play
-                animator.PlayPunchReadyAction();
-                _animationing = true;
-
                 foreach(var player in _players)
                 {
                     if (_players.Length < 2)
@@ -550,10 +543,14 @@ namespace Monster.Container
                     {
                         fakeTargetPosition = (player.transform.position + targetPosition) / 2;
                         break;
-                    }        
+                    }
                 }
 
                 type = Random.Range(0, 2);
+                
+                // Animation Play
+                animator.PlayPunchReadyAction();
+                _animationing = true;
             }
 
             if (false == animator.PunchReadyTimerExpired)
