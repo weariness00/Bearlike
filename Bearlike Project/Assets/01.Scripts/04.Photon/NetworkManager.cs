@@ -155,6 +155,8 @@ namespace Photon
                               "누군가가 세션을 나가면 정보 업데이트 해줘야함\n" +
                               "세션에 한명도 없으면 json에 세션 지워줘야함");
 
+            LoadingManager.AddWait();
+            
             // Create the NetworkSceneInfo from the current scene
             var scene = SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(matchingScene));
             var sceneInfo = new NetworkSceneInfo();
