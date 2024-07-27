@@ -52,11 +52,11 @@ namespace Skill.Container
             if (durationTimer.Expired(Runner) == false)
             {
                 var timeValue = _currentDurationTime / _duration;
-                ownerPlayer.buffCanvas.SetTimer(skillName, timeValue);
+                ownerPlayer.uiController.buffCanvas.SetTimer(skillName, timeValue);
             }
-            else if (ownerPlayer.buffCanvas.HasUI(skillName))
+            else if (ownerPlayer.uiController.buffCanvas.HasUI(skillName))
             {
-                ownerPlayer.buffCanvas.RemoveUI(skillName);
+                ownerPlayer.uiController.buffCanvas.RemoveUI(skillName);
             }
         }
 
@@ -90,12 +90,12 @@ namespace Skill.Container
             status.damageMultiple = multiple;
             status.moveSpeedMultiple = multiple;
 
-            if (ownerPlayer.buffCanvas.HasUI(skillName) == false)
+            if (ownerPlayer.uiController.buffCanvas.HasUI(skillName) == false)
             {
-                ownerPlayer.buffCanvas.SpawnUI(skillName);
-                ownerPlayer.buffCanvas.SetIcon(skillName, icon);
+                ownerPlayer.uiController.buffCanvas.SpawnUI(skillName);
+                ownerPlayer.uiController.buffCanvas.SetIcon(skillName, icon);
             }
-            ownerPlayer.buffCanvas.SetStackText(skillName, _comboCount);
+            ownerPlayer.uiController.buffCanvas.SetStackText(skillName, _comboCount);
         }
     }
 }

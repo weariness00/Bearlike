@@ -42,18 +42,6 @@ namespace Monster.Container
         }
 
         #endregion
-
-        #region Member Function
-
-        // 몸이 물체를 관통하는 상태로 만듬
-        // 기본적인 건물과 공격 물체들은 관통하지 못함
-        // 시체, 플레이어, 몬스터 등만 관통
-        private void BodyPenetrate()
-        {
-            
-        }
-
-        #endregion
         
         #region BT Function
 
@@ -63,7 +51,7 @@ namespace Monster.Container
             var idle = new ActionNode(Idle);
             var move = new ActionNode(Move);
             var closeAttack = new Detector(() => CheckStraightDis(1f),new ActionNode(DefaultAttack)) ; // 근접 공격
-            var longAttack = new Detector(() => stabbingAttackTimer.Expired(Runner) && CheckStraightDis(status.attackRange.Current), new ActionNode(StabbingAttack));
+            var longAttack = new Detector(() => stabbingAttackTimer.Expired(Runner) && CheckStraightDis(stabbingDistance), new ActionNode(StabbingAttack));
 
             // TargetTransform == null 경우
             var offTarget = new SelectorNode(
@@ -195,7 +183,7 @@ namespace Monster.Container
                 animator.AttackSpeed = status.attackSpeed.Current;
                 animator.PlayStabbingAttack();
                 
-                DisableNavMeshAgent(false, true);
+                DisableNavMeshAgent(false, false);
                 rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
             }
             

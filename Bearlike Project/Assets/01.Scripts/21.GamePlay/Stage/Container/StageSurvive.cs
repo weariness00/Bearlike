@@ -14,11 +14,6 @@ namespace GamePlay.StageLevel.Container
         [HideInInspector] 
         public float currentTime = 0f;
         private float _startTime;
-        
-        public override void StageInit()
-        {
-            base.StageInit();
-        }
 
         public override void StageStart()
         {
@@ -40,16 +35,7 @@ namespace GamePlay.StageLevel.Container
                 currentTime = GameManager.Instance.PlayTimer - _startTime;
             }
         }
-
-        public override void StageClear()
-        {
-            if (isStageClear)
-            {
-                return;
-            }
-            base.StageClear();
-        }
-
+        
         public override void StageOver()
         {
             if (isStageOver)

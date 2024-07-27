@@ -36,14 +36,6 @@ namespace UI
             UserData.Instance.NameUpdateAfterAction += DataUpdateRPC;
         }
 
-        private void Update()
-        {   
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                OnExit();
-            }
-        }
-
         private void OnDestroy()
         {
             UserData.Instance.UserJoinAction -= UserActionToDataUpdate;

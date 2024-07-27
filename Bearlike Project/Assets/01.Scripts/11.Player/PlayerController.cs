@@ -6,22 +6,15 @@ using Data;
 using Fusion;
 using Fusion.Addons.SimpleKCC;
 using GamePlay;
-using GamePlay.UI;
-using Item;
 using Loading;
 using Manager;
-using Monster;
 using Photon;
+using Player.Container;
 using Skill;
 using Status;
-using UI;
-using UI.Skill;
-using UI.Status;
 using UI.Weapon;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
-using User;
 using Weapon;
 using Weapon.Gun;
 
@@ -52,38 +45,26 @@ namespace Player
         // public Status status;
         [Header("Player Related")] 
         public PlayerStatus status;
+        public PlayerUIController uiController;
         public PlayerCameraController cameraController;
         public PlayerWeaponCameraController weaponCameraController;
         public PlayerSoundController soundController;
         public PlayerRigController rigController;
         public SkillSystem skillSystem;
         public WeaponSystem weaponSystem;
-        
-        [Header("UI")]
-        public Canvas gunUI;
-        public Canvas hpUI;
-        public ItemInventory itemInventory;
-        public SkillInventory skillInventory;
-        public SkillSelectUI skillSelectUI;
-        public SkillCanvas skillCanvas;
-        public PlayerEXP levelCanvas;
-        public BuffCanvas buffCanvas;
-        public GoodsCanvas goodsCanvas;
-        public GameProgressCanvas progressCanvas;
         public AggroTarget aggroTarget;
 
         public Animator animator;
         [HideInInspector] public SimpleKCC simpleKcc;
         private HitboxRoot _hitboxRoot;
-        private StageSelectUI _stageSelectUI;
         
         [Tooltip("마우스 움직임에 따라 회전할 오브젝트")] public List<GameObject> mouseRotateObjects;
 
         public Action<GameObject> MonsterKillAction;
         public Action<int> AfterApplyDamageAction { get; set; }
-
+        
+        [Networked] public NetworkBool IsCursor { get; private set; } = false;
         [Networked] public float W { get; set; } = 1f;
-        private TickTimer _uiKeyDownTimer;
         private TickTimer _dashTimer;
 
         public float _dashAmount = 100.0f;
@@ -91,7 +72,7 @@ namespace Player
         private ChangeDetector _changeDetector;
         
         #region Animation
-        
+
         [Networked] private NetworkBool IsMove { get; set; }
         
         private int OneHandGunLayer = 1;
@@ -131,6 +112,7 @@ namespace Player
             LoadingManager.AddWait();
             
             status = gameObject.GetComponent<PlayerStatus>();
+            uiController = GetComponentInChildren<PlayerUIController>();
             cameraController = GetComponent<PlayerCameraController>();
             weaponCameraController = GetComponentInChildren<PlayerWeaponCameraController>();
             soundController = GetComponent<PlayerSoundController>();
@@ -138,8 +120,6 @@ namespace Player
             weaponSystem = gameObject.GetComponentInChildren<WeaponSystem>();
             animator = GetComponentInChildren<Animator>();
             aggroTarget = GetComponent<AggroTarget>();
-
-            _stageSelectUI = FindObjectOfType<StageSelectUI>();
 
             _hitboxRoot = GetComponent<HitboxRoot>();
             
@@ -150,17 +130,29 @@ namespace Player
 
         private void Start()
         {
-            status.LevelUpAction += () =>
-            {
-                if (HasInputAuthority)
-                {
-                    if (skillSelectUI.GetSelectCount() <= 0)
-                        skillSelectUI.SpawnRandomSkillBlocks(3);
-                    skillSelectUI.AddSelectCount();
-                }
-            };
-            
             aggroTarget.AddCondition(AggroCondition);
+        }
+
+        private void Update()
+        {
+            if (HasInputAuthority)
+            {
+                if (KeyManager.InputActionDown(KeyToAction.LockCursor))
+                {
+                    switch (Cursor.lockState)
+                    {
+                        case CursorLockMode.None:
+                            Cursor.lockState = CursorLockMode.Locked;
+                            IsCursor = true;
+                            break;
+                        case CursorLockMode.Locked:
+                            Cursor.lockState = CursorLockMode.None;
+                            IsCursor = false;
+                            break;
+                    }
+                    IsCursor = !IsCursor;
+                }
+            }
         }
 
         public override void Spawned()
@@ -172,7 +164,6 @@ namespace Player
             
             StatusInit();
 
-            _uiKeyDownTimer = TickTimer.CreateFromTicks(Runner, 1);
             Cursor.lockState = CursorLockMode.Locked;
             simpleKcc = gameObject.GetOrAddComponent<SimpleKCC>();
             simpleKcc.Collider.tag = "Player";
@@ -189,8 +180,6 @@ namespace Player
                 skill.Earn(gameObject);
             }
             
-            progressCanvas = FindObjectOfType<GameProgressCanvas>();
-            
             // 권한에 따른 초기화
             if (HasInputAuthority)
             {
@@ -203,14 +192,11 @@ namespace Player
                 status.ReviveAction += () => cameraController.ChangeCameraMode(CameraMode.Free);
                 status.RecoveryFromReviveAction += () => cameraController.ChangeCameraMode(CameraMode.FirstPerson);
 
-                CanvasActive(true);
                 
-                goodsCanvas.CottonCoinUpdate(UserInformation.Instance.cottonInfo.GetCoin());
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
             }
             else
             {
-                CanvasActive(false);
                 name = "Remote Player";
             }
             
@@ -244,17 +230,14 @@ namespace Player
 
             if (GetInput(out PlayerInputData data))
             {
-                if (!data.Cursor)
+                if (!IsCursor)
                 {
                     MouseRotateControl(data.MouseAxis);
                     MoveControl(data);
                     WeaponControl(data);
                 }
                 else
-                    simpleKcc.Move();
-
-                if (HasInputAuthority)
-                    UISetting(data);
+                    simpleKcc.Move(Vector3.zero, Vector3.zero);
             }
         }
 
@@ -278,16 +261,6 @@ namespace Player
         #endregion
         
         #region Member Function
-
-        private void CanvasActive(bool value)
-        {
-            gunUI.gameObject.SetActive(value);
-            hpUI.gameObject.SetActive(value);
-            levelCanvas.gameObject.SetActive(value);
-            buffCanvas.gameObject.SetActive(value);
-            goodsCanvas.gameObject.SetActive(value);
-            skillCanvas.gameObject.SetActive(value);
-        }
 
         private IEnumerator InitCoroutine()
         {
@@ -373,45 +346,6 @@ namespace Player
             };
         }
 
-        private void UISetting(PlayerInputData data)
-        {
-            if(_uiKeyDownTimer.Expired(Runner) == false)
-                return;
-
-            void UIActive(GameObject uiObj)
-            {
-                var isActive = uiObj.activeSelf;
-                UIManager.ActiveUIAllDisable();
-                if (!isActive)
-                {
-                    uiObj.SetActive(true);
-                    UIManager.AddActiveUI(uiObj);
-                }
-                
-                _uiKeyDownTimer = TickTimer.CreateFromTicks(Runner, 2);
-            }
-
-            if (data.StageSelect)
-            {
-                UIActive(_stageSelectUI.gameObject);
-            }
-            else if (data.ItemInventory)
-            {
-                UIActive(itemInventory.canvas.gameObject);
-            }
-            else if (data.SkillInventory)
-            {
-                UIActive(skillInventory.canvas.gameObject);
-            }
-            else if (data.SkillSelect)
-            {
-                UIActive(skillSelectUI.canvas.gameObject);
-            }
-
-            if (KeyManager.InputActionDown(KeyToAction.GameProgress)) progressCanvas.gameObject.SetActive(true);
-            else if(KeyManager.InputActionUp(KeyToAction.GameProgress)) progressCanvas.gameObject.SetActive(false);
-        }
-        
         private void MoveControl(PlayerInputData data = default)
         {
             if (HasStateAuthority == false)
@@ -505,35 +439,35 @@ namespace Player
             if(status.isInjury)
                 return;
 
-            if (HasInputAuthority)
-            {
-                var overlayCameraSetups = FindObjectsOfType<OverlayCameraSetup>();
-                
-                if (data.ChangeWeapon0)
-                {
-                    foreach (var overlayCameraSetup in overlayCameraSetups)
-                    {
-                        overlayCameraSetup.ChangeWeapon(0);
-                    }
-                    ChangeWeaponRPC(0);
-                }
-                else if (data.ChangeWeapon1)
-                {
-                    foreach (var overlayCameraSetup in overlayCameraSetups)
-                    {
-                        overlayCameraSetup.ChangeWeapon(1);
-                    }
-                    ChangeWeaponRPC(1);
-                }
-                else if (data.ChangeWeapon2)
-                {
-                    foreach (var overlayCameraSetup in overlayCameraSetups)
-                    {
-                        overlayCameraSetup.ChangeWeapon(2);
-                    }
-                    ChangeWeaponRPC(2);
-                }
-            }
+            // if (HasInputAuthority)
+            // {
+            //     var overlayCameraSetups = FindObjectsOfType<OverlayCameraSetup>();
+            //     
+            //     if (data.ChangeWeapon0)
+            //     {
+            //         foreach (var overlayCameraSetup in overlayCameraSetups)
+            //         {
+            //             overlayCameraSetup.ChangeWeapon(0);
+            //         }
+            //         ChangeWeaponRPC(0);
+            //     }
+            //     else if (data.ChangeWeapon1)
+            //     {
+            //         foreach (var overlayCameraSetup in overlayCameraSetups)
+            //         {
+            //             overlayCameraSetup.ChangeWeapon(1);
+            //         }
+            //         ChangeWeaponRPC(1);
+            //     }
+            //     else if (data.ChangeWeapon2)
+            //     {
+            //         foreach (var overlayCameraSetup in overlayCameraSetups)
+            //         {
+            //             overlayCameraSetup.ChangeWeapon(2);
+            //         }
+            //         ChangeWeaponRPC(2);
+            //     }
+            // }
             
 
             if (data.Attack && weaponSystem.equipment.IsGun)

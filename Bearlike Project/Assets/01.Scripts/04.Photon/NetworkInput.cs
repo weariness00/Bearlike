@@ -18,10 +18,6 @@ namespace Photon
         
         public NetworkBool Jump;
 
-        public NetworkBool StageSelect;
-        public NetworkBool ItemInventory;
-        public NetworkBool SkillInventory;
-        public NetworkBool SkillSelect;
         public NetworkBool Interact;
 
         public NetworkBool Attack;
@@ -30,8 +26,6 @@ namespace Photon
         public NetworkBool ChangeWeapon0;
         public NetworkBool ChangeWeapon1;
         public NetworkBool ChangeWeapon2;
-
-        public NetworkBool Cursor;
 
         public NetworkBool FirstSkill;
         public NetworkBool SecondSkill;

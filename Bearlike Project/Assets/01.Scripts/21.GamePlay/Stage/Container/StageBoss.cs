@@ -50,9 +50,9 @@ namespace GamePlay.Stage.Container
 
         public override void StageClear()
         {
+            base.StageClear();
             if (isStageClear)
                 return;
-            base.StageClear();
 
             GameManager.Instance.GameClear();
             nextStagePortal.otherPortal = GameManager.Instance.gameClearPortal;
