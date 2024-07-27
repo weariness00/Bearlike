@@ -930,6 +930,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6098458096184943034}
   - component: {fileID: 2825182143197179564}
+  - component: {fileID: 7289149792360627017}
   m_Layer: 0
   m_Name: Right_Hand
   m_TagString: Untagged
@@ -978,6 +979,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3.056343, y: 4.7160697, z: 2.585541}
   m_Center: {x: 0.38104248, y: 3.4749622, z: 0.57099336}
+--- !u!114 &7289149792360627017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5636176336137278558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0
 --- !u!1 &5637506657552812867
 GameObject:
   m_ObjectHideFlags: 0
@@ -1019,6 +1036,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2104339055823836714}
   - component: {fileID: 3690577441432844549}
+  - component: {fileID: 111717123101222034}
   m_Layer: 0
   m_Name: Left_Hand
   m_TagString: Untagged
@@ -1067,6 +1085,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3.0405335, y: 3.7993145, z: 2.585541}
   m_Center: {x: -0.19703674, y: 3.1049154, z: 0.57100075}
+--- !u!114 &111717123101222034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5784549853624773473}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0
 --- !u!1 &5947251938343302726
 GameObject:
   m_ObjectHideFlags: 0
@@ -1305,6 +1339,8 @@ MonoBehaviour:
   - {fileID: 3988033129583131212}
   - {fileID: 7571277668212460376}
   - {fileID: 7474769967962284444}
+  - {fileID: 111717123101222034}
+  - {fileID: 7289149792360627017}
 --- !u!114 &7571277668212460376
 MonoBehaviour:
   m_ObjectHideFlags: 0

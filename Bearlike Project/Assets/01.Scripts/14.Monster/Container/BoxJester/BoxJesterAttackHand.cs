@@ -30,7 +30,7 @@ namespace Monster.Container
         private void Awake()
         {
             status.damage.Max = 10;
-            status.damage.Current = 10;
+            status.damage.Current = 10;//
         }
         
         public override void Spawned()
