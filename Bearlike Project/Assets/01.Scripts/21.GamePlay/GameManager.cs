@@ -179,9 +179,8 @@ namespace GamePlay
             gameClearPortal.portalVFXList[0].gameObject.SetActive(true);
             gameClearPortal.InteractKeyDownAction = (obj) =>
             {
-                NetworkManager.LoadScene(SceneList.GetScene("Game Result"), LoadSceneMode.Additive);
+                SceneManager.LoadScene(SceneList.GetScene("Game Result"), LoadSceneMode.Additive);
                 gameClearPortal.gameObject.SetActive(false);
-                
                 gameClearPortal.IsConnect = false;
             };
             

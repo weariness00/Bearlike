@@ -142,14 +142,13 @@ namespace Player
                     {
                         case CursorLockMode.None:
                             Cursor.lockState = CursorLockMode.Locked;
-                            IsCursor = true;
+                            SetIsCursorRPC(false);
                             break;
                         case CursorLockMode.Locked:
                             Cursor.lockState = CursorLockMode.None;
-                            IsCursor = false;
+                            SetIsCursorRPC(true);
                             break;
                     }
-                    IsCursor = !IsCursor;
                 }
             }
         }
@@ -504,6 +503,9 @@ namespace Player
         #endregion
         
         #region RPC Function
+
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        private void SetIsCursorRPC(NetworkBool value) => IsCursor = value;
 
         [Rpc(RpcSources.All,RpcTargets.StateAuthority)]
         public new void SetPositionRPC(Vector3 pos) => simpleKcc.SetPosition(pos);
