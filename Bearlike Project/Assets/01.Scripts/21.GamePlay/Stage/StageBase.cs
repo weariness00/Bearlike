@@ -46,7 +46,6 @@ namespace GamePlay.Stage
 
         private ChangeDetector _changeDetector;
         [Networked] [Capacity(3)] public NetworkArray<NetworkBool> IsStageUnload { get; }
-        [Networked] public NetworkBool IsInit { get; set; }
         [Networked] public NetworkBool IsStageStart { get; set; }
         
         #endregion
@@ -84,6 +83,22 @@ namespace GamePlay.Stage
             
             lootingTable = GetComponent<LootingTable>();
             stageGameObject.SetActive(false);
+            
+            var childEventSystem = stageGameObject.GetComponentInChildren<EventSystem>();
+            var childCamera = stageGameObject.GetComponentInChildren<Camera>();
+            var lihgts = stageGameObject.GetComponentsInChildren<Light>();
+            if (childEventSystem != null)
+                Destroy(childEventSystem.gameObject);
+            if (childCamera != null)
+                Destroy(childCamera.gameObject);
+            foreach (var lihgt in lihgts)
+            {
+                if (lihgt.type == LightType.Directional)
+                {
+                    Destroy(lihgt.gameObject);
+                    break;
+                }
+            }
         }
 
         public virtual void Start()
@@ -93,6 +108,12 @@ namespace GamePlay.Stage
             
             StageInfo.SetJsonData(GetInfoData(StageInfo.id));
             lootingTable.CalLootingItem(GetLootingData(StageInfo.id).LootingItems);
+
+            if (StageInfo.stageType != StageType.None)
+            {
+                transform.position = Vector3.one * 1000f;
+                stageGameObject.transform.position = Vector3.one * 1000f;
+            }
         }
         
         public void OnTriggerEnter(Collider other)
@@ -117,10 +138,6 @@ namespace GamePlay.Stage
         public override void Spawned()
         {
             _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
-            if (IsInit)
-            {
-                StageInit();
-            }
             
             SpawnedSuccessRPC(UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber, true);
         }
@@ -144,6 +161,7 @@ namespace GamePlay.Stage
                         {
                             Runner.MoveGameObjectToSameScene(gameObject, GameManager.Instance.gameObject);
                             Runner.MoveGameObjectToSameScene(stageGameObject, GameManager.Instance.gameObject);
+                            StageInit();
                         }
                         break;
                     case nameof(IsStageUnload): // 스테이지 초기화 되면 스테이지를 부른 Scene을 Unload
@@ -156,12 +174,12 @@ namespace GamePlay.Stage
                         if (count == 0 && HasStateAuthority)
                             NetworkManager.UnloadScene(sceneReference.ScenePath);
                         break;
-                    case nameof(IsInit): // 스테이지 초기화 동기화를 위해 사용
-                        if (IsInit)
-                        {
-                            StageInit();
-                        }
-                        break;
+                    // case nameof(IsInit): // 스테이지 초기화 동기화를 위해 사용
+                    //     if (IsInit)
+                    //     {
+                    //         StageInit();
+                    //     }
+                    //     break;
                     case nameof(IsStageStart):
                         if (IsStageStart)
                         {
@@ -234,22 +252,6 @@ namespace GamePlay.Stage
         public virtual void StageInit()
         {
             SetDifficult();
-            
-            var childEventSystem = stageGameObject.GetComponentInChildren<EventSystem>();
-            var childCamera = stageGameObject.GetComponentInChildren<Camera>();
-            var lihgts = stageGameObject.GetComponentsInChildren<Light>();
-            if (childEventSystem != null)
-                Destroy(childEventSystem.gameObject);
-            if (childCamera != null)
-                Destroy(childCamera.gameObject);
-            foreach (var lihgt in lihgts)
-            {
-                if (lihgt.type == LightType.Directional)
-                {
-                    Destroy(lihgt.gameObject);
-                    break;
-                }
-            }
 
             var pos = new Vector3(0,(FindObjectsOfType<StageBase>().Length - 1) * 100,0);
             transform.position = pos;
@@ -344,9 +346,6 @@ namespace GamePlay.Stage
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void SetIsUnloadRPC(int clientNumber, NetworkBool value) => IsStageUnload.Set(clientNumber, value);
-
-        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-        public void SetIsInitRPC(bool value) => IsInit = value;
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void SetIsStartRPC(NetworkBool value) => IsStageStart = value;

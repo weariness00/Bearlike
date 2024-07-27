@@ -37,6 +37,8 @@ namespace Manager.FireBase
         private FirebaseAuth _auth;
         private FirebaseUser _user;
 
+        private bool tryLogin = false;
+        
         private void Init()
         {
             _auth = FirebaseAuth.DefaultInstance;
@@ -102,12 +104,16 @@ namespace Manager.FireBase
 
         private void FireBaseLogin(string email, string password, Action<bool> successAction)
         {
+            if(tryLogin) return;
+            tryLogin = true;
+
             _auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWith(task =>
             {
                 if (task.IsCanceled)
                 {
                     Debug.LogWarning("로그인 취소");
                     successAction?.Invoke(false);
+                    tryLogin = false;
                     return;
                 }
 
@@ -120,12 +126,14 @@ namespace Manager.FireBase
                         HandleAuthError(errorCode);
                     }
                     successAction?.Invoke(false);
+                    tryLogin = false;
                     return;
                 }
 
                 FirebaseUser newUser = task.Result.User;
                 successAction?.Invoke(true);
                 Debug.Log($"로그인 [{newUser.Email}]");
+                tryLogin = false;
             });
         }
 
