@@ -51,13 +51,9 @@ namespace GamePlay.Stage.Container
 
         public override void StageClear()
         {
-            if (isStageClear)
-            {
-                SetIsUnloadRPC(UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber, true);
-                return;
-            }
             base.StageClear();
 
+            // 모든 클라에서 실행되어야함
             GameManager.Instance.GameClear();
             nextStagePortal.otherPortal = GameManager.Instance.gameClearPortal;
             if(nextStagePortal.portalVFXList.Count >= 5) nextStagePortal.portalVFXList[0].gameObject.SetActive(true);
