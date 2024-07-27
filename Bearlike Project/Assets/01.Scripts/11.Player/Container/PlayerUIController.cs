@@ -67,7 +67,7 @@ namespace Player.Container
             base.Spawned();
             progressCanvas = FindObjectOfType<GameProgressCanvas>();
 
-            if (HasStateAuthority)
+            if (HasInputAuthority)
             {
                 goodsCanvas.CottonCoinUpdate(UserInformation.Instance.cottonInfo.GetCoin());
                 
