@@ -333,8 +333,8 @@ namespace Status
                     {
                         var playerStatus = ownerObj.gameObject.GetComponent<StatusBase>();
                         var monsterId = gameObject.GetComponent<NetworkObject>().Id;
-                        
-                        playerStatus.ApplyDamageRPC(realDamage / 10, DamageTextType.Normal, monsterId);
+
+                        playerStatus.hp.Current -= realDamage / 10;
                     }
                 }
                 
