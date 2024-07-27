@@ -7231,6 +7231,7 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 421d263491e4a8f4388b983587fed873, type: 3}
   status: {fileID: 3591252219797454216}
   cameraController: {fileID: 8389592379722413424}
+  weaponCameraController: {fileID: 0}
   soundController: {fileID: 0}
   rigController: {fileID: 0}
   skillSystem: {fileID: 4719698784326777624}
@@ -13434,6 +13435,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4303053860246033292, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: shotsmoke
+      value: 
+      objectReference: {fileID: 6120328737084483131}
     - target: {fileID: 4743372364268393535, guid: fb0375b9d4667184885fa46e6c1de475,
         type: 3}
       propertyPath: m_Name
