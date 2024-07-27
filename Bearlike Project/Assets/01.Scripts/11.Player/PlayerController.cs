@@ -348,7 +348,7 @@ namespace Player
 
         private void MoveControl(PlayerInputData data = default)
         {
-            if (HasInputAuthority == false)
+            if (HasStateAuthority == false)
             {
                 return;
             }
@@ -439,35 +439,35 @@ namespace Player
             if(status.isInjury)
                 return;
 
-            if (HasInputAuthority)
-            {
-                var overlayCameraSetups = FindObjectsOfType<OverlayCameraSetup>();
-                
-                if (data.ChangeWeapon0)
-                {
-                    foreach (var overlayCameraSetup in overlayCameraSetups)
-                    {
-                        overlayCameraSetup.ChangeWeapon(0);
-                    }
-                    ChangeWeaponRPC(0);
-                }
-                else if (data.ChangeWeapon1)
-                {
-                    foreach (var overlayCameraSetup in overlayCameraSetups)
-                    {
-                        overlayCameraSetup.ChangeWeapon(1);
-                    }
-                    ChangeWeaponRPC(1);
-                }
-                else if (data.ChangeWeapon2)
-                {
-                    foreach (var overlayCameraSetup in overlayCameraSetups)
-                    {
-                        overlayCameraSetup.ChangeWeapon(2);
-                    }
-                    ChangeWeaponRPC(2);
-                }
-            }
+            // if (HasInputAuthority)
+            // {
+            //     var overlayCameraSetups = FindObjectsOfType<OverlayCameraSetup>();
+            //     
+            //     if (data.ChangeWeapon0)
+            //     {
+            //         foreach (var overlayCameraSetup in overlayCameraSetups)
+            //         {
+            //             overlayCameraSetup.ChangeWeapon(0);
+            //         }
+            //         ChangeWeaponRPC(0);
+            //     }
+            //     else if (data.ChangeWeapon1)
+            //     {
+            //         foreach (var overlayCameraSetup in overlayCameraSetups)
+            //         {
+            //             overlayCameraSetup.ChangeWeapon(1);
+            //         }
+            //         ChangeWeaponRPC(1);
+            //     }
+            //     else if (data.ChangeWeapon2)
+            //     {
+            //         foreach (var overlayCameraSetup in overlayCameraSetups)
+            //         {
+            //             overlayCameraSetup.ChangeWeapon(2);
+            //         }
+            //         ChangeWeaponRPC(2);
+            //     }
+            // }
             
 
             if (data.Attack && weaponSystem.equipment.IsGun)
