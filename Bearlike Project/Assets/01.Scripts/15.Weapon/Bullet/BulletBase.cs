@@ -3,6 +3,7 @@ using Aggro;
 using Fusion;
 using GamePlay;
 using Manager;
+using Monster.Container;
 using Photon;
 using Photon.MeshDestruct;
 using Status;
@@ -82,6 +83,7 @@ namespace Weapon.Bullet
         {
             if (!HasStateAuthority) return;
             if (other.gameObject.CompareTag("Volume") || other.gameObject.CompareTag("Stage")) return;
+            if (other.TryGetComponent(out BoxJesterShield boxJesterShield)) return; 
             
             if (_aggroTarget)
             {

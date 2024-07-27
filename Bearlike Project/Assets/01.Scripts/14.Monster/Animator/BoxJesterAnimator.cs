@@ -91,9 +91,10 @@ namespace Monster.Container
         public void PlayIdle()
         {
             IdleTimer = TickTimer.CreateFromSeconds(Runner, idleClip.length * 2);
-            // var state = _animator.GetCurrentAnimatorStateInfo(0);
-            // if(!state.IsName("Clown_Idle_Hand"))
-            _networkAnimator.SetTrigger(tIdle);
+            var state = _networkAnimator.Animator.GetCurrentAnimatorStateInfo(0);
+            
+            if(!state.IsName("Clown_Idle_Hand"))
+                _networkAnimator.SetTrigger(tIdle);
         }
 
         public void PlayTeleport()
