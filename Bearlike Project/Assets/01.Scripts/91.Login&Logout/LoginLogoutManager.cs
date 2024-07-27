@@ -22,7 +22,7 @@ namespace Login_Logout
         [SerializeField] private GameObject loginMassageObject;
         [SerializeField] private TMP_Text loginMassageText;
         private string _loginMassage;
-        
+
         #region Unity Event Function
 
         private void Start()
@@ -91,17 +91,6 @@ namespace Login_Logout
                 
                 SceneManager.LoadScene(SceneList.GetScene("Lobby"));
             }
-        }
-
-        private void LoginError(AuthError e, string massage)
-        {
-           
-        }
-
-        private void SendAuthMassage(string massage)
-        {
-            loginMassageObject.SetActive(true);
-            loginMassageText.text = massage;
         }
 
         public void AccountCreate()
