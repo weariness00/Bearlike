@@ -43,7 +43,9 @@ namespace Monster.Container
             
             _time = time - 0.5f;
 
-            StartCoroutine(StartPunchingCoroutine());
+            
+            if(HasStateAuthority)
+                StartCoroutine(StartPunchingCoroutine());
         }
         
         private void OnTriggerEnter(Collider other)

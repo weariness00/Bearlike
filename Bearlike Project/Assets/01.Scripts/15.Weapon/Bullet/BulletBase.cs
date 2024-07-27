@@ -96,14 +96,15 @@ namespace Weapon.Bullet
             StatusBase otherStatus = null;
             if (other.TryGetComponent(out ColliderStatus colliderStatus))
             {
+                _hitEffect?.OnWeaponHitEffect(transform.position);
+                _hitSound?.PlayWeaponHit();
+                
                 otherStatus = colliderStatus.originalStatus;
                 status.AddAdditionalStatus(colliderStatus.status);
                 _hitInterface?.BeforeHitAction?.Invoke(gameObject, otherStatus.gameObject);
                 
                 otherStatus.ApplyDamageRPC(status.CalDamage(out bool isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, OwnerId);
                 status.RemoveAdditionalStatus(colliderStatus.status);
-                _hitEffect?.OnWeaponHitEffect(transform.position);
-                _hitSound?.PlayWeaponHit();
                 
                 if (KnockBack > 0)
                 {
@@ -123,6 +124,9 @@ namespace Weapon.Bullet
                 _hitInterface?.BeforeHitAction?.Invoke(gameObject, otherStatus.gameObject);
 
                 otherStatus.ApplyDamageRPC(status.CalDamage(out var isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, OwnerId);
+                
+                _hitEffect?.OnWeaponHitEffect(transform.position);
+                _hitSound?.PlayWeaponHit();
                 
                 _hitInterface?.AfterHitAction?.Invoke(gameObject, otherStatus.gameObject);
             }

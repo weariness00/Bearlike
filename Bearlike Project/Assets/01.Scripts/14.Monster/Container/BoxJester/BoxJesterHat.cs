@@ -11,8 +11,6 @@ namespace Monster.Container
     {
         [Networked] public NetworkId OwnerId { get; set; }
 
-        public int hatType; // 0 : 정속성, 1 : Reverse
-
         private void Awake()
         {
             status = gameObject.GetComponent<MonsterStatus>();
@@ -20,12 +18,7 @@ namespace Monster.Container
         
         public override void Spawned()
         {
-            // if(hatType == 1)
-            //     status.AddCondition(CrowdControl.DamageReflect);
-            
             Destroy(gameObject, 10f);
-
-            var sd = OwnerId;
         }
         
         public override void FixedUpdateNetwork()
@@ -45,14 +38,5 @@ namespace Monster.Container
         {
             throw new System.NotImplementedException();
         }
-
-        // [Rpc(RpcSources.All, RpcTargets.All)]
-        // private void BrokenHatRPC()
-        // {
-        //     var ownerObj = Runner.FindObject(OwnerId);
-        //     var boxJester = ownerObj.gameObject.GetComponent<BoxJester>();
-        //
-        //     boxJester.hatCount--;
-        // }
     }
 }

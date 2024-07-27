@@ -188,16 +188,19 @@ namespace Monster.Container
         {
             StatusBase otherStatus = null;
 
-            if (true == other.gameObject.CompareTag("Player"))
+            if (status.IsDie == false)
             {
-                if (other.gameObject.TryGetComponent(out otherStatus) ||
-                    other.transform.root.gameObject.TryGetComponent(out otherStatus))
+                if (true == other.gameObject.CompareTag("Player"))
                 {
-                    status.AddAdditionalStatus(otherStatus);
-                    // otherStatus.ApplyDamageRPC(status.CalDamage(out bool isCritical),
-                    //     isCritical ? DamageTextType.Critical : DamageTextType.Normal, OwnerId);
-                    otherStatus.ApplyDamageRPC(5, DamageTextType.Normal, OwnerId);
-                    status.RemoveAdditionalStatus(otherStatus);
+                    if (other.gameObject.TryGetComponent(out otherStatus) ||
+                        other.transform.root.gameObject.TryGetComponent(out otherStatus))
+                    {
+                        status.AddAdditionalStatus(otherStatus);
+                        // otherStatus.ApplyDamageRPC(status.CalDamage(out bool isCritical),
+                        //     isCritical ? DamageTextType.Critical : DamageTextType.Normal, OwnerId);
+                        otherStatus.ApplyDamageRPC(5, DamageTextType.Normal, OwnerId);
+                        status.RemoveAdditionalStatus(otherStatus);
+                    }
                 }
             }
         }
@@ -242,12 +245,12 @@ namespace Monster.Container
                     new SequenceNode(
                         new ActionNode(PunchReady),
                         new ActionNode(FakePunching)
-                    ),
-                    new ActionNode(ClonePattern)
+                    )
+                    // new ActionNode(ClonePattern)
                 );
 
             var Smile = new SequenceNode(
-                    new ActionNode(IsSmile),
+                    // new ActionNode(IsSmile),
                     SmilePattern
                 );
             
@@ -257,14 +260,14 @@ namespace Monster.Container
 
             var CryPattern = new SelectorNode(
                     true,
-                    new SequenceNode(
-                        new ActionNode(CryingShield),
-                        new ActionNode(ShieldOffAction)
-                    ),
-                    new SequenceNode(
-                        new ActionNode(ReverseCryingShield),
-                        new ActionNode(ShieldOffAction)
-                    ),
+                    // new SequenceNode(
+                    //     new ActionNode(CryingShield),
+                    //     new ActionNode(ShieldOffAction)
+                    // ),
+                    // new SequenceNode(
+                    //     new ActionNode(ReverseCryingShield),
+                    //     new ActionNode(ShieldOffAction)
+                    // ),
                     new SequenceNode(
                     new ActionNode(BreakHat),
                         new ActionNode(CheckHatCount)
@@ -298,10 +301,10 @@ namespace Monster.Container
             
             #endregion
 
-            var Attack = new SelectorNode(
-                    false,
-                    Smile
-                    // Cry,
+            var Attack = new SequenceNode(
+                    // false,
+                    Smile,
+                    Cry
                     // Angry
                 );
             
@@ -789,13 +792,20 @@ namespace Monster.Container
 
                 foreach (var index in indexList)
                 {
-                    Runner.SpawnAsync(hat[0].gameObject, hatPlaces[index].position, transform.rotation, null,
-                        (runner, o) =>
-                        {
-                            var h = o.GetComponent<BoxJesterHat>();
-                            h.OwnerId = OwnerId;
-                            h.hatType = 0;
-                        });
+                    // try
+                    // {
+                        Runner.SpawnAsync(hat[0].gameObject, hatPlaces[index].position, transform.rotation, null,
+                            (runner, o) =>
+                            {
+                                var h = o.GetComponent<BoxJesterHat>();
+                                h.OwnerId = OwnerId;
+                            });
+                        
+                    // }
+                    // catch (Exception ex)
+                    // {
+                    //     DebugManager.LogError($"Hat Spawn Failed : {ex}");
+                    // }
                 }
                 
                 // foreach (var hatplace in hatPlaces)
@@ -814,7 +824,7 @@ namespace Monster.Container
 
             _animationing = false;
             DebugManager.Log($"Break Hat");
-            // 모자 소환 후 모자를 정속성으로 생성
+            
             return INode.NodeState.Success;
         }
         
@@ -822,7 +832,7 @@ namespace Monster.Container
         {
             DebugManager.Log($"hatCount : {hatCount}");
             if (hatCount > 0)
-                status.ApplyHealRPC(10 * hatCount, OwnerId);   // 힐량은 밸런스 측정해서 하자
+                status.ApplyHealRPC(100 * hatCount, OwnerId);   // 힐량은 밸런스 측정해서 하자
             
             return INode.NodeState.Success;
         }
@@ -852,7 +862,6 @@ namespace Monster.Container
                         {
                             var h = o.GetComponent<BoxJesterHat>();
                             h.OwnerId = OwnerId;
-                            h.hatType = 1;
                         });
                 }
                 
@@ -873,7 +882,7 @@ namespace Monster.Container
             _animationing = false;
             
             DebugManager.Log($"Non Break Hat");
-            // 모자 소환 후 모자를 역속성으로 생성
+            
             return INode.NodeState.Success;
         }
         
@@ -881,7 +890,7 @@ namespace Monster.Container
         {
             DebugManager.Log($"hatCount : {hatCount}");
             
-            if (hatCount < HATNUM)
+            if (hatCount > 0)
             {
                 foreach (var player in _players)
                 {
