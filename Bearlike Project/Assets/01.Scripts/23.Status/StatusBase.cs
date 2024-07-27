@@ -328,6 +328,14 @@ namespace Status
                             afterApplyDamage.AfterApplyDamageAction?.Invoke(realDamage);
                         }
                     }
+
+                    if (ConditionDamageReflectIsOn())
+                    {
+                        var playerStatus = ownerObj.gameObject.GetComponent<StatusBase>();
+                        var monsterId = gameObject.GetComponent<NetworkObject>().Id;
+                        
+                        playerStatus.ApplyDamageRPC(realDamage / 10, DamageTextType.Normal, monsterId);
+                    }
                 }
                 
                 DebugManager.Log(
@@ -379,6 +387,7 @@ namespace Status
         public bool ConditionPoisonedIsOn() { return ConditionOn(CrowdControl.Poisoned); }
         public bool ConditionWeakIsOn() { return ConditionOn(CrowdControl.Weak); }
         public bool ConditionDamageIgnoreIsOn() { return ConditionOn(CrowdControl.DamageIgnore); }
+        public bool ConditionDamageReflectIsOn() { return ConditionOn(CrowdControl.DamageReflect); }
 
         public void AddCondition(CrowdControl cc)
         {

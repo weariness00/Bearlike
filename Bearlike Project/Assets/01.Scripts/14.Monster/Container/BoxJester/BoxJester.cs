@@ -245,12 +245,12 @@ namespace Monster.Container
                     new SequenceNode(
                         new ActionNode(PunchReady),
                         new ActionNode(FakePunching)
-                    )
-                    // new ActionNode(ClonePattern)
+                    ),
+                    new ActionNode(ClonePattern)
                 );
 
             var Smile = new SequenceNode(
-                    // new ActionNode(IsSmile),
+                    new ActionNode(IsSmile),
                     SmilePattern
                 );
             
@@ -264,18 +264,18 @@ namespace Monster.Container
                     //     new ActionNode(CryingShield),
                     //     new ActionNode(ShieldOffAction)
                     // ),
-                    // new SequenceNode(
-                    //     new ActionNode(ReverseCryingShield),
-                    //     new ActionNode(ShieldOffAction)
-                    // ),
                     new SequenceNode(
-                    new ActionNode(BreakHat),
-                        new ActionNode(CheckHatCount)
-                    ),
-                    new SequenceNode(
-                    new ActionNode(BreakReverseHat),
-                    new ActionNode(CheckReverseHatCount)
+                        new ActionNode(ReverseCryingShield),
+                        new ActionNode(ShieldOffAction)
                     )
+                    // new SequenceNode(
+                    // new ActionNode(BreakHat),
+                    //     new ActionNode(CheckHatCount)
+                    // ),
+                    // new SequenceNode(
+                    // new ActionNode(BreakReverseHat),
+                    // new ActionNode(CheckReverseHatCount)
+                    // )
                 );
 
             var Cry = new SequenceNode(
@@ -301,9 +301,9 @@ namespace Monster.Container
             
             #endregion
 
-            var Attack = new SequenceNode(
-                    // false,
-                    Smile,
+            var Attack = new SelectorNode(
+                    false,
+                    // Smile,
                     Cry
                     // Angry
                 );
@@ -345,13 +345,11 @@ namespace Monster.Container
             
             float time = 0.0f;
             
-            while (true)
+            while (time < 1.0f)
             {
-                time += 0.01f;
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(new Vector3(playerPosition.x, 0, playerPosition.z)), time);
-                yield return new WaitForSeconds(0.01f);
-                if(time > 1.0f)
-                    yield break;
+                time += Time.deltaTime;
+                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(new Vector3(playerPosition.x, 0, playerPosition.z)), time);
+                yield return null;
             }
         }
         
@@ -470,6 +468,8 @@ namespace Monster.Container
         {
             if (false == _animationing)
             {
+                StartCoroutine(RotationCoroutine());
+                
                 int tmp = Random.Range(0, 3);
 
                 while (tmp == (int)(_maskType))
@@ -515,6 +515,8 @@ namespace Monster.Container
         {
             if (false == _animationing)
             {
+                StartCoroutine(RotationCoroutine());
+                
                 GameObject playerObject = _players[0];
                 // Calculation
                 targetPosition = new Vector3(0, 0, 0);
@@ -776,6 +778,8 @@ namespace Monster.Container
         {
             if (_animationing == false)
             {
+                StartCoroutine(RotationCoroutine());
+                
                 hatCount = HATNUM;
                 animator.PlayHatAction();
                 _animationing = true;
@@ -800,7 +804,7 @@ namespace Monster.Container
                                 var h = o.GetComponent<BoxJesterHat>();
                                 h.OwnerId = OwnerId;
                             });
-                        
+                        DebugManager.Log("BlueHat Spawn");
                     // }
                     // catch (Exception ex)
                     // {
@@ -841,6 +845,8 @@ namespace Monster.Container
         {            
             if (_animationing == false)
             {
+                StartCoroutine(RotationCoroutine());
+                
                 hatCount = HATNUM;
                 animator.PlayHatAction();
                 _animationing = true;
@@ -863,6 +869,7 @@ namespace Monster.Container
                             var h = o.GetComponent<BoxJesterHat>();
                             h.OwnerId = OwnerId;
                         });
+                    DebugManager.Log("RedHat Spawn");
                 }
                 
                 // foreach (var hatplace in hatPlaces)
@@ -937,6 +944,8 @@ namespace Monster.Container
         {
             if (false == _animationing)
             {
+                StartCoroutine(RotationCoroutine());
+                
                 animator.PlayThrowBoomAction();
                 _animationing = true;
 
