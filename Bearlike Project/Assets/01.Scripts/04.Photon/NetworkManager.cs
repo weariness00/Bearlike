@@ -10,7 +10,6 @@ using Fusion.Photon.Realtime;
 using Fusion.Sockets;
 using Loading;
 using Manager;
-using Manager.FireBase;
 using SceneExtension;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -354,14 +353,6 @@ namespace Photon
             else if (KeyManager.InputActionDown(KeyToAction.ChangeWeapon2))
                 playerInputData.ChangeWeapon2 = trueValue;
 
-            if (KeyManager.InputActionDown(KeyToAction.StageSelect))
-                playerInputData.StageSelect = trueValue;
-            if (KeyManager.InputActionDown(KeyToAction.ItemInventory))
-                playerInputData.ItemInventory = trueValue;
-            if (KeyManager.InputActionDown(KeyToAction.SkillInventory))
-                playerInputData.SkillInventory = trueValue;
-            if (KeyManager.InputActionDown(KeyToAction.SkillSelect))
-                playerInputData.SkillSelect = trueValue;
             if (KeyManager.InputAction(KeyToAction.Interact) || KeyManager.InputActionDown(KeyToAction.Interact))
                 playerInputData.Interact = trueValue;
             

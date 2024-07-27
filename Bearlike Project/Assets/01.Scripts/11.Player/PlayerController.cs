@@ -12,6 +12,8 @@ using Loading;
 using Manager;
 using Monster;
 using Photon;
+using Player.Container;
+using Script.Data;
 using Skill;
 using Status;
 using UI;
@@ -52,6 +54,7 @@ namespace Player
         // public Status status;
         [Header("Player Related")] 
         public PlayerStatus status;
+        public PlayerUIController uiController;
         public PlayerCameraController cameraController;
         public PlayerWeaponCameraController weaponCameraController;
         public PlayerSoundController soundController;
@@ -59,23 +62,11 @@ namespace Player
         public SkillSystem skillSystem;
         public WeaponSystem weaponSystem;
         
-        [Header("UI")]
-        public Canvas gunUI;
-        public Canvas hpUI;
-        public ItemInventory itemInventory;
-        public SkillInventory skillInventory;
-        public SkillSelectUI skillSelectUI;
-        public SkillCanvas skillCanvas;
-        public PlayerEXP levelCanvas;
-        public BuffCanvas buffCanvas;
-        public GoodsCanvas goodsCanvas;
-        public GameProgressCanvas progressCanvas;
         public AggroTarget aggroTarget;
 
         public Animator animator;
         [HideInInspector] public SimpleKCC simpleKcc;
         private HitboxRoot _hitboxRoot;
-        private StageSelectUI _stageSelectUI;
         
         [Tooltip("마우스 움직임에 따라 회전할 오브젝트")] public List<GameObject> mouseRotateObjects;
 
@@ -83,7 +74,6 @@ namespace Player
         public Action<int> AfterApplyDamageAction { get; set; }
 
         [Networked] public float W { get; set; } = 1f;
-        private TickTimer _uiKeyDownTimer;
         private TickTimer _dashTimer;
 
         public float _dashAmount = 100.0f;
@@ -131,6 +121,7 @@ namespace Player
             LoadingManager.AddWait();
             
             status = gameObject.GetComponent<PlayerStatus>();
+            uiController = GetComponentInChildren<PlayerUIController>();
             cameraController = GetComponent<PlayerCameraController>();
             weaponCameraController = GetComponentInChildren<PlayerWeaponCameraController>();
             soundController = GetComponent<PlayerSoundController>();
@@ -138,8 +129,6 @@ namespace Player
             weaponSystem = gameObject.GetComponentInChildren<WeaponSystem>();
             animator = GetComponentInChildren<Animator>();
             aggroTarget = GetComponent<AggroTarget>();
-
-            _stageSelectUI = FindObjectOfType<StageSelectUI>();
 
             _hitboxRoot = GetComponent<HitboxRoot>();
             
@@ -150,16 +139,6 @@ namespace Player
 
         private void Start()
         {
-            status.LevelUpAction += () =>
-            {
-                if (HasInputAuthority)
-                {
-                    if (skillSelectUI.GetSelectCount() <= 0)
-                        skillSelectUI.SpawnRandomSkillBlocks(3);
-                    skillSelectUI.AddSelectCount();
-                }
-            };
-            
             aggroTarget.AddCondition(AggroCondition);
         }
 
@@ -172,7 +151,6 @@ namespace Player
             
             StatusInit();
 
-            _uiKeyDownTimer = TickTimer.CreateFromTicks(Runner, 1);
             Cursor.lockState = CursorLockMode.Locked;
             simpleKcc = gameObject.GetOrAddComponent<SimpleKCC>();
             simpleKcc.Collider.tag = "Player";
@@ -189,8 +167,6 @@ namespace Player
                 skill.Earn(gameObject);
             }
             
-            progressCanvas = FindObjectOfType<GameProgressCanvas>();
-            
             // 권한에 따른 초기화
             if (HasInputAuthority)
             {
@@ -203,14 +179,11 @@ namespace Player
                 status.ReviveAction += () => cameraController.ChangeCameraMode(CameraMode.Free);
                 status.RecoveryFromReviveAction += () => cameraController.ChangeCameraMode(CameraMode.FirstPerson);
 
-                CanvasActive(true);
                 
-                goodsCanvas.CottonCoinUpdate(UserInformation.Instance.cottonInfo.GetCoin());
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
             }
             else
             {
-                CanvasActive(false);
                 name = "Remote Player";
             }
             
@@ -252,9 +225,6 @@ namespace Player
                 }
                 else
                     simpleKcc.Move();
-
-                if (HasInputAuthority)
-                    UISetting(data);
             }
         }
 
@@ -278,16 +248,6 @@ namespace Player
         #endregion
         
         #region Member Function
-
-        private void CanvasActive(bool value)
-        {
-            gunUI.gameObject.SetActive(value);
-            hpUI.gameObject.SetActive(value);
-            levelCanvas.gameObject.SetActive(value);
-            buffCanvas.gameObject.SetActive(value);
-            goodsCanvas.gameObject.SetActive(value);
-            skillCanvas.gameObject.SetActive(value);
-        }
 
         private IEnumerator InitCoroutine()
         {
@@ -373,45 +333,6 @@ namespace Player
             };
         }
 
-        private void UISetting(PlayerInputData data)
-        {
-            if(_uiKeyDownTimer.Expired(Runner) == false)
-                return;
-
-            void UIActive(GameObject uiObj)
-            {
-                var isActive = uiObj.activeSelf;
-                UIManager.ActiveUIAllDisable();
-                if (!isActive)
-                {
-                    uiObj.SetActive(true);
-                    UIManager.AddActiveUI(uiObj);
-                }
-                
-                _uiKeyDownTimer = TickTimer.CreateFromTicks(Runner, 2);
-            }
-
-            if (data.StageSelect)
-            {
-                UIActive(_stageSelectUI.gameObject);
-            }
-            else if (data.ItemInventory)
-            {
-                UIActive(itemInventory.canvas.gameObject);
-            }
-            else if (data.SkillInventory)
-            {
-                UIActive(skillInventory.canvas.gameObject);
-            }
-            else if (data.SkillSelect)
-            {
-                UIActive(skillSelectUI.canvas.gameObject);
-            }
-
-            if (KeyManager.InputActionDown(KeyToAction.GameProgress)) progressCanvas.gameObject.SetActive(true);
-            else if(KeyManager.InputActionUp(KeyToAction.GameProgress)) progressCanvas.gameObject.SetActive(false);
-        }
-        
         private void MoveControl(PlayerInputData data = default)
         {
             if (HasStateAuthority == false)

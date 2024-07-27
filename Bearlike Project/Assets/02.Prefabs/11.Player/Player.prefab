@@ -907,6 +907,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2295367705590454408}
   - component: {fileID: 1635653570448613156}
+  - component: {fileID: 2286816445218626347}
   - component: {fileID: 6045299984504742306}
   - component: {fileID: 8627706988696599911}
   - component: {fileID: 1564754083023447529}
@@ -972,22 +973,13 @@ MonoBehaviour:
   playerType: 0
   icon: {fileID: 21300000, guid: 421d263491e4a8f4388b983587fed873, type: 3}
   status: {fileID: 1564754083023447529}
+  uiController: {fileID: 0}
   cameraController: {fileID: 6045299984504742306}
   weaponCameraController: {fileID: 0}
   soundController: {fileID: 0}
   rigController: {fileID: 0}
   skillSystem: {fileID: 5406974862128712661}
   weaponSystem: {fileID: 7232534934634824343}
-  gunUI: {fileID: 6624931928495696034}
-  hpUI: {fileID: 4784800286224645311}
-  itemInventory: {fileID: 6299060961271270538}
-  skillInventory: {fileID: 497196640133497928}
-  skillSelectUI: {fileID: 5842089393361499012}
-  skillCanvas: {fileID: 4498321116458354720}
-  levelCanvas: {fileID: 8590463430772962483}
-  buffCanvas: {fileID: 6992746519765054050}
-  goodsCanvas: {fileID: 2082894979139697805}
-  progressCanvas: {fileID: 0}
   aggroTarget: {fileID: 0}
   animator: {fileID: 0}
   simpleKcc: {fileID: 0}
@@ -1003,6 +995,32 @@ MonoBehaviour:
   - {fileID: 678142229060202161}
   - {fileID: 6818164175131250251}
   - {fileID: 5270825787093319795}
+--- !u!114 &2286816445218626347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 808882531419838579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c62e4d8e8e54eefafbc39cd4b6cf1f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
+  gunUI: {fileID: 0}
+  hpUI: {fileID: 0}
+  itemInventory: {fileID: 0}
+  skillInventory: {fileID: 0}
+  skillSelectUI: {fileID: 0}
+  skillCanvas: {fileID: 0}
+  levelCanvas: {fileID: 0}
+  buffCanvas: {fileID: 0}
+  goodsCanvas: {fileID: 0}
+  progressCanvas: {fileID: 0}
+  stageSelectUI: {fileID: 0}
 --- !u!114 &6045299984504742306
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1265,6 +1283,7 @@ MonoBehaviour:
   - {fileID: 3231577071016498501}
   NetworkedBehaviours:
   - {fileID: 1635653570448613156}
+  - {fileID: 2286816445218626347}
   - {fileID: 6045299984504742306}
   - {fileID: 1564754083023447529}
   - {fileID: 7370251092920483002}
@@ -13257,12 +13276,6 @@ Animation:
 --- !u!224 &1466453347545210820 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2806321500718320414, guid: 7a68dec2cbfce0e4ca5e52ca2616376d,
-    type: 3}
-  m_PrefabInstance: {fileID: 3651272530855335130}
-  m_PrefabAsset: {fileID: 0}
---- !u!223 &6624931928495696034 stripped
-Canvas:
-  m_CorrespondingSourceObject: {fileID: 7591821543876279416, guid: 7a68dec2cbfce0e4ca5e52ca2616376d,
     type: 3}
   m_PrefabInstance: {fileID: 3651272530855335130}
   m_PrefabAsset: {fileID: 0}

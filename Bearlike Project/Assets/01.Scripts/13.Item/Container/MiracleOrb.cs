@@ -41,19 +41,19 @@ namespace Item.Container
                 switch (orbType)
                 {
                     case OrbType.Random:
-                        if(pc.skillSelectUI.GetSelectCount() <= 0)
-                            pc.skillSelectUI.SpawnRandomSkillBlocks(skillBlockSpawnCount);
-                        pc.skillSelectUI.AddSelectCount();
+                        if(pc.uiController.skillSelectUI.GetSelectCount() <= 0)
+                            pc.uiController.skillSelectUI.SpawnRandomSkillBlocks(skillBlockSpawnCount);
+                        pc.uiController.skillSelectUI.AddSelectCount();
                         break;
                     case OrbType.HasRandom:
-                        pc.skillSelectUI.SpawnHasRandomSkillBlock(skillBlockSpawnCount);
+                        pc.uiController.skillSelectUI.SpawnHasRandomSkillBlock(skillBlockSpawnCount);
                         break;
                     case OrbType.Has:
                         break;
                     case OrbType.All:
-                        if(pc.skillSelectUI.AllSelectCount <= 0)
-                            pc.skillSelectUI.SpawnAllSkillBlock();
-                        ++pc.skillSelectUI.AllSelectCount;
+                        if(pc.uiController.skillSelectUI.AllSelectCount <= 0)
+                            pc.uiController.skillSelectUI.SpawnAllSkillBlock();
+                        ++pc.uiController.skillSelectUI.AllSelectCount;
                         break;
                 }
                 Destroy(gameObject);   

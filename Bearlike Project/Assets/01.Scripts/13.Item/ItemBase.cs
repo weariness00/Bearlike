@@ -138,7 +138,7 @@ namespace Item
             PlayerController pc;
             if (targetObject.TryGetComponent(out pc) || targetObject.transform.root.TryGetComponent(out pc))
             {
-                pc.itemInventory.AddItemRPC(new NetworkItemInfo(){Id = info.id, amount = info.amount.Current});
+                pc.uiController.itemInventory.AddItemRPC(new NetworkItemInfo(){Id = info.id, amount = info.amount.Current});
                 pc.soundController.PlayItemEarn();
             }
         }

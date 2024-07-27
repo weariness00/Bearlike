@@ -95,10 +95,10 @@ namespace GamePlay
             {
                 case TreasureBoxOpenConditionType.Money:
                     if (_playerController && 
-                        _playerController.itemInventory.TryGetItem(1, out var coin) &&
+                        _playerController.uiController.itemInventory.TryGetItem(1, out var coin) &&
                         coin.Amount.Current >= condition.MoneyAmount)
                     {
-                        _playerController.itemInventory.UseItemRPC(new NetworkItemInfo(){Id =  1, amount = condition.MoneyAmount});
+                        _playerController.uiController.itemInventory.UseItemRPC(new NetworkItemInfo(){Id =  1, amount = condition.MoneyAmount});
                         var spawnItem = ItemObjectList.GetFromId(condition.ItemID);
                         if (spawnItem) Instantiate(spawnItem, itemDropTransform.position, itemDropTransform.rotation);
                         return true;
@@ -110,7 +110,7 @@ namespace GamePlay
                     if (cottonCoinAmount > condition.MoneyAmount)
                     {
                         cottonCoinInfo.AddCoin(-condition.MoneyAmount);
-                        if (_playerController) _playerController.goodsCanvas.CottonCoinUpdate(cottonCoinAmount - condition.MoneyAmount);
+                        if (_playerController) _playerController.uiController.goodsCanvas.CottonCoinUpdate(cottonCoinAmount - condition.MoneyAmount);
                         var spawnItem = ItemObjectList.GetFromId(condition.ItemID);
                         if (spawnItem) Instantiate(spawnItem, itemDropTransform.position, itemDropTransform.rotation);
                         return true;

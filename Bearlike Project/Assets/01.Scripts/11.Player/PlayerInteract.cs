@@ -170,9 +170,9 @@ namespace Player
             {
                 var remotePlayerController = targetObject.GetComponent<PlayerController>();
                 var battery = ItemObjectList.GetFromName("Battery");
-                if (remotePlayerController.itemInventory.HasItem(battery.Id))
+                if (remotePlayerController.uiController.itemInventory.HasItem(battery.Id))
                 {
-                    remotePlayerController.itemInventory.UseItemRPC(new NetworkItemInfo(){Id = battery.Id, amount = 1});
+                    remotePlayerController.uiController.itemInventory.UseItemRPC(new NetworkItemInfo(){Id = battery.Id, amount = 1});
                     _playerController.status.RecoveryFromReviveActionRPC(); // 대상을 부활
                 }
 

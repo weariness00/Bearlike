@@ -47,14 +47,14 @@ namespace Skill.Container
 
             if (HasInputAuthority)
             {
-                if (!ownerPlayer.buffCanvas.HasUI(skillName))
+                if (!ownerPlayer.uiController.buffCanvas.HasUI(skillName))
                 {
                     DebugManager.ToDo("풀 스크린 이펙트 넣기, 테이프 붙이는 효과음, 이펙트 넣기");
                     URPRendererFeaturesManager.Instance.StartEffect("ShieldEffect");
 
-                    ownerPlayer.buffCanvas.SpawnUI(skillName);
-                    ownerPlayer.buffCanvas.SetIcon(skillName, buffIcon);
-                    ownerPlayer.buffCanvas.SetStackText(skillName, damageNullified);
+                    ownerPlayer.uiController.buffCanvas.SpawnUI(skillName);
+                    ownerPlayer.uiController.buffCanvas.SetIcon(skillName, buffIcon);
+                    ownerPlayer.uiController.buffCanvas.SetStackText(skillName, damageNullified);
                 }
             }
         }
@@ -85,14 +85,14 @@ namespace Skill.Container
             if (damageNullified.isMin)
             {
                 ownerPlayer.status.RemoveBeforeApplyDamageEvent(DamageNullified);
-                ownerPlayer.buffCanvas.RemoveUI(skillName);
+                ownerPlayer.uiController.buffCanvas.RemoveUI(skillName);
             }
             
             if (HasInputAuthority)
             {
                 DebugManager.ToDo("풀 스크린 이펙트 빼기, 쉴드가 깨지거나 테이프가 때지는 효과랑 효과음 넣기");
-                if (ownerPlayer.buffCanvas.HasUI(skillName))
-                    ownerPlayer.buffCanvas.SetStackText(skillName, damageNullified);
+                if (ownerPlayer.uiController.buffCanvas.HasUI(skillName))
+                    ownerPlayer.uiController.buffCanvas.SetStackText(skillName, damageNullified);
             }
             
             return applyDamage;
