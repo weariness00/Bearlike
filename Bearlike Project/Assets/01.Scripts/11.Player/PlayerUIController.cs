@@ -1,10 +1,7 @@
-﻿using System;
-using Fusion;
-using GamePlay.UI;
+﻿using GamePlay.UI;
 using Item;
 using Manager;
 using Photon;
-using Script.Data;
 using Skill;
 using UI;
 using UI.Skill;
@@ -13,7 +10,7 @@ using UI.Weapon.Gun;
 using UnityEngine;
 using User;
 
-namespace Player.Container
+namespace Player
 {
     public class PlayerUIController : NetworkBehaviourEx
     {

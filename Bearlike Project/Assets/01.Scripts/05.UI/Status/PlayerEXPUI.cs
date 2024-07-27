@@ -30,6 +30,7 @@ namespace UI.Status
         
         private void Awake()
         {
+            playerStatus = GetComponentInChildren<PlayerStatus>();
             gameObject.SetActive(false);
         }
 

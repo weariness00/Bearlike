@@ -231,9 +231,6 @@ namespace Player
         public void LevelUpRPC() => LevelUp();
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public void IncreaseExpRPC(int value) => IncreaseExp(value);
-        
-        [Rpc(RpcSources.All, RpcTargets.All)]
         public void SetRecoveryInjuryTimeRPC(float time) => recoveryFromInjuryTime.Current = time;
 
         [Rpc(RpcSources.All, RpcTargets.All)]
