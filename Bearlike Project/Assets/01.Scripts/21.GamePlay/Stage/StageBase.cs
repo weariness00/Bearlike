@@ -174,14 +174,8 @@ namespace GamePlay.Stage
                         if (count == 0 && HasStateAuthority)
                             NetworkManager.UnloadScene(sceneReference.ScenePath);
                         break;
-                    // case nameof(IsInit): // 스테이지 초기화 동기화를 위해 사용
-                    //     if (IsInit)
-                    //     {
-                    //         StageInit();
-                    //     }
-                    //     break;
                     case nameof(IsStageStart):
-                        if (IsStageStart)
+                        if (IsStageStart && !isStageClear)
                         {
                             StageStart();
                         }
