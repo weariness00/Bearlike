@@ -41,7 +41,7 @@ namespace Player.Container
 
             if (GetInput(out PlayerInputData data))
             {
-                if (!data.Cursor)
+                if (!IsCursor)
                 {
                     SkillControl(data);
                 }

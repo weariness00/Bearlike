@@ -6,24 +6,15 @@ using Data;
 using Fusion;
 using Fusion.Addons.SimpleKCC;
 using GamePlay;
-using GamePlay.UI;
-using Item;
 using Loading;
 using Manager;
-using Monster;
 using Photon;
 using Player.Container;
-using Script.Data;
 using Skill;
 using Status;
-using UI;
-using UI.Skill;
-using UI.Status;
 using UI.Weapon;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
-using User;
 using Weapon;
 using Weapon.Gun;
 
@@ -61,7 +52,6 @@ namespace Player
         public PlayerRigController rigController;
         public SkillSystem skillSystem;
         public WeaponSystem weaponSystem;
-        
         public AggroTarget aggroTarget;
 
         public Animator animator;
@@ -72,7 +62,8 @@ namespace Player
 
         public Action<GameObject> MonsterKillAction;
         public Action<int> AfterApplyDamageAction { get; set; }
-
+        
+        [Networked] public NetworkBool IsCursor { get; private set; } = false;
         [Networked] public float W { get; set; } = 1f;
         private TickTimer _dashTimer;
 
@@ -81,7 +72,7 @@ namespace Player
         private ChangeDetector _changeDetector;
         
         #region Animation
-        
+
         [Networked] private NetworkBool IsMove { get; set; }
         
         private int OneHandGunLayer = 1;
@@ -140,6 +131,28 @@ namespace Player
         private void Start()
         {
             aggroTarget.AddCondition(AggroCondition);
+        }
+
+        private void Update()
+        {
+            if (HasInputAuthority)
+            {
+                if (KeyManager.InputActionDown(KeyToAction.LockCursor))
+                {
+                    switch (Cursor.lockState)
+                    {
+                        case CursorLockMode.None:
+                            Cursor.lockState = CursorLockMode.Locked;
+                            IsCursor = true;
+                            break;
+                        case CursorLockMode.Locked:
+                            Cursor.lockState = CursorLockMode.None;
+                            IsCursor = false;
+                            break;
+                    }
+                    IsCursor = !IsCursor;
+                }
+            }
         }
 
         public override void Spawned()
@@ -217,14 +230,14 @@ namespace Player
 
             if (GetInput(out PlayerInputData data))
             {
-                if (!data.Cursor)
+                if (!IsCursor)
                 {
                     MouseRotateControl(data.MouseAxis);
                     MoveControl(data);
                     WeaponControl(data);
                 }
                 else
-                    simpleKcc.Move();
+                    simpleKcc.Move(Vector3.zero, Vector3.zero);
             }
         }
 
@@ -335,7 +348,7 @@ namespace Player
 
         private void MoveControl(PlayerInputData data = default)
         {
-            if (HasStateAuthority == false)
+            if (HasInputAuthority == false)
             {
                 return;
             }

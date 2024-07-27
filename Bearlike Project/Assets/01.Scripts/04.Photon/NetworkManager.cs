@@ -41,7 +41,6 @@ namespace Photon
 
         public Action<SessionInfo[]> SessionListUpdateAction;
 
-        private TickTimer _keyDownTimer;
 
         #region Unity Event Function
 
@@ -189,8 +188,6 @@ namespace Photon
             }
 
             gameObject.transform.parent = Managers.Instance.transform;
-            
-            _keyDownTimer = TickTimer.CreateFromTicks(_runner, 2);
         }
 
         async Task RandomMatching()
@@ -286,35 +283,6 @@ namespace Photon
                 input.Set(playerInputData);
                 return;
             }
-            
-            // 마우스 휠 클릭시 UI와 상호작용 할 수 있도록 플레이어 정지
-            if (_keyDownTimer.Expired(runner))
-            {
-                if (KeyManager.InputActionDown(KeyToAction.LockCursor))
-                {
-                    switch (Cursor.lockState)
-                    {
-                        case CursorLockMode.None:
-                            Cursor.lockState = CursorLockMode.Locked;
-                            isCursor = true;
-                            break;
-                        case CursorLockMode.Locked:
-                            Cursor.lockState = CursorLockMode.None;
-                            isCursor = false;
-                            break;
-                    }
-                    isCursor = !isCursor;
-
-                    _keyDownTimer = TickTimer.CreateFromTicks(runner, 2);
-                }
-                if (KeyManager.InputAction(KeyToAction.Esc))
-                {
-                    playerInputData.Escape = true;
-                    _keyDownTimer = TickTimer.CreateFromTicks(runner, 2);
-                }
-            }
-            if (Cursor.lockState == CursorLockMode.None)
-                playerInputData.Cursor = trueValue;
 
             if (KeyManager.InputAction(KeyToAction.MoveFront))
                 playerInputData.MoveFront = trueValue;
@@ -383,8 +351,6 @@ namespace Photon
         {
             DebugManager.Log("서버 연결 성공\n" +
                              $"세션 이름 : {runner.SessionInfo.Name}");
-
-            _keyDownTimer = TickTimer.CreateFromTicks(runner, 2);
         }
 
         public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)

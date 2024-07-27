@@ -27,8 +27,6 @@ namespace Photon
         public NetworkBool ChangeWeapon1;
         public NetworkBool ChangeWeapon2;
 
-        public NetworkBool Cursor;
-
         public NetworkBool FirstSkill;
         public NetworkBool SecondSkill;
         public NetworkBool Ultimate;
