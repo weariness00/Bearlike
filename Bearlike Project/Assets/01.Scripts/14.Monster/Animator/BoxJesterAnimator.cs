@@ -71,7 +71,7 @@ namespace Monster.Container
             _networkAnimator = transform.root.GetComponent<NetworkMecanimAnimator>();
 
 
-            IdleTimer = TickTimer.CreateFromTicks(Runner, 0);
+            // IdleTimer = TickTimer.CreateFromTicks(Runner, 0);
             // TeleportTimer = TickTimer.CreateFromTicks(Runner, 0);
             // SmokeStartTimer = TickTimer.CreateFromTicks(Runner, 0);
             // SmokingTimer = TickTimer.CreateFromTicks(Runner, 0);
@@ -93,7 +93,7 @@ namespace Monster.Container
             IdleTimer = TickTimer.CreateFromSeconds(Runner, idleClip.length * 2);
             // var state = _animator.GetCurrentAnimatorStateInfo(0);
             // if(!state.IsName("Clown_Idle_Hand"))
-                _networkAnimator.SetTrigger(tIdle);
+            _networkAnimator.SetTrigger(tIdle);
         }
 
         public void PlayTeleport()

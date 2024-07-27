@@ -576,8 +576,8 @@ namespace Monster.Container
                     {
                         var h = o.GetComponent<BoxJesterAttackHand>();
 
-                        h.position = _handModel.transform.position;
-                        h.rotation = transform.rotation;
+                        // h.position = _handModel.transform.position;
+                        // h.rotation = transform.rotation;
                         
                         h.targetPosition = targetPosition;
                         h.handType = type;
@@ -611,8 +611,8 @@ namespace Monster.Container
                     {
                         var h = o.GetComponent<BoxJesterAttackHand>();
 
-                        h.position = _handModel.transform.position;
-                        h.rotation = transform.rotation;
+                        // h.position = _handModel.transform.position;
+                        // h.rotation = transform.rotation;
                         
                         h.targetPosition = targetPosition;
                         h.fakeTargetPosition = fakeTargetPosition;
