@@ -46,11 +46,6 @@ namespace Monster.Container
             StartCoroutine(StartPunchingCoroutine());
         }
         
-        private void Update()
-        {
-            DebugManager.Log($"position : {hands[handType].transform.position}");
-        }
-        
         private void OnTriggerEnter(Collider other)
         {
             StatusBase otherStatus = null;
@@ -68,7 +63,12 @@ namespace Monster.Container
                 }
             }
         }
-        
+
+        private void Update()
+        {
+            DebugManager.Log($"posiiton : {hands[handType].transform.position}");
+        }
+
         #region Punch Attack
 
         IEnumerator StartPunchingCoroutine()
