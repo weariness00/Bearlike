@@ -58,7 +58,7 @@ namespace Item.Container
             PlayerController pc;
             if (targetObject.TryGetComponent(out pc) || targetObject.transform.root.TryGetComponent(out pc))
             {
-                pc.status.IncreaseExp(_expAmount);
+                pc.status.IncreaseExpRPC(_expAmount);
                 pc.soundController.PlayItemEarn();
             }
         }
