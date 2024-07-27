@@ -3530,7 +3530,9 @@ MonoBehaviour:
   icon: {fileID: 0}
   status: {fileID: 3119487648565583453}
   cameraController: {fileID: 4111289363253553492}
+  weaponCameraController: {fileID: 0}
   soundController: {fileID: 0}
+  rigController: {fileID: 0}
   skillSystem: {fileID: 3149006354213416159}
   weaponSystem: {fileID: 4873826561568888664}
   gunUI: {fileID: 2734686267890153244}
@@ -3546,9 +3548,9 @@ MonoBehaviour:
   aggroTarget: {fileID: 0}
   animator: {fileID: 0}
   simpleKcc: {fileID: 0}
-  rigBuilder: {fileID: 0}
-  mouseRotateObject: {fileID: 1801531898679229535}
+  mouseRotateObjects: []
   _W: 0
+  _dashAmount: 100
   rotateSpeed: 500
   armMehs: {fileID: 0}
   otherMeshes: []
@@ -3593,7 +3595,6 @@ MonoBehaviour:
   NestedObjects:
   - {fileID: 4491082804579630670}
   - {fileID: 5203628710983792406}
-  - {fileID: 3768832502207127089}
   - {fileID: 1510846061475938718}
   - {fileID: 2699057857236427147}
   - {fileID: 1512200151716444724}
@@ -6122,9 +6123,17 @@ MonoBehaviour:
   _IsSpawnSuccess:
     _value: 0
   canvas: {fileID: 4861238172356618835}
+  playerController: {fileID: 4304092530995406759}
+  randomSelectScroll: {fileID: 0}
+  randomViewToggle: {fileID: 0}
   toggleGroup: {fileID: 3752769399434269690}
   selectUIBlockObject: {fileID: 5198700945744738040}
-  playerController: {fileID: 4304092530995406759}
+  allSelectScroll: {fileID: 0}
+  allViewToggle: {fileID: 0}
+  allSelectToggleGroup: {fileID: 0}
+  allSelectUIBlockObject: {fileID: 0}
+  allSelectSkillExplainPanelRectTransform: {fileID: 0}
+  allSelectSkillExplainText: {fileID: 0}
 --- !u!1 &7279871377464235292
 GameObject:
   m_ObjectHideFlags: 0
@@ -7518,18 +7527,6 @@ PrefabInstance:
       addedObject: {fileID: 2859275346967319364}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0f1b1844c83e1944e9eded47132bc861, type: 3}
---- !u!114 &3768832502207127089 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2811269193302312777, guid: 0f1b1844c83e1944e9eded47132bc861,
-    type: 3}
-  m_PrefabInstance: {fileID: 1391110214233102712}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &4224859481071913779 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3021774675860755019, guid: 0f1b1844c83e1944e9eded47132bc861,
