@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Data;
 using GamePlay.StageLevel;
 using Manager;
 using Monster;
@@ -50,9 +51,12 @@ namespace GamePlay.Stage.Container
 
         public override void StageClear()
         {
-            base.StageClear();
             if (isStageClear)
+            {
+                SetIsUnloadRPC(UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber, true);
                 return;
+            }
+            base.StageClear();
 
             GameManager.Instance.GameClear();
             nextStagePortal.otherPortal = GameManager.Instance.gameClearPortal;
