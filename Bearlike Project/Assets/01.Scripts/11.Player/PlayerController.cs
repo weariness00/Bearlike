@@ -12,7 +12,6 @@ using Photon;
 using Player.Container;
 using Skill;
 using Status;
-using UI.Weapon;
 using Unity.VisualScripting;
 using UnityEngine;
 using Weapon;
@@ -53,11 +52,11 @@ namespace Player
         public SkillSystem skillSystem;
         public WeaponSystem weaponSystem;
         public AggroTarget aggroTarget;
+        public NetworkMecanimAnimator networkAnimator;
 
-        public Animator animator;
-        [HideInInspector] public SimpleKCC simpleKcc;
         private HitboxRoot _hitboxRoot;
         
+        [HideInInspector] public SimpleKCC simpleKcc;
         [Tooltip("마우스 움직임에 따라 회전할 오브젝트")] public List<GameObject> mouseRotateObjects;
 
         public Action<GameObject> MonsterKillAction;
@@ -88,17 +87,17 @@ namespace Player
 
         public void SetLayer(float weight = 1)
         {
-            animator.SetLayerWeight(OneHandGunLayer, 0);
-            animator.SetLayerWeight(TwoHandGunLayer, 0);
+            networkAnimator.Animator.SetLayerWeight(OneHandGunLayer, 0);
+            networkAnimator.Animator.SetLayerWeight(TwoHandGunLayer, 0);
             if (weaponSystem.TryGetEquipGun(out GunBase gun))
             {
                 switch (gun.handType)
                 {
                     case GunBase.GunHandType.OneHand:
-                        animator.SetLayerWeight(OneHandGunLayer, weight);
+                        networkAnimator.Animator.SetLayerWeight(OneHandGunLayer, weight);
                         break;
                     case GunBase.GunHandType.TwoHand:
-                        animator.SetLayerWeight(TwoHandGunLayer, weight);
+                        networkAnimator.Animator.SetLayerWeight(TwoHandGunLayer, weight);
                         break;
                 }
             }
@@ -118,14 +117,14 @@ namespace Player
             soundController = GetComponent<PlayerSoundController>();
             rigController = GetComponentInChildren<PlayerRigController>();
             weaponSystem = gameObject.GetComponentInChildren<WeaponSystem>();
-            animator = GetComponentInChildren<Animator>();
+            networkAnimator = GetComponentInChildren<NetworkMecanimAnimator>();
             aggroTarget = GetComponent<AggroTarget>();
 
             _hitboxRoot = GetComponent<HitboxRoot>();
             
             // 애니메이터
-            OneHandGunLayer = animator.GetLayerIndex("One Hand Gun");
-            TwoHandGunLayer = animator.GetLayerIndex("Two Hand Gun");
+            OneHandGunLayer = networkAnimator.Animator.GetLayerIndex("One Hand Gun");
+            TwoHandGunLayer = networkAnimator.Animator.GetLayerIndex("Two Hand Gun");
         }
 
         private void Start()
@@ -254,8 +253,8 @@ namespace Player
                 }
             }
             
-            animator.SetFloat(AniFainMove, IsMove ? 1 : 0);
-            animator.SetFloat(AniMovement, IsMove ? 1 : 0);
+            networkAnimator.Animator.SetFloat(AniFainMove, IsMove ? 1 : 0);
+            networkAnimator.Animator.SetFloat(AniMovement, IsMove ? 1 : 0);
         }
 
         #endregion
@@ -289,8 +288,8 @@ namespace Player
             {
                 GameManager.Instance.AlivePlayerCount--;
 
-                animator.SetTrigger(AniInjury);
-                SetLayer();
+                networkAnimator.SetTrigger(AniInjury);
+                SetLayer(0);
                 // _headRig.weight = 0;
                 W = 0;
                 simpleKcc.Collider.transform.localPosition = new Vector3(0.05f, 0.33f, -0.44f);
@@ -308,8 +307,8 @@ namespace Player
             {
                 GameManager.Instance.AlivePlayerCount++;
                 
-                animator.SetTrigger(AniRevive);
-                SetLayer();
+                networkAnimator.SetTrigger(AniRevive);
+                SetLayer(0);
                 W = 1;
                 simpleKcc.Collider.transform.localPosition = Vector3.zero;
                 simpleKcc.Collider.transform.localRotation = Quaternion.identity;
@@ -324,14 +323,14 @@ namespace Player
             };
             status.ReviveAction += () =>
             {
-                animator.SetTrigger(AniDie);
+                networkAnimator.SetTrigger(AniDie);
             };
             status.RecoveryFromReviveAction += () =>
             {
                 GameManager.Instance.AlivePlayerCount++;
                 
-                animator.SetTrigger(AniRevive);
-                SetLayer();
+                networkAnimator.SetTrigger(AniRevive);
+                SetLayer(1);
                 W = 1;
                 simpleKcc.Collider.transform.localPosition = Vector3.zero;
                 simpleKcc.Collider.transform.localRotation = Quaternion.identity;
@@ -402,10 +401,10 @@ namespace Player
             {
                 var hitOptions = HitOptions.IncludePhysX | HitOptions.IgnoreInputAuthority;
                 DebugManager.DrawRay(transform.position + new Vector3(0,0.03f,0), -transform.up * 0.1f, Color.blue, 1f);
-                if (Runner.LagCompensation.Raycast(transform.position + new Vector3(0,0.03f,0), -transform.up, 0.1f, Runner.LocalPlayer, out var hit,Int32.MaxValue , hitOptions))
+                if (Runner.LagCompensation.Raycast(transform.position + new Vector3(0,0.03f,0), -transform.up, 0.1f, Object.InputAuthority, out var hit,Int32.MaxValue , hitOptions))
                 {
                     jumpImpulse = Vector3.up * status.jumpPower;
-                    animator.SetTrigger(AniJump);
+                    networkAnimator.SetTrigger(AniJump);
                 }
             }
 
@@ -468,16 +467,15 @@ namespace Player
             //         ChangeWeaponRPC(2);
             //     }
             // }
-            
 
             if (data.Attack && weaponSystem.equipment.IsGun)
             {
-                animator.SetBool(AniShoot, true);
+                networkAnimator.Animator.SetBool(AniShoot, true);
                 if(HasStateAuthority) weaponSystem.equipment.AttackAction?.Invoke();
             }
-            else if (animator.GetBool(AniShoot) == true)
+            else if (networkAnimator.Animator.GetBool(AniShoot) == true)
             {
-                animator.SetBool(AniShoot, false);
+                networkAnimator.Animator.SetBool(AniShoot, false);
             }
 
             if (data.ReLoad && weaponSystem.equipment.IsGun)
