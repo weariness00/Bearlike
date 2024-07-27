@@ -357,6 +357,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  effectVFX: {fileID: 0}
   cleanShootCanvas: {fileID: 3223929226563402317}
   aimCanvas: {fileID: 3284216052248679964}
   areaObject: {fileID: 4646657968551755057}
@@ -413,7 +414,6 @@ MonoBehaviour:
     isMin: 0
     isMax: 0
   damageMultiple: 1
-  criticalHitMultiple: 1
   criticalHitChance:
     _min: 0
     _max: 1
@@ -422,6 +422,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  criticalHitMultiple: 1
   defence:
     _min: 0
     _max: 99999
@@ -438,6 +439,7 @@ MonoBehaviour:
     isOverMin: 1
     isMin: 0
     isMax: 0
+  avoidMultiple: 1
   moveSpeed:
     _min: 0
     _max: 99999
@@ -467,6 +469,7 @@ MonoBehaviour:
   property: 0
   burnDamage: 0
   poisonDamage: 0
+  knockBack: 0
 --- !u!1 &8624964009659259095
 GameObject:
   m_ObjectHideFlags: 0
