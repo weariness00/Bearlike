@@ -171,6 +171,7 @@ namespace Monster.Container
 
             DieAction += () =>
             {
+                AnimatorActiveRPC(true);
                 HandActiveRPC(true);           
                 animator.PlayDieAction();
                 Destroy(gameObject, 3);

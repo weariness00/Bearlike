@@ -183,7 +183,7 @@ namespace Monster.Container
         {
             OffIdle();
             networkAnimator.Animator.SetFloat(Attack, 3);
-            networkAnimator.SetTrigger(tAttack);
+            networkAnimator.SetTrigger(tAttack, true);
             ThrowBoomTimer = TickTimer.CreateFromSeconds(Runner, throwBoomClip.length);
         }
         
