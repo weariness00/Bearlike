@@ -27,7 +27,8 @@ namespace UI.Skill
         [SerializeField] private Toggle randomViewToggle;
         public ToggleGroup toggleGroup;
         public GameObject selectUIBlockObject;
-        
+
+        private readonly List<SkillSelectBlockHandle> _randomSelectSkillBlockHandleList = new List<SkillSelectBlockHandle>();
         private int _selectCount = 0; // 횟수가 남아있다면 스킬을 선택후 다시 스킬 선택창 리롤
 
         [Header("All Select View")] 
@@ -45,6 +46,28 @@ namespace UI.Skill
             selectUIBlockObject.SetActive(false);
             allSelectUIBlockObject.SetActive(false);
             allSelectSkillExplainPanelRectTransform.gameObject.SetActive(false);
+        }
+
+        private void Update()
+        {
+            if (HasInputAuthority)
+            {
+                if (randomSelectScroll.gameObject.activeSelf)
+                {
+                    if (Input.GetKeyDown(KeyCode.Alpha1) && _randomSelectSkillBlockHandleList.Count > 0)
+                    {
+                        _randomSelectSkillBlockHandleList[0].button.onClick?.Invoke();
+                    }
+                    else if (Input.GetKeyDown(KeyCode.Alpha2) && _randomSelectSkillBlockHandleList.Count > 1)
+                    {
+                        _randomSelectSkillBlockHandleList[1].button.onClick?.Invoke();
+                    }
+                    else if (Input.GetKeyDown(KeyCode.Alpha3) && _randomSelectSkillBlockHandleList.Count > 2)
+                    {
+                        _randomSelectSkillBlockHandleList[2].button.onClick?.Invoke();
+                    }
+                }
+            }
         }
 
         #region Member Funtion
@@ -68,11 +91,10 @@ namespace UI.Skill
             randomViewToggle.isOn = true;
             UIManager.AddActiveUI(gameObject);
 
-            {  // 이미 있는 스킬들 삭제
-                var handles = toggleGroup.GetComponentsInChildren<SkillSelectBlockHandle>().ToList();
-                foreach (var handle in handles)
-                    Destroy(handle.gameObject);
-            }
+            // 이미 있는 스킬들 삭제
+            foreach (var handle in _randomSelectSkillBlockHandleList)
+                Destroy(handle.gameObject);
+            _randomSelectSkillBlockHandleList.Clear();
 
             // 스킬 UI 생성
             bool isSuccessSelectSkillSpawn = false;
@@ -131,12 +153,14 @@ namespace UI.Skill
                     if (_selectCount > 0) SpawnRandomSkillBlocks(count);
                     else
                     {
-                        var handles = toggleGroup.GetComponentsInChildren<SkillSelectBlockHandle>().ToList();
-                        foreach (var h in handles)
+                        foreach (var h in _randomSelectSkillBlockHandleList)
                             Destroy(h.gameObject); 
+                        _randomSelectSkillBlockHandleList.Clear();
                         gameObject.SetActive(false);
                     }
                 });
+                
+                _randomSelectSkillBlockHandleList.Add(handle);
             }
         }
 

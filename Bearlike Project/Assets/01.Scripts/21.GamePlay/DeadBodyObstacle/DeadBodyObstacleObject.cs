@@ -33,7 +33,7 @@ namespace GamePlay.DeadBodyObstacle
             _ragdollColliders = GetComponentsInChildren<Collider>();
 
             SetDeadBodyComponentActive(false);
-            SetLagDollLayer(LayerMask.NameToLayer("Ignore Nav Mesh"));
+            SetLagDollLayer(LayerMask.NameToLayer("Monster"));
         }
 
         public override void Spawned()

@@ -28,6 +28,7 @@ namespace Skill.Support
         private readonly HashSet<GameObject> _damageMonsterSet = new HashSet<GameObject>(); // 이미 대미지를 입은 대상은 대미지를 다시 입으면 안됨으로 사용
         
         private StatusBase _status;
+        private int skillLevel;
 
         private Vector3 _destinationPosition; // 도미노가 닿을 목적지
 
@@ -37,12 +38,12 @@ namespace Skill.Support
             {
                 DebugManager.Log("충돌 도미노");
                 var ms = other.GetComponentInParent<MonsterStatus>();
-                if (ms.gameObject.layer != LayerMask.NameToLayer("DeadBody"))
+                if (ms)
                 {
                     // 타격을 입은 몬스터인지 확인
                     if (_damageMonsterSet.Contains(ms.gameObject) == false)
                     {
-                        ms.ApplyDamageRPC(_status.AddAllDamage(), DamageTextType.Normal, Object.Id);
+                        ms.ApplyDamageRPC(_status.AddAllDamage() * skillLevel, DamageTextType.Normal, Object.Id);
 
                         _damageMonsterSet.Add(ms.gameObject);
                     }
@@ -60,10 +61,12 @@ namespace Skill.Support
             base.Spawned();
             transform.position -= transform.forward * transform.localScale.magnitude * 2f;
             
-            var skill = Runner.FindObject(SkillId);
-            if (skill && 
-                skill.TryGetComponent(out _status))
+            var skillObj = Runner.FindObject(SkillId);
+            if (skillObj && 
+                skillObj.TryGetComponent(out SkillBase skill))
             {
+                _status = skill.status;
+                skillLevel = skill.level.Current;
                 _animator.enabled = true;
                 wallDownAudio.Play();
             }

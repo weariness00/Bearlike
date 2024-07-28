@@ -103,17 +103,6 @@ namespace GamePlay.Stage
 
         public virtual void Start()
         {
-            aliveMonsterCount.isOverMax = true;
-            monsterKillCount.isOverMax = true;
-            
-            StageInfo.SetJsonData(GetInfoData(StageInfo.id));
-            lootingTable.CalLootingItem(GetLootingData(StageInfo.id).LootingItems);
-
-            if (StageInfo.stageType != StageType.None)
-            {
-                transform.position = Vector3.one * 1000f;
-                stageGameObject.transform.position = Vector3.one * 1000f;
-            }
         }
         
         public void OnTriggerEnter(Collider other)
@@ -138,6 +127,18 @@ namespace GamePlay.Stage
         public override void Spawned()
         {
             _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
+                
+            aliveMonsterCount.isOverMax = true;
+            monsterKillCount.isOverMax = true;
+            
+            StageInfo.SetJsonData(GetInfoData(StageInfo.id));
+            lootingTable.CalLootingItem(GetLootingData(StageInfo.id).LootingItems);
+
+            if (StageInfo.stageType != StageType.None)
+            {
+                transform.position = Vector3.one * 1000f;
+                stageGameObject.transform.position = Vector3.one * 1000f;
+            }
             
             SpawnedSuccessRPC(UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber, true);
         }
@@ -300,6 +301,11 @@ namespace GamePlay.Stage
                 var monsters = FindObjectsOfType<MonsterBase>();
                 foreach (var monster in monsters)
                     monster.status.ApplyDamageRPC(999999, DamageTextType.Critical, monster.Object.Id);
+
+                // 프레임을 치키기 위해 시체 삭제
+                var deadbodys = FindObjectsOfType<DeadBodyObstacleObject>();
+                foreach (var deadbody in deadbodys)
+                    Destroy(deadbody.gameObject, 3f);
             }
             
             prevStagePortal.IsConnect = true;
@@ -307,7 +313,7 @@ namespace GamePlay.Stage
             isStageClear = true;
 
             lootingTable.SpawnDropItem();
-
+            
             if (destructObject != null) destructObject.tag = "Destruction";
 
             if(StageInfo.stageType != StageType.Boss) StageClearAction?.Invoke();

@@ -23,7 +23,7 @@ namespace GamePlay.UI
         public void SetPlayerData(PlayerController player)
         {
             var playerProgress = FindObjectsOfType<PlayerProgressBlock>(true).First(p => p.Object.InputAuthority == player.Object.InputAuthority);
-
+ 
             playerImage.sprite = player.icon;
             levelText.text = player.status.level.Current.ToString();
             nameText.text = playerProgress.GetPlayerName();

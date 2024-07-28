@@ -8464,7 +8464,6 @@ Transform:
   - {fileID: 2540202287877354472}
   - {fileID: 70370772684248357}
   - {fileID: 4799922026440080989}
-  - {fileID: 1172438978967428787}
   m_Father: {fileID: 7785925461561076709}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &5070666367796732317
@@ -8582,6 +8581,12 @@ MonoBehaviour:
   rig: {fileID: 3705661013842506294}
   leftArm: {fileID: 3923312357852129199}
   rightArm: {fileID: 2011668775583836785}
+  armMehs: {fileID: 9050629424576714037}
+  otherMeshes:
+  - {fileID: 7061983481985052906}
+  - {fileID: 4295484894810289299}
+  - {fileID: 8667303408665454922}
+  - {fileID: 513019035368071200}
 --- !u!1 &5423031015067378809
 GameObject:
   m_ObjectHideFlags: 0
@@ -10144,7 +10149,7 @@ MonoBehaviour:
   _IsSpawnSuccess:
     _value: 0
   playerType: 2
-  icon: {fileID: 21300000, guid: 421d263491e4a8f4388b983587fed873, type: 3}
+  icon: {fileID: 21300000, guid: d9ba87ece20253b47bfe935b6eaf7fdb, type: 3}
   status: {fileID: 7034224159123870484}
   uiController: {fileID: 0}
   cameraController: {fileID: 3032223850842735175}
@@ -10154,7 +10159,7 @@ MonoBehaviour:
   skillSystem: {fileID: 6063825830102821033}
   weaponSystem: {fileID: 5988630535614751886}
   aggroTarget: {fileID: 0}
-  animator: {fileID: 0}
+  networkAnimator: {fileID: 0}
   simpleKcc: {fileID: 0}
   mouseRotateObjects:
   - {fileID: 7808734984757609506}
@@ -10164,12 +10169,6 @@ MonoBehaviour:
   _W: 1
   _dashAmount: 100
   rotateSpeed: 500
-  armMehs: {fileID: 9050629424576714037}
-  otherMeshes:
-  - {fileID: 7061983481985052906}
-  - {fileID: 4295484894810289299}
-  - {fileID: 8667303408665454922}
-  - {fileID: 513019035368071200}
 --- !u!114 &1489619672394119936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10214,8 +10213,10 @@ MonoBehaviour:
   weaponCamera: {fileID: 9169840299119051588}
   uiCamera: {fileID: 2907893309410483889}
   fullScreenCamera: {fileID: 524013791105986748}
-  firstOffset: {x: 0, y: 0, z: 0.27}
-  thirdOffset: {x: 0, y: 0, z: -2}
+  firstOffset: {x: -0.122, y: 0.676, z: -0.285}
+  firstRotateOffset: {x: 0, y: 0, z: 0, w: 0}
+  thirdOffset: {x: 0, y: -2, z: -3.5}
+  thirdRotateOffset: {x: -0.34611705, y: 0, z: 0, w: 0.93819135}
   movement: 0.01
   rotationAngle: 1
   time: 1
@@ -12333,14 +12334,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7808734984757609506}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.9172353, z: 0}
+  m_LocalRotation: {x: -0.00000014901163, y: -7.4987995e-33, z: 1.102026e-39, w: 1}
+  m_LocalPosition: {x: 0, y: 0.39925227, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5053240255358205309}
   - {fileID: 6454413302100980428}
-  m_Father: {fileID: 596203090304503304}
+  m_Father: {fileID: 2717215691121586856}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &249924066294229317
 MonoBehaviour:
@@ -13959,6 +13960,7 @@ Transform:
   - {fileID: 8385428220437451928}
   - {fileID: 7889020528927657628}
   - {fileID: 8329013720449516097}
+  - {fileID: 1172438978967428787}
   m_Father: {fileID: 2652347828970162151}
   m_LocalEulerAnglesHint: {x: 89.98021, y: 0, z: 0}
 --- !u!1 &8783055350413396807

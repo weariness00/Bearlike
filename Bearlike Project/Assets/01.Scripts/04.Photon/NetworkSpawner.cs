@@ -45,11 +45,16 @@ namespace Script.Photon
 
         void OnDestroy()
         {
-            CurrentSpawnInterval = TickTimer.None;
+            if (isSpawned)
+            {
+                CurrentSpawnInterval = TickTimer.None;
+            }
         }
-        
+
+        private bool isSpawned;
         public override void Spawned()
         {
+            base.Spawned();
             if (isStartSpawn)
             {
                 SpawnStartRPC();
