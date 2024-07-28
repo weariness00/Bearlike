@@ -7,6 +7,8 @@ namespace Item.Container
 {
     public class Money : ItemBase
     {
+        private PlayerController _playerController;
+        
         #region Unity Event Function
 
         public void Update()
@@ -16,8 +18,7 @@ namespace Item.Container
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.CompareTag("Player") && 
-                (other.TryGetComponent(out PlayerController pc) || other.transform.root.TryGetComponent(out pc)) && pc.HasInputAuthority)
+            if (CheckPlayer(other.gameObject, out PlayerController pc))
             {
                 rigidbody.isKinematic = true;
                 
@@ -38,7 +39,7 @@ namespace Item.Container
         {
             base.AddItem(addItem);
 
-            var goodsCanvas = FindObjectOfType<GoodsCanvas>();
+            var goodsCanvas = _playerController.uiController.goodsCanvas;
             goodsCanvas.BearCoinUpdate(Amount.Current);
             
             return addItem;
@@ -50,7 +51,7 @@ namespace Item.Container
             if (useItem is ItemBase item)
             {
                 Amount.Current -= item.Amount.Current;
-                var goodsCanvas = FindObjectOfType<GoodsCanvas>();
+                var goodsCanvas = _playerController.uiController.goodsCanvas;
                 goodsCanvas.BearCoinUpdate(Amount.Current);
 
                 if (Amount.isMin)
