@@ -103,17 +103,6 @@ namespace GamePlay.Stage
 
         public virtual void Start()
         {
-            aliveMonsterCount.isOverMax = true;
-            monsterKillCount.isOverMax = true;
-            
-            StageInfo.SetJsonData(GetInfoData(StageInfo.id));
-            lootingTable.CalLootingItem(GetLootingData(StageInfo.id).LootingItems);
-
-            if (StageInfo.stageType != StageType.None)
-            {
-                transform.position = Vector3.one * 1000f;
-                stageGameObject.transform.position = Vector3.one * 1000f;
-            }
         }
         
         public void OnTriggerEnter(Collider other)
@@ -138,6 +127,18 @@ namespace GamePlay.Stage
         public override void Spawned()
         {
             _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
+                
+            aliveMonsterCount.isOverMax = true;
+            monsterKillCount.isOverMax = true;
+            
+            StageInfo.SetJsonData(GetInfoData(StageInfo.id));
+            lootingTable.CalLootingItem(GetLootingData(StageInfo.id).LootingItems);
+
+            if (StageInfo.stageType != StageType.None)
+            {
+                transform.position = Vector3.one * 1000f;
+                stageGameObject.transform.position = Vector3.one * 1000f;
+            }
             
             SpawnedSuccessRPC(UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber, true);
         }

@@ -184,12 +184,16 @@ namespace Player
                 Object.
                 name = "Local Player";
                 Runner.SetPlayerObject(Runner.LocalPlayer, Object);
+                
+                rigController.EnableArmMesh();
+                status.InjuryAction += rigController.DisableArmMesh;
+                status.RecoveryFromInjuryAction += rigController.EnableArmMesh;
+                status.RecoveryFromReviveAction += rigController.EnableArmMesh;
 
                 status.InjuryAction += () => cameraController.ChangeCameraMode(CameraMode.ThirdPerson);
                 status.RecoveryFromInjuryAction += () => cameraController.ChangeCameraMode(CameraMode.FirstPerson);
                 status.ReviveAction += () => cameraController.ChangeCameraMode(CameraMode.Free);
                 status.RecoveryFromReviveAction += () => cameraController.ChangeCameraMode(CameraMode.FirstPerson);
-
                 
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
             }
@@ -379,7 +383,7 @@ namespace Player
                 isMoveY = true;
             }
             
-            if (data.Dash)
+            if (data.Dash && !status.isInjury && !status.isRevive)
             {
                 if (_dashTimer.Expired(Runner))
                 {

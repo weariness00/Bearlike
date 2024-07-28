@@ -10,10 +10,6 @@ namespace Player.Container
 {
     public class FirstBear : PlayerController
     {
-        [Header("Skinned Mesh")]
-        [SerializeField] private GameObject armMehs;
-        [SerializeField] private List<GameObject> otherMeshes;
-        
         private SkillBase FlippingCoin;
         private SkillBase tmpSkill;
         private SkillBase ultimateSkill;
@@ -22,21 +18,13 @@ namespace Player.Container
         {
             base.Spawned();
             SkillInit();
-
-            if (HasInputAuthority)
-            {
-                armMehs.layer = LayerMask.NameToLayer("Weapon");
-                foreach (var otherMesh in otherMeshes)
-                    otherMesh.layer = LayerMask.NameToLayer("Volum");
-            }
         }
 
         public override void FixedUpdateNetwork()
         {
+            base.FixedUpdateNetwork();
+            
             if (!GameManager.Instance.isControl)
-                return;
-
-            if (status.isInjury || status.isRevive)
                 return;
 
             if (GetInput(out PlayerInputData data))
@@ -46,8 +34,6 @@ namespace Player.Container
                     SkillControl(data);
                 }
             }
-
-            base.FixedUpdateNetwork();
         }
 
         void SkillInit()
@@ -80,7 +66,9 @@ namespace Player.Container
         {
             if (HasInputAuthority == false)
                 return;
-
+            if (status.isInjury || status.isRevive)
+                return;
+            
             if (data.FirstSkill)
             {
                 uiController.skillCanvas.StartCoolTime(FlippingCoin);
