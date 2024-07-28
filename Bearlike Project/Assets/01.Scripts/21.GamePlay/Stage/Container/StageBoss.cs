@@ -33,7 +33,8 @@ namespace GamePlay.Stage.Container
             InitCinematic();
             cinematicCollider.gameObject.AddOnTriggerEnter(other =>
             {
-                StartCinematicRPC();
+                if(other.CompareTag("Player"))
+                    StartCinematicRPC();
             });
         }
 
