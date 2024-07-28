@@ -345,7 +345,7 @@ namespace Monster.Container
             while (time < 1.0f)
             {
                 time += Time.deltaTime;
-                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(new Vector3(playerPosition.x, 0, playerPosition.z)), time);
+                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(new Vector3(playerPosition.x, 0, playerPosition.z) - new Vector3(transform.position.x, 0, transform.position.z)), time);
                 yield return null;
             }
         }

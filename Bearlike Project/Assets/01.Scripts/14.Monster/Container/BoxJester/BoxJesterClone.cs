@@ -216,8 +216,8 @@ namespace Monster.Container
             );
         
             var loop = new SequenceNode(
-                Idle,
-                AttackPattern
+                Idle
+                // AttackPattern
             );
 
             return loop;
@@ -239,14 +239,12 @@ namespace Monster.Container
                 }
             }
 
-            DebugManager.Log($"Clone playerPosition : {Quaternion.LookRotation(new Vector3(playerPosition.x, 0, playerPosition.z)).eulerAngles}");
-            
             float time = 0.0f;
             
             while (time < 1.0f)
             {
                 time += Time.deltaTime;
-                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(new Vector3(playerPosition.x, 0, playerPosition.z)), time);
+                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(new Vector3(playerPosition.x, 0, playerPosition.z) - new Vector3(transform.position.x, 0, transform.position.z)), time);
                 yield return null;
             }
         }
