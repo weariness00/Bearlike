@@ -113,6 +113,11 @@ namespace Item
         protected IEnumerator MoveTargetCoroutine(GameObject targetObject)
         {
             Transform targetTransform = targetObject.transform;
+            if (rigidbody)
+            {
+                rigidbody.useGravity = false;
+                rigidbody.isKinematic = true;
+            }
             while (true)
             {
                 var dis = Vector3.Distance(targetTransform.position, transform.position);

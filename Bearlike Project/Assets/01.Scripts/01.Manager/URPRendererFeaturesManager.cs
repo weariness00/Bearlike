@@ -48,6 +48,17 @@ namespace Manager
             {
                 if (_rendererFeaturesEffectDictionary.TryGetValue(name, out var effect))
                 {
+                    if (name == "HitEffect")
+                        effect.passMaterial.SetFloat(Alpha, 0);
+                    else if (name == "FireEffect")
+                    {
+                        
+                    }
+                    else if (name == "ShieldEffect")
+                        effect.passMaterial.SetFloat(FullScreenIntensity, 1.0f);
+                    else if (name == "HealEffect")
+                        effect.passMaterial.SetFloat(VignetteIntensity, 0);
+                    
                     effect.SetActive(false);
                 }
             }
@@ -58,6 +69,28 @@ namespace Manager
         public void StartEffect(string name)
         {
             StartCoroutine(PlayEffectCoroutine(name));
+        }
+
+        public void StartShield()
+        {
+            FullScreenPassRendererFeature fullScreenPassRendererFeature;
+
+            if (_rendererFeaturesEffectDictionary.TryGetValue("ShieldEffect", out fullScreenPassRendererFeature))
+            {
+                fullScreenPassRendererFeature.SetActive(true);
+                fullScreenPassRendererFeature.passMaterial.SetFloat(FullScreenIntensity, 0.6f);
+            }
+        }
+
+        public void StopShield()
+        {
+            FullScreenPassRendererFeature fullScreenPassRendererFeature;
+        
+            if (_rendererFeaturesEffectDictionary.TryGetValue("ShieldEffect", out fullScreenPassRendererFeature))
+            {
+                fullScreenPassRendererFeature.SetActive(true);
+                fullScreenPassRendererFeature.passMaterial.SetFloat(FullScreenIntensity, 1.0f);
+            }
         }
         
         IEnumerator PlayEffectCoroutine(string name)

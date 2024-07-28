@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Data;
 using Fusion;
@@ -18,11 +19,12 @@ namespace UI
         #region Network Variable
 
         private ChangeDetector _changeDetector;
+        private bool isSpawned = false;
         [Networked] public NetworkBool IsSettingUI { get; set; }
         [Networked] [Capacity(3)] private NetworkArray<NetworkBool> NetworkReadyArray { get; } // 투표를 마치고 준비가 되었는지
         [Networked] [Capacity(2)] public NetworkArray<int> StageVoteCount { get; }
         [Networked] [Capacity(2)] public NetworkArray<StageType> NetworkStages { get; }
-
+        
         #endregion
 
         public List<StageData> nextStageList = new List<StageData>();
@@ -42,8 +44,30 @@ namespace UI
             StageBase.StageClearAction -= SettingStageInfo;
         }
 
+        private void Update()
+        {
+            if(!isSpawned) return;
+            if (IsSettingUI)
+            {
+                if (Input.GetKeyDown(KeyCode.Alpha1))
+                {
+                    stageSelectUIHandlerList[0].toggle.isOn = !stageSelectUIHandlerList[0].toggle.isOn;
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha2))
+                {
+                    stageSelectUIHandlerList[1].toggle.isOn = !stageSelectUIHandlerList[1].toggle.isOn;
+                }
+
+                if (Input.GetKeyDown(KeyCode.Return))
+                {
+                    selectToggle.isOn = !selectToggle.isOn;
+                }
+            }
+        }
+
         public override void Spawned()
         {
+            isSpawned = true;
             _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
             
             clientNumber = UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber;

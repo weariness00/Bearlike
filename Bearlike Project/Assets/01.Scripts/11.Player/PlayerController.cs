@@ -108,8 +108,6 @@ namespace Player
         #region Unity Event Function
         private void Awake()
         {
-            LoadingManager.AddWait();
-            
             status = gameObject.GetComponent<PlayerStatus>();
             uiController = GetComponentInChildren<PlayerUIController>();
             cameraController = GetComponent<PlayerCameraController>();
@@ -142,14 +140,13 @@ namespace Player
                     {
                         case CursorLockMode.None:
                             Cursor.lockState = CursorLockMode.Locked;
-                            IsCursor = true;
+                            SetIsCursorRPC(false);
                             break;
                         case CursorLockMode.Locked:
                             Cursor.lockState = CursorLockMode.None;
-                            IsCursor = false;
+                            SetIsCursorRPC(true);
                             break;
                     }
-                    IsCursor = !IsCursor;
                 }
             }
         }
@@ -157,16 +154,15 @@ namespace Player
         public override void Spawned()
         {
             base.Spawned();
-            _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
+            LoadingManager.AddWait();
 
-            DebugManager.LogWarning("headRig를 Update에서 계속 바꿔주고 있는거고치기");
+            _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
             
             StatusInit();
 
             Cursor.lockState = CursorLockMode.Locked;
             simpleKcc = gameObject.GetOrAddComponent<SimpleKCC>();
             simpleKcc.Collider.tag = "Player";
-            // simpleKcc.SetGravity(new Vector3(0, -9.8f, 0));
             
             // 무기 초기화
             ChangeWeaponRPC(0);
@@ -185,12 +181,8 @@ namespace Player
                 Object.
                 name = "Local Player";
                 Runner.SetPlayerObject(Runner.LocalPlayer, Object);
-
-                status.InjuryAction += () => cameraController.ChangeCameraMode(CameraMode.ThirdPerson);
-                status.RecoveryFromInjuryAction += () => cameraController.ChangeCameraMode(CameraMode.FirstPerson);
-                status.ReviveAction += () => cameraController.ChangeCameraMode(CameraMode.Free);
-                status.RecoveryFromReviveAction += () => cameraController.ChangeCameraMode(CameraMode.FirstPerson);
-
+                
+                rigController.EnableArmMesh();
                 
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
             }
@@ -283,12 +275,24 @@ namespace Player
         
         private void StatusInit()
         {
+            if (HasInputAuthority)
+            {
+                status.InjuryAction += rigController.DisableArmMesh;
+                status.RecoveryFromInjuryAction += rigController.EnableArmMesh;
+                status.RecoveryFromReviveAction += rigController.EnableArmMesh;
+
+                status.InjuryAction += () => cameraController.ChangeCameraMode(CameraMode.ThirdPerson);
+                status.RecoveryFromInjuryAction += () => cameraController.ChangeCameraMode(CameraMode.FirstPerson);
+                status.ReviveAction += () => cameraController.ChangeCameraMode(CameraMode.Free);
+                status.RecoveryFromReviveAction += () => cameraController.ChangeCameraMode(CameraMode.FirstPerson);
+            }
+            
             // Status 관련 초기화
             status.InjuryAction += () =>
             {
                 GameManager.Instance.AlivePlayerCount--;
 
-                networkAnimator.SetTrigger(AniInjury);
+                networkAnimator.SetTrigger(AniInjury, true);
                 SetLayer(0);
                 // _headRig.weight = 0;
                 W = 0;
@@ -307,7 +311,7 @@ namespace Player
             {
                 GameManager.Instance.AlivePlayerCount++;
                 
-                networkAnimator.SetTrigger(AniRevive);
+                networkAnimator.SetTrigger(AniRevive,true);
                 SetLayer(0);
                 W = 1;
                 simpleKcc.Collider.transform.localPosition = Vector3.zero;
@@ -323,13 +327,13 @@ namespace Player
             };
             status.ReviveAction += () =>
             {
-                networkAnimator.SetTrigger(AniDie);
+                networkAnimator.SetTrigger(AniDie, true);
             };
             status.RecoveryFromReviveAction += () =>
             {
                 GameManager.Instance.AlivePlayerCount++;
                 
-                networkAnimator.SetTrigger(AniRevive);
+                networkAnimator.SetTrigger(AniRevive, true);
                 SetLayer(1);
                 W = 1;
                 simpleKcc.Collider.transform.localPosition = Vector3.zero;
@@ -380,7 +384,7 @@ namespace Player
                 isMoveY = true;
             }
             
-            if (data.Dash)
+            if (data.Dash && !status.isInjury && !status.isRevive)
             {
                 if (_dashTimer.Expired(Runner))
                 {
@@ -504,6 +508,9 @@ namespace Player
         #endregion
         
         #region RPC Function
+
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        private void SetIsCursorRPC(NetworkBool value) => IsCursor = value;
 
         [Rpc(RpcSources.All,RpcTargets.StateAuthority)]
         public new void SetPositionRPC(Vector3 pos) => simpleKcc.SetPosition(pos);

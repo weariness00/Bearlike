@@ -5,6 +5,7 @@ using Data;
 using DG.Tweening;
 using Fusion;
 using Manager;
+using Player;
 using UI.Status;
 using Unity.Mathematics;
 using UnityEngine;
@@ -287,11 +288,11 @@ namespace Status
                 return;
             }
 
-            if (Random.Range(0f, 1f) < avoid.Current)
-            {
-                DebugManager.Log($"{name} 회피 성공");
-                return;
-            }
+            // if (Random.Range(0f, 1f) < avoid.Current)
+            // {
+            //     DebugManager.Log($"{name} 회피 성공");
+            //     return;
+            // }
 
             if (!ConditionDamageIgnoreIsOn())
             {
@@ -327,14 +328,16 @@ namespace Status
                         {
                             afterApplyDamage.AfterApplyDamageAction?.Invoke(realDamage);
                         }
-                    }
+                        
+                        if (HasStateAuthority && ConditionDamageReflectIsOn())
+                        {
+                            var playerStatus = ownerObj.gameObject.GetComponent<PlayerStatus>();
 
-                    if (ConditionDamageReflectIsOn())
-                    {
-                        var playerStatus = ownerObj.gameObject.GetComponent<StatusBase>();
-                        var monsterId = gameObject.GetComponent<NetworkObject>().Id;
-
-                        playerStatus.hp.Current -= realDamage / 10;
+                            playerStatus.ApplyDamageRPC(realDamage / 10, DamageTextType.Normal, Object.Id, CrowdControl.Normality);
+                        
+                            DebugManager.Log($"{ownerObj.name} player가 반사로 인해 {realDamage / 10}만큼 데미지를 받음\n"+
+                                             $"남은 hp : {playerStatus.hp.Current}");
+                        }
                     }
                 }
                 

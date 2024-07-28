@@ -36,9 +36,7 @@ namespace Item.Container
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.CompareTag("Player") && 
-                (other.TryGetComponent(out PlayerController pc) || other.transform.root.TryGetComponent(out pc)) &&
-                pc.HasInputAuthority)
+            if (CheckPlayer(other.gameObject, out PlayerController pc))
             {
                 foreach (var sphereCollider in GetComponentsInChildren<SphereCollider>())
                 {
@@ -58,7 +56,7 @@ namespace Item.Container
             PlayerController pc;
             if (targetObject.TryGetComponent(out pc) || targetObject.transform.root.TryGetComponent(out pc))
             {
-                pc.status.IncreaseExpRPC(_expAmount);
+                pc.status.IncreaseExp(_expAmount);
                 pc.soundController.PlayItemEarn();
             }
         }

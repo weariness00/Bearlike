@@ -62,10 +62,12 @@ namespace GamePlay
 
                 if (targetObject.CompareTag("Player"))
                 {
-                    var pc = targetObject.GetComponent<PlayerController>();
-                    pc.SetPositionRPC(spot.position);
-                    pc.SetLookRotationRPC(spot.forward);
-                    
+                    var pc = targetObject.GetComponentInParent<PlayerController>();
+                    if (pc)
+                    {
+                        pc.SetPositionRPC(spot.position);
+                        pc.SetLookRotationRPC(spot.forward);
+                    }
                 }
                 else if (targetObject.TryGetComponent(out NetworkBehaviourEx networkEx))
                 {

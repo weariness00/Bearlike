@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.NetworkInformation;
+using Fusion;
 using GamePlay.Sync;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
@@ -21,6 +23,10 @@ namespace Player
         [Header("Two Bone IK")] 
         [SerializeField] private TwoBoneIKConstraint leftArm;
         [SerializeField] private TwoBoneIKConstraint rightArm;
+        
+        [Header("Skinned Mesh")]
+        [SerializeField] private GameObject armMehs;
+        [SerializeField] private List<GameObject> otherMeshes;
 
         #region Parameter Getter & Setter
 
@@ -85,6 +91,20 @@ namespace Player
         {
             var sync = rightArm.data.target.GetComponent<TransformSync>();
             sync.targetTransform = rightIK.transform;
+        }
+
+        public void EnableArmMesh()
+        {
+            armMehs.layer = LayerMask.NameToLayer("Weapon");
+            foreach (var otherMesh in otherMeshes)
+                otherMesh.layer = LayerMask.NameToLayer("Volum");
+        }
+
+        public void DisableArmMesh()
+        {
+            armMehs.layer = LayerMask.NameToLayer("Default");
+            foreach (var otherMesh in otherMeshes)
+                otherMesh.layer = LayerMask.NameToLayer("Default");
         }
     }
 }

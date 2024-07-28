@@ -31,7 +31,7 @@ namespace Skill.Container
 
         private void SpawnDomino(GameObject monsterObj)
         {
-            if (spawnProbability.IsProbability(1f))
+            if ((spawnProbability * level).IsProbability(1f))
             {
                 var rotate = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
                 
@@ -48,7 +48,7 @@ namespace Skill.Container
             base.ExplainUpdate();
             if (explain.Contains("(Damage)")) explain = explain.Replace("(Damage)", $"{status.AddAllDamage()}");
             if (explain.Contains("(Level)")) explain = explain.Replace("(Level)", $"{level.Current}");
-            if (explain.Contains("(Spawn Probability)")) explain = explain.Replace("(Spawn Probability)", $"{level.Current}");
+            if (explain.Contains("(Spawn Probability)")) explain = explain.Replace("(Spawn Probability)", $"{spawnProbability}");
 
             explain = explain.CalculateNumber();
         }

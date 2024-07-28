@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using BehaviorTree.Base;
@@ -77,13 +76,14 @@ namespace Monster.Container
         
         public int hatCount;
         private readonly int HATNUM = 4;
+
+        private readonly float _punchAttackDistance = 50.0f;
         
         #endregion
 
-
         #region Unity Event Function
 
-        void Awake()
+        public override void Awake()
         {
             base.Awake();
             
@@ -144,7 +144,6 @@ namespace Monster.Container
 
                 for (int i = 0; i < rootTrans.childCount; ++i)
                 {
-                    DebugManager.Log($"tpPlaces[i] : {tpPlaces[i]}, rootTrans.GetChild(i) : {rootTrans.GetChild(i)}");
                     cloneTPPlaces[i] = rootTrans.GetChild(i);
                 }
             }
@@ -164,7 +163,6 @@ namespace Monster.Container
 
                 for (int i = 0; i < rootTrans.childCount; ++i)
                 {
-                    DebugManager.Log($"HatPlaces[i] : {hatPlaces[i]}, rootTrans.GetChild(i) : {rootTrans.GetChild(i)}");
                     hatPlaces[i] = rootTrans.GetChild(i);
                 }
             }
@@ -260,26 +258,26 @@ namespace Monster.Container
 
             var CryPattern = new SelectorNode(
                     true,
-                    // new SequenceNode(
-                    //     new ActionNode(CryingShield),
-                    //     new ActionNode(ShieldOffAction)
-                    // ),
+                    new SequenceNode(
+                        new ActionNode(CryingShield),
+                        new ActionNode(ShieldOffAction)
+                    ),
                     new SequenceNode(
                         new ActionNode(ReverseCryingShield),
                         new ActionNode(ShieldOffAction)
+                    ),
+                    new SequenceNode(
+                    new ActionNode(BreakHat),
+                        new ActionNode(CheckHatCount)
+                    ),
+                    new SequenceNode(
+                    new ActionNode(BreakReverseHat),
+                    new ActionNode(CheckReverseHatCount)
                     )
-                    // new SequenceNode(
-                    // new ActionNode(BreakHat),
-                    //     new ActionNode(CheckHatCount)
-                    // ),
-                    // new SequenceNode(
-                    // new ActionNode(BreakReverseHat),
-                    // new ActionNode(CheckReverseHatCount)
-                    // )
                 );
 
             var Cry = new SequenceNode(
-                    // new ActionNode(IsCry),
+                    new ActionNode(IsCry),
                     CryPattern
                 );
             
@@ -289,13 +287,13 @@ namespace Monster.Container
             
             var AngryPattern = new SelectorNode(
                     true,
-                    new ActionNode(HandLazer),
-                    new ActionNode(ThrowBoom),
-                    new ActionNode(slapAttack)
+                    // new ActionNode(HandLazer),
+                    new ActionNode(ThrowBoom)
+                    // new ActionNode(slapAttack)
                 );
 
             var Angry = new SequenceNode(
-                    new ActionNode(IsAngry),
+                    // new ActionNode(IsAngry),
                     AngryPattern
                 );
             
@@ -304,8 +302,8 @@ namespace Monster.Container
             var Attack = new SelectorNode(
                     false,
                     // Smile,
-                    Cry
-                    // Angry
+                    // Cry,
+                    Angry
                 );
             
             #endregion
@@ -340,15 +338,13 @@ namespace Monster.Container
                     playerPosition = player.transform.position;
                 }
             }
-
-            DebugManager.Log($"playerPosition : {playerPosition}");
             
             float time = 0.0f;
             
             while (time < 1.0f)
             {
                 time += Time.deltaTime;
-                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(new Vector3(playerPosition.x, 0, playerPosition.z)), time);
+                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(new Vector3(playerPosition.x, 0, playerPosition.z) - new Vector3(transform.position.x, 0, transform.position.z)), time);
                 yield return null;
             }
         }
@@ -536,9 +532,8 @@ namespace Monster.Container
                     }
                 }
                 
-                // 공격 범위를 지정해서 구현할까? => 고민 필요
-                // if (attackDistance < minDistance)
-                //     return INode.NodeState.Failure;
+                if (_punchAttackDistance < minDistance)
+                    return INode.NodeState.Failure;
                 
                 foreach(var player in _players)
                 {
@@ -553,6 +548,9 @@ namespace Monster.Container
                     }
                 }
 
+                if (_punchAttackDistance < math.distance(transform.position, fakeTargetPosition))
+                    return INode.NodeState.Failure;
+                
                 type = Random.Range(0, 2);
                 
                 // Animation Play
@@ -661,6 +659,8 @@ namespace Monster.Container
                 (runner, o) =>
                 {
                     var h = o.GetComponent<BoxJesterClone>();
+
+                    h.OwnerId = OwnerId;
                 });
             
             return INode.NodeState.Success;
@@ -969,10 +969,13 @@ namespace Monster.Container
             pos -= transform.forward * 2;
             pos += transform.up * 3;
             
+            DebugManager.Log("boom 소환");
+            
             Runner.SpawnAsync(boom, pos, transform.rotation, null,
                 (runner, o) =>
                 {
                     var h = o.GetComponent<BoxJesterBoom>();
+                    
                     h.OwnerId = OwnerId;
                     h.dir = transform.forward;
                 });

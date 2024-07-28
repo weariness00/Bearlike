@@ -15,10 +15,8 @@ using Util;
 
 namespace GamePlay
 {
-    public class GameResult : NetworkBehaviourEx
+    public class GameResult : MonoBehaviour
     {
-        [Networked] private NetworkBool IsInit { get; set; }
-        
         public Button lobbyButton;
 
         public Image backgroundImage;
@@ -27,8 +25,7 @@ namespace GamePlay
         public Image gameOverImage;
 
         [SerializeField] private GameObject playerResultObject;
-        [SerializeField] private NetworkObject networkObjectPlayerResultGrid;
-        [SerializeField] private NetworkPrefabRef playerResultBlockPrefab;
+        [SerializeField] private GameObject playerResultBlockPrefab;
         
         private void Start()
         {
@@ -42,25 +39,14 @@ namespace GamePlay
                 OnGameOver();
 
             Compensation();
-        }
-
-        public override void Spawned()
-        {
-            base.Spawned();
-
-            if (HasStateAuthority)
+            
+            foreach (var player in FindObjectsOfType<PlayerController>())
             {
-                foreach (var data in UserData.GetAllUserData())
-                {
-                    Runner.SpawnAsync(playerResultBlockPrefab, null, null, data.PlayerRef, (runner, o) =>
-                    {
-                        var block = o.GetComponent<PlayerResultBlock>();
-                        block.PlayerId = data.NetworkId;
-                        block.ParentId = networkObjectPlayerResultGrid.Id;
-                    });
-                }
-
-                IsInit = true;
+                var obj = Instantiate(playerResultBlockPrefab, playerResultBlockPrefab.transform.parent);
+                var block = obj.GetComponent<PlayerResultBlock>();
+                
+                block.gameObject.SetActive(true);
+                block.SetPlayerData(player);
             }
         }
 
@@ -69,9 +55,18 @@ namespace GamePlay
             lobbyButton.onClick.AddListener(() => NetworkManager.Runner.Shutdown());
             
             var lobbyText = lobbyButton.GetComponentInChildren<TMP_Text>();
-            lobbyText.DOFade(0, 0);
+            {
+                var color = lobbyText.color;
+                color.a = 0;
+                lobbyText.color = color;
+            }
+            {
+                var color = lobbyButton.image.color;
+                color.a = 0;
+                lobbyButton.image.color = color;
+            }
+            
             lobbyText.DOFade(1, 1).SetDelay(2f);
-            lobbyButton.image.DOFade(0, 0);
             lobbyButton.image.DOFade(1, 1).SetDelay(2f);
             
             lobbyButton.gameObject.SetActive(true);
@@ -90,10 +85,7 @@ namespace GamePlay
             gameClearImage.rectTransform.DOPunchScale(Vector3.one, 1f);
 
             yield return new WaitForSeconds(1f);
-    
-            while (IsInit == false)
-                yield return null;
-
+            
             InitPlayerResult();
             ButtonInit();
         }

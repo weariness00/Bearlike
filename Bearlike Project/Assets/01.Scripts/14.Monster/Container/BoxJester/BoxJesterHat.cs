@@ -11,32 +11,37 @@ namespace Monster.Container
     {
         [Networked] public NetworkId OwnerId { get; set; }
 
-        private void Awake()
+        private BoxJester boxJester;
+        
+        public override void Awake()
         {
+            base.Awake();
             status = gameObject.GetComponent<MonsterStatus>();
         }
         
         public override void Spawned()
         {
+            base.Spawned();
             Destroy(gameObject, 10f);
+            
+            var ownerObj = Runner.FindObject(OwnerId);
+            boxJester = ownerObj.gameObject.GetComponent<BoxJester>();
+
+            DieAction += () =>
+            {
+                --boxJester.hatCount;
+                Destroy(gameObject, 0f);
+            };
         }
         
-        public override void FixedUpdateNetwork()
-        {
-            if (status.IsDie)
-            {            
-                var ownerObj = Runner.FindObject(OwnerId);
-
-                var boxJester = ownerObj.gameObject.GetComponent<BoxJester>();
-                boxJester.DestroyHatRPC();
-                
-                Destroy(gameObject, 0f);
-            }
-        }
-
         public override INode InitBT()
         {
-            throw new System.NotImplementedException();
+            return new ActionNode(tmp);
+        }
+
+        private INode.NodeState tmp()
+        {
+            return INode.NodeState.Success;
         }
     }
 }

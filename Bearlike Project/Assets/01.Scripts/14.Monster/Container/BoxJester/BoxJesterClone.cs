@@ -60,11 +60,13 @@ namespace Monster.Container
         
         private bool _animationing = false;
 
+        private readonly float _punchAttackDistance = 50.0f;
+
         #endregion
         
         #region Unity Event Function
 
-        void Awake()
+        public override void Awake()
         {
             base.Awake();
             
@@ -82,11 +84,6 @@ namespace Monster.Container
             _masks[0] = boxJester.Find("Smile_Face").gameObject;
             _masks[1] = boxJester.Find("Sad_Face").gameObject;
             _masks[2] = boxJester.Find("Angry_Face").gameObject;
-            
-            DieAction += () => animator.PlayDieAction();
-            DieAction += () => Destroy(gameObject, 3);
-            
-            _handModel = transform.Find("Clown").Find("Hand").gameObject;
         }
         
         #endregion
@@ -122,10 +119,15 @@ namespace Monster.Container
                 playerObjects.Add(Runner.GetPlayerObject(playerRef).gameObject);
             }
             _players = playerObjects.ToArray();
-
-            OwnerId = gameObject.GetComponent<NetworkObject>().Id;
             
-            Destroy(gameObject, 10.0f);
+            Destroy(gameObject, 20.0f);
+            
+            DieAction += () => animator.PlayDieAction();
+            DieAction += () => Destroy(gameObject, 3);
+            
+            _handModel = transform.Find("Clown").Find("Hand").gameObject;
+            
+            DebugManager.Log($"Clone의 HP는 {status.hp.Current}입니다.");
         }
         
         #endregion
@@ -134,11 +136,6 @@ namespace Monster.Container
         public override INode InitBT()
         {
             var Idle = new ActionNode(IdleNode);
-        
-            var TP = new SequenceNode(
-                new ActionNode(TeleportCharge),
-                new ActionNode(TeleportAction)
-                );
 
             #region Hide
 
@@ -216,7 +213,6 @@ namespace Monster.Container
 
             var AttackPattern = new SelectorNode(
                 true, 
-                TP,
                 Hide,
                 Attack
             );
@@ -247,13 +243,11 @@ namespace Monster.Container
 
             float time = 0.0f;
             
-            while (true)
+            while (time < 1.0f)
             {
-                time += 0.01f;
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(new Vector3(playerPosition.x, 0, playerPosition.z)), time);
-                yield return new WaitForSeconds(0.01f);
-                if(time > 1.0f)
-                    yield break;
+                time += Time.deltaTime;
+                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(new Vector3(playerPosition.x, 0, playerPosition.z) - new Vector3(transform.position.x, 0, transform.position.z)), time);
+                yield return null;
             }
         }
         
@@ -270,36 +264,7 @@ namespace Monster.Container
                 return INode.NodeState.Running;
 
             _animationing = false;
-            DebugManager.Log($"Idle");
-            
-            return INode.NodeState.Success;
-        }
-
-        #endregion
-
-        #region TP
-
-        private INode.NodeState TeleportCharge()
-        {
-            if (false == _animationing)
-            {
-                tpEffect.SendEvent("OnPlay");
-                animator.PlayTeleport();
-                _animationing = true;
-            }
-
-            if (false == animator.TeleportTimerExpired)
-                return INode.NodeState.Running;
-
-            _animationing = false;
-            DebugManager.Log($"TP");
-            
-            return INode.NodeState.Success;
-        }
-        
-        private INode.NodeState TeleportAction()
-        {
-            TPPositionRPC();
+            DebugManager.Log($"Clone Idle");
             
             return INode.NodeState.Success;
         }
@@ -325,7 +290,7 @@ namespace Monster.Container
                 _animationing = true;
                 StartCoroutine(ChangeMaskCoroutine((MaskType)(tmp)));
                 
-                DebugManager.Log($"MaskChange : {((MaskType)(tmp)).ToString()}");
+                DebugManager.Log($"Clone MaskChange : {((MaskType)(tmp)).ToString()}");
             }
 
             if (false == animator.MaskChangeTimerExpired)
@@ -376,9 +341,8 @@ namespace Monster.Container
                     }
                 }
                 
-                // 공격 범위를 지정해서 구현할까? => 고민 필요
-                // if (attackDistance < minDistance)
-                //     return INode.NodeState.Failure;
+                if (_punchAttackDistance < minDistance)
+                    return INode.NodeState.Failure;
                 
                 foreach(var player in _players)
                 {
@@ -392,6 +356,9 @@ namespace Monster.Container
                         break;
                     }
                 }
+                
+                if (_punchAttackDistance < math.distance(transform.position, fakeTargetPosition))
+                    return INode.NodeState.Failure;
 
                 type = Random.Range(0, 2);
                 
@@ -405,7 +372,7 @@ namespace Monster.Container
 
             _animationing = false;
             
-            DebugManager.Log($"Punching Ready");
+            DebugManager.Log($"Clone Punching Ready");
             
             return INode.NodeState.Success;
         }
@@ -437,7 +404,7 @@ namespace Monster.Container
             HandActiveRPC(true);
             
             _animationing = false;
-            DebugManager.Log($"Punching");
+            DebugManager.Log($"Clone Punching");
             
             return INode.NodeState.Success;
         }
@@ -470,7 +437,7 @@ namespace Monster.Container
             HandActiveRPC(true);
             
             _animationing = false;
-            DebugManager.Log($"Fake Punching");
+            DebugManager.Log($"Clone Fake Punching");
             
             return INode.NodeState.Success;
         }
@@ -599,7 +566,7 @@ namespace Monster.Container
                 return INode.NodeState.Running;
 
             _animationing = false;
-            DebugManager.Log($"Throw Boom");
+            DebugManager.Log($"Clone Throw Boom");
             
             return INode.NodeState.Success;
         }
@@ -638,7 +605,7 @@ namespace Monster.Container
 
             _animationing = false;
             animator.enabled = true;
-            DebugManager.Log($"Slap Attack");
+            DebugManager.Log($"Clone Slap Attack");
             
             return INode.NodeState.Success;
         }

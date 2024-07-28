@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Data;
@@ -82,7 +83,6 @@ namespace GamePlay.Stage
             if(destructObject) destructObject.AddComponent<NetworkMeshSliceObject>();
             
             lootingTable = GetComponent<LootingTable>();
-            stageGameObject.SetActive(false);
             
             var childEventSystem = stageGameObject.GetComponentInChildren<EventSystem>();
             var childCamera = stageGameObject.GetComponentInChildren<Camera>();
@@ -99,21 +99,16 @@ namespace GamePlay.Stage
                     break;
                 }
             }
-        }
-
-        public virtual void Start()
-        {
-            aliveMonsterCount.isOverMax = true;
-            monsterKillCount.isOverMax = true;
             
-            StageInfo.SetJsonData(GetInfoData(StageInfo.id));
-            lootingTable.CalLootingItem(GetLootingData(StageInfo.id).LootingItems);
-
             if (StageInfo.stageType != StageType.None)
             {
                 transform.position = Vector3.one * 1000f;
                 stageGameObject.transform.position = Vector3.one * 1000f;
             }
+        }
+
+        public virtual void Start()
+        {
         }
         
         public void OnTriggerEnter(Collider other)
@@ -138,6 +133,12 @@ namespace GamePlay.Stage
         public override void Spawned()
         {
             _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
+                
+            aliveMonsterCount.isOverMax = true;
+            monsterKillCount.isOverMax = true;
+            
+            StageInfo.SetJsonData(GetInfoData(StageInfo.id));
+            lootingTable.CalLootingItem(GetLootingData(StageInfo.id).LootingItems);
             
             SpawnedSuccessRPC(UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber, true);
         }
@@ -203,6 +204,24 @@ namespace GamePlay.Stage
 
             aliveMonsterCount.Max = (int)(aliveMonsterCount.Max * Difficult.AliveMonsterCountRate);
             monsterKillCount.Max = (int)(monsterKillCount.Max * Difficult.MonsterKillCountRate);
+        }
+
+        private Coroutine _stageSceneUnloadCoroutine;
+        private void StageSceneUnload()
+        {
+            if (_stageSceneUnloadCoroutine == null)
+                _stageSceneUnloadCoroutine = StartCoroutine(StageSceneUnloadCoroutine());
+        }
+
+        private IEnumerator StageSceneUnloadCoroutine()
+        {
+            var waitTime = new WaitForSeconds(0.1f);
+            var clientNumber = UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber;
+            while (IsStageUnload.Get(clientNumber) == false)
+            {
+                SetIsUnloadRPC(clientNumber, true);
+                yield return waitTime;
+            }
         }
 
         // 스테이지에 들어서면 정보에 맞춰 해당 스테이지를 셋팅 해준다.
@@ -288,7 +307,7 @@ namespace GamePlay.Stage
 
         public virtual void StageClear()
         {
-            SetIsUnloadRPC(UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber, true);
+            StageSceneUnload();
             if (isStageClear)
                 return;
 
@@ -300,6 +319,11 @@ namespace GamePlay.Stage
                 var monsters = FindObjectsOfType<MonsterBase>();
                 foreach (var monster in monsters)
                     monster.status.ApplyDamageRPC(999999, DamageTextType.Critical, monster.Object.Id);
+
+                // 프레임을 치키기 위해 시체 삭제
+                var deadbodys = FindObjectsOfType<DeadBodyObstacleObject>();
+                foreach (var deadbody in deadbodys)
+                    Destroy(deadbody.gameObject, 3f);
             }
             
             prevStagePortal.IsConnect = true;
@@ -307,7 +331,7 @@ namespace GamePlay.Stage
             isStageClear = true;
 
             lootingTable.SpawnDropItem();
-
+            
             if (destructObject != null) destructObject.tag = "Destruction";
 
             if(StageInfo.stageType != StageType.Boss) StageClearAction?.Invoke();
@@ -337,7 +361,7 @@ namespace GamePlay.Stage
         
         #region RPC Function
 
-        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority, Channel = RpcChannel.Reliable)]
         public void SetIsUnloadRPC(int clientNumber, NetworkBool value) => IsStageUnload.Set(clientNumber, value);
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
