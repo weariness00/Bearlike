@@ -24,7 +24,6 @@ namespace Item.Container
             if (CheckPlayer(other.gameObject, out PlayerController pc))
             {
                 _playerController = pc;
-                ;
                 rigidbody.isKinematic = true;
                 
                 foreach (var sphereCollider in GetComponents<SphereCollider>())
