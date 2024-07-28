@@ -53,18 +53,24 @@ namespace UI.Inventory
             }
             else
             {
-                item = Instantiate(item.gameObject, canvas.transform).GetComponent<Item>();
-                item.gameObject.SetActive(false);
-                itemHashSet.Add(item);
+                var newItem = Instantiate(item.gameObject, canvas.transform).GetComponent<Item>();
+                newItem.gameObject.SetActive(false);
+                itemHashSet.Add(newItem);
+                
+                if (newItem is IInventoryItemAdd inventoryItemAdd and IInventoryItemUse inventoryItemUse)
+                {
+                    inventoryItemAdd.AddItem(item);
+                    inventoryItemUse.UseItem(item, out bool isDestroy);
+                }
 
                 var handle = Instantiate(blockUIPrefab, uiParentTransform).GetComponent<UIHandle>();
                 handle.gameObject.SetActive(true);
                 if (handle.TryGetComponent(out IInventoryUIUpdate handleUpdateInterface))
                 {
-                    handleUpdateInterface.UIUpdateFromItem(item);
+                    handleUpdateInterface.UIUpdateFromItem(newItem);
                 }
                 
-                uiHandleDictionary.Add(item, handle);
+                uiHandleDictionary.Add(newItem, handle);
             }
 
             DebugManager.Log($"[{name}] Inventory에 {item.name}을 추가");

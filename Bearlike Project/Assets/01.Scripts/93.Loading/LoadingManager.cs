@@ -66,6 +66,7 @@ namespace Loading
             
             --Instance._waitCount;
             Instance._downByte.Current += downByte;
+            ++Instance.refValue.Current;
 
             if (Instance._waitCount <= 0)
             {
@@ -125,7 +126,6 @@ namespace Loading
                 DebugManager.Log($"Loading 완료");
 
                 EndAction?.Invoke();
-                ++refValue.Current;
                 isLoading = false;
             }
         }

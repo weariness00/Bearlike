@@ -44,34 +44,18 @@ namespace Item.Container
         {
             base.AddItem(addItem);
 
-            if (addItem is Money m)
-            {
-                var goodsCanvas = m._playerController.uiController.goodsCanvas;
-                goodsCanvas.BearCoinUpdate(Amount.Current);
-            }
+            var goodsCanvas = gameObject.GetComponentInParent<PlayerController>().uiController.goodsCanvas;
+            goodsCanvas.BearCoinUpdate(Amount.Current);
             
             return addItem;
         }
 
         public override ItemBase UseItem<UseItem>(UseItem useItem, out bool isDestroy)
         {
-            isDestroy = false;
-            if (useItem is ItemBase item)
-            {
-                Amount.Current -= item.Amount.Current;
-                
-                if (useItem is Money m)
-                {
-                    var goodsCanvas = m._playerController.uiController.goodsCanvas;
-                    goodsCanvas.BearCoinUpdate(Amount.Current);
-                }
-
-                if (Amount.isMin)
-                {
-                    Destroy(gameObject);
-                    isDestroy = true;
-                }
-            }
+            base.UseItem(useItem, out isDestroy);
+            
+            var goodsCanvas = gameObject.GetComponentInParent<PlayerController>().uiController.goodsCanvas;
+            goodsCanvas.BearCoinUpdate(Amount.Current);
 
             return this;
         }
