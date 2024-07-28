@@ -141,11 +141,10 @@ namespace Monster
             behaviorTreeRunner.Operator();
             if (HasStateAuthority)
             {
-                if (transform.CompareTag("Clone"))
+                if (transform.CompareTag("BoxJester"))
                 {
                     if(status.IsDie && transform.GetComponent<BoxJesterClone>().isSpawned)
                         DieRPC();
-                        
                 }
                 else if (status.IsDie)
                 {

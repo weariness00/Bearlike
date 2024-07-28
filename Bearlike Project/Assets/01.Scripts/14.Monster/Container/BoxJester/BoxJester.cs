@@ -76,6 +76,8 @@ namespace Monster.Container
         
         public int hatCount;
         private readonly int HATNUM = 4;
+
+        private bool isSpawned = false;
         
         #endregion
 
@@ -105,6 +107,12 @@ namespace Monster.Container
             DieAction += () => Destroy(gameObject, 3);
 
             _handModel = transform.Find("Clown").Find("Hand").gameObject;
+        }
+
+        public override void Start()
+        {
+            base.Start();
+            isSpawned = true;
         }
         
         #endregion
