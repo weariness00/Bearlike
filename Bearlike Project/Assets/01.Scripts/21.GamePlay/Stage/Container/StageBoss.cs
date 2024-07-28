@@ -92,9 +92,12 @@ namespace GamePlay.Stage.Container
                     player.gameObject.SetActive(false);
                 }
                 
-                var sliceObjects = FindObjectsOfType<NetworkMeshSliceObject>();
-                foreach (var sliceObject in sliceObjects)
-                    sliceObject.gameObject.SetActive(false);
+                var allNetworkObjects = FindObjectsOfType<NetworkObject>();
+                foreach (var netObj in allNetworkObjects)
+                {
+                    if(netObj.name.Contains("Network Slice"))
+                        netObj.gameObject.SetActive(false);
+                }
 
                 rescueCinematic.SetActive(true);
             };
