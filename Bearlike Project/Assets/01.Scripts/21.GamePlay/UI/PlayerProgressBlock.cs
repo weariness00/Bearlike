@@ -57,7 +57,6 @@ namespace GamePlay.UI
             {
                 EventBusManager.Subscribe<SkillBase>(EventBusType.AddSkill, AddSkillBlock);
                 EventBusManager.Subscribe<SkillBase>(EventBusType.SkillLevelUp, SkillLevelUp);
-                EventBusManager.Subscribe(EventBusType.SkillLevelUp, () => { });
             }
 
             _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
@@ -122,6 +121,8 @@ namespace GamePlay.UI
 
         public void SkillLevelUp(SkillBase skill)
         {
+            if(_playerController != skill.ownerPlayer) return;
+            
             if (skillBlockDictionary.TryGetValue(skill.id, out SkillBlock block))
             {
                 block.LevelText.text = skill.level.Current.ToString();
