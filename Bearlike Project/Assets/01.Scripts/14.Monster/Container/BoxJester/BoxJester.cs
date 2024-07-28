@@ -575,6 +575,44 @@ namespace Monster.Container
             {
                 HandActiveRPC(false);
                 
+                GameObject playerObject = _players[0];
+                // Calculation
+                targetPosition = new Vector3(0, 0, 0);
+                fakeTargetPosition = new Vector3(0, 0, 0);
+                minDistance = int.MaxValue;
+            
+                // 가까운 대상 계산
+                foreach(var player in _players)
+                {
+                    var distance = (int)(math.distance(player.transform.position, transform.position));
+                    if (minDistance > distance)
+                    {
+                        playerObject = player;
+                        minDistance = distance;
+                        targetPosition = player.transform.position + new Vector3(0, 2f, 0);
+                        fakeTargetPosition = targetPosition;
+                    }
+                }
+                
+                if (_punchAttackDistance < minDistance)
+                    return INode.NodeState.Failure;
+                
+                foreach(var player in _players)
+                {
+                    if (_players.Length < 2)
+                    {
+                        fakeTargetPosition = transform.position + new Vector3(0, 20, 0);
+                    }
+                    else if (playerObject != player)
+                    {
+                        fakeTargetPosition = (player.transform.position + targetPosition) / 2;
+                        break;
+                    }
+                }
+
+                if (_punchAttackDistance < math.distance(transform.position, fakeTargetPosition))
+                    return INode.NodeState.Failure;
+                
                 Runner.SpawnAsync(hand, _handModel.transform.position, transform.rotation, null,
                     (runner, o) =>
                     {
@@ -607,6 +645,44 @@ namespace Monster.Container
             if (false == _animationing)
             {
                 HandActiveRPC(false);
+                
+                GameObject playerObject = _players[0];
+                // Calculation
+                targetPosition = new Vector3(0, 0, 0);
+                fakeTargetPosition = new Vector3(0, 0, 0);
+                minDistance = int.MaxValue;
+            
+                // 가까운 대상 계산
+                foreach(var player in _players)
+                {
+                    var distance = (int)(math.distance(player.transform.position, transform.position));
+                    if (minDistance > distance)
+                    {
+                        playerObject = player;
+                        minDistance = distance;
+                        targetPosition = player.transform.position + new Vector3(0, 2f, 0);
+                        fakeTargetPosition = targetPosition;
+                    }
+                }
+                
+                if (_punchAttackDistance < minDistance)
+                    return INode.NodeState.Failure;
+                
+                foreach(var player in _players)
+                {
+                    if (_players.Length < 2)
+                    {
+                        fakeTargetPosition = transform.position + new Vector3(0, 20, 0);
+                    }
+                    else if (playerObject != player)
+                    {
+                        fakeTargetPosition = (player.transform.position + targetPosition) / 2;
+                        break;
+                    }
+                }
+
+                if (_punchAttackDistance < math.distance(transform.position, fakeTargetPosition))
+                    return INode.NodeState.Failure;
                 
                 Runner.SpawnAsync(hand, _handModel.transform.position, transform.rotation, null,
                     (runner, o) =>
