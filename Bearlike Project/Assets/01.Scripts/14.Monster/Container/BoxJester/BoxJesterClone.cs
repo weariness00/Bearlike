@@ -66,7 +66,7 @@ namespace Monster.Container
         
         #region Unity Event Function
 
-        void Awake()
+        public override void Awake()
         {
             base.Awake();
             
@@ -84,6 +84,12 @@ namespace Monster.Container
             _masks[0] = boxJester.Find("Smile_Face").gameObject;
             _masks[1] = boxJester.Find("Sad_Face").gameObject;
             _masks[2] = boxJester.Find("Angry_Face").gameObject;
+        }
+
+        public override void Start()
+        {
+            base.Start();
+            isSpawned = true;
         }
         
         #endregion
@@ -126,8 +132,6 @@ namespace Monster.Container
             DieAction += () => Destroy(gameObject, 3);
             
             _handModel = transform.Find("Clown").Find("Hand").gameObject;
-
-            isSpawned = true;
             
             DebugManager.Log($"Clone의 HP는 {status.hp.Current}입니다.");
         }

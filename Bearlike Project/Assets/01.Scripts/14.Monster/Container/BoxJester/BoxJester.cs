@@ -82,7 +82,7 @@ namespace Monster.Container
 
         #region Unity Event Function
 
-        void Awake()
+        public override void Awake()
         {
             base.Awake();
             

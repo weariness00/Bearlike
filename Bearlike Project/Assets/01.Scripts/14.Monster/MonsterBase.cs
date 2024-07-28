@@ -117,9 +117,6 @@ namespace Monster
             if(lootingTable)
                 lootingTable.CalLootingItem(GetLootingData(id).LootingItems);
             DieAction += OnDieAction;
-
-            if(transform.root.CompareTag("Clone"))
-                DebugManager.Log($"Clone이 죽었습니다. hp는 {transform.root.GetComponent<StatusBase>().hp.Current}입니다.");
             
             var statusData = GetStatusData(id);
             status.SetJsonData(statusData);
@@ -134,9 +131,8 @@ namespace Monster
         }
 
         public override void Spawned()
-        {
-            if(HasStateAuthority)
-                behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
+        { 
+            behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
             aggroController.AddTarget(FindObjectsOfType<AggroTarget>());// 접속한 플레이어들 저장
         }
 
