@@ -11,12 +11,18 @@ namespace Item.Container
     {
         #region Unity Event Functon
 
+        private bool isGet = false;
+
         private void OnCollisionEnter(Collision other)
         {
+            if(isGet) return;
+
             if (CheckPlayer(other.gameObject, out PlayerController pc))
             {
+                isGet = true;
+                
                 GetItem(other.gameObject);
-                Destroy(gameObject);
+                Destroy(gameObject, 0.1f);
             }
         }
 
