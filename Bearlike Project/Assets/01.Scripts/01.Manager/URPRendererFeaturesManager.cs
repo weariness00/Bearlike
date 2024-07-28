@@ -78,7 +78,7 @@ namespace Manager
             if (_rendererFeaturesEffectDictionary.TryGetValue("ShieldEffect", out fullScreenPassRendererFeature))
             {
                 fullScreenPassRendererFeature.SetActive(true);
-                fullScreenPassRendererFeature.passMaterial.SetFloat(FullScreenIntensity, 0.6f);
+                fullScreenPassRendererFeature.passMaterial.SetFloat(FullScreenIntensity, 0.8f);
             }
         }
 
