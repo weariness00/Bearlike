@@ -16,38 +16,33 @@ namespace Monster.Container
     public class BoxJesterBoom : NetworkBehaviourEx
     {
         [Networked] public NetworkId OwnerId { get; set; }
-        [Networked] private Vector3 NetworkedDest { get; set; }
-        [Networked] private Vector3 NetworkedStartPos { get; set; }
-        [Networked] private float NetworkedTime { get; set; }
+        [Networked] public Vector3 dir { get; set; }
 
-        [Header("Bomb")] [SerializeField] private GameObject bombPrefab;
-        [Header("Effect")] [SerializeField] private VisualEffect effect;
+        [Header("Bomb")] 
+        [SerializeField] private GameObject bombPrefab;
+        [SerializeField] private VisualEffect fireBall;
         
-        public Vector3 dir;
-        private float speed;
-        private float time;
+        private Vector3 Dest { get; set; }
+        
+        private float speed = 25f;
+        private float _time = 1.5f;
+        private float _height = 5f;
         
         public override void Spawned()
         {
+            fireBall.SendEvent("OnPlay");
             Destroy(gameObject, 5f);
             
-            speed = 25f;
-            time = 1.5f;
-            
-            NetworkedStartPos = transform.position;
-            NetworkedDest = transform.position + dir * (speed * time);
-            NetworkedTime = time;
+            Dest = transform.position + dir * (speed * _time);
 
-            BoomMoveRPC();
-            StartCoroutine(TransformCoroutine());
+            StartCoroutine(BoomMoveCoroutine());
         }
         
-        private void OnCollisionEnter(Collision other)
+        private void OnTriggerEnter(Collider other)
         {
-            StatusBase otherStatus = null;
-
-            if (false == other.gameObject.CompareTag("Monster"))
+            if (false == other.gameObject.CompareTag("Monster") && false == other.gameObject.CompareTag("Volume") && false == other.gameObject.CompareTag("Boom"))
             {
+                DebugManager.Log($"{other.gameObject.name}과 폭탄 충돌");
                 Runner.SpawnAsync(bombPrefab, transform.position, transform.rotation, null, (runner, o) =>
                 {
                     var bomb = o.GetComponent<BoxJesterBoomObject>();
@@ -55,32 +50,26 @@ namespace Monster.Container
                     bomb.OwnerId = OwnerId;
                 });
                 
-                Destroy(gameObject, 0f); // 터지는 이벤트 발생해야함
+                Destroy(gameObject, 0f);
             }
         }
 
-        IEnumerator TransformCoroutine()
+        IEnumerator BoomMoveCoroutine()
         {
-            while (true)
+            float time = 0.0f;
+
+            var pos = transform.position;
+            float yOffset = 0.0f;
+
+            while (time < 1.0f)
             {
-                TransformRPC();
-                yield return new WaitForSeconds(0.01f);
-            }
-        }
-        
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void BoomMoveRPC()
-        {
-            transform.DOMoveX(NetworkedDest.x, NetworkedTime).SetEase(Ease.InQuad);
-            transform.DOMoveZ(NetworkedDest.z, NetworkedTime).SetEase(Ease.InQuad);
+                DebugManager.Log($"position : {transform.position}, time : {time}");
+                yOffset = _height * 4.0f * (time - time * time * 2);
+                transform.position = Vector3.Lerp(pos, Dest, time) + Vector3.up * yOffset;
 
-            transform.DOMoveY(transform.position.y + 4, NetworkedTime * 0.3f).SetEase(Ease.InSine);
-        }
-        
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void TransformRPC()
-        {
-            effect.SetVector3("Position", transform.position);
+                time += Time.deltaTime / _time;
+                yield return null;
+            }
         }
     }
 }

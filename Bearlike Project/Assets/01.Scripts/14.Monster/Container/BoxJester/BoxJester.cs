@@ -258,14 +258,14 @@ namespace Monster.Container
 
             var CryPattern = new SelectorNode(
                     true,
-                    // new SequenceNode(
-                    //     new ActionNode(CryingShield),
-                    //     new ActionNode(ShieldOffAction)
-                    // ),
-                    // new SequenceNode(
-                    //     new ActionNode(ReverseCryingShield),
-                    //     new ActionNode(ShieldOffAction)
-                    // ),
+                    new SequenceNode(
+                        new ActionNode(CryingShield),
+                        new ActionNode(ShieldOffAction)
+                    ),
+                    new SequenceNode(
+                        new ActionNode(ReverseCryingShield),
+                        new ActionNode(ShieldOffAction)
+                    ),
                     new SequenceNode(
                     new ActionNode(BreakHat),
                         new ActionNode(CheckHatCount)
@@ -277,7 +277,7 @@ namespace Monster.Container
                 );
 
             var Cry = new SequenceNode(
-                    // new ActionNode(IsCry),
+                    new ActionNode(IsCry),
                     CryPattern
                 );
             
@@ -287,13 +287,13 @@ namespace Monster.Container
             
             var AngryPattern = new SelectorNode(
                     true,
-                    new ActionNode(HandLazer),
-                    new ActionNode(ThrowBoom),
-                    new ActionNode(slapAttack)
+                    // new ActionNode(HandLazer),
+                    new ActionNode(ThrowBoom)
+                    // new ActionNode(slapAttack)
                 );
 
             var Angry = new SequenceNode(
-                    new ActionNode(IsAngry),
+                    // new ActionNode(IsAngry),
                     AngryPattern
                 );
             
@@ -302,8 +302,8 @@ namespace Monster.Container
             var Attack = new SelectorNode(
                     false,
                     // Smile,
-                    Cry
-                    // Angry
+                    // Cry,
+                    Angry
                 );
             
             #endregion
@@ -338,8 +338,6 @@ namespace Monster.Container
                     playerPosition = player.transform.position;
                 }
             }
-
-            DebugManager.Log($"playerPosition : {Quaternion.LookRotation(new Vector3(playerPosition.x, 0, playerPosition.z))}");
             
             float time = 0.0f;
             
@@ -971,10 +969,13 @@ namespace Monster.Container
             pos -= transform.forward * 2;
             pos += transform.up * 3;
             
+            DebugManager.Log("boom 소환");
+            
             Runner.SpawnAsync(boom, pos, transform.rotation, null,
                 (runner, o) =>
                 {
                     var h = o.GetComponent<BoxJesterBoom>();
+                    
                     h.OwnerId = OwnerId;
                     h.dir = transform.forward;
                 });

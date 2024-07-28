@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: 5602186846786547253}
   m_Layer: 1
   m_Name: Boom
-  m_TagString: Untagged
+  m_TagString: Boom
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -54,7 +54,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -87,7 +87,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3874871357665135427}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
@@ -113,10 +113,10 @@ MonoBehaviour:
     _value: 0
   _OwnerId:
     Raw: 0
+  _dir: {x: 0, y: 0, z: 0}
   bombPrefab: {fileID: 2660829121576087624, guid: 79a615f49cd155f47ad33ed304076bfd,
     type: 3}
-  effect: {fileID: 9073875449610803187}
-  dir: {x: 0, y: 0, z: 0}
+  fireBall: {fileID: 9073875449610803187}
 --- !u!114 &4102381656843983702
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -226,7 +226,7 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -281,7 +281,7 @@ VFXRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3874871357665135427}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
