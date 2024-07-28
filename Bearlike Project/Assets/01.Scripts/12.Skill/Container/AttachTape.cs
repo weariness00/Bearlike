@@ -10,14 +10,7 @@ namespace Skill.Container
         [Header("테이프 변수")]
         [SerializeField] private Sprite buffIcon;
         [SerializeField] private StatusValue<int> damageNullified; // 최대 피해 무효 횟수
-
-        public override void Awake()
-        {
-            base.Awake();
-
-            damageNullified.Max = level.Max;
-        }
-
+        
         public override void Spawned()
         {
             base.Spawned();
@@ -34,7 +27,7 @@ namespace Skill.Container
 
         public override void MainLoop()
         {
-            if (IsUse)
+            if (!damageNullified.isMax && IsUse)
             {
                 StartCoolTimer(GetCoolTime());
                 RunRPC();
@@ -50,7 +43,7 @@ namespace Skill.Container
             {
                 if (!ownerPlayer.uiController.buffCanvas.HasUI(skillName))
                 {
-                    DebugManager.ToDo("풀 스크린 이펙트 넣기, 테이프 붙이는 효과음, 이펙트 넣기");
+                    DebugManager.ToDo("테이프 붙이는 효과음");
                     URPRendererFeaturesManager.Instance.StartShield();
 
                     ownerPlayer.uiController.buffCanvas.SpawnUI(skillName);
@@ -72,6 +65,7 @@ namespace Skill.Container
         public override void LevelUp(int upAmount = 1, bool isAddInventory = true)
         {
             base.LevelUp(upAmount, isAddInventory);
+            damageNullified.Max = level.Max;
             Run();
         }
 
@@ -92,6 +86,8 @@ namespace Skill.Container
             if(damageNullified.isMin)
             {
                 URPRendererFeaturesManager.Instance.StopShield();
+                
+                StartCoolTimer(GetCoolTime());
                 
                 ownerPlayer.status.RemoveBeforeApplyDamageEvent(DamageNullified);
                 ownerPlayer.uiController.buffCanvas.RemoveUI(skillName);

@@ -11,17 +11,14 @@ namespace Item.Container
     {
         #region Unity Event Functon
 
-        private bool isGet = false;
-
-        private void OnCollisionEnter(Collision other)
+        private void OnTriggerEnter(Collider other)
         {
-            if(isGet) return;
-
             if (CheckPlayer(other.gameObject, out PlayerController pc))
             {
-                isGet = true;
-                
-                GetItem(other.gameObject);
+                foreach (var sphereCollider in GetComponents<Collider>())
+                    Destroy(sphereCollider);
+
+                StartCoroutine(MoveTargetCoroutine(other.gameObject));
             }
         }
 

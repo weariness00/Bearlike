@@ -48,7 +48,16 @@ namespace GamePlay.Stage.Container
             
             // 실패 조건은 모든 플레이어가 죽을 경우
         }
-        
+
+        public override void StageClear()
+        {
+            if(isStageClear) return;
+
+            foreach (var monsterSpawner in waveList)
+                monsterSpawner.SpawnStop();
+            
+            base.StageClear();
+        }
     }
 }
 

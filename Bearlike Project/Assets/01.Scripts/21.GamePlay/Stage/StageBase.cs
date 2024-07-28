@@ -266,7 +266,7 @@ namespace GamePlay.Stage
         {
             SetDifficult();
 
-            var pos = new Vector3(0,(FindObjectsOfType<StageBase>().Length - 1) * 100,0);
+            var pos = new Vector3((FindObjectsOfType<StageBase>(true).Length - 1) * 150,0,0);
             transform.position = pos;
             stageGameObject.transform.position = pos;
             
@@ -330,7 +330,7 @@ namespace GamePlay.Stage
             //prevStagePortal.portalVFXList[0].gameObject.SetActive(true);
             isStageClear = true;
 
-            lootingTable.SpawnDropItem();
+            lootingTable.SpawnDropItem(transform.position + Vector3.up * 2f);
             
             if (destructObject != null) destructObject.tag = "Destruction";
 
