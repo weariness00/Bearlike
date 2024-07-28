@@ -43,6 +43,8 @@ namespace Monster.Container
 
         [Header("Effect")] 
         [SerializeField] private Material bloodShieldMat;
+
+        public GameObject ui;
         
         private static readonly int Dissolve = Shader.PropertyToID("_Dissolve");
         
@@ -173,6 +175,7 @@ namespace Monster.Container
             {
                 AnimatorActiveRPC(true);
                 HandActiveRPC(true);           
+                ui.SetActive(false);
                 animator.PlayDieAction();
                 Destroy(gameObject, 3);
             };
