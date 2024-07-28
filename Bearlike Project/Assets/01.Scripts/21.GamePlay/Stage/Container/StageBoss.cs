@@ -82,6 +82,7 @@ namespace GamePlay.Stage.Container
             cinematicPlayableDirector.played += director =>
             {
                 GameManager.Instance.isControl = false;
+                GameManager.Instance.gameCanvasGroup.SetActive(false);
                 for (var i = 0; i < players.Length; i++)
                 {
                     var player = players[i];
@@ -100,6 +101,7 @@ namespace GamePlay.Stage.Container
             {
                 rescueCinematic.SetActive(false);
                 GameManager.Instance.isControl = true;
+                GameManager.Instance.gameCanvasGroup.SetActive(true);
                 
                 foreach (var player in players)
                     player.gameObject.SetActive(true);

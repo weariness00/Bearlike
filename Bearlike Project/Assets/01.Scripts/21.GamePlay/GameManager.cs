@@ -4,7 +4,6 @@ using Data;
 using Fusion;
 using GamePlay.Stage;
 using GamePlay.StageLevel;
-using GamePlay.UI;
 using Loading;
 using Manager;
 using Photon;
@@ -15,8 +14,6 @@ using Status;
 using UI.Status;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using User.MagicCotton;
-using UserRelated.MagicCotton;
 using Random = UnityEngine.Random;
 
 namespace GamePlay
@@ -37,6 +34,7 @@ namespace GamePlay
 
         [Header("게임 클리어 관련")] 
         public GameObject matherBear;
+        public GameObject gameCanvasGroup;
         public Portal gameClearPortal;
         
         [SerializeField]private SpawnPlace _spawnPlace = new SpawnPlace();
