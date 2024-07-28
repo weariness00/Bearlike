@@ -92,10 +92,9 @@ namespace GamePlay
                 LoadingManager.AddWait();
                 PlayerHpCanvasInit();
                 LoadingManager.EndWait();
-                return;
             }
             
-            Init();
+            StageBase.StageOverAction += () => { NetworkManager.LoadScene(gameResultScene, LoadSceneMode.Additive); };
             UserInit();
             
             LoadingManager.EndWait();
@@ -108,11 +107,6 @@ namespace GamePlay
         #endregion
 
         #region Inisialize
-
-        void Init()
-        {
-            StageBase.StageOverAction += () => { NetworkManager.LoadScene(gameResultScene, LoadSceneMode.Additive); };
-        }
         
         async void UserInit()
         {   
