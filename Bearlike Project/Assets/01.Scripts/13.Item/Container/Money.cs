@@ -18,7 +18,7 @@ namespace Item.Container
 
         private void OnTriggerEnter(Collider other)
         {
-            if (CheckPlayer(other.gameObject, out PlayerController pc))
+            if (CheckPlayer(other.gameObject, out _playerController))
             {
                 rigidbody.isKinematic = true;
                 
