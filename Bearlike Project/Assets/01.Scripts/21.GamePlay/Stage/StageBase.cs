@@ -82,7 +82,6 @@ namespace GamePlay.Stage
             if(destructObject) destructObject.AddComponent<NetworkMeshSliceObject>();
             
             lootingTable = GetComponent<LootingTable>();
-            stageGameObject.SetActive(false);
             
             var childEventSystem = stageGameObject.GetComponentInChildren<EventSystem>();
             var childCamera = stageGameObject.GetComponentInChildren<Camera>();
@@ -98,6 +97,12 @@ namespace GamePlay.Stage
                     Destroy(lihgt.gameObject);
                     break;
                 }
+            }
+            
+            if (StageInfo.stageType != StageType.None)
+            {
+                transform.position = Vector3.one * 1000f;
+                stageGameObject.transform.position = Vector3.one * 1000f;
             }
         }
 
@@ -133,12 +138,6 @@ namespace GamePlay.Stage
             
             StageInfo.SetJsonData(GetInfoData(StageInfo.id));
             lootingTable.CalLootingItem(GetLootingData(StageInfo.id).LootingItems);
-
-            if (StageInfo.stageType != StageType.None)
-            {
-                transform.position = Vector3.one * 1000f;
-                stageGameObject.transform.position = Vector3.one * 1000f;
-            }
             
             SpawnedSuccessRPC(UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber, true);
         }
