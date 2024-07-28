@@ -332,10 +332,9 @@ namespace Status
                     if (ConditionDamageReflectIsOn())
                     {
                         var playerStatus = ownerObj.gameObject.GetComponent<StatusBase>();
-                        var monsterId = gameObject.GetComponent<NetworkObject>().Id;
 
-                        playerStatus.hp.Current -= realDamage / 10;
-
+                        playerStatus.ApplyDamage(realDamage / 10, DamageTextType.Normal, Object.Id, CrowdControl.Normality);
+                        
                         DebugManager.Log($"{ownerObj.name} player가 반사로 인해 {realDamage / 10}만큼 데미지를 받음\n"+
                                          $"남은 hp : {playerStatus.hp.Current}");
                     }

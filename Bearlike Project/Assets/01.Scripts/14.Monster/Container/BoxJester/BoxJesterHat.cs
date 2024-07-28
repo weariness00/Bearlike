@@ -11,7 +11,7 @@ namespace Monster.Container
     {
         [Networked] public NetworkId OwnerId { get; set; }
 
-        private void Awake()
+        public override void Awake()
         {
             status = gameObject.GetComponent<MonsterStatus>();
         }
