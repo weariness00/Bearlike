@@ -218,16 +218,16 @@ namespace Monster.Container
 
             var Attack = new SelectorNode(
                     false,
-                    Smile
-                    // Cry,
-                    // Angry
+                    Smile,
+                    Cry,
+                    Angry
                 );
             
             #endregion
 
             var AttackPattern = new SelectorNode(
                 true, 
-                // Hide,
+                Hide,
                 Attack
             );
         
@@ -338,7 +338,8 @@ namespace Monster.Container
         {
             if (false == _animationing)
             {
-                // Calculation
+                StartCoroutine(RotationCoroutine());
+                
                 targetPosition = new Vector3(0, 0, 0);
                 fakeTargetPosition = new Vector3(0, 0, 0);
                 minDistance = int.MaxValue;
@@ -572,6 +573,7 @@ namespace Monster.Container
         {
             if (false == _animationing)
             {
+                StartCoroutine(RotationCoroutine());
                 animator.PlayThrowBoomAction();
                 _animationing = true;
 
@@ -601,7 +603,6 @@ namespace Monster.Container
                     var h = o.GetComponent<BoxJesterBoom>();
                     h.OwnerId = OwnerId;
                     h.dir = transform.forward;
-                    // Effect 넣어줘야함
                 });
         }
 

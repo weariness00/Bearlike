@@ -152,10 +152,10 @@ namespace Monster.Container
         public void PlayReverseShieldAction()
         {
             OffIdle();
-            ShieldTimer = TickTimer.CreateFromSeconds(Runner, 7);   // 상수화 해야함
             // ShieldTimer = TickTimer.CreateFromSeconds(Runner, ReverseShieldClip.length);
             networkAnimator.Animator.SetFloat(FaceHide, 1);
             networkAnimator.SetTrigger(tFaceHide);
+            ShieldTimer = TickTimer.CreateFromSeconds(Runner, 7);   // 상수화 해야함
         }
         
         public void PlayShieldOffAction()
@@ -174,17 +174,17 @@ namespace Monster.Container
         public void PlayHandLazerAction()
         {
             OffIdle();
-            HandLazerTimer = TickTimer.CreateFromSeconds(Runner, handLazerClip.length);
             networkAnimator.Animator.SetFloat(Attack, 2);
             networkAnimator.SetTrigger(tAttack);
+            HandLazerTimer = TickTimer.CreateFromSeconds(Runner, handLazerClip.length);
         }
 
         public void PlayThrowBoomAction()
         {
             OffIdle();
-            ThrowBoomTimer = TickTimer.CreateFromSeconds(Runner, throwBoomClip.length);
             networkAnimator.Animator.SetFloat(Attack, 3);
             networkAnimator.SetTrigger(tAttack);
+            ThrowBoomTimer = TickTimer.CreateFromSeconds(Runner, throwBoomClip.length);
         }
         
         public void PlaySlapAction()

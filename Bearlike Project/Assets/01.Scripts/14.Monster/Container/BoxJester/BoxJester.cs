@@ -9,6 +9,7 @@ using Status;
 using UI.Status;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Rendering;
 using DebugManager = Manager.DebugManager;
 using Random = UnityEngine.Random;
 
@@ -39,11 +40,6 @@ namespace Monster.Container
         [SerializeField] private GameObject lazer;
         [SerializeField] private GameObject breath;
         [SerializeField] private GameObject cloneObject;
-        
-        // [Header("VFX Properties")]
-        // [SerializeField] private VisualEffect tpEffect;
-        // [SerializeField] private VisualEffect darknessAttackEffect;
-        // [SerializeField] private VisualEffect handLazerEffect;
 
         [Header("Effect")] 
         [SerializeField] private Material bloodShieldMat;
@@ -52,7 +48,6 @@ namespace Monster.Container
         
         [Networked] public NetworkId OwnerId { get; set; }
         
-        // public SoundBox soundBox;
         private BehaviorTreeRunner _behaviorTreeRunner;
         private GameObject[] _players;
         private GameObject[] _masks;
@@ -238,14 +233,14 @@ namespace Monster.Container
 
             var SmilePattern = new SelectorNode(
                     true,
-                    // new SequenceNode(
-                    //     new ActionNode(PunchReady),
-                    //         new ActionNode(Punching)
-                    // ),
-                    // new SequenceNode(
-                    //     new ActionNode(PunchReady),
-                    //     new ActionNode(FakePunching)
-                    // ),
+                    new SequenceNode(
+                        new ActionNode(PunchReady),
+                            new ActionNode(Punching)
+                    ),
+                    new SequenceNode(
+                        new ActionNode(PunchReady),
+                        new ActionNode(FakePunching)
+                    ),
                     new ActionNode(ClonePattern)
                 );
 
@@ -289,13 +284,13 @@ namespace Monster.Container
             
             var AngryPattern = new SelectorNode(
                     true,
-                    new ActionNode(HandLazer),
+                    // new ActionNode(HandLazer),
                     new ActionNode(ThrowBoom),
                     new ActionNode(slapAttack)
                 );
 
             var Angry = new SequenceNode(
-                    new ActionNode(IsAngry),
+                    // new ActionNode(IsAngry),
                     AngryPattern
                 );
             
@@ -303,9 +298,9 @@ namespace Monster.Container
 
             var Attack = new SelectorNode(
                     false,
-                    Smile
+                    // Smile,
                     // Cry,
-                    // Angry
+                    Angry
                 );
             
             #endregion
@@ -942,8 +937,6 @@ namespace Monster.Container
             pos -= transform.forward * 2;
             pos += transform.up * 3;
             
-            DebugManager.Log("boom 소환");
-            
             Runner.SpawnAsync(boom, pos, transform.rotation, null,
                 (runner, o) =>
                 {
@@ -958,7 +951,7 @@ namespace Monster.Container
         {
             if (false == _animationing)
             {
-                animator.networkAnimator.Animator.enabled = false;
+                AnimatorActiveRPC(false);
                 animator.PlaySlapAction();
                 _animationing = true;
                 
@@ -969,7 +962,8 @@ namespace Monster.Container
                 return INode.NodeState.Running;
 
             _animationing = false;
-            animator.networkAnimator.Animator.enabled = true;
+            
+            AnimatorActiveRPC(true);
             DebugManager.Log($"Slap Attack");
             
             return INode.NodeState.Success;
@@ -1085,6 +1079,12 @@ namespace Monster.Container
 
         #region Slap
 
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void AnimatorActiveRPC(bool value)
+        {
+            animator.networkAnimator.Animator.enabled = value;
+        }
+        
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void SlapStartRPC()
         {
