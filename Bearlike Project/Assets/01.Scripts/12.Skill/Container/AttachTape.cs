@@ -29,6 +29,7 @@ namespace Skill.Container
         {
             base.Earn(earnTargetObject);
             ownerPlayer.status.AddBeforeApplyDamageEvent(DamageNullified);
+            StartCoolTimer(GetCoolTime());
         }
 
         public override void MainLoop()
@@ -44,7 +45,7 @@ namespace Skill.Container
         {
             ++damageNullified.Current;
             ownerPlayer.status.AddBeforeApplyDamageEvent(DamageNullified, false);
-
+            
             if (HasInputAuthority)
             {
                 if (!ownerPlayer.uiController.buffCanvas.HasUI(skillName))
@@ -68,6 +69,12 @@ namespace Skill.Container
             explain = explain.CalculateNumber();
         }
 
+        public override void LevelUp(int upAmount = 1, bool isAddInventory = true)
+        {
+            base.LevelUp(upAmount, isAddInventory);
+            Run();
+        }
+
         /// <summary>
         /// 대미지를 막아주는 로직
         /// StatusBase의 BeforeApplyDamageEvent에 추가해준다.
@@ -81,8 +88,8 @@ namespace Skill.Container
                 --damageNullified.Current;
                 applyDamage = 0;
             }
-
-            if (damageNullified.isMin)
+            
+            if(damageNullified.isMin)
             {
                 URPRendererFeaturesManager.Instance.StopShield();
                 

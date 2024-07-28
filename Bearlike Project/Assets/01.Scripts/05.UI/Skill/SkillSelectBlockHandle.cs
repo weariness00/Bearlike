@@ -19,13 +19,13 @@ namespace UI.Skill
 
         public void SettingBlock(SkillBase skill)
         {
-            skill.LevelUp(1, false);
+            skill.level.Current += 1;
+            skill.ExplainUpdate();
+            skill.level.Current -= 1;
             
             if(icon && skill.icon) icon.texture = skill.icon.texture;
             if(titleText) titleText.text = skill.skillName;
             if(explainText) explainText.text = skill.explain;
-            
-            skill.LevelUp(-1, false);
             
             id = skill.id;
         }
