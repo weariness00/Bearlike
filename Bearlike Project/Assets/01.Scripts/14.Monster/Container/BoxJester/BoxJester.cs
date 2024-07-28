@@ -259,26 +259,26 @@ namespace Monster.Container
 
             var CryPattern = new SelectorNode(
                     true,
-                    new SequenceNode(
-                        new ActionNode(CryingShield),
-                        new ActionNode(ShieldOffAction)
-                    ),
+                    // new SequenceNode(
+                    //     new ActionNode(CryingShield),
+                    //     new ActionNode(ShieldOffAction)
+                    // ),
                     new SequenceNode(
                         new ActionNode(ReverseCryingShield),
                         new ActionNode(ShieldOffAction)
-                    ),
-                    new SequenceNode(
-                    new ActionNode(BreakHat),
-                        new ActionNode(CheckHatCount)
-                    ),
-                    new SequenceNode(
-                    new ActionNode(BreakReverseHat),
-                    new ActionNode(CheckReverseHatCount)
                     )
+                    // new SequenceNode(
+                    // new ActionNode(BreakHat),
+                    //     new ActionNode(CheckHatCount)
+                    // ),
+                    // new SequenceNode(
+                    // new ActionNode(BreakReverseHat),
+                    // new ActionNode(CheckReverseHatCount)
+                    // )
                 );
 
             var Cry = new SequenceNode(
-                    new ActionNode(IsCry),
+                    // new ActionNode(IsCry),
                     CryPattern
                 );
             
@@ -302,17 +302,17 @@ namespace Monster.Container
 
             var Attack = new SelectorNode(
                     false,
-                    Smile,
-                    Cry,
-                    Angry
+                    // Smile,
+                    Cry
+                    // Angry
                 );
             
             #endregion
 
             var AttackPattern = new SelectorNode(
                 true, 
-                TP,
-                Hide,
+                // TP,
+                // Hide,
                 Attack
             );
         
