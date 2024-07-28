@@ -87,13 +87,6 @@ namespace GamePlay
             
             NetworkManager.LoadScene(modelUIScene, LoadSceneMode.Additive);
             
-            if (Runner.IsServer == false)
-            {
-                LoadingManager.AddWait();
-                PlayerHpCanvasInit();
-                LoadingManager.EndWait();
-            }
-            
             StageBase.StageOverAction += () => { NetworkManager.LoadScene(gameResultScene, LoadSceneMode.Additive); };
             UserInit();
             
