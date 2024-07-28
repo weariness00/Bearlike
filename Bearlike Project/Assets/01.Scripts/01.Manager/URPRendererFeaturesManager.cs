@@ -74,22 +74,14 @@ namespace Manager
         public void StartShield()
         {
             FullScreenPassRendererFeature fullScreenPassRendererFeature;
-        
+
             if (_rendererFeaturesEffectDictionary.TryGetValue("ShieldEffect", out fullScreenPassRendererFeature))
             {
                 fullScreenPassRendererFeature.SetActive(true);
-            }
-            
-            for (int index = 0; index < _rendererFeaturesEffectNames.Count; ++index)
-            {
-                if ("ShieldEffect" == _rendererFeaturesEffectNames[index])
-                {
-                    if(fullScreenPassRendererFeature)
-                        fullScreenPassRendererFeature.passMaterial.SetFloat(FullScreenIntensity, 0.6f);
-                }
+                fullScreenPassRendererFeature.passMaterial.SetFloat(FullScreenIntensity, 0.6f);
             }
         }
-        
+
         public void StopShield()
         {
             FullScreenPassRendererFeature fullScreenPassRendererFeature;
@@ -97,15 +89,7 @@ namespace Manager
             if (_rendererFeaturesEffectDictionary.TryGetValue("ShieldEffect", out fullScreenPassRendererFeature))
             {
                 fullScreenPassRendererFeature.SetActive(true);
-            }
-            
-            for (int index = 0; index < _rendererFeaturesEffectNames.Count; ++index)
-            {
-                if ("ShieldEffect" == _rendererFeaturesEffectNames[index])
-                {
-                    if(fullScreenPassRendererFeature)
-                        fullScreenPassRendererFeature.passMaterial.SetFloat(FullScreenIntensity, 1.0f);
-                }
+                fullScreenPassRendererFeature.passMaterial.SetFloat(FullScreenIntensity, 1.0f);
             }
         }
         
