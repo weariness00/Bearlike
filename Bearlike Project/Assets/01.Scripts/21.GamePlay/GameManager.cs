@@ -53,18 +53,29 @@ namespace GamePlay
 
         public SceneReference gmModeScene;
         public SceneReference gameResultScene;
-        public SceneReference loadingScene;
         public SceneReference modelUIScene;
         
         #region Unity Event Function
         protected override void Awake()
         {
+            base.Awake();
+            
             LoadingManager.Initialize();
+
+            LoadingManager.StartAction += () =>
+            {
+                Instance.isControl = false;
+                SceneManager.LoadSceneAsync(SceneList.GetScene("Game Start Loading"), LoadSceneMode.Additive);
+            };
+            LoadingManager.EndAction += () =>
+            {
+                Instance.isControl = true;
+                SceneManager.UnloadSceneAsync(SceneList.GetScene("Game Start Loading"));
+            };
+            
             LoadingManager.AddWait();
             
-            base.Awake();
             _spawnPlace.Initialize();
-            NetworkManager.LoadScene(loadingScene, LoadSceneMode.Additive);
         }
 
         public override void Spawned()

@@ -29,7 +29,7 @@ namespace Photon
             LoadingManager.Initialize();
             LoadingManager.StartAction += ()=> SceneManager.LoadScene(playerJoinLoadingScene, LoadSceneMode.Additive);
             LoadingManager.EndAction += () => StartCoroutine(LoadingUnload());
-            SceneManager.LoadScene(magicCotton, LoadSceneMode.Additive);
+            // SceneManager.LoadScene(magicCotton, LoadSceneMode.Additive);
         }
 
         public override void Spawned()
