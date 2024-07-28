@@ -112,7 +112,7 @@ namespace Weapon.Bullet
                 {
                     var parent = otherStatus.gameObject;
                         
-                    Vector3 knockbackDirection = parent.transform.position - transform.position;
+                    Vector3 knockbackDirection = direction;
                     knockbackDirection.y = 0;
                     knockbackDirection.Normalize();
 

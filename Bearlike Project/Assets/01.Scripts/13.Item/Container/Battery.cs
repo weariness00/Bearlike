@@ -13,7 +13,7 @@ namespace Item.Container
 
         private bool isGet = false;
 
-        private void OnCollisionEnter(Collision other)
+        private void OnTriggerEnter(Collider other)
         {
             if(isGet) return;
 

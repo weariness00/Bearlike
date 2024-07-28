@@ -35,6 +35,8 @@ namespace Skill.Container
             base.Earn(earnTargetObject);
             if (earnTargetObject.TryGetComponent(out PlayerController pc))
             {
+                status.knockBack = 1;
+                
                 pc.status.AddAdditionalStatus(status);
             }
         }
