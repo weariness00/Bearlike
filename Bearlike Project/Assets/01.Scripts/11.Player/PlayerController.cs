@@ -108,8 +108,6 @@ namespace Player
         #region Unity Event Function
         private void Awake()
         {
-            LoadingManager.AddWait();
-            
             status = gameObject.GetComponent<PlayerStatus>();
             uiController = GetComponentInChildren<PlayerUIController>();
             cameraController = GetComponent<PlayerCameraController>();
@@ -156,16 +154,15 @@ namespace Player
         public override void Spawned()
         {
             base.Spawned();
-            _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
+            LoadingManager.AddWait();
 
-            DebugManager.LogWarning("headRig를 Update에서 계속 바꿔주고 있는거고치기");
+            _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
             
             StatusInit();
 
             Cursor.lockState = CursorLockMode.Locked;
             simpleKcc = gameObject.GetOrAddComponent<SimpleKCC>();
             simpleKcc.Collider.tag = "Player";
-            // simpleKcc.SetGravity(new Vector3(0, -9.8f, 0));
             
             // 무기 초기화
             ChangeWeaponRPC(0);
