@@ -48,6 +48,17 @@ namespace Manager
             {
                 if (_rendererFeaturesEffectDictionary.TryGetValue(name, out var effect))
                 {
+                    if (name == "HitEffect")
+                        effect.passMaterial.SetFloat(Alpha, 0);
+                    else if (name == "FireEffect")
+                    {
+                        
+                    }
+                    else if (name == "ShieldEffect")
+                        effect.passMaterial.SetFloat(FullScreenIntensity, 1.0f);
+                    else if (name == "HealEffect")
+                        effect.passMaterial.SetFloat(VignetteIntensity, 0);
+                    
                     effect.SetActive(false);
                 }
             }
@@ -63,22 +74,14 @@ namespace Manager
         public void StartShield()
         {
             FullScreenPassRendererFeature fullScreenPassRendererFeature;
-        
+
             if (_rendererFeaturesEffectDictionary.TryGetValue("ShieldEffect", out fullScreenPassRendererFeature))
             {
                 fullScreenPassRendererFeature.SetActive(true);
-            }
-            
-            for (int index = 0; index < _rendererFeaturesEffectNames.Count; ++index)
-            {
-                if ("ShieldEffect" == _rendererFeaturesEffectNames[index])
-                {
-                    if(fullScreenPassRendererFeature)
-                        fullScreenPassRendererFeature.passMaterial.SetFloat(Alpha, 0.9f);
-                }
+                fullScreenPassRendererFeature.passMaterial.SetFloat(FullScreenIntensity, 0.6f);
             }
         }
-        
+
         public void StopShield()
         {
             FullScreenPassRendererFeature fullScreenPassRendererFeature;
@@ -86,15 +89,7 @@ namespace Manager
             if (_rendererFeaturesEffectDictionary.TryGetValue("ShieldEffect", out fullScreenPassRendererFeature))
             {
                 fullScreenPassRendererFeature.SetActive(true);
-            }
-            
-            for (int index = 0; index < _rendererFeaturesEffectNames.Count; ++index)
-            {
-                if ("ShieldEffect" == _rendererFeaturesEffectNames[index])
-                {
-                    if(fullScreenPassRendererFeature)
-                        fullScreenPassRendererFeature.passMaterial.SetFloat(Alpha, 1.0f);
-                }
+                fullScreenPassRendererFeature.passMaterial.SetFloat(FullScreenIntensity, 1.0f);
             }
         }
         

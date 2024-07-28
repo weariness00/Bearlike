@@ -186,14 +186,6 @@ namespace Player
                 Runner.SetPlayerObject(Runner.LocalPlayer, Object);
                 
                 rigController.EnableArmMesh();
-                status.InjuryAction += rigController.DisableArmMesh;
-                status.RecoveryFromInjuryAction += rigController.EnableArmMesh;
-                status.RecoveryFromReviveAction += rigController.EnableArmMesh;
-
-                status.InjuryAction += () => cameraController.ChangeCameraMode(CameraMode.ThirdPerson);
-                status.RecoveryFromInjuryAction += () => cameraController.ChangeCameraMode(CameraMode.FirstPerson);
-                status.ReviveAction += () => cameraController.ChangeCameraMode(CameraMode.Free);
-                status.RecoveryFromReviveAction += () => cameraController.ChangeCameraMode(CameraMode.FirstPerson);
                 
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
             }
@@ -286,12 +278,24 @@ namespace Player
         
         private void StatusInit()
         {
+            if (HasInputAuthority)
+            {
+                status.InjuryAction += rigController.DisableArmMesh;
+                status.RecoveryFromInjuryAction += rigController.EnableArmMesh;
+                status.RecoveryFromReviveAction += rigController.EnableArmMesh;
+
+                status.InjuryAction += () => cameraController.ChangeCameraMode(CameraMode.ThirdPerson);
+                status.RecoveryFromInjuryAction += () => cameraController.ChangeCameraMode(CameraMode.FirstPerson);
+                status.ReviveAction += () => cameraController.ChangeCameraMode(CameraMode.Free);
+                status.RecoveryFromReviveAction += () => cameraController.ChangeCameraMode(CameraMode.FirstPerson);
+            }
+            
             // Status 관련 초기화
             status.InjuryAction += () =>
             {
                 GameManager.Instance.AlivePlayerCount--;
 
-                networkAnimator.SetTrigger(AniInjury);
+                networkAnimator.SetTrigger(AniInjury, true);
                 SetLayer(0);
                 // _headRig.weight = 0;
                 W = 0;
@@ -310,7 +314,7 @@ namespace Player
             {
                 GameManager.Instance.AlivePlayerCount++;
                 
-                networkAnimator.SetTrigger(AniRevive);
+                networkAnimator.SetTrigger(AniRevive,true);
                 SetLayer(0);
                 W = 1;
                 simpleKcc.Collider.transform.localPosition = Vector3.zero;
@@ -326,13 +330,13 @@ namespace Player
             };
             status.ReviveAction += () =>
             {
-                networkAnimator.SetTrigger(AniDie);
+                networkAnimator.SetTrigger(AniDie, true);
             };
             status.RecoveryFromReviveAction += () =>
             {
                 GameManager.Instance.AlivePlayerCount++;
                 
-                networkAnimator.SetTrigger(AniRevive);
+                networkAnimator.SetTrigger(AniRevive, true);
                 SetLayer(1);
                 W = 1;
                 simpleKcc.Collider.transform.localPosition = Vector3.zero;

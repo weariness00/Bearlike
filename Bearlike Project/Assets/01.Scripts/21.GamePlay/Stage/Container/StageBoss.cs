@@ -1,13 +1,9 @@
 ﻿using System.Collections.Generic;
-using Data;
-using GamePlay.StageLevel;
 using Manager;
 using Monster;
-using Photon;
 using Script.Photon;
 using Status;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace GamePlay.Stage.Container
 {
@@ -53,6 +49,8 @@ namespace GamePlay.Stage.Container
         {
             base.StageClear();
 
+            if(nextStagePortal.IsConnect) return;
+            
             // 모든 클라에서 실행되어야함
             GameManager.Instance.GameClear();
             nextStagePortal.otherPortal = GameManager.Instance.gameClearPortal;
