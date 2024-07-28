@@ -60,6 +60,8 @@ namespace Monster.Container
         
         private bool _animationing = false;
 
+        private readonly float _punchAttackDistance = 50.0f;
+
         #endregion
         
         #region Unity Event Function
@@ -202,22 +204,22 @@ namespace Monster.Container
 
             var Attack = new SelectorNode(
                     false,
-                    Smile
-                    // Cry,
-                    // Angry
+                    Smile,
+                    Cry,
+                    Angry
                 );
             
             #endregion
 
             var AttackPattern = new SelectorNode(
                 true, 
-                // Hide,
+                Hide,
                 Attack
             );
         
             var loop = new SequenceNode(
-                Idle
-                // AttackPattern
+                Idle,
+                AttackPattern
             );
 
             return loop;
@@ -339,9 +341,8 @@ namespace Monster.Container
                     }
                 }
                 
-                // 공격 범위를 지정해서 구현할까? => 고민 필요
-                // if (attackDistance < minDistance)
-                //     return INode.NodeState.Failure;
+                if (_punchAttackDistance < minDistance)
+                    return INode.NodeState.Failure;
                 
                 foreach(var player in _players)
                 {
@@ -355,6 +356,9 @@ namespace Monster.Container
                         break;
                     }
                 }
+                
+                if (_punchAttackDistance < math.distance(transform.position, fakeTargetPosition))
+                    return INode.NodeState.Failure;
 
                 type = Random.Range(0, 2);
                 

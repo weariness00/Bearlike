@@ -76,6 +76,8 @@ namespace Monster.Container
         
         public int hatCount;
         private readonly int HATNUM = 4;
+
+        private readonly float _punchAttackDistance = 50.0f;
         
         #endregion
 
@@ -235,14 +237,14 @@ namespace Monster.Container
 
             var SmilePattern = new SelectorNode(
                     true,
-                    // new SequenceNode(
-                    //     new ActionNode(PunchReady),
-                    //         new ActionNode(Punching)
-                    // ),
-                    // new SequenceNode(
-                    //     new ActionNode(PunchReady),
-                    //     new ActionNode(FakePunching)
-                    // ),
+                    new SequenceNode(
+                        new ActionNode(PunchReady),
+                            new ActionNode(Punching)
+                    ),
+                    new SequenceNode(
+                        new ActionNode(PunchReady),
+                        new ActionNode(FakePunching)
+                    ),
                     new ActionNode(ClonePattern)
                 );
 
@@ -257,26 +259,26 @@ namespace Monster.Container
 
             var CryPattern = new SelectorNode(
                     true,
-                    // new SequenceNode(
-                    //     new ActionNode(CryingShield),
-                    //     new ActionNode(ShieldOffAction)
-                    // ),
+                    new SequenceNode(
+                        new ActionNode(CryingShield),
+                        new ActionNode(ShieldOffAction)
+                    ),
                     new SequenceNode(
                         new ActionNode(ReverseCryingShield),
                         new ActionNode(ShieldOffAction)
+                    ),
+                    new SequenceNode(
+                    new ActionNode(BreakHat),
+                        new ActionNode(CheckHatCount)
+                    ),
+                    new SequenceNode(
+                    new ActionNode(BreakReverseHat),
+                    new ActionNode(CheckReverseHatCount)
                     )
-                    // new SequenceNode(
-                    // new ActionNode(BreakHat),
-                    //     new ActionNode(CheckHatCount)
-                    // ),
-                    // new SequenceNode(
-                    // new ActionNode(BreakReverseHat),
-                    // new ActionNode(CheckReverseHatCount)
-                    // )
                 );
 
             var Cry = new SequenceNode(
-                    // new ActionNode(IsCry),
+                    new ActionNode(IsCry),
                     CryPattern
                 );
             
@@ -300,17 +302,17 @@ namespace Monster.Container
 
             var Attack = new SelectorNode(
                     false,
-                    Smile
-                    // Cry
-                    // Angry
+                    Smile,
+                    Cry,
+                    Angry
                 );
             
             #endregion
 
             var AttackPattern = new SelectorNode(
                 true, 
-                // TP,
-                // Hide,
+                TP,
+                Hide,
                 Attack
             );
         
@@ -533,9 +535,8 @@ namespace Monster.Container
                     }
                 }
                 
-                // 공격 범위를 지정해서 구현할까? => 고민 필요
-                // if (attackDistance < minDistance)
-                //     return INode.NodeState.Failure;
+                if (_punchAttackDistance < minDistance)
+                    return INode.NodeState.Failure;
                 
                 foreach(var player in _players)
                 {
@@ -550,6 +551,9 @@ namespace Monster.Container
                     }
                 }
 
+                if (_punchAttackDistance < math.distance(transform.position, fakeTargetPosition))
+                    return INode.NodeState.Failure;
+                
                 type = Random.Range(0, 2);
                 
                 // Animation Play
