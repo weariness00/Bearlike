@@ -17,7 +17,7 @@ namespace Monster.Container
 {
     public class BoxJester : MonsterBase
     {
-        #region Property
+        #region Property//
         
         [Header("Animator")]
         [SerializeField] private BoxJesterAnimator animator;
@@ -285,13 +285,13 @@ namespace Monster.Container
             
             var AngryPattern = new SelectorNode(
                     true,
-                    // new ActionNode(HandLazer),
+                    new ActionNode(HandLazer),
                     new ActionNode(ThrowBoom),
                     new ActionNode(slapAttack)
                 );
 
             var Angry = new SequenceNode(
-                    // new ActionNode(IsAngry),
+                    new ActionNode(IsAngry),
                     AngryPattern
                 );
             
@@ -299,8 +299,8 @@ namespace Monster.Container
 
             var Attack = new SelectorNode(
                     false,
-                    // Smile,
-                    // Cry,
+                    Smile,
+                    Cry,
                     Angry
                 );
             
@@ -308,8 +308,8 @@ namespace Monster.Container
 
             var AttackPattern = new SelectorNode(
                 true, 
-                // TP,
-                // Hide,
+                TP,
+                Hide,
                 Attack
             );
         
