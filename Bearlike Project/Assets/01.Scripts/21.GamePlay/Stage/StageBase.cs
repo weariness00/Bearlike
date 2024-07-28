@@ -301,6 +301,11 @@ namespace GamePlay.Stage
                 var monsters = FindObjectsOfType<MonsterBase>();
                 foreach (var monster in monsters)
                     monster.status.ApplyDamageRPC(999999, DamageTextType.Critical, monster.Object.Id);
+
+                // 프레임을 치키기 위해 시체 삭제
+                var deadbodys = FindObjectsOfType<DeadBodyObstacleObject>();
+                foreach (var deadbody in deadbodys)
+                    Destroy(deadbody.gameObject, 3f);
             }
             
             prevStagePortal.IsConnect = true;
@@ -308,7 +313,7 @@ namespace GamePlay.Stage
             isStageClear = true;
 
             lootingTable.SpawnDropItem();
-
+            
             if (destructObject != null) destructObject.tag = "Destruction";
 
             if(StageInfo.stageType != StageType.Boss) StageClearAction?.Invoke();
