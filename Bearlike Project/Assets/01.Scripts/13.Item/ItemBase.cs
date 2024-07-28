@@ -88,9 +88,10 @@ namespace Item
         public bool CheckPlayer(GameObject obj, out PlayerController pc)
         {
             pc = null;
-            if (obj.CompareTag("Player") && obj.transform.parent.TryGetComponent(out pc))
+            if (obj.CompareTag("Player"))
             {
-                if (pc.HasInputAuthority)
+                pc = obj.GetComponentInParent<PlayerController>();
+                if (pc && pc.HasInputAuthority)
                 {
                     return true;
                 }

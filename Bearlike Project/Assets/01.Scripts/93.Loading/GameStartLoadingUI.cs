@@ -24,22 +24,17 @@ namespace Loading
             loadingBar.value = 0;
             _barHandle = loadingBar.handleRect;
             
-            LoadingManager.Initialize();
-            LoadingManager.StartAction += () =>
-            {
-                loadingCoroutine ??= StartCoroutine(LoadingCoroutine());
-            };
-            LoadingManager.EndAction += () =>
-            {
-                if(loadingCoroutine != null) StopCoroutine(loadingCoroutine);
-                GameManager.Instance.isControl = true;
-                SceneManager.UnloadSceneAsync(gameObject.scene.path);
-            };
+            loadingCoroutine = StartCoroutine(LoadingCoroutine());
         }
 
         private void Update()
         {
             _barHandle.Rotate(0,0, 30);
+        }
+
+        private void OnDestroy()
+        {
+            if(loadingCoroutine != null) StopCoroutine(loadingCoroutine);
         }
 
         IEnumerator LoadingCoroutine()

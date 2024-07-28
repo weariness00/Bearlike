@@ -112,6 +112,10 @@ namespace Status
                         _beforeApplyDamage += func;
                     }
                 }
+                else
+                {
+                    _beforeApplyDamage += func;
+                }
             }
             else
             {

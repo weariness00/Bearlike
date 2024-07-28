@@ -13,6 +13,7 @@ namespace Player
     {
         private PlayerController _playerController;
 
+        [SerializeField] private Camera mainCamera;
         public float interactLength = 1f; // 상호작용 범위
 
         private IInteract _currentInteract;
@@ -24,10 +25,12 @@ namespace Player
         private void Awake()
         {
             _playerController = GetComponent<PlayerController>();
+            mainCamera = _playerController.cameraController.targetCamera;
         }
 
-        private void Start()
+        public override void Spawned()
         {
+            base.Spawned();
             InteractInit();
         }
 
@@ -48,7 +51,7 @@ namespace Player
                 return;
             }
 
-            Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+            Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
             var hitOptions = HitOptions.IncludePhysX | HitOptions.IgnoreInputAuthority;
             DebugManager.DrawRay(ray.origin, ray.direction * interactLength, Color.red, 1.0f);
             if (Runner.LagCompensation.Raycast(ray.origin, ray.direction, interactLength, Object.InputAuthority, out var hit, Int32.MaxValue, hitOptions))

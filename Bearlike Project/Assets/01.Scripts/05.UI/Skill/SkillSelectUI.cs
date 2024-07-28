@@ -247,14 +247,15 @@ namespace UI.Skill
                 obj.SetActive(true);
                 obj.AddOnPointerEnter(data =>
                 {
-                    skill.LevelUp(1, false);
+                    ++skill.level.Current;
+                    skill.ExplainUpdate();
+                    --skill.level.Current;
 
                     allSelectSkillExplainText.text = skill.explain.WrapText(30);
                     allSelectSkillExplainPanelRectTransform.gameObject.SetActive(true);
                     
                     // TMP_Text의 GetPreferredValues를 사용하여 텍스트의 크기를 계산
                     allSelectSkillExplainPanelRectTransform.sizeDelta = new Vector2(allSelectSkillExplainText.preferredWidth + 150, allSelectSkillExplainText.preferredHeight + 150);
-                    skill.LevelUp(-1, false);
                     
                     Vector2 anchor = new Vector2(0.5f, 0.5f); // 기본 앵커와 피봇을 중앙으로 설정
                     Vector2 pivot = new Vector2(0.5f, 0.5f);

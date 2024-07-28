@@ -34,6 +34,9 @@ namespace GamePlay
         public bool isControl = true; // 게임중에 플레이어나 다른 무언가들의 컨트롤을 가능하게 할지
         public bool isGameClear; // 게임을 완전 클리어 했을때
         public bool isGameOver;
+
+        [Header("게임 클리어 관련")] 
+        public GameObject matherBear;
         public Portal gameClearPortal;
         
         [SerializeField]private SpawnPlace _spawnPlace = new SpawnPlace();
@@ -50,18 +53,29 @@ namespace GamePlay
 
         public SceneReference gmModeScene;
         public SceneReference gameResultScene;
-        public SceneReference loadingScene;
         public SceneReference modelUIScene;
         
         #region Unity Event Function
         protected override void Awake()
         {
+            base.Awake();
+            
             LoadingManager.Initialize();
+
+            LoadingManager.StartAction += () =>
+            {
+                Instance.isControl = false;
+                SceneManager.LoadSceneAsync(SceneList.GetScene("Game Start Loading"), LoadSceneMode.Additive);
+            };
+            LoadingManager.EndAction += () =>
+            {
+                Instance.isControl = true;
+                SceneManager.UnloadSceneAsync(SceneList.GetScene("Game Start Loading"));
+            };
+            
             LoadingManager.AddWait();
             
-            base.Awake();
             _spawnPlace.Initialize();
-            NetworkManager.LoadScene(loadingScene, LoadSceneMode.Additive);
         }
 
         public override void Spawned()
@@ -184,8 +198,9 @@ namespace GamePlay
                 gameClearPortal.IsConnect = false;
             };
             
+            matherBear.SetActive(true);
+            
             isGameClear = true;
-
             gameClearPortal.IsConnect = true;
         }
     }
