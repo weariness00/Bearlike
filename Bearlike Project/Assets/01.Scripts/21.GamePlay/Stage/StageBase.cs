@@ -266,7 +266,7 @@ namespace GamePlay.Stage
         {
             SetDifficult();
 
-            var pos = new Vector3((FindObjectsOfType<StageBase>(true).Length - 1) * 150,0,0);
+            var pos = new Vector3( (GameManager.Instance.stageCount.Current + 1)* 150,0,0);
             transform.position = pos;
             stageGameObject.transform.position = pos;
             
