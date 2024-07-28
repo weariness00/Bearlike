@@ -9169,7 +9169,6 @@ GameObject:
   - component: {fileID: 970143111507914843}
   - component: {fileID: 6642022133758274332}
   - component: {fileID: 2891138938673968315}
-  - component: {fileID: 5688374560756711695}
   m_Layer: 12
   m_Name: Frist Player
   m_TagString: Player
@@ -9234,7 +9233,7 @@ MonoBehaviour:
   skillSystem: {fileID: 5320264026091426571}
   weaponSystem: {fileID: 2584110042649792121}
   aggroTarget: {fileID: 0}
-  animator: {fileID: 0}
+  networkAnimator: {fileID: 0}
   simpleKcc: {fileID: 0}
   mouseRotateObjects:
   - {fileID: 5317245523772461872}
@@ -9582,20 +9581,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 442f5d13a652fcb42bf34b8b09a8b5b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &5688374560756711695
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5878848526010201710}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1541381998, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Guid:
-    RawGuidValue: 47e5cbd256e36be40b45381ed7145ae5
 --- !u!1 &5893762105524976175
 GameObject:
   m_ObjectHideFlags: 0
@@ -15134,6 +15119,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4303053860246033292, guid: fb0375b9d4667184885fa46e6c1de475,
+        type: 3}
+      propertyPath: shotsmoke
+      value: 
+      objectReference: {fileID: 2752630163448190676}
     - target: {fileID: 4743372364268393535, guid: fb0375b9d4667184885fa46e6c1de475,
         type: 3}
       propertyPath: m_Name

@@ -10,6 +10,7 @@ using GamePlay;
 using GamePlay.DeadBodyObstacle;
 using Item.Looting;
 using Manager;
+using Monster.Container;
 using Photon;
 using Player;
 using Status;
@@ -117,6 +118,9 @@ namespace Monster
                 lootingTable.CalLootingItem(GetLootingData(id).LootingItems);
             DieAction += OnDieAction;
 
+            if(transform.root.CompareTag("Clone"))
+                DebugManager.Log($"Clone이 죽었습니다. hp는 {transform.root.GetComponent<StatusBase>().hp.Current}입니다.");
+            
             var statusData = GetStatusData(id);
             status.SetJsonData(statusData);
             if (statusData.HasFloat("Rigidbody Mass")) rigidbody.mass = statusData.GetFloat("Rigidbody Mass");
@@ -131,7 +135,8 @@ namespace Monster
 
         public override void Spawned()
         {
-            behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
+            if(HasStateAuthority)
+                behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
             aggroController.AddTarget(FindObjectsOfType<AggroTarget>());// 접속한 플레이어들 저장
         }
 
@@ -140,7 +145,13 @@ namespace Monster
             behaviorTreeRunner.Operator();
             if (HasStateAuthority)
             {
-                if (status.IsDie)
+                if (transform.CompareTag("Clone"))
+                {
+                    if(status.IsDie && transform.GetComponent<BoxJesterClone>().isSpawned)
+                        DieRPC();
+                        
+                }
+                else if (status.IsDie)
                 {
                     DieRPC();
                 }

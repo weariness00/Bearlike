@@ -237,14 +237,14 @@ namespace Monster.Container
 
             var SmilePattern = new SelectorNode(
                     true,
-                    new SequenceNode(
-                        new ActionNode(PunchReady),
-                            new ActionNode(Punching)
-                    ),
-                    new SequenceNode(
-                        new ActionNode(PunchReady),
-                        new ActionNode(FakePunching)
-                    ),
+                    // new SequenceNode(
+                    //     new ActionNode(PunchReady),
+                    //         new ActionNode(Punching)
+                    // ),
+                    // new SequenceNode(
+                    //     new ActionNode(PunchReady),
+                    //     new ActionNode(FakePunching)
+                    // ),
                     new ActionNode(ClonePattern)
                 );
 
@@ -302,8 +302,8 @@ namespace Monster.Container
 
             var Attack = new SelectorNode(
                     false,
-                    // Smile,
-                    Cry
+                    Smile
+                    // Cry
                     // Angry
                 );
             
@@ -660,6 +660,8 @@ namespace Monster.Container
                 (runner, o) =>
                 {
                     var h = o.GetComponent<BoxJesterClone>();
+
+                    h.OwnerId = OwnerId;
                 });
             
             return INode.NodeState.Success;

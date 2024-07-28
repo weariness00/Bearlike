@@ -66,11 +66,6 @@ namespace Monster.Container
             }
         }
 
-        private void Update()
-        {
-            DebugManager.Log($"posiiton : {hands[handType].transform.position}");
-        }
-
         #region Punch Attack
 
         IEnumerator StartPunchingCoroutine()

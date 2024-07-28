@@ -12,14 +12,42 @@ namespace Monster.Container
         [SerializeField] private VisualEffect darknessAttackEffect;
         [SerializeField] private VisualEffect HandLazerEffect;
 
-        private void Awake()
+        // private void Start()
+        // {
+        //     if(HandLazerEffect)
+        //         StopLazerVFXRPC();
+        //     
+        //     if (tpEffect)
+        //     {
+        //         StopTPVFXRPC();
+        //         tpEffect.SetFloat("Time", 1.0f);
+        //     }
+        //
+        //     if (darknessAttackEffect)
+        //     {
+        //         StopBreathVFXRPC();
+        //         darknessAttackEffect.SetFloat("Time", 1.0f);
+        //         
+        //     }
+        // }
+        
+        public override void Spawned()
         {
-            StopLazerVFXRPC();
-            StopTPVFXRPC();
-            StopBreathVFXRPC();
+            if(HandLazerEffect)
+                StopLazerVFXRPC();
             
-            tpEffect.SetFloat("Time", 1.0f);
-            darknessAttackEffect.SetFloat("Time", 1.0f);
+            if (tpEffect)
+            {
+                StopTPVFXRPC();
+                tpEffect.SetFloat("Time", 1.0f);
+            }
+
+            if (darknessAttackEffect)
+            {
+                StopBreathVFXRPC();
+                darknessAttackEffect.SetFloat("Time", 1.0f);
+                
+            }
         }
         
         [Rpc(RpcSources.All, RpcTargets.All)]

@@ -1,5 +1,7 @@
 ﻿using Fusion;
+using Manager;
 using Photon;
+using Status;
 using UnityEngine;
 
 namespace Monster.Container
@@ -69,25 +71,8 @@ namespace Monster.Container
         private void Awake()
         {
             _networkAnimator = transform.root.GetComponent<NetworkMecanimAnimator>();
-
-
-            // IdleTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // TeleportTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // SmokeStartTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // SmokingTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // SmokeEndTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // MaskChangeTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // PunchReadyTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // PunchTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // CloneTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // ShieldTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // HatTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // HandLazerTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // ThrowBoomTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // SlapTimer = TickTimer.CreateFromTicks(Runner, 0);
         }
         
-        // [Rpc(RpcSources.All, RpcTargets.All)]
         public void PlayIdle()
         {
             IdleTimer = TickTimer.CreateFromSeconds(Runner, idleClip.length * 2);
@@ -184,7 +169,6 @@ namespace Monster.Container
         public void PlaySlapAction()
         {
             SlapTimer = TickTimer.CreateFromSeconds(Runner, 4.5f);
-            // _networkAnimator.SetTrigger(tSlap);
         }
 
         public void PlayCloneAction()
