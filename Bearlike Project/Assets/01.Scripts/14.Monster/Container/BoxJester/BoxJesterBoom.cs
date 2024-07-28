@@ -27,6 +27,8 @@ namespace Monster.Container
         private float speed = 25f;
         private float _time = 1.5f;
         private float _height = 5f;
+
+        private bool isObjectSpawn = false;
         
         public override void Spawned()
         {
@@ -41,8 +43,12 @@ namespace Monster.Container
         
         private void OnTriggerEnter(Collider other)
         {
+            if(isObjectSpawn) return;
+            
             if (false == other.gameObject.CompareTag("Monster") && false == other.gameObject.CompareTag("Volume"))
             {
+                isObjectSpawn = true;
+
                 Runner.SpawnAsync(bombPrefab, transform.position, transform.rotation, null, (runner, o) =>
                 {
                     var bomb = o.GetComponent<BoxJesterBoomObject>();
