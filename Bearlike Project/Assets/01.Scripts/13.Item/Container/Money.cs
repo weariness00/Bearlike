@@ -1,4 +1,7 @@
-﻿using Manager;
+﻿using System.Linq;
+using DG.Tweening;
+using Fusion;
+using Manager;
 using Player;
 using UI;
 using UnityEngine;
@@ -18,8 +21,10 @@ namespace Item.Container
 
         private void OnTriggerEnter(Collider other)
         {
-            if (CheckPlayer(other.gameObject, out _playerController))
+            if (CheckPlayer(other.gameObject, out PlayerController pc))
             {
+                _playerController = pc;
+                ;
                 rigidbody.isKinematic = true;
                 
                 foreach (var sphereCollider in GetComponents<SphereCollider>())
@@ -39,8 +44,11 @@ namespace Item.Container
         {
             base.AddItem(addItem);
 
-            var goodsCanvas = _playerController.uiController.goodsCanvas;
-            goodsCanvas.BearCoinUpdate(Amount.Current);
+            if (addItem is Money m)
+            {
+                var goodsCanvas = m._playerController.uiController.goodsCanvas;
+                goodsCanvas.BearCoinUpdate(Amount.Current);
+            }
             
             return addItem;
         }
@@ -51,8 +59,12 @@ namespace Item.Container
             if (useItem is ItemBase item)
             {
                 Amount.Current -= item.Amount.Current;
-                var goodsCanvas = _playerController.uiController.goodsCanvas;
-                goodsCanvas.BearCoinUpdate(Amount.Current);
+                
+                if (useItem is Money m)
+                {
+                    var goodsCanvas = m._playerController.uiController.goodsCanvas;
+                    goodsCanvas.BearCoinUpdate(Amount.Current);
+                }
 
                 if (Amount.isMin)
                 {
