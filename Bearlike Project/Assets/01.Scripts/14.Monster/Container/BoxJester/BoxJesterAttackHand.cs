@@ -26,11 +26,13 @@ namespace Monster.Container
         // 실제는 여기서 시간 설정해야함
         public float time;
         private float _time;
+
+        private StatusBase _ownerStatus;
         
         private void Awake()
         {
             status.damage.Max = 10;
-            status.damage.Current = 10;//
+            status.damage.Current = 10;
         }
         
         public override void Spawned()
@@ -38,16 +40,23 @@ namespace Monster.Container
             base.Spawned();
             Destroy(gameObject, 3.0f);
             
-            var root = transform.root.gameObject.GetComponent<NetworkObject>();
-            OwnerId = root.Id;
+            var ownerObj = Runner.FindObject(OwnerId);
+            _ownerStatus = ownerObj.gameObject.GetComponent<StatusBase>();
             
             _time = time - 0.5f;
-
             
             if(HasStateAuthority)
                 StartCoroutine(StartPunchingCoroutine());
         }
-        
+
+        public override void FixedUpdateNetwork()
+        {
+            if (_ownerStatus.IsDie)
+            {
+                OffObjectRPC();
+            }
+        }
+
         private void OnTriggerEnter(Collider other)
         {
             StatusBase otherStatus = null;
@@ -172,6 +181,12 @@ namespace Monster.Container
         }
         
         #endregion
+        
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void OffObjectRPC()
+        {
+            Destroy(gameObject);
+        }
         
         // [Networked] public Vector3 position { get; set; }
         // [Networked] public Quaternion rotation { get; set; }

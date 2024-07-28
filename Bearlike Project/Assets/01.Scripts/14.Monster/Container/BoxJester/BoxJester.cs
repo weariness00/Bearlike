@@ -73,9 +73,11 @@ namespace Monster.Container
         private bool _animationing = false;
         
         public int hatCount;
-        private readonly int HATNUM = 4;
+        private readonly int HATNUM = 5;
 
         private readonly float _punchAttackDistance = 50.0f;
+
+        public bool isCloneSpawned = false;
         
         #endregion
 
@@ -86,8 +88,6 @@ namespace Monster.Container
             base.Awake();
             
             animator = GetComponentInChildren<BoxJesterAnimator>();
-            
-            // tpEffect.SetFloat("Time", animator.tpClip.length);
 
             var bloodShieldRenderer = transform.Find("ShieldEffect").GetComponent<Renderer>();
             bloodShieldMat = bloodShieldRenderer.material;
@@ -99,9 +99,6 @@ namespace Monster.Container
             _masks[0] = boxJester.Find("Smile_Face").gameObject;
             _masks[1] = boxJester.Find("Sad_Face").gameObject;
             _masks[2] = boxJester.Find("Angry_Face").gameObject;
-
-            DieAction += () => animator.PlayDieAction();
-            DieAction += () => Destroy(gameObject, 3);
 
             _handModel = transform.Find("Clown").Find("Hand").gameObject;
         }
@@ -177,6 +174,13 @@ namespace Monster.Container
             }
             _players = playerObjects.ToArray();
 
+            DieAction += () =>
+            {
+                HandActiveRPC(true);           
+                animator.PlayDieAction();
+                Destroy(gameObject, 3);
+            };
+
             OwnerId = gameObject.GetComponent<NetworkObject>().Id;
         }
         
@@ -234,14 +238,14 @@ namespace Monster.Container
 
             var SmilePattern = new SelectorNode(
                     true,
-                    new SequenceNode(
-                        new ActionNode(PunchReady),
-                            new ActionNode(Punching)
-                    ),
-                    new SequenceNode(
-                        new ActionNode(PunchReady),
-                        new ActionNode(FakePunching)
-                    ),
+                    // new SequenceNode(
+                    //     new ActionNode(PunchReady),
+                    //         new ActionNode(Punching)
+                    // ),
+                    // new SequenceNode(
+                    //     new ActionNode(PunchReady),
+                    //     new ActionNode(FakePunching)
+                    // ),
                     new ActionNode(ClonePattern)
                 );
 
@@ -285,13 +289,13 @@ namespace Monster.Container
             
             var AngryPattern = new SelectorNode(
                     true,
-                    // new ActionNode(HandLazer),
-                    // new ActionNode(ThrowBoom),
+                    new ActionNode(HandLazer),
+                    new ActionNode(ThrowBoom),
                     new ActionNode(slapAttack)
                 );
 
             var Angry = new SequenceNode(
-                    // new ActionNode(IsAngry),
+                    new ActionNode(IsAngry),
                     AngryPattern
                 );
             
@@ -299,9 +303,9 @@ namespace Monster.Container
 
             var Attack = new SelectorNode(
                     false,
-                    // Smile,
+                    Smile
                     // Cry,
-                    Angry
+                    // Angry
                 );
             
             #endregion
@@ -577,9 +581,7 @@ namespace Monster.Container
                     {
                         var h = o.GetComponent<BoxJesterAttackHand>();
 
-                        // h.position = _handModel.transform.position;
-                        // h.rotation = transform.rotation;
-                        
+                        h.OwnerId = OwnerId;
                         h.targetPosition = targetPosition;
                         h.handType = type;
                         h.isFake = false;
@@ -612,9 +614,7 @@ namespace Monster.Container
                     {
                         var h = o.GetComponent<BoxJesterAttackHand>();
 
-                        // h.position = _handModel.transform.position;
-                        // h.rotation = transform.rotation;
-                        
+                        h.OwnerId = OwnerId;
                         h.targetPosition = targetPosition;
                         h.fakeTargetPosition = fakeTargetPosition;
                         h.handType = type;
@@ -639,6 +639,8 @@ namespace Monster.Container
 
         private INode.NodeState ClonePattern()
         {
+            if (isCloneSpawned) return INode.NodeState.Failure;
+            
             if (false == _animationing)
             {
                 animator.PlayCloneAction();
@@ -660,6 +662,8 @@ namespace Monster.Container
 
                     h.OwnerId = OwnerId;
                 });
+            
+            isCloneSpawned = true;
             
             return INode.NodeState.Success;
         }
@@ -794,8 +798,6 @@ namespace Monster.Container
 
                 foreach (var index in indexList)
                 {
-                    // try
-                    // {
                         Runner.SpawnAsync(hat[0].gameObject, hatPlaces[index].position, transform.rotation, null,
                             (runner, o) =>
                             {
@@ -803,23 +805,7 @@ namespace Monster.Container
                                 h.OwnerId = OwnerId;
                             });
                         DebugManager.Log("BlueHat Spawn");
-                    // }
-                    // catch (Exception ex)
-                    // {
-                    //     DebugManager.LogError($"Hat Spawn Failed : {ex}");
-                    // }
                 }
-                
-                // foreach (var hatplace in hatPlaces)
-                // {
-                //     Runner.SpawnAsync(hat[0].gameObject, hatplace.position, transform.rotation, null,
-                //         (runner, o) =>
-                //         {
-                //             var h = o.GetComponent<BoxJesterHat>();
-                //             h.OwnerId = OwnerId;
-                //             h.hatType = 0;
-                //         });
-                // }
             }
             if (false == animator.HatTimerExpired)
                 return INode.NodeState.Running;
@@ -834,7 +820,7 @@ namespace Monster.Container
         {
             DebugManager.Log($"hatCount : {hatCount}");
             if (hatCount > 0)
-                status.ApplyHealRPC(100 * hatCount, OwnerId);   // 힐량은 밸런스 측정해서 하자
+                status.ApplyHealRPC(300 * hatCount, OwnerId);   // 힐량은 밸런스 측정해서 하자
             
             return INode.NodeState.Success;
         }
@@ -869,17 +855,6 @@ namespace Monster.Container
                         });
                     DebugManager.Log("RedHat Spawn");
                 }
-                
-                // foreach (var hatplace in hatPlaces)
-                // {
-                //     Runner.SpawnAsync(hat[1].gameObject, hatplace.position, transform.rotation, null,
-                //         (runner, o) =>
-                //         {
-                //             var h = o.GetComponent<BoxJesterHat>();
-                //             h.OwnerId = OwnerId;
-                //             h.hatType = 1;
-                //         });
-                // }
             }
             if (false == animator.HatTimerExpired)
                 return INode.NodeState.Running;
@@ -1107,12 +1082,6 @@ namespace Monster.Container
         }
         
         #endregion
-        
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        public void DestroyHatRPC()
-        {
-            hatCount -= 1;
-        }
 
         #region Slap
 
