@@ -36,7 +36,12 @@ namespace Monster.Container
         
         public override INode InitBT()
         {
-            throw new System.NotImplementedException();
+            return new ActionNode(tmp);
+        }
+
+        private INode.NodeState tmp()
+        {
+            return INode.NodeState.Success;
         }
     }
 }

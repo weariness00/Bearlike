@@ -262,18 +262,18 @@ namespace Monster.Container
                     //     new ActionNode(CryingShield),
                     //     new ActionNode(ShieldOffAction)
                     // ),
-                    new SequenceNode(
-                        new ActionNode(ReverseCryingShield),
-                        new ActionNode(ShieldOffAction)
-                    )
                     // new SequenceNode(
-                    // new ActionNode(BreakHat),
-                    //     new ActionNode(CheckHatCount)
+                    //     new ActionNode(ReverseCryingShield),
+                    //     new ActionNode(ShieldOffAction)
                     // ),
-                    // new SequenceNode(
-                    // new ActionNode(BreakReverseHat),
-                    // new ActionNode(CheckReverseHatCount)
-                    // )
+                    new SequenceNode(
+                    new ActionNode(BreakHat),
+                        new ActionNode(CheckHatCount)
+                    ),
+                    new SequenceNode(
+                    new ActionNode(BreakReverseHat),
+                    new ActionNode(CheckReverseHatCount)
+                    )
                 );
 
             var Cry = new SequenceNode(
