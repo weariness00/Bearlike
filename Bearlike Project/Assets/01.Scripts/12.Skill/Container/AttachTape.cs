@@ -50,7 +50,7 @@ namespace Skill.Container
                 if (!ownerPlayer.uiController.buffCanvas.HasUI(skillName))
                 {
                     DebugManager.ToDo("풀 스크린 이펙트 넣기, 테이프 붙이는 효과음, 이펙트 넣기");
-                    URPRendererFeaturesManager.Instance.StartEffect("ShieldEffect");
+                    URPRendererFeaturesManager.Instance.StartShield();
 
                     ownerPlayer.uiController.buffCanvas.SpawnUI(skillName);
                     ownerPlayer.uiController.buffCanvas.SetIcon(skillName, buffIcon);
@@ -84,6 +84,8 @@ namespace Skill.Container
 
             if (damageNullified.isMin)
             {
+                URPRendererFeaturesManager.Instance.StopShield();
+                
                 ownerPlayer.status.RemoveBeforeApplyDamageEvent(DamageNullified);
                 ownerPlayer.uiController.buffCanvas.RemoveUI(skillName);
             }
