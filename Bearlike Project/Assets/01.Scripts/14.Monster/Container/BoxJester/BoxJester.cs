@@ -81,7 +81,6 @@ namespace Monster.Container
         
         #endregion
 
-
         #region Unity Event Function
 
         public override void Awake()
