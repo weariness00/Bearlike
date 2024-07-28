@@ -33,11 +33,7 @@ namespace GamePlay.Stage.Container
             InitCinematic();
             cinematicCollider.gameObject.AddOnTriggerEnter(other =>
             {
-                if (isStartCinematic) return;
-                isStartCinematic = true;
-            
-                Destroy(cinematicCollider);
-                cinematicPlayableDirector.Play();
+                StartCinematicRPC();
             });
         }
 
@@ -82,14 +78,16 @@ namespace GamePlay.Stage.Container
 
         private void InitCinematic()
         {
+            var players = FindObjectsOfType<PlayerController>();
             cinematicPlayableDirector.played += director =>
             {
-                var players = FindObjectsOfType<PlayerController>();
+                GameManager.Instance.isControl = false;
                 for (var i = 0; i < players.Length; i++)
                 {
                     var player = players[i];
                     if (HasStateAuthority)
                         UserData.SetTeleportPosition(player.Object.InputAuthority, playerTPTransformList[i].position);
+                    player.gameObject.SetActive(false);
                 }
                 
                 var sliceObjects = FindObjectsOfType<NetworkMeshSliceObject>();
@@ -101,6 +99,10 @@ namespace GamePlay.Stage.Container
             cinematicPlayableDirector.stopped += director =>
             {
                 rescueCinematic.SetActive(false);
+                GameManager.Instance.isControl = true;
+                
+                foreach (var player in players)
+                    player.gameObject.SetActive(true);
 
                 // 모든 클라에서 실행되어야함
                 GameManager.Instance.GameClear();
@@ -108,6 +110,16 @@ namespace GamePlay.Stage.Container
                 if (nextStagePortal.portalVFXList.Count >= 5) nextStagePortal.portalVFXList[0].gameObject.SetActive(true);
                 nextStagePortal.IsConnect = true; // 현재 진행중인 스테이지의 포탙 개방
             };
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void StartCinematicRPC()
+        {
+            if (isStartCinematic) return;
+            isStartCinematic = true;
+            
+            Destroy(cinematicCollider);
+            cinematicPlayableDirector.Play();
         }
     }
 }
