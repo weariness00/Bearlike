@@ -955,18 +955,6 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1413023859}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1413023862 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5532947624800936727, guid: 3d0b2520abcc4944cbadaa519a2fa8d9,
-    type: 3}
-  m_PrefabInstance: {fileID: 1413023859}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1413023863 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2807221146518277626, guid: 3d0b2520abcc4944cbadaa519a2fa8d9,
@@ -1450,7 +1438,7 @@ MonoBehaviour:
   lootingTable: {fileID: 0}
   stageGameObject: {fileID: 5159579677945267862}
   destructObject: {fileID: 1413023861}
-  navMeshSurface: {fileID: 1413023862}
+  navMeshSurface: {fileID: 8124913317860333872}
   prevStagePortal: {fileID: 2242541014192191843}
   nextStagePortal: {fileID: 1140885318}
   monsterSpawnerList: []
@@ -1661,6 +1649,7 @@ GameObject:
   - component: {fileID: 4873311087894112045}
   - component: {fileID: 8124913317860333870}
   - component: {fileID: 8124913317860333871}
+  - component: {fileID: 8124913317860333872}
   m_Layer: 0
   m_Name: Boss Stage
   m_TagString: Untagged
@@ -1897,6 +1886,37 @@ MonoBehaviour:
   - {fileID: 8124913317860333870}
   - {fileID: 1423062493400387}
   - {fileID: 948661560}
+--- !u!114 &8124913317860333872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5159579677945267862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AgentTypeID: 0
+  m_CollectObjects: 2
+  m_Size: {x: 65, y: 45, z: 65}
+  m_Center: {x: 0, y: 20, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 1074003969
+  m_UseGeometry: 1
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.083333336
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: f73d9973bc13461468696d17b2d467e2, type: 2}
+  m_BuildHeightMesh: 0
 --- !u!1 &8479858861657024152
 GameObject:
   m_ObjectHideFlags: 0
