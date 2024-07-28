@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using Data;
 using Manager;
 using Monster;
+using Photon.MeshDestruct;
+using Player;
 using Script.Photon;
 using Status;
 using UnityEngine;
@@ -18,8 +21,8 @@ namespace GamePlay.Stage.Container
         [Header("시네마틱")] 
         [SerializeField] private Collider cinematicCollider; // 이 콜라이더와 충돌하면 시네마틱 실행
         [SerializeField] private GameObject rescueCinematic;
-        [SerializeField] private Camera cinematicCamera;
-        [SerializeField] private PlayableDirector cinemachinePlayableDirector;
+        [SerializeField] private PlayableDirector cinematicPlayableDirector;
+        [SerializeField] private List<Transform> playerTPTransformList = new List<Transform>();
         private bool isStartCinematic = false;
 
         public override void Spawned()
@@ -30,13 +33,45 @@ namespace GamePlay.Stage.Container
             {
                 if (isStartCinematic) return;
                 isStartCinematic = true;
+
+                var sliceObjects = FindObjectsOfType<NetworkMeshSliceObject>();
+                foreach (var sliceObject in sliceObjects)
+                    sliceObject.gameObject.SetActive(false);
+
+                var players = FindObjectsOfType<PlayerController>();
+                foreach (var player in players)
+                    player.gameObject.SetActive(false);
                 
                 rescueCinematic.SetActive(true);
-                
-                cinemachinePlayableDirector.Play();
+                cinematicPlayableDirector.stopped += director =>
+                {
+                    rescueCinematic.SetActive(false);
+                    
+                    // 모든 클라에서 실행되어야함
+                    GameManager.Instance.GameClear();
+                    nextStagePortal.otherPortal = GameManager.Instance.gameClearPortal;
+                    if(nextStagePortal.portalVFXList.Count >= 5) nextStagePortal.portalVFXList[0].gameObject.SetActive(true);
+                    nextStagePortal.IsConnect = true; // 현재 진행중인 스테이지의 포탙 개방
+                    
+                    for (var i = 0; i < players.Length; i++)
+                    {
+                        var player = players[i];
+                        player.gameObject.SetActive(true);
+                        if(HasStateAuthority)
+                            UserData.SetTeleportPosition(player.Object.InputAuthority, playerTPTransformList[i].position);
+                    }
+                };
+                cinematicPlayableDirector.Play();
                 
                 Destroy(cinematicCollider);
             });
+        }
+
+        public override void StageInit()
+        {
+            base.StageInit();
+            Runner.MoveGameObjectToSameScene(cinematicPlayableDirector.gameObject, GameManager.Instance.gameObject);
+            cinematicPlayableDirector.transform.position = stageGameObject.transform.position;
         }
 
         public override void StageStart()
@@ -69,19 +104,6 @@ namespace GamePlay.Stage.Container
             {
                 StageClear();
             }
-        }
-
-        public override void StageClear()
-        {
-            base.StageClear();
-
-            if(nextStagePortal.IsConnect) return;
-            
-            // 모든 클라에서 실행되어야함
-            GameManager.Instance.GameClear();
-            nextStagePortal.otherPortal = GameManager.Instance.gameClearPortal;
-            if(nextStagePortal.portalVFXList.Count >= 5) nextStagePortal.portalVFXList[0].gameObject.SetActive(true);
-            nextStagePortal.IsConnect = true; // 현재 진행중인 스테이지의 포탙 개방
         }
     }
 }
