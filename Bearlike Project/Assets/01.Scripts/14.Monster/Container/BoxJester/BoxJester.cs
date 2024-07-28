@@ -17,7 +17,7 @@ namespace Monster.Container
 {
     public class BoxJester : MonsterBase
     {
-        #region Property
+        #region Property//
         
         [Header("Animator")]
         [SerializeField] private BoxJesterAnimator animator;
