@@ -4,6 +4,8 @@ using Monster;
 using Script.Photon;
 using Status;
 using UnityEngine;
+using UnityEngine.Playables;
+using Util.UnityEventComponent;
 
 namespace GamePlay.Stage.Container
 {
@@ -11,7 +13,31 @@ namespace GamePlay.Stage.Container
     {
         [Header("보스 정보")]
         public List<NetworkSpawner> bossSpawnerList;
-        public StatusValue<int> bossMonsterCount = new StatusValue<int>(); 
+        public StatusValue<int> bossMonsterCount = new StatusValue<int>();
+
+        [Header("시네마틱")] 
+        [SerializeField] private Collider cinematicCollider; // 이 콜라이더와 충돌하면 시네마틱 실행
+        [SerializeField] private GameObject rescueCinematic;
+        [SerializeField] private Camera cinematicCamera;
+        [SerializeField] private PlayableDirector cinemachinePlayableDirector;
+        private bool isStartCinematic = false;
+
+        public override void Spawned()
+        {
+            base.Spawned();
+            
+            cinematicCollider.gameObject.AddOnTriggerEnter((other) =>
+            {
+                if (isStartCinematic) return;
+                isStartCinematic = true;
+                
+                rescueCinematic.SetActive(true);
+                
+                cinemachinePlayableDirector.Play();
+                
+                Destroy(cinematicCollider);
+            });
+        }
 
         public override void StageStart()
         {
