@@ -23,6 +23,8 @@ namespace UI
             _monsterKill = stage.monsterKillCount;
             _killCount = _monsterKill.Current;
             _killMax = _monsterKill.Max;
+            maxKillText.text = _monsterKill.Max.ToString();
+            killText.text = _monsterKill.Current.ToString();
         }
 
         private void Update()

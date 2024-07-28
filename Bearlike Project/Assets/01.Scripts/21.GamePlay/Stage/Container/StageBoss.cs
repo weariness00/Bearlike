@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Data;
+using Fusion;
 using Manager;
 using Monster;
 using Photon.MeshDestruct;
@@ -28,42 +29,15 @@ namespace GamePlay.Stage.Container
         public override void Spawned()
         {
             base.Spawned();
-            
-            cinematicCollider.gameObject.AddOnTriggerEnter((other) =>
+
+            InitCinematic();
+            cinematicCollider.gameObject.AddOnTriggerEnter(other =>
             {
                 if (isStartCinematic) return;
                 isStartCinematic = true;
-
-                var sliceObjects = FindObjectsOfType<NetworkMeshSliceObject>();
-                foreach (var sliceObject in sliceObjects)
-                    sliceObject.gameObject.SetActive(false);
-
-                var players = FindObjectsOfType<PlayerController>();
-                foreach (var player in players)
-                    player.gameObject.SetActive(false);
-                
-                rescueCinematic.SetActive(true);
-                cinematicPlayableDirector.stopped += director =>
-                {
-                    rescueCinematic.SetActive(false);
-                    
-                    // 모든 클라에서 실행되어야함
-                    GameManager.Instance.GameClear();
-                    nextStagePortal.otherPortal = GameManager.Instance.gameClearPortal;
-                    if(nextStagePortal.portalVFXList.Count >= 5) nextStagePortal.portalVFXList[0].gameObject.SetActive(true);
-                    nextStagePortal.IsConnect = true; // 현재 진행중인 스테이지의 포탙 개방
-                    
-                    for (var i = 0; i < players.Length; i++)
-                    {
-                        var player = players[i];
-                        player.gameObject.SetActive(true);
-                        if(HasStateAuthority)
-                            UserData.SetTeleportPosition(player.Object.InputAuthority, playerTPTransformList[i].position);
-                    }
-                };
-                cinematicPlayableDirector.Play();
-                
+            
                 Destroy(cinematicCollider);
+                cinematicPlayableDirector.Play();
             });
         }
 
@@ -104,6 +78,36 @@ namespace GamePlay.Stage.Container
             {
                 StageClear();
             }
+        }
+
+        private void InitCinematic()
+        {
+            cinematicPlayableDirector.played += director =>
+            {
+                var players = FindObjectsOfType<PlayerController>();
+                for (var i = 0; i < players.Length; i++)
+                {
+                    var player = players[i];
+                    if (HasStateAuthority)
+                        UserData.SetTeleportPosition(player.Object.InputAuthority, playerTPTransformList[i].position);
+                }
+                
+                var sliceObjects = FindObjectsOfType<NetworkMeshSliceObject>();
+                foreach (var sliceObject in sliceObjects)
+                    sliceObject.gameObject.SetActive(false);
+
+                rescueCinematic.SetActive(true);
+            };
+            cinematicPlayableDirector.stopped += director =>
+            {
+                rescueCinematic.SetActive(false);
+
+                // 모든 클라에서 실행되어야함
+                GameManager.Instance.GameClear();
+                nextStagePortal.otherPortal = GameManager.Instance.gameClearPortal;
+                if (nextStagePortal.portalVFXList.Count >= 5) nextStagePortal.portalVFXList[0].gameObject.SetActive(true);
+                nextStagePortal.IsConnect = true; // 현재 진행중인 스테이지의 포탙 개방
+            };
         }
     }
 }
