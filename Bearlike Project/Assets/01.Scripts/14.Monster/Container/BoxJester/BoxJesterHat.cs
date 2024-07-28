@@ -13,6 +13,7 @@ namespace Monster.Container
 
         public override void Awake()
         {
+            base.Awake();
             status = gameObject.GetComponent<MonsterStatus>();
         }
         
