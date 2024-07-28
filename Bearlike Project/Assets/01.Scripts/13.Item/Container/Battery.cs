@@ -22,7 +22,6 @@ namespace Item.Container
                 isGet = true;
                 
                 GetItem(other.gameObject);
-                Destroy(gameObject, 0.1f);
             }
         }
 
