@@ -15,19 +15,18 @@ namespace Monster.Container
         [Networked] public NetworkId OwnerId { get; set; }
         public ParticleSystem BoomEffect;
         
-        public MonsterStatus status;
+        // public MonsterStatus status;
         
         private HashSet<GameObject> damagePlayerSet = new HashSet<GameObject>(); // 이미 대미지를 입은 플레이어인지
 
         private void Awake()
         {
-            status = gameObject.GetOrAddComponent<MonsterStatus>();
-
-            status.damage.Max = 10;
-            status.damage.Current = 10;
+            // status = gameObject.GetOrAddComponent<MonsterStatus>();
+            
+            // status.damage.Max = 10;
+            // status.damage.Current = 10;
         }
-
-
+        
         public override void Spawned()
         {
             BoomEffect.Play();
@@ -45,12 +44,13 @@ namespace Monster.Container
                 {
                     if (damagePlayerSet.Contains(otherStatus.gameObject) == false)
                     {
-                        status.AddAdditionalStatus(otherStatus);
+                        // status.AddAdditionalStatus(otherStatus);
                         // otherStatus.ApplyDamageRPC(status.CalDamage(out bool isCritical),
                         //     isCritical ? DamageTextType.Critical : DamageTextType.Normal, OwnerId);
-                        otherStatus.ApplyDamageRPC(10, DamageTextType.Normal, OwnerId);
-                        status.RemoveAdditionalStatus(otherStatus);
+                        // status.RemoveAdditionalStatus(otherStatus);
 
+                        otherStatus.ApplyDamageRPC(10, DamageTextType.Normal, OwnerId);
+                        
                         damagePlayerSet.Add(otherStatus.gameObject);
                     }
                 }

@@ -40,6 +40,7 @@ namespace Monster.Container
         private static readonly int Dissolve = Shader.PropertyToID("_Dissolve");
         
         [Networked] public NetworkId OwnerId { get; set; }
+        [Networked] public NetworkId MyId { get; set; }
         
         private BehaviorTreeRunner _behaviorTreeRunner;
         private GameObject[] _players;
@@ -61,6 +62,7 @@ namespace Monster.Container
         private bool _animationing = false;
 
         private readonly float _punchAttackDistance = 50.0f;
+        private BoxJester boxJester;
 
         #endregion
         
@@ -85,7 +87,11 @@ namespace Monster.Container
             _masks[1] = boxJester.Find("Sad_Face").gameObject;
             _masks[2] = boxJester.Find("Angry_Face").gameObject;
         }
-        
+
+        private void OnDestroy()
+        {
+            boxJester.isCloneSpawned = false;
+        }
         #endregion
 
         #region Member Function
@@ -120,14 +126,23 @@ namespace Monster.Container
             }
             _players = playerObjects.ToArray();
             
-            Destroy(gameObject, 20.0f);
             
-            DieAction += () => animator.PlayDieAction();
-            DieAction += () => Destroy(gameObject, 3);
+            var ownerObj = Runner.FindObject(OwnerId);
+            boxJester = ownerObj.gameObject.GetComponent<BoxJester>();
+            
+            DieAction += () =>
+            {
+                boxJester.isCloneSpawned = false;
+                HandActiveRPC(true);
+                animator.PlayDieAction();
+                Destroy(gameObject, 3);
+            };
+            
+            MyId = gameObject.GetComponent<NetworkObject>().Id;
             
             _handModel = transform.Find("Clown").Find("Hand").gameObject;
             
-            DebugManager.Log($"Clone의 HP는 {status.hp.Current}입니다.");
+            Destroy(gameObject, 20.0f);
         }
         
         #endregion
@@ -191,8 +206,7 @@ namespace Monster.Container
             
             var AngryPattern = new SelectorNode(
                     true,
-                    new ActionNode(ThrowBoom),
-                    new ActionNode(slapAttack)
+                    new ActionNode(ThrowBoom)
                 );
 
             var Angry = new SequenceNode(
@@ -324,7 +338,8 @@ namespace Monster.Container
         {
             if (false == _animationing)
             {
-                // Calculation
+                StartCoroutine(RotationCoroutine());
+                
                 targetPosition = new Vector3(0, 0, 0);
                 fakeTargetPosition = new Vector3(0, 0, 0);
                 minDistance = int.MaxValue;
@@ -388,6 +403,7 @@ namespace Monster.Container
                     {
                         var h = o.GetComponent<BoxJesterAttackHand>();
 
+                        h.OwnerId = MyId;
                         h.targetPosition = targetPosition;
                         h.handType = type;
                         h.isFake = false;
@@ -420,6 +436,7 @@ namespace Monster.Container
                     {
                         var h = o.GetComponent<BoxJesterAttackHand>();
 
+                        h.OwnerId = MyId;
                         h.targetPosition = targetPosition;
                         h.fakeTargetPosition = fakeTargetPosition;
                         h.handType = type;
@@ -556,6 +573,7 @@ namespace Monster.Container
         {
             if (false == _animationing)
             {
+                StartCoroutine(RotationCoroutine());
                 animator.PlayThrowBoomAction();
                 _animationing = true;
 
@@ -585,29 +603,7 @@ namespace Monster.Container
                     var h = o.GetComponent<BoxJesterBoom>();
                     h.OwnerId = OwnerId;
                     h.dir = transform.forward;
-                    // Effect 넣어줘야함
                 });
-        }
-
-        private INode.NodeState slapAttack()
-        {
-            if (false == _animationing)
-            {
-                animator.enabled = false;
-                animator.PlaySlapAction();
-                _animationing = true;
-                
-                SlapStartRPC();
-            }
-
-            if (false == animator.SlapTimerExpired)
-                return INode.NodeState.Running;
-
-            _animationing = false;
-            animator.enabled = true;
-            DebugManager.Log($"Clone Slap Attack");
-            
-            return INode.NodeState.Success;
         }
 
         #endregion
@@ -715,53 +711,7 @@ namespace Monster.Container
         }
         
         #endregion
-
-        #region Slap
-
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void SlapStartRPC()
-        {
-            hands[1].transform.DOLocalMove(new Vector3(5, 3, 2), 1).SetEase(Ease.InCirc);
-            hands[1].transform.DOLocalRotate(new Vector3(0, 0, -45f), 1).SetEase(Ease.InCirc);
-            StartCoroutine(SlapAttackCoroutine());
-        }
-
-        IEnumerator SlapAttackCoroutine()
-        {
-            yield return new WaitForSeconds(1.5f);
-
-            SlapingRPC();
-        }
-
-        private float _radius = 15f;
-        private float _duration = 2f;
-        private int _segments = 36;
         
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void SlapingRPC()
-        {
-            Vector3[] path = new Vector3[_segments];
-            float angleStep = 180f / _segments;
-
-            for (int i = 0; i < _segments; i++)
-            {
-                float angle = i * angleStep * Mathf.Deg2Rad;
-                path[i] = new Vector3(Mathf.Cos(angle) * _radius, 0.5f, Mathf.Sin(angle) * _radius);
-            }
-
-            hands[1].transform.DOLocalPath(path, _duration).SetOptions(true);
-            hands[1].transform.DOLocalRotate(new Vector3(0, -180f, 0), _duration);
-
-            StartCoroutine(HandRotationCoroutine());
-        }
-
-        IEnumerator HandRotationCoroutine()
-        {
-            yield return new WaitForSeconds(_duration);
-            hands[1].transform.DOLocalRotate(new Vector3(0, 0, 0), 0.5f);
-        }
-        
-        #endregion
         #endregion
     }
 }
