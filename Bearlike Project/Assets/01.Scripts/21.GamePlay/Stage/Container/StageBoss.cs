@@ -33,11 +33,8 @@ namespace GamePlay.Stage.Container
             InitCinematic();
             cinematicCollider.gameObject.AddOnTriggerEnter(other =>
             {
-                if (isStartCinematic) return;
-                isStartCinematic = true;
-            
-                Destroy(cinematicCollider);
-                cinematicPlayableDirector.Play();
+                if(other.CompareTag("Player"))
+                    StartCinematicRPC();
             });
         }
 
@@ -82,25 +79,36 @@ namespace GamePlay.Stage.Container
 
         private void InitCinematic()
         {
+            var players = FindObjectsOfType<PlayerController>();
             cinematicPlayableDirector.played += director =>
             {
-                var players = FindObjectsOfType<PlayerController>();
+                GameManager.Instance.isControl = false;
+                GameManager.Instance.gameCanvasGroup.SetActive(false);
                 for (var i = 0; i < players.Length; i++)
                 {
                     var player = players[i];
                     if (HasStateAuthority)
                         UserData.SetTeleportPosition(player.Object.InputAuthority, playerTPTransformList[i].position);
+                    player.gameObject.SetActive(false);
                 }
                 
-                var sliceObjects = FindObjectsOfType<NetworkMeshSliceObject>();
-                foreach (var sliceObject in sliceObjects)
-                    sliceObject.gameObject.SetActive(false);
+                var allNetworkObjects = FindObjectsOfType<NetworkObject>();
+                foreach (var netObj in allNetworkObjects)
+                {
+                    if(netObj.name.Contains("Network Slice"))
+                        netObj.gameObject.SetActive(false);
+                }
 
                 rescueCinematic.SetActive(true);
             };
             cinematicPlayableDirector.stopped += director =>
             {
                 rescueCinematic.SetActive(false);
+                GameManager.Instance.isControl = true;
+                GameManager.Instance.gameCanvasGroup.SetActive(true);
+                
+                foreach (var player in players)
+                    player.gameObject.SetActive(true);
 
                 // 모든 클라에서 실행되어야함
                 GameManager.Instance.GameClear();
@@ -108,6 +116,16 @@ namespace GamePlay.Stage.Container
                 if (nextStagePortal.portalVFXList.Count >= 5) nextStagePortal.portalVFXList[0].gameObject.SetActive(true);
                 nextStagePortal.IsConnect = true; // 현재 진행중인 스테이지의 포탙 개방
             };
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void StartCinematicRPC()
+        {
+            if (isStartCinematic) return;
+            isStartCinematic = true;
+            
+            Destroy(cinematicCollider);
+            cinematicPlayableDirector.Play();
         }
     }
 }

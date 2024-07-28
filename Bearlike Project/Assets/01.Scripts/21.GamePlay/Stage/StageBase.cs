@@ -265,8 +265,8 @@ namespace GamePlay.Stage
         public virtual void StageInit()
         {
             SetDifficult();
-
-            var pos = new Vector3(0,(FindObjectsOfType<StageBase>().Length - 1) * 100,0);
+            
+            var pos = new Vector3(GameManager.Instance.stageCount.Current * 150,0,0);
             transform.position = pos;
             stageGameObject.transform.position = pos;
             
@@ -286,6 +286,7 @@ namespace GamePlay.Stage
 
             StageInitAction?.Invoke();
             
+            GameManager.Instance.stageCount.Current++;
             DebugManager.Log($"스테이지 초기화 {stageData.info.title}");
         }
 
@@ -311,7 +312,6 @@ namespace GamePlay.Stage
             if (isStageClear)
                 return;
 
-            GameManager.Instance.stageCount.Current++;
             StopMonsterSpawn();
             
             if (HasStateAuthority)
@@ -330,7 +330,7 @@ namespace GamePlay.Stage
             //prevStagePortal.portalVFXList[0].gameObject.SetActive(true);
             isStageClear = true;
 
-            lootingTable.SpawnDropItem();
+            lootingTable.SpawnDropItem(transform.position + Vector3.up * 2f);
             
             if (destructObject != null) destructObject.tag = "Destruction";
 

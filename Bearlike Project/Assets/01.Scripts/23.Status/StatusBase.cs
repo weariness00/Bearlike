@@ -530,15 +530,23 @@ namespace Status
             
             if(_enemynav != null) _enemynav.enabled = false;
 
-            transform.DOMove(transform.position + direction * amount * 10, 0.5f)
-                .SetEase(Ease.OutCirc);
-                        
-            StartCoroutine(RestartNavAgentCorutine(_enemynav));
+            // transform.DOMove(transform.position + direction * amount * 5, 0.5f)
+            //     .SetEase(Ease.OutCirc);
+            StartCoroutine(NuckNackCoroutine(_enemynav));
         }
-        
-        IEnumerator RestartNavAgentCorutine(UnityEngine.AI.NavMeshAgent _nav)
+
+        IEnumerator NuckNackCoroutine(UnityEngine.AI.NavMeshAgent _nav)
         {
-            yield return new WaitForSeconds(0.5f);
+            float time = 0.0f;
+
+            while (time < 1.0f)
+            {
+                transform.position = transform.position;
+                
+                time += 2 * Time.deltaTime;
+                yield return null;
+            }
+            
             if(_nav != null) _nav.enabled = true;
         }
 

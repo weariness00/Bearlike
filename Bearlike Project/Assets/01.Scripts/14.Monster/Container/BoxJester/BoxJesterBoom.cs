@@ -77,6 +77,17 @@ namespace Monster.Container
                 time += Time.deltaTime / _time;
                 yield return null;
             }
+            
+            isObjectSpawn = true;
+
+            Runner.SpawnAsync(bombPrefab, transform.position, transform.rotation, null, (runner, o) =>
+            {
+                var bomb = o.GetComponent<BoxJesterBoomObject>();
+                
+                bomb.OwnerId = OwnerId;
+            });
+                
+            Destroy(gameObject);
         }
         
         

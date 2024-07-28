@@ -320,9 +320,11 @@ MonoBehaviour:
   cloneObject: {fileID: 4338069252089480973, guid: 855b678f19f96394bb73b22cae6b6c7b,
     type: 3}
   bloodShieldMat: {fileID: 0}
+  ui: {fileID: 909476862914970855}
   _OwnerId:
     Raw: 0
   hatCount: 0
+  isCloneSpawned: 0
 --- !u!114 &6430590144718798744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -339,7 +341,7 @@ MonoBehaviour:
   TotalWords: 3
   ApplyTiming: 2
   SyncSettings: 79
-  StateHashes: 0000000033be54514b005c307090b77ac06108240d60fe46a82419f93f52437efd2082dcad7c4c0c0838abb396f9a88456cee8fcdec279b7c3c5bef097ede3d3798f2ba68e7ae00d65b968f0
+  StateHashes: 0000000033be54514b005c307090b77ac06108240d60fe46a82419f93f52437efd2082dcad7c4c0c0838abb396f9a88456cee8fcdec279b7c3c5bef097ede3d3798f2ba68e7ae00d65b968f086c55c642381bbdb
   TriggerHashes: 0000000025742297e8a2e574a0cba8ab17dfd46fd60fc6a68554c3b06cdb1e90c5ad950f43e3d5c1
 --- !u!114 &6159267201163480657
 MonoBehaviour:
@@ -2917,6 +2919,7 @@ MonoBehaviour:
   _IsSpawnSuccess:
     _value: 0
   boxJester: {fileID: 2305757693255670067}
+  networkAnimator: {fileID: 0}
   idleClip: {fileID: -248664233814177982, guid: 44e027b201d0de442ba1d19b500130f4,
     type: 3}
   tpClip: {fileID: 6249639091889934529, guid: 44e027b201d0de442ba1d19b500130f4, type: 3}

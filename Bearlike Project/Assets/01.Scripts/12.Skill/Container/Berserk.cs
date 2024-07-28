@@ -18,6 +18,10 @@ namespace Skill.Container
 
         private int _comboCount = 0; // Monster 처치 콤보 Count
 
+        private float _originDamageMultiple;
+        private float _originAttackSpeedMultiple;
+        private float _originMoveSpeedMultiple;
+
         #region Unity Event Function
 
         public override void Awake()
@@ -57,6 +61,9 @@ namespace Skill.Container
             else if (ownerPlayer.uiController.buffCanvas.HasUI(skillName))
             {
                 ownerPlayer.uiController.buffCanvas.RemoveUI(skillName);
+                status.attackSpeedMultiple = _originDamageMultiple;
+                status.damageMultiple = _originAttackSpeedMultiple;
+                status.moveSpeedMultiple = _originMoveSpeedMultiple;
             }
         }
 
@@ -83,19 +90,23 @@ namespace Skill.Container
             
             _currentDurationTime = 0;
             durationTimer = TickTimer.CreateFromSeconds(Runner,_duration);
-            ++_comboCount;
-
-            var multiple = 1f + _comboCount * _amount;
-            status.attackSpeedMultiple = multiple;
-            status.damageMultiple = multiple;
-            status.moveSpeedMultiple = multiple;
 
             if (ownerPlayer.uiController.buffCanvas.HasUI(skillName) == false)
             {
+                _originDamageMultiple = status.attackSpeedMultiple;
+                _originAttackSpeedMultiple = status.damageMultiple;
+                _originMoveSpeedMultiple = status.moveSpeedMultiple;
+                
                 ownerPlayer.uiController.buffCanvas.SpawnUI(skillName);
                 ownerPlayer.uiController.buffCanvas.SetIcon(skillName, icon);
             }
             ownerPlayer.uiController.buffCanvas.SetStackText(skillName, _comboCount);
+            
+            ++_comboCount;
+            var multiple = _comboCount * _amount;
+            status.attackSpeedMultiple = _originDamageMultiple + multiple;
+            status.damageMultiple = _originAttackSpeedMultiple + multiple;
+            status.moveSpeedMultiple = _originMoveSpeedMultiple + multiple;
         }
     }
 }

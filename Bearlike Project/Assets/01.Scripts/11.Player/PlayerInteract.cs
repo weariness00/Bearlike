@@ -131,16 +131,25 @@ namespace Player
 
         void InteractEnter(GameObject targetObject)
         {
-            if (_playerController.status.isInjury || _playerController.status.isRevive)
+            if (_playerController.status.isInjury)
             {
                 InteractUI.SetKeyActive(true);
                 InteractUI.KeyCodeText.text = "F";
+            }
+            else if (_playerController.status.isRevive && targetObject.TryGetComponent(out PlayerController remotePlayerController))
+            {
+                var battery = ItemObjectList.GetFromName("Battery");
+                if (remotePlayerController.uiController.itemInventory.HasItem(battery.Id))
+                {
+                    InteractUI.SetKeyActive(true);
+                    InteractUI.KeyCodeText.text = "F";
+                }
             }
         }
         
         public void InjuryInteractKeyDown(GameObject targetObject)
         {
-            if (_playerController.status.isInjury)
+            if (_playerController.status.isInjury && _playerController.gameObject != targetObject)
             {
                 var remotePlayerStatus = targetObject.GetComponent<PlayerStatus>();
                 

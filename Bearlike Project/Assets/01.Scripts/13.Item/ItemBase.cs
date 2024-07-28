@@ -111,8 +111,12 @@ namespace Item
         }
         
         // 타겟을 향해 이동하는 코루틴
+        private bool isMoveTarget = false;
         protected IEnumerator MoveTargetCoroutine(GameObject targetObject)
         {
+            if(isMoveTarget) yield break;
+            isMoveTarget = true;
+            
             Transform targetTransform = targetObject.transform;
             if (rigidbody)
             {
@@ -141,8 +145,8 @@ namespace Item
         
         public virtual void GetItem(GameObject targetObject)
         {
-            PlayerController pc;
-            if (targetObject.TryGetComponent(out pc) || targetObject.transform.root.TryGetComponent(out pc))
+            PlayerController pc = targetObject.GetComponentInParent<PlayerController>();
+            if (pc)
             {
                 pc.uiController.itemInventory.AddItemRPC(new NetworkItemInfo(){Id = info.id, amount = info.amount.Current});
                 pc.soundController.PlayItemEarn();

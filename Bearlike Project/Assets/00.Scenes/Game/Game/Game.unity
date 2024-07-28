@@ -656,6 +656,7 @@ MonoBehaviour:
   isGameClear: 0
   isGameOver: 0
   matherBear: {fileID: 503279035}
+  gameCanvasGroup: {fileID: 1327282398}
   gameClearPortal: {fileID: 372855230}
   _spawnPlace:
     _spotList:
@@ -675,7 +676,7 @@ MonoBehaviour:
   currentStage: {fileID: 0}
   stageCount:
     _min: 0
-    _max: 2
+    _max: 3
     _current: 0
     isOverMax: 0
     isOverMin: 0
@@ -687,9 +688,6 @@ MonoBehaviour:
   gameResultScene:
     sceneAsset: {fileID: 102900000, guid: b432b15f467c51e4da51bf8cdb5f9046, type: 3}
     scenePath: Assets/00.Scenes/Game/Game/Game Result.unity
-  loadingScene:
-    sceneAsset: {fileID: 102900000, guid: 458e08f0c6c6b754c8522ad427003f08, type: 3}
-    scenePath: Assets/00.Scenes/Game/Game/Game Start Loading.unity
   modelUIScene:
     sceneAsset: {fileID: 102900000, guid: a5aff987f2767994d844f02c5fb5ecd6, type: 3}
     scenePath: Assets/00.Scenes/Game/UI/ModelOverlayCameraScene.unity

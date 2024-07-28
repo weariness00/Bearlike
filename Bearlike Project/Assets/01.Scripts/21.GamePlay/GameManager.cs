@@ -4,7 +4,6 @@ using Data;
 using Fusion;
 using GamePlay.Stage;
 using GamePlay.StageLevel;
-using GamePlay.UI;
 using Loading;
 using Manager;
 using Photon;
@@ -15,8 +14,6 @@ using Status;
 using UI.Status;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using User.MagicCotton;
-using UserRelated.MagicCotton;
 using Random = UnityEngine.Random;
 
 namespace GamePlay
@@ -37,6 +34,7 @@ namespace GamePlay
 
         [Header("게임 클리어 관련")] 
         public GameObject matherBear;
+        public GameObject gameCanvasGroup;
         public Portal gameClearPortal;
         
         [SerializeField]private SpawnPlace _spawnPlace = new SpawnPlace();
@@ -149,26 +147,6 @@ namespace GamePlay
             }
 
             await NetworkManager.LoadScene(stageData.sceneReference.ScenePath,LoadSceneMode.Additive, LocalPhysicsMode.Physics3D);
-            // async void OnSceneLoadDoneAction()
-            // {
-            //      foreach (var stageLevelBase in FindObjectsOfType<StageBase>())
-            //      {
-            //         // 이미 활성화된 스테이지
-            //         if (stageLevelBase.stageGameObject.activeSelf)
-            //         {
-            //             continue;
-            //         }
-            //
-            //         // if (stageData.info.stageType == stageLevelBase.StageInfo.stageType)
-            //         // {
-            //         //     stageLevelBase.SetIsInitRPC(true);
-            //         //     
-            //         //     DebugManager.Log($"씬 생성 후 초기화 완료 {stageData.sceneReference}");
-            //         //     break;
-            //         // }
-            //      }
-            // }
-            // NetworkManager.SceneLoadDoneAction += OnSceneLoadDoneAction;
         }
 
         public void SetStage(int index) => SetStage(stageList.Count < index ? null : stageList[index]);
@@ -180,6 +158,8 @@ namespace GamePlay
             gameClearPortal.portalVFXList[0].gameObject.SetActive(true);
             gameClearPortal.InteractKeyDownAction = (obj) =>
             {
+                isControl = false;
+                
                 SceneManager.LoadScene(SceneList.GetScene("Game Result"), LoadSceneMode.Additive);
                 gameClearPortal.gameObject.SetActive(false);
                 gameClearPortal.IsConnect = false;

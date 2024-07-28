@@ -44,6 +44,10 @@ namespace Player
             goodsCanvas = GetComponentInChildren<GoodsCanvas>(true);
             progressCanvas = GetComponentInChildren<GameProgressCanvas>(true);
             stageSelectUI = FindObjectOfType<StageSelectUI>(true);
+
+            bool activeValue = true;
+            itemInventory.gameObject.SetActive(activeValue);
+            skillInventory.gameObject.SetActive(activeValue);
         }
 
         private void Start()
@@ -74,6 +78,10 @@ namespace Player
             {
                 CanvasActive(false);
             }
+            
+            bool activeValue = false;
+            itemInventory.gameObject.SetActive(activeValue);
+            skillInventory.gameObject.SetActive(activeValue);
         }
 
         public void Update()
