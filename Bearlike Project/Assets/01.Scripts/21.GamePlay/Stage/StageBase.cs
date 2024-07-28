@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Data;
@@ -205,6 +206,24 @@ namespace GamePlay.Stage
             monsterKillCount.Max = (int)(monsterKillCount.Max * Difficult.MonsterKillCountRate);
         }
 
+        private Coroutine _stageSceneUnloadCoroutine;
+        private void StageSceneUnload()
+        {
+            if (_stageSceneUnloadCoroutine == null)
+                _stageSceneUnloadCoroutine = StartCoroutine(StageSceneUnloadCoroutine());
+        }
+
+        private IEnumerator StageSceneUnloadCoroutine()
+        {
+            var waitTime = new WaitForSeconds(0.1f);
+            var clientNumber = UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber;
+            while (IsStageUnload.Get(clientNumber) == false)
+            {
+                SetIsUnloadRPC(clientNumber, true);
+                yield return waitTime;
+            }
+        }
+
         // 스테이지에 들어서면 정보에 맞춰 해당 스테이지를 셋팅 해준다.
         public void StartMonsterSpawn()
         {
@@ -288,7 +307,7 @@ namespace GamePlay.Stage
 
         public virtual void StageClear()
         {
-            SetIsUnloadRPC(UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber, true);
+            StageSceneUnload();
             if (isStageClear)
                 return;
 
@@ -342,7 +361,7 @@ namespace GamePlay.Stage
         
         #region RPC Function
 
-        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority, Channel = RpcChannel.Reliable)]
         public void SetIsUnloadRPC(int clientNumber, NetworkBool value) => IsStageUnload.Set(clientNumber, value);
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
