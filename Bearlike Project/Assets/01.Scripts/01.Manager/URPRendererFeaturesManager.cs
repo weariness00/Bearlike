@@ -59,6 +59,44 @@ namespace Manager
         {
             StartCoroutine(PlayEffectCoroutine(name));
         }
+
+        public void StartShield()
+        {
+            FullScreenPassRendererFeature fullScreenPassRendererFeature;
+        
+            if (_rendererFeaturesEffectDictionary.TryGetValue("ShieldEffect", out fullScreenPassRendererFeature))
+            {
+                fullScreenPassRendererFeature.SetActive(true);
+            }
+            
+            for (int index = 0; index < _rendererFeaturesEffectNames.Count; ++index)
+            {
+                if ("ShieldEffect" == _rendererFeaturesEffectNames[index])
+                {
+                    if(fullScreenPassRendererFeature)
+                        fullScreenPassRendererFeature.passMaterial.SetFloat(Alpha, 0.9f);
+                }
+            }
+        }
+        
+        public void StopShield()
+        {
+            FullScreenPassRendererFeature fullScreenPassRendererFeature;
+        
+            if (_rendererFeaturesEffectDictionary.TryGetValue("ShieldEffect", out fullScreenPassRendererFeature))
+            {
+                fullScreenPassRendererFeature.SetActive(true);
+            }
+            
+            for (int index = 0; index < _rendererFeaturesEffectNames.Count; ++index)
+            {
+                if ("ShieldEffect" == _rendererFeaturesEffectNames[index])
+                {
+                    if(fullScreenPassRendererFeature)
+                        fullScreenPassRendererFeature.passMaterial.SetFloat(Alpha, 1.0f);
+                }
+            }
+        }
         
         IEnumerator PlayEffectCoroutine(string name)
         {
