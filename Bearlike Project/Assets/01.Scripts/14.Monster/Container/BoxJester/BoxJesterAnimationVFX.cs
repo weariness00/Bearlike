@@ -43,11 +43,7 @@ namespace Monster.Container
             }
 
             if (darknessAttackEffect)
-            {
                 StopBreathVFXRPC();
-                darknessAttackEffect.SetFloat("Time", 1.0f);
-                
-            }
         }
         
         [Rpc(RpcSources.All, RpcTargets.All)]

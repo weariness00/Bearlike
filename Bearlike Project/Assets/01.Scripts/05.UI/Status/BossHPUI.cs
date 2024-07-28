@@ -18,7 +18,7 @@ namespace UI.Status
         void Start()
         {
             _currentHp = statusBase.hp.Current;
-            _ratio = Mathf.Floor((float)(_currentHp) / (float)(statusBase.hp.Max) * 100) / 100;
+            _ratio = Mathf.Ceil((float)(_currentHp) / (float)(statusBase.hp.Max) * 100) / 100;
             hpText.text = _ratio * 100 + " %";
             hpImage.fillAmount = _ratio;
         }
@@ -28,7 +28,7 @@ namespace UI.Status
             if (statusBase.hp.Current != _currentHp)
             {
                 _currentHp = statusBase.hp.Current;
-                _ratio = Mathf.Floor((float)(_currentHp) / (float)(statusBase.hp.Max) * 100) / 100;
+                _ratio = Mathf.Ceil((float)(_currentHp) / (float)(statusBase.hp.Max) * 100) / 100;
                 hpText.text = _ratio * 100 + " %";
                 hpImage.fillAmount = _ratio;
             }

@@ -9,8 +9,6 @@ using Status;
 using UI.Status;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.VFX;
 using DebugManager = Manager.DebugManager;
 using Random = UnityEngine.Random;
 
@@ -288,8 +286,8 @@ namespace Monster.Container
             var AngryPattern = new SelectorNode(
                     true,
                     // new ActionNode(HandLazer),
-                    new ActionNode(ThrowBoom)
-                    // new ActionNode(slapAttack)
+                    // new ActionNode(ThrowBoom),
+                    new ActionNode(slapAttack)
                 );
 
             var Angry = new SequenceNode(
@@ -985,7 +983,7 @@ namespace Monster.Container
         {
             if (false == _animationing)
             {
-                animator.enabled = false;
+                animator.networkAnimator.Animator.enabled = false;
                 animator.PlaySlapAction();
                 _animationing = true;
                 
@@ -996,7 +994,7 @@ namespace Monster.Container
                 return INode.NodeState.Running;
 
             _animationing = false;
-            animator.enabled = true;
+            animator.networkAnimator.Animator.enabled = true;
             DebugManager.Log($"Slap Attack");
             
             return INode.NodeState.Success;
