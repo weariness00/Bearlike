@@ -30,6 +30,7 @@ namespace Monster.Container
         
         public override void Spawned()
         {
+            base.Spawned();
             fireBall.SendEvent("OnPlay");
             Destroy(gameObject, 5f);
             
@@ -40,9 +41,8 @@ namespace Monster.Container
         
         private void OnTriggerEnter(Collider other)
         {
-            if (false == other.gameObject.CompareTag("Monster") && false == other.gameObject.CompareTag("Volume") && false == other.gameObject.CompareTag("Boom"))
+            if (false == other.gameObject.CompareTag("Monster") && false == other.gameObject.CompareTag("Volume"))
             {
-                DebugManager.Log($"{other.gameObject.name}과 폭탄 충돌");
                 Runner.SpawnAsync(bombPrefab, transform.position, transform.rotation, null, (runner, o) =>
                 {
                     var bomb = o.GetComponent<BoxJesterBoomObject>();
@@ -50,7 +50,7 @@ namespace Monster.Container
                     bomb.OwnerId = OwnerId;
                 });
                 
-                Destroy(gameObject, 0f);
+                Destroy(gameObject);
             }
         }
 
@@ -63,6 +63,7 @@ namespace Monster.Container
 
             while (time < 1.0f)
             {
+                BoomVFXPositionRPC(transform.position);
                 DebugManager.Log($"position : {transform.position}, time : {time}");
                 yOffset = _height * 4.0f * (time - time * time * 2);
                 transform.position = Vector3.Lerp(pos, Dest, time) + Vector3.up * yOffset;
@@ -70,6 +71,13 @@ namespace Monster.Container
                 time += Time.deltaTime / _time;
                 yield return null;
             }
+        }
+        
+        
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void BoomVFXPositionRPC(Vector3 position)
+        {
+            fireBall.SetVector3("Position", position);
         }
     }
 }
