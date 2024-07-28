@@ -76,8 +76,6 @@ namespace Monster.Container
         
         public int hatCount;
         private readonly int HATNUM = 4;
-
-        private bool isSpawned = false;
         
         #endregion
 
@@ -107,12 +105,6 @@ namespace Monster.Container
             DieAction += () => Destroy(gameObject, 3);
 
             _handModel = transform.Find("Clown").Find("Hand").gameObject;
-        }
-
-        public override void Start()
-        {
-            base.Start();
-            isSpawned = true;
         }
         
         #endregion
@@ -151,7 +143,6 @@ namespace Monster.Container
 
                 for (int i = 0; i < rootTrans.childCount; ++i)
                 {
-                    DebugManager.Log($"tpPlaces[i] : {tpPlaces[i]}, rootTrans.GetChild(i) : {rootTrans.GetChild(i)}");
                     cloneTPPlaces[i] = rootTrans.GetChild(i);
                 }
             }
@@ -171,7 +162,6 @@ namespace Monster.Container
 
                 for (int i = 0; i < rootTrans.childCount; ++i)
                 {
-                    DebugManager.Log($"HatPlaces[i] : {hatPlaces[i]}, rootTrans.GetChild(i) : {rootTrans.GetChild(i)}");
                     hatPlaces[i] = rootTrans.GetChild(i);
                 }
             }
@@ -348,7 +338,7 @@ namespace Monster.Container
                 }
             }
 
-            DebugManager.Log($"playerPosition : {playerPosition}");
+            DebugManager.Log($"playerPosition : {Quaternion.LookRotation(new Vector3(playerPosition.x, 0, playerPosition.z))}");
             
             float time = 0.0f;
             

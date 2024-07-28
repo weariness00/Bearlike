@@ -117,12 +117,6 @@ namespace Monster
             if(lootingTable)
                 lootingTable.CalLootingItem(GetLootingData(id).LootingItems);
             DieAction += OnDieAction;
-            
-            var statusData = GetStatusData(id);
-            status.SetJsonData(statusData);
-            if (statusData.HasFloat("Rigidbody Mass")) rigidbody.mass = statusData.GetFloat("Rigidbody Mass");
-
-            SetDifficultStatus();
         }
         
         private void OnDestroy()
@@ -132,6 +126,12 @@ namespace Monster
 
         public override void Spawned()
         { 
+            var statusData = GetStatusData(id);
+            status.SetJsonData(statusData);
+            if (statusData.HasFloat("Rigidbody Mass")) rigidbody.mass = statusData.GetFloat("Rigidbody Mass");
+
+            SetDifficultStatus();
+            
             behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
             aggroController.AddTarget(FindObjectsOfType<AggroTarget>());// 접속한 플레이어들 저장
         }
@@ -141,12 +141,7 @@ namespace Monster
             behaviorTreeRunner.Operator();
             if (HasStateAuthority)
             {
-                if (transform.CompareTag("BoxJester"))
-                {
-                    if(status.IsDie && transform.GetComponent<BoxJesterClone>().isSpawned)
-                        DieRPC();
-                }
-                else if (status.IsDie)
+                if (status.IsDie)
                 {
                     DieRPC();
                 }
@@ -157,7 +152,7 @@ namespace Monster
 
         #region Member Function
 
-        private void SetDifficultStatus()
+        protected void SetDifficultStatus()
         {
             status.hp.Max = (int)(status.hp.Max * Difficult.MonsterHpRate);
             status.hp.SetMax();

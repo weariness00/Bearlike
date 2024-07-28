@@ -45,8 +45,6 @@ namespace Monster.Container
         private GameObject[] _players;
         private GameObject[] _masks;
         private GameObject _handModel;
-
-        public bool isSpawned = false;
         
         enum MaskType
         {
@@ -84,12 +82,6 @@ namespace Monster.Container
             _masks[0] = boxJester.Find("Smile_Face").gameObject;
             _masks[1] = boxJester.Find("Sad_Face").gameObject;
             _masks[2] = boxJester.Find("Angry_Face").gameObject;
-        }
-
-        public override void Start()
-        {
-            base.Start();
-            isSpawned = true;
         }
         
         #endregion
@@ -247,7 +239,7 @@ namespace Monster.Container
                 }
             }
 
-            DebugManager.Log($"Clone playerPosition : {playerPosition}");
+            DebugManager.Log($"Clone playerPosition : {Quaternion.LookRotation(new Vector3(playerPosition.x, 0, playerPosition.z)).eulerAngles}");
             
             float time = 0.0f;
             
