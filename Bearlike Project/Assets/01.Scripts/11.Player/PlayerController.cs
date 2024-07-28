@@ -388,9 +388,8 @@ namespace Player
             {
                 if (_dashTimer.Expired(Runner))
                 {
-                    _dashTimer = TickTimer.CreateFromSeconds(Runner, 1.0f);                
-                    dir += transform.forward * _dashAmount;
-                    isMoveX = true;
+                    _dashTimer = TickTimer.CreateFromSeconds(Runner, 1.0f);
+                    dir *= _dashAmount;
                 }
             }
 
