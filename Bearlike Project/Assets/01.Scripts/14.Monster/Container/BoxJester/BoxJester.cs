@@ -107,7 +107,6 @@ namespace Monster.Container
         public override void Spawned()
         {
             base.Spawned();
-
             // TP Position 넣기
             // Transform rootTrans = transform.root.Find("TPPosition"); // pool에 들어가는 경우
             Transform rootTrans = GameObject.Find("Boss Stage").transform.Find("TPPosition"); // 안들어가는 경우

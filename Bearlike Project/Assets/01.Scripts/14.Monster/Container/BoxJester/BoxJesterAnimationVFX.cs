@@ -6,7 +6,7 @@ using UnityEngine.VFX;
 namespace Monster.Container
 {
     public class BoxJesterAnimationVFX : NetworkBehaviourEx
-    {
+    {//
         [Header("VFX Properties")]
         [SerializeField] private VisualEffect tpEffect;
         [SerializeField] private VisualEffect darknessAttackEffect;
