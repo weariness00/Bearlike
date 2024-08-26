@@ -8,10 +8,26 @@ namespace Util
 {
     public class JsonConvertExtension
     {
-        public static bool Load(string fileName, Action<string> action = null)
+        public enum JsonDataType
+        {
+            StreamingAssetsData,
+            PersistentData,
+        }
+        
+        public static bool Load(string fileName, Action<string> action = null, JsonDataType dataType = JsonDataType.PersistentData)
         {
             fileName = Path.GetFileNameWithoutExtension(fileName);
-            var path = Application.persistentDataPath + $"/Json/{fileName}.json";
+            string path = "";
+            switch (dataType)
+            {
+                case JsonDataType.PersistentData:
+                    path = Application.persistentDataPath + $"/Json/{fileName}.json";
+                    break;
+                case JsonDataType.StreamingAssetsData:
+                    path = Application.streamingAssetsPath + $"/Json/{fileName}.json";
+                    break;
+            }
+            
             if (File.Exists(path) == false)
             {
                 DebugManager.LogWarning("존재하지 않는 Json입니다.\n" +

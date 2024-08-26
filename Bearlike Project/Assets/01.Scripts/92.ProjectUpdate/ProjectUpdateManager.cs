@@ -258,43 +258,53 @@ namespace ProjectUpdate
         private void WebRequestJson(string url, string fileName, Action<string> action = null, bool isLoop = false, bool isSave = false)
         {
             LoadingManager.AddWait();
-            // json의 version 정보 가져오기
-            WebManager.DownloadJson($"{url}/Version", $"{fileName}_Version", nowVersionJson =>
+            WebManager.IsConnect(connect =>
             {
-                // 컴퓨터에 저장된 Version 데이터 가져오기
-                var hasVersion = JsonConvertExtension.Load($"{fileName}_Version", prevVersionJson =>
+                if (connect)
                 {
-                    TableVersion nowVersionData = JsonConvert.DeserializeObject<TableVersion[]>(nowVersionJson).First();
-                    TableVersion prevVersionData;
-                    try
+                    // json의 version 정보 가져오기
+                    WebManager.DownloadJson($"{url}/Version", $"{fileName}_Version", nowVersionJson =>
                     {
-                        prevVersionData = JsonConvert.DeserializeObject<TableVersion[]>(prevVersionJson).First();
-                    }
-                    catch (Exception e)
-                    {
-                        prevVersionData.UnixTime = 0;
-                    }
+                        // 컴퓨터에 저장된 Version 데이터 가져오기
+                        var hasVersion = JsonConvertExtension.Load($"{fileName}_Version", prevVersionJson =>
+                        {
+                            TableVersion nowVersionData = JsonConvert.DeserializeObject<TableVersion[]>(nowVersionJson).First();
+                            TableVersion prevVersionData;
+                            try
+                            {
+                                prevVersionData = JsonConvert.DeserializeObject<TableVersion[]>(prevVersionJson).First();
+                            }
+                            catch (Exception e)
+                            {
+                                prevVersionData.UnixTime = 0;
+                            }
 
-                    // Version이 최신이 아니면 다운로드
-                    if (nowVersionData.UnixTime > prevVersionData.UnixTime)
-                    {
-                        WebManager.DownloadJson(url, fileName, action, isLoop, isSave);
-                    }
-                    // 버전이 최신이라면 load
-                    else
-                    {
-                        if (JsonConvertExtension.Load(fileName, action) == false)
+                            // Version이 최신이 아니면 다운로드
+                            if (nowVersionData.UnixTime > prevVersionData.UnixTime)
+                            {
+                                WebManager.DownloadJson(url, fileName, action, isLoop, isSave);
+                            }
+                            // 버전이 최신이라면 load
+                            else
+                            {
+                                if (JsonConvertExtension.Load(fileName, action) == false)
+                                {
+                                    WebManager.DownloadJson(url, fileName, action, isLoop, isSave);
+                                }
+                            }
+                        });
+                        // 버전이 없다면 다운로드
+                        if (hasVersion == false)
                         {
                             WebManager.DownloadJson(url, fileName, action, isLoop, isSave);
                         }
-                    }
-                });
-                // 버전이 없다면 다운로드
-                if (hasVersion == false)
-                {
-                    WebManager.DownloadJson(url, fileName, action, isLoop, isSave);
+                    }, true, true);
                 }
-            }, true, true);
+                else
+                {
+                    JsonConvertExtension.Load(fileName, action, JsonConvertExtension.JsonDataType.StreamingAssetsData);
+                }
+            });
         }
 
         #region Struct
