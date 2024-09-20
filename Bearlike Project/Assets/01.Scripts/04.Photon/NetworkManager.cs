@@ -266,7 +266,6 @@ namespace Photon
         {
             DebugManager.Log($"종료 : {player}");
 
-            UserData.Instance.UserDictionary.Remove(player);
             UserData.Instance.UserLeftRPC(player);
             
             if (runner.ActivePlayers.ToList().Count == 0)
