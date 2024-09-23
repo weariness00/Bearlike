@@ -37,7 +37,10 @@ namespace Photon
         private NetworkRunner _runner;
         private SessionInfo[] _sessionInfoAll = Array.Empty<SessionInfo>();
 
+        public bool isCursor;
+
         public Action<SessionInfo[]> SessionListUpdateAction;
+
 
         #region Unity Event Function
 
@@ -143,11 +146,6 @@ namespace Photon
             }
             
             await _runner.JoinSessionLobby(SessionLobby.Shared);
-        }
-
-        private void HostMigrationResume(NetworkRunner runner)
-        {
-            
         }
         
         async Task Matching(GameMode mode, string sessionName)
@@ -396,19 +394,11 @@ namespace Photon
 
         public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken)
         {
-            DebugManager.Log("Host Migration");
-
-            runner.StartGame(new StartGameArgs()
-            {
-                SceneManager = gameObject.GetOrAddComponent<NetworkSceneManagerDefault>(),
-                HostMigrationToken = hostMigrationToken,
-                HostMigrationResume = HostMigrationResume
-            });
         }
 
         public void OnSceneLoadDone(NetworkRunner runner)
         {
-            DebugManager.Log($"씬 Loading 끝"); 
+            DebugManager.Log($"씬 Loading 끝");
             _isLoadDone = true;
         }
 
