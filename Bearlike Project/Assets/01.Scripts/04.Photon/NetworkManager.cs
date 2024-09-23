@@ -37,10 +37,7 @@ namespace Photon
         private NetworkRunner _runner;
         private SessionInfo[] _sessionInfoAll = Array.Empty<SessionInfo>();
 
-        public bool isCursor;
-
         public Action<SessionInfo[]> SessionListUpdateAction;
-
 
         #region Unity Event Function
 

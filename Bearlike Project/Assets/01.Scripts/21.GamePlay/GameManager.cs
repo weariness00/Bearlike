@@ -158,17 +158,25 @@ namespace GamePlay
             gameClearPortal.portalVFXList[0].gameObject.SetActive(true);
             gameClearPortal.InteractKeyDownAction = (obj) =>
             {
-                isControl = false;
-                
-                SceneManager.LoadScene(SceneList.GetScene("Game Result"), LoadSceneMode.Additive);
-                gameClearPortal.gameObject.SetActive(false);
-                gameClearPortal.IsConnect = false;
+                LoadResultRPC();
             };
             
             matherBear.SetActive(true);
             
             isGameClear = true;
             gameClearPortal.IsConnect = true;
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void LoadResultRPC()
+        {
+            if(gameClearPortal.IsConnect == false) return;
+            
+            isControl = false;
+                
+            SceneManager.LoadScene(SceneList.GetScene("Game Result"), LoadSceneMode.Additive);
+            gameClearPortal.gameObject.SetActive(false);
+            gameClearPortal.IsConnect = false;
         }
     }
 }
