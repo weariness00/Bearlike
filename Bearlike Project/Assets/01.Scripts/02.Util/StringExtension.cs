@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -81,6 +82,47 @@ namespace Util
             if (value.Contains(replaceTarget))
                 return value.Replace(replaceTarget, replaceValue);
             return value;
+        }
+
+        /// <summary>
+        /// 문자열 길이와 온점(.)을 기준으로 문자열의 1줄 당 길이를 지정
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="maxLength">문자열의 1줄의 최대 길이</param>
+        /// <returns></returns>
+        public static string WrapText(this string value, int maxLength)
+        {
+            string[] words = value.Split(' ');
+            StringBuilder currentLine = new StringBuilder();
+            StringBuilder result = new StringBuilder();
+
+            foreach (string word in words)
+            {
+                if (currentLine.Length + word.Length + 1 > maxLength)
+                {
+                    result.AppendLine(currentLine.ToString().Trim());
+                    currentLine.Clear();
+                }
+
+                if (currentLine.Length > 0)
+                {
+                    currentLine.Append(" ");
+                }
+                currentLine.Append(word);
+
+                if (word.EndsWith("."))
+                {
+                    result.AppendLine(currentLine.ToString().Trim());
+                    currentLine.Clear();
+                }
+            }
+
+            if (currentLine.Length > 0)
+            {
+                result.AppendLine(currentLine.ToString().Trim());
+            }
+
+            return result.ToString();
         }
     }
 }

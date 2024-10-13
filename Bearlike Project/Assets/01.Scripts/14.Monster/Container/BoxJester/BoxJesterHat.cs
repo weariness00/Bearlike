@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using BehaviorTree.Base;
 using Fusion;
 using Photon;
 using Status;
@@ -6,50 +7,41 @@ using Unity.VisualScripting;
 
 namespace Monster.Container
 {
-    public class BoxJesterHat : NetworkBehaviourEx
+    public class BoxJesterHat : MonsterBase
     {
         [Networked] public NetworkId OwnerId { get; set; }
 
-        public MonsterStatus status;
-        public int hatType; // 0 : 정속성, 1 : Reverse
-
-        private void Awake()
+        private BoxJester boxJester;
+        
+        public override void Awake()
         {
-            status = gameObject.GetOrAddComponent<MonsterStatus>();
-            status.hp.Max = 100;
-            status.hp.Current = 100;
+            base.Awake();
+            status = gameObject.GetComponent<MonsterStatus>();
         }
         
         public override void Spawned()
         {
-            if(hatType == 1)
-                status.AddCondition(CrowdControl.DamageReflect);
-            
+            base.Spawned();
             Destroy(gameObject, 10f);
+            
+            var ownerObj = Runner.FindObject(OwnerId);
+            boxJester = ownerObj.gameObject.GetComponent<BoxJester>();
 
-            var sd = OwnerId;
-        }
-        
-        public override void FixedUpdateNetwork()
-        {
-            if (status.IsDie)
-            {            
-                var ownerObj = Runner.FindObject(OwnerId);
-
-                var boxJester = ownerObj.gameObject.GetComponent<BoxJester>();
-                boxJester.DestroyHatRPC();
-                
+            DieAction += () =>
+            {
+                --boxJester.hatCount;
                 Destroy(gameObject, 0f);
-            }
+            };
         }
         
-        // [Rpc(RpcSources.All, RpcTargets.All)]
-        // private void BrokenHatRPC()
-        // {
-        //     var ownerObj = Runner.FindObject(OwnerId);
-        //     var boxJester = ownerObj.gameObject.GetComponent<BoxJester>();
-        //
-        //     boxJester.hatCount--;
-        // }
+        public override INode InitBT()
+        {
+            return new ActionNode(tmp);
+        }
+
+        private INode.NodeState tmp()
+        {
+            return INode.NodeState.Success;
+        }
     }
 }

@@ -33,7 +33,7 @@ namespace GamePlay.DeadBodyObstacle
             _ragdollColliders = GetComponentsInChildren<Collider>();
 
             SetDeadBodyComponentActive(false);
-            SetLagDollLayer(LayerMask.NameToLayer("Ignore Nav Mesh"));
+            SetLagDollLayer(LayerMask.NameToLayer("Monster"));
         }
 
         public override void Spawned()
@@ -61,7 +61,7 @@ namespace GamePlay.DeadBodyObstacle
 
             // 특정 Componenet를 제외한 모든 Componenet 삭제
             Component[] components = GetComponents<Component>();
-            foreach (var component in components)
+            foreach (var component in components.Reverse())
             {
                 if(component == null) continue;
                 
@@ -93,7 +93,7 @@ namespace GamePlay.DeadBodyObstacle
             NavMeshRebuildSystem.ReBuild();
             if (HasStateAuthority)
             {
-                InvokeRepeating(nameof(BakeNavMeshToCollider), 1,0.1f);
+                StartCoroutine(BakeNavMeshToCollider());
                 StartCoroutine(CheckHP());
             }
         }
@@ -184,8 +184,7 @@ namespace GamePlay.DeadBodyObstacle
         {
             var updateTime = new WaitForSeconds(0.1f);
             
-            float stopThreshold = 0.1f; // 멈춤을 감지할 속도 임계값
-            float stopDuration = 2.0f; // 멈춤을 판단하기 위한 지속 시간
+            float stopThreshold = 0.25f; // 멈춤을 감지할 속도 임계값
             while (true)
             {
                 yield return updateTime;
@@ -206,6 +205,7 @@ namespace GamePlay.DeadBodyObstacle
                     break;
             }
 
+            DestroyNetworkTransformRPC();
             SetDeadBodyComponentActive(false);
             NavMeshRebuildSystem.ReBuildRPC();
         }
@@ -217,6 +217,19 @@ namespace GamePlay.DeadBodyObstacle
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void OnDeadBodyRPC(int hp = 1000) => OnDeadBody(hp);
 
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        public void DestroyNetworkTransformRPC()
+        {
+            foreach (var c in GetComponentsInChildren<CharacterJoint>())
+                Destroy(c);
+            foreach (var c in GetComponentsInChildren<Rigidbody>())
+                Destroy(c);
+            foreach (var c in GetComponentsInChildren<NetworkTransform>())
+                Destroy(c);
+            foreach (var c in GetComponentsInChildren<StatusBase>())
+                if(c != _status) Destroy(c);
+        }
+        
         #endregion
     }
 }

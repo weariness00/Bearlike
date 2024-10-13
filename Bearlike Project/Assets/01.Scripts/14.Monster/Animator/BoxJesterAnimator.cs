@@ -1,12 +1,17 @@
 ﻿using Fusion;
+using Manager;
 using Photon;
+using Status;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Monster.Container
 {
     public class BoxJesterAnimator : NetworkBehaviourEx
     {
-        [Header("Animator")]
+        [Header("Object")]
+        public BoxJester boxJester;
+
         public NetworkMecanimAnimator networkAnimator;
         
         [Header("Animation Clip")] 
@@ -67,62 +72,61 @@ namespace Monster.Container
         private void Awake()
         {
             networkAnimator = transform.root.GetComponent<NetworkMecanimAnimator>();
-            
-            // IdleTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // TeleportTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // SmokeStartTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // SmokingTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // SmokeEndTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // MaskChangeTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // PunchReadyTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // PunchTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // CloneTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // ShieldTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // HatTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // HandLazerTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // ThrowBoomTimer = TickTimer.CreateFromTicks(Runner, 0);
-            // SlapTimer = TickTimer.CreateFromTicks(Runner, 0);
         }
         
         public void PlayIdle()
         {
             IdleTimer = TickTimer.CreateFromSeconds(Runner, idleClip.length * 2);
-            var state = networkAnimator.Animator.GetCurrentAnimatorStateInfo(0);
-            if(!state.IsName("Clown_Idle_Hand"))
-                networkAnimator.SetTrigger(tIdle);
+            
+            networkAnimator.Animator.SetBool("bTestIdle", true);
+            // var state = _networkAnimator.Animator.GetCurrentAnimatorStateInfo(0);
+            //
+            // if(!state.IsName("Clown_Idle_Hand"))
+            //     _networkAnimator.SetTrigger(tIdle);
         }
 
+        public void OffIdle()
+        {
+            networkAnimator.Animator.SetBool("bTestIdle", false);
+        }
+        
         public void PlayTeleport()
         {
+            OffIdle();
             TeleportTimer = TickTimer.CreateFromSeconds(Runner, tpClip.length);
             networkAnimator.SetTrigger(tTeleport);
         }
         
         public void PlaySmokeStartAttack()
         {
+            OffIdle();
             SmokeStartTimer = TickTimer.CreateFromSeconds(Runner, DarknessBreathStartClip.length);
             networkAnimator.SetTrigger(tSmoke);
         }
         
         public void PlaySmokingAttack()
         {
+            OffIdle();
             SmokingTimer = TickTimer.CreateFromSeconds(Runner, 2);    // 상수화 필요
         }
         
         public void PlaySmokeEndAttack()
         {
+            OffIdle();
             SmokeEndTimer = TickTimer.CreateFromSeconds(Runner, DarknessBreathEndClip.length);
             networkAnimator.SetTrigger(tSmokeEnd);
         }
         
         public void PlayMaskChange()
         {
+            OffIdle();
             MaskChangeTimer = TickTimer.CreateFromSeconds(Runner, MaskChageClip.length);
             networkAnimator.SetTrigger(tChangeMask);
         }
         
         public void PlayPunchReadyAction()
         {
+            OffIdle();
             PunchReadyTimer = TickTimer.CreateFromSeconds(Runner, punchReadyClip.length);
             networkAnimator.Animator.SetFloat(Attack, 0);
             networkAnimator.SetTrigger(tAttack);
@@ -130,11 +134,15 @@ namespace Monster.Container
         
         public void PlayPunchAction()
         {
+            OffIdle();
             PunchTimer = TickTimer.CreateFromSeconds(Runner, 3);
+            networkAnimator.Animator.SetFloat(Attack, 1);
+            networkAnimator.SetTrigger(tAttack);
         }
         
         public void PlayShieldAction()
         {
+            OffIdle();
             ShieldTimer = TickTimer.CreateFromSeconds(Runner, 7);   // 상수화 해야함
             // ShieldTimer = TickTimer.CreateFromSeconds(Runner, ShieldClip.length);
             networkAnimator.Animator.SetFloat(FaceHide, 0);
@@ -143,47 +151,59 @@ namespace Monster.Container
         
         public void PlayReverseShieldAction()
         {
-            ShieldTimer = TickTimer.CreateFromSeconds(Runner, 7);   // 상수화 해야함
+            OffIdle();
             // ShieldTimer = TickTimer.CreateFromSeconds(Runner, ReverseShieldClip.length);
             networkAnimator.Animator.SetFloat(FaceHide, 1);
             networkAnimator.SetTrigger(tFaceHide);
+            ShieldTimer = TickTimer.CreateFromSeconds(Runner, 7);   // 상수화 해야함
         }
         
         public void PlayShieldOffAction()
         {
+            OffIdle();
             ShieldTimer = TickTimer.CreateFromSeconds(Runner, 1.5f);   // 상수화 해야함
         }
 
         public void PlayHatAction()
         {
+            OffIdle();
             HatTimer = TickTimer.CreateFromSeconds(Runner, 10.0f);  // 상수화 필요
             networkAnimator.SetTrigger(tHat);
         }
 
         public void PlayHandLazerAction()
         {
-            HandLazerTimer = TickTimer.CreateFromSeconds(Runner, handLazerClip.length);
-            networkAnimator.Animator.SetFloat(Attack, 1);
+            OffIdle();
+            networkAnimator.Animator.SetFloat(Attack, 2);
             networkAnimator.SetTrigger(tAttack);
+            HandLazerTimer = TickTimer.CreateFromSeconds(Runner, handLazerClip.length);
         }
 
         public void PlayThrowBoomAction()
         {
+            OffIdle();
+            networkAnimator.Animator.SetFloat(Attack, 3);
+            networkAnimator.SetTrigger(tAttack, true);
             ThrowBoomTimer = TickTimer.CreateFromSeconds(Runner, throwBoomClip.length);
-            networkAnimator.Animator.SetFloat(Attack, 2);
-            networkAnimator.SetTrigger(tAttack);
         }
         
         public void PlaySlapAction()
         {
+            OffIdle();
             SlapTimer = TickTimer.CreateFromSeconds(Runner, 4.5f);
-            // networkAnimator.SetTrigger(tSlap);
         }
 
         public void PlayCloneAction()
         {
+            OffIdle();
             CloneTimer = TickTimer.CreateFromSeconds(Runner, tpClip.length);
             networkAnimator.SetTrigger(tTeleport);
+        }
+
+        public void PlayDieAction()
+        {
+            OffIdle();
+            networkAnimator.SetTrigger(tDeath);
         }
     }
 }

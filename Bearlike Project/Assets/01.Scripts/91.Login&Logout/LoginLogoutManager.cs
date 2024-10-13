@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 namespace Login_Logout
 {
@@ -16,15 +17,18 @@ namespace Login_Logout
         public Button accountCreateButton;
         public Toggle idMemoryToggle;
         [SerializeField] private Button exitButton; // 게임 종료 버튼
-        [SerializeField] private TMP_Text loginErrorText;
         
+        [Header("Login Massage")]
+        [SerializeField] private GameObject loginMassageObject;
+        [SerializeField] private TMP_Text loginMassageText;
+        private string _loginMassage;
+
         #region Unity Event Function
 
         private void Start()
         {
-            passwordInputFiled.onValueChanged.AddListener(ValidateInput);
-            
             LogOut();
+            passwordInputFiled.onValueChanged.AddListener(ValidateInput);
             accountCreateButton.onClick.AddListener(AccountCreate);
             loginButton.onClick.AddListener(Login);
             
@@ -36,8 +40,8 @@ namespace Login_Logout
 
             FireBaseAuthManager.LoginState -= ChangeLoginState;
             FireBaseAuthManager.LoginState += ChangeLoginState;
-            FireBaseAuthManager.AuthErrorAction -= LoginError;
-            FireBaseAuthManager.AuthErrorAction += LoginError;
+            FireBaseAuthManager.AuthErrorAction += (e, massage) => _loginMassage = massage;
+            FireBaseAuthManager.AccountCreateAction += (massage) => _loginMassage = massage;
 
             if (PlayerPrefs.HasKey("IDMemory")) idMemoryToggle.isOn = PlayerPrefs.GetInt("IDMemory") == 1;
             if (idMemoryToggle.isOn && PlayerPrefs.HasKey("ID")) idInputFiled.text = PlayerPrefs.GetString("ID");
@@ -53,6 +57,13 @@ namespace Login_Logout
             if (idInputFiled.isFocused && Input.GetKeyDown(KeyCode.Tab))
             {
                 passwordInputFiled.Select();
+            }
+
+            if (_loginMassage != null)
+            {
+                loginMassageObject.SetActive(true);
+                loginMassageText.text = _loginMassage;
+                _loginMassage = null;
             }
         }
 
@@ -80,12 +91,6 @@ namespace Login_Logout
                 
                 SceneManager.LoadScene(SceneList.GetScene("Lobby"));
             }
-        }
-
-        private void LoginError(AuthError e, string massage)
-        {
-            loginErrorText.text = massage;
-            loginErrorText.transform.parent.gameObject.SetActive(true);
         }
 
         public void AccountCreate()

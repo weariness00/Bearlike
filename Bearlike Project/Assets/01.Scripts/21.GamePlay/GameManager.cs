@@ -4,7 +4,6 @@ using Data;
 using Fusion;
 using GamePlay.Stage;
 using GamePlay.StageLevel;
-using GamePlay.UI;
 using Loading;
 using Manager;
 using Photon;
@@ -15,8 +14,6 @@ using Status;
 using UI.Status;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using User.MagicCotton;
-using UserRelated.MagicCotton;
 using Random = UnityEngine.Random;
 
 namespace GamePlay
@@ -34,6 +31,10 @@ namespace GamePlay
         public bool isControl = true; // 게임중에 플레이어나 다른 무언가들의 컨트롤을 가능하게 할지
         public bool isGameClear; // 게임을 완전 클리어 했을때
         public bool isGameOver;
+
+        [Header("게임 클리어 관련")] 
+        public GameObject matherBear;
+        public GameObject gameCanvasGroup;
         public Portal gameClearPortal;
         
         [SerializeField]private SpawnPlace _spawnPlace = new SpawnPlace();
@@ -50,18 +51,29 @@ namespace GamePlay
 
         public SceneReference gmModeScene;
         public SceneReference gameResultScene;
-        public SceneReference loadingScene;
         public SceneReference modelUIScene;
         
         #region Unity Event Function
         protected override void Awake()
         {
+            base.Awake();
+            
             LoadingManager.Initialize();
+
+            LoadingManager.StartAction += () =>
+            {
+                Instance.isControl = false;
+                SceneManager.LoadSceneAsync(SceneList.GetScene("Game Start Loading"), LoadSceneMode.Additive);
+            };
+            LoadingManager.EndAction += () =>
+            {
+                Instance.isControl = true;
+                SceneManager.UnloadSceneAsync(SceneList.GetScene("Game Start Loading"));
+            };
+            
             LoadingManager.AddWait();
             
-            base.Awake();
             _spawnPlace.Initialize();
-            NetworkManager.LoadScene(loadingScene, LoadSceneMode.Additive);
         }
 
         public override void Spawned()
@@ -73,15 +85,7 @@ namespace GamePlay
             
             NetworkManager.LoadScene(modelUIScene, LoadSceneMode.Additive);
             
-            if (Runner.IsServer == false)
-            {
-                LoadingManager.AddWait();
-                PlayerHpCanvasInit();
-                LoadingManager.EndWait();
-                return;
-            }
-            
-            Init();
+            StageBase.StageOverAction += () => { NetworkManager.LoadScene(gameResultScene, LoadSceneMode.Additive); };
             UserInit();
             
             LoadingManager.EndWait();
@@ -94,12 +98,6 @@ namespace GamePlay
         #endregion
 
         #region Inisialize
-
-        void Init()
-        {
-            defaultStage.SetIsInitRPC(true);
-            StageBase.StageOverAction += () => { NetworkManager.LoadScene(gameResultScene, LoadSceneMode.Additive); };
-        }
         
         async void UserInit()
         {   
@@ -149,26 +147,6 @@ namespace GamePlay
             }
 
             await NetworkManager.LoadScene(stageData.sceneReference.ScenePath,LoadSceneMode.Additive, LocalPhysicsMode.Physics3D);
-            async void OnSceneLoadDoneAction()
-            {
-                 foreach (var stageLevelBase in FindObjectsOfType<StageBase>())
-                 {
-                    // 이미 활성화된 스테이지
-                    if (stageLevelBase.stageGameObject.activeSelf)
-                    {
-                        continue;
-                    }
-
-                    if (stageData.info.stageType == stageLevelBase.StageInfo.stageType)
-                    {
-                        stageLevelBase.SetIsInitRPC(true);
-                        
-                        DebugManager.Log($"씬 생성 후 초기화 완료 {stageData.sceneReference}");
-                        break;
-                    }
-                 }
-            }
-            NetworkManager.SceneLoadDoneAction += OnSceneLoadDoneAction;
         }
 
         public void SetStage(int index) => SetStage(stageList.Count < index ? null : stageList[index]);
@@ -180,15 +158,25 @@ namespace GamePlay
             gameClearPortal.portalVFXList[0].gameObject.SetActive(true);
             gameClearPortal.InteractKeyDownAction = (obj) =>
             {
-                NetworkManager.LoadScene(SceneList.GetScene("Game Result"), LoadSceneMode.Additive);
-                gameClearPortal.gameObject.SetActive(false);
-                
-                gameClearPortal.IsConnect = false;
+                LoadResultRPC();
             };
             
+            matherBear.SetActive(true);
+            
             isGameClear = true;
-
             gameClearPortal.IsConnect = true;
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void LoadResultRPC()
+        {
+            if(gameClearPortal.IsConnect == false) return;
+            
+            isControl = false;
+                
+            SceneManager.LoadScene(SceneList.GetScene("Game Result"), LoadSceneMode.Additive);
+            gameClearPortal.gameObject.SetActive(false);
+            gameClearPortal.IsConnect = false;
         }
     }
 }

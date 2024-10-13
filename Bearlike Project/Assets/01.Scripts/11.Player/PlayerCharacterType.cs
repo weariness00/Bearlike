@@ -4,5 +4,6 @@
     {
         FirstBear,
         SecondBear,
+        ThirdBear,
     }
 }

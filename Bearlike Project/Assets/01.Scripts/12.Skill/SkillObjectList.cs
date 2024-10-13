@@ -10,7 +10,9 @@ namespace Skill
     {
         #region Static
 
+        public static List<SkillBase> SkillList => Instance.skillList;
         public static int SkillCount => Instance.skillList.Count;
+        public static int[] SkillIdArray => Instance._skillIdArray;
         
         public static SkillBase GetFromIndex(int index)
         {
@@ -56,6 +58,7 @@ namespace Skill
         #endregion
 
         public List<SkillBase> skillList = new List<SkillBase>();
+        private int[] _skillIdArray;
 
         #region Unity Event Function
 
@@ -63,6 +66,11 @@ namespace Skill
         {
             base.Awake();
             DontDestroyOnLoad(gameObject);
+
+            // id를 담은 array 초기화
+            _skillIdArray = new int[skillList.Count];
+            for (var i = 0; i < skillList.Count; i++)
+                _skillIdArray[i] = skillList[i].id;
         }
         
         #endregion

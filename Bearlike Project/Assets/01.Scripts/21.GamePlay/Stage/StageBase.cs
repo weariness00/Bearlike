@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Data;
@@ -46,7 +47,6 @@ namespace GamePlay.Stage
 
         private ChangeDetector _changeDetector;
         [Networked] [Capacity(3)] public NetworkArray<NetworkBool> IsStageUnload { get; }
-        [Networked] public NetworkBool IsInit { get; set; }
         [Networked] public NetworkBool IsStageStart { get; set; }
         
         #endregion
@@ -83,16 +83,32 @@ namespace GamePlay.Stage
             if(destructObject) destructObject.AddComponent<NetworkMeshSliceObject>();
             
             lootingTable = GetComponent<LootingTable>();
-            stageGameObject.SetActive(false);
+            
+            var childEventSystem = stageGameObject.GetComponentInChildren<EventSystem>();
+            var childCamera = stageGameObject.GetComponentInChildren<Camera>();
+            var lihgts = stageGameObject.GetComponentsInChildren<Light>();
+            if (childEventSystem != null)
+                Destroy(childEventSystem.gameObject);
+            if (childCamera != null)
+                Destroy(childCamera.gameObject);
+            foreach (var lihgt in lihgts)
+            {
+                if (lihgt.type == LightType.Directional)
+                {
+                    Destroy(lihgt.gameObject);
+                    break;
+                }
+            }
+            
+            if (StageInfo.stageType != StageType.None)
+            {
+                transform.position = Vector3.one * 1000f;
+                stageGameObject.transform.position = Vector3.one * 1000f;
+            }
         }
 
         public virtual void Start()
         {
-            aliveMonsterCount.isOverMax = true;
-            monsterKillCount.isOverMax = true;
-            
-            StageInfo.SetJsonData(GetInfoData(StageInfo.id));
-            lootingTable.CalLootingItem(GetLootingData(StageInfo.id).LootingItems);
         }
         
         public void OnTriggerEnter(Collider other)
@@ -117,10 +133,12 @@ namespace GamePlay.Stage
         public override void Spawned()
         {
             _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
-            if (IsInit)
-            {
-                StageInit();
-            }
+                
+            aliveMonsterCount.isOverMax = true;
+            monsterKillCount.isOverMax = true;
+            
+            StageInfo.SetJsonData(GetInfoData(StageInfo.id));
+            lootingTable.CalLootingItem(GetLootingData(StageInfo.id).LootingItems);
             
             SpawnedSuccessRPC(UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber, true);
         }
@@ -144,6 +162,7 @@ namespace GamePlay.Stage
                         {
                             Runner.MoveGameObjectToSameScene(gameObject, GameManager.Instance.gameObject);
                             Runner.MoveGameObjectToSameScene(stageGameObject, GameManager.Instance.gameObject);
+                            StageInit();
                         }
                         break;
                     case nameof(IsStageUnload): // 스테이지 초기화 되면 스테이지를 부른 Scene을 Unload
@@ -156,14 +175,8 @@ namespace GamePlay.Stage
                         if (count == 0 && HasStateAuthority)
                             NetworkManager.UnloadScene(sceneReference.ScenePath);
                         break;
-                    case nameof(IsInit): // 스테이지 초기화 동기화를 위해 사용
-                        if (IsInit)
-                        {
-                            StageInit();
-                        }
-                        break;
                     case nameof(IsStageStart):
-                        if (IsStageStart)
+                        if (IsStageStart && !isStageClear)
                         {
                             StageStart();
                         }
@@ -191,6 +204,24 @@ namespace GamePlay.Stage
 
             aliveMonsterCount.Max = (int)(aliveMonsterCount.Max * Difficult.AliveMonsterCountRate);
             monsterKillCount.Max = (int)(monsterKillCount.Max * Difficult.MonsterKillCountRate);
+        }
+
+        private Coroutine _stageSceneUnloadCoroutine;
+        private void StageSceneUnload()
+        {
+            if (_stageSceneUnloadCoroutine == null)
+                _stageSceneUnloadCoroutine = StartCoroutine(StageSceneUnloadCoroutine());
+        }
+
+        private IEnumerator StageSceneUnloadCoroutine()
+        {
+            var waitTime = new WaitForSeconds(0.1f);
+            var clientNumber = UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber;
+            while (IsStageUnload.Get(clientNumber) == false)
+            {
+                SetIsUnloadRPC(clientNumber, true);
+                yield return waitTime;
+            }
         }
 
         // 스테이지에 들어서면 정보에 맞춰 해당 스테이지를 셋팅 해준다.
@@ -235,23 +266,7 @@ namespace GamePlay.Stage
         {
             SetDifficult();
             
-            var childEventSystem = stageGameObject.GetComponentInChildren<EventSystem>();
-            var childCamera = stageGameObject.GetComponentInChildren<Camera>();
-            var lihgts = stageGameObject.GetComponentsInChildren<Light>();
-            if (childEventSystem != null)
-                Destroy(childEventSystem.gameObject);
-            if (childCamera != null)
-                Destroy(childCamera.gameObject);
-            foreach (var lihgt in lihgts)
-            {
-                if (lihgt.type == LightType.Directional)
-                {
-                    Destroy(lihgt.gameObject);
-                    break;
-                }
-            }
-
-            var pos = new Vector3(0,(FindObjectsOfType<StageBase>().Length - 1) * 100,0);
+            var pos = new Vector3(GameManager.Instance.stageCount.Current * 150,0,0);
             transform.position = pos;
             stageGameObject.transform.position = pos;
             
@@ -271,6 +286,7 @@ namespace GamePlay.Stage
 
             StageInitAction?.Invoke();
             
+            GameManager.Instance.stageCount.Current++;
             DebugManager.Log($"스테이지 초기화 {stageData.info.title}");
         }
 
@@ -292,11 +308,10 @@ namespace GamePlay.Stage
 
         public virtual void StageClear()
         {
-            SetIsUnloadRPC(UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber, true);
+            StageSceneUnload();
             if (isStageClear)
                 return;
 
-            GameManager.Instance.stageCount.Current++;
             StopMonsterSpawn();
             
             if (HasStateAuthority)
@@ -304,14 +319,19 @@ namespace GamePlay.Stage
                 var monsters = FindObjectsOfType<MonsterBase>();
                 foreach (var monster in monsters)
                     monster.status.ApplyDamageRPC(999999, DamageTextType.Critical, monster.Object.Id);
+
+                // 프레임을 치키기 위해 시체 삭제
+                var deadbodys = FindObjectsOfType<DeadBodyObstacleObject>();
+                foreach (var deadbody in deadbodys)
+                    Destroy(deadbody.gameObject, 3f);
             }
             
             prevStagePortal.IsConnect = true;
             //prevStagePortal.portalVFXList[0].gameObject.SetActive(true);
             isStageClear = true;
 
-            lootingTable.SpawnDropItem();
-
+            lootingTable.SpawnDropItem(transform.position + Vector3.up * 2f);
+            
             if (destructObject != null) destructObject.tag = "Destruction";
 
             if(StageInfo.stageType != StageType.Boss) StageClearAction?.Invoke();
@@ -338,14 +358,11 @@ namespace GamePlay.Stage
         }
 
         #endregion
-
+        
         #region RPC Function
 
-        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority, Channel = RpcChannel.Reliable)]
         public void SetIsUnloadRPC(int clientNumber, NetworkBool value) => IsStageUnload.Set(clientNumber, value);
-
-        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-        public void SetIsInitRPC(bool value) => IsInit = value;
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void SetIsStartRPC(NetworkBool value) => IsStageStart = value;

@@ -3,6 +3,7 @@ using Aggro;
 using Fusion;
 using GamePlay;
 using Manager;
+using Monster.Container;
 using Photon;
 using Photon.MeshDestruct;
 using Status;
@@ -81,7 +82,9 @@ namespace Weapon.Bullet
         private void OnTriggerEnter(Collider other)
         {
             if (!HasStateAuthority) return;
-
+            if (other.gameObject.CompareTag("Volume") || other.gameObject.CompareTag("Stage")) return;
+            if (other.TryGetComponent(out BoxJesterShield boxJesterShield)) return; 
+            
             if (_aggroTarget)
             {
                 var point = other.ClosestPoint(transform.position);
@@ -95,20 +98,21 @@ namespace Weapon.Bullet
             StatusBase otherStatus = null;
             if (other.TryGetComponent(out ColliderStatus colliderStatus))
             {
+                _hitEffect?.OnWeaponHitEffect(transform.position);
+                _hitSound?.PlayWeaponHit();
+                
                 otherStatus = colliderStatus.originalStatus;
                 status.AddAdditionalStatus(colliderStatus.status);
                 _hitInterface?.BeforeHitAction?.Invoke(gameObject, otherStatus.gameObject);
                 
                 otherStatus.ApplyDamageRPC(status.CalDamage(out bool isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, OwnerId);
                 status.RemoveAdditionalStatus(colliderStatus.status);
-                _hitEffect?.OnWeaponHitEffect(transform.position);
-                _hitSound?.PlayWeaponHit();
                 
                 if (KnockBack > 0)
                 {
                     var parent = otherStatus.gameObject;
                         
-                    Vector3 knockbackDirection = parent.transform.position - transform.position;
+                    Vector3 knockbackDirection = direction;
                     knockbackDirection.y = 0;
                     knockbackDirection.Normalize();
 
@@ -122,6 +126,9 @@ namespace Weapon.Bullet
                 _hitInterface?.BeforeHitAction?.Invoke(gameObject, otherStatus.gameObject);
 
                 otherStatus.ApplyDamageRPC(status.CalDamage(out var isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, OwnerId);
+                
+                _hitEffect?.OnWeaponHitEffect(transform.position);
+                _hitSound?.PlayWeaponHit();
                 
                 _hitInterface?.AfterHitAction?.Invoke(gameObject, otherStatus.gameObject);
             }

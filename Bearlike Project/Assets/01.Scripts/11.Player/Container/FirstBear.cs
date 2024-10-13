@@ -1,4 +1,5 @@
-﻿using GamePlay;
+﻿using System.Collections.Generic;
+using GamePlay;
 using Photon;
 using Skill;
 using Skill.Container;
@@ -21,21 +22,18 @@ namespace Player.Container
 
         public override void FixedUpdateNetwork()
         {
+            base.FixedUpdateNetwork();
+            
             if (!GameManager.Instance.isControl)
-                return;
-
-            if (status.isInjury || status.isRevive)
                 return;
 
             if (GetInput(out PlayerInputData data))
             {
-                if (!data.Cursor)
+                if (!IsCursor)
                 {
                     SkillControl(data);
                 }
             }
-
-            base.FixedUpdateNetwork();
         }
 
         void SkillInit()
@@ -50,13 +48,13 @@ namespace Player.Container
                 tmpSkill.Object.AssignInputAuthority(Object.InputAuthority);
                 ultimateSkill.Object.AssignInputAuthority(Object.InputAuthority);
 
-                skillCanvas.gameObject.SetActive(true);
+                uiController.skillCanvas.gameObject.SetActive(true);
 
-                skillCanvas.SetFirstSkill(FlippingCoin);
-                skillCanvas.SetSecondSkill(tmpSkill);
-                skillCanvas.SetUltimateSkill(ultimateSkill);
-
-                skillCanvas.Initialize();
+                uiController.skillCanvas.SetFirstSkill(FlippingCoin);
+                uiController.skillCanvas.SetSecondSkill(tmpSkill);
+                uiController.skillCanvas.SetUltimateSkill(ultimateSkill);
+                
+                uiController.skillCanvas.Initialize();
             }
 
             FlippingCoin.LevelUp();
@@ -68,20 +66,22 @@ namespace Player.Container
         {
             if (HasInputAuthority == false)
                 return;
-
+            if (status.isInjury || status.isRevive)
+                return;
+            
             if (data.FirstSkill)
             {
-                skillCanvas.StartCoolTime(FlippingCoin);
+                uiController.skillCanvas.StartCoolTime(FlippingCoin);
                 FlippingCoin.RunRPC();
             }
             else if (data.SecondSkill)
             {
-                skillCanvas.StartCoolTime(tmpSkill);
+                uiController.skillCanvas.StartCoolTime(tmpSkill);
                 tmpSkill.RunRPC();
             }
             else if (data.Ultimate)
             {
-                skillCanvas.StartCoolTime(ultimateSkill);
+                uiController.skillCanvas.StartCoolTime(ultimateSkill);
                 ultimateSkill.RunRPC();
             }
         }

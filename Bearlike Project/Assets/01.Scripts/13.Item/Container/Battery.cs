@@ -11,13 +11,14 @@ namespace Item.Container
     {
         #region Unity Event Functon
 
-        private void OnCollisionEnter(Collision other)
+        private void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.CompareTag("Player") &&
-                other.gameObject.TryGetComponent(out PlayerController pc) && pc.HasInputAuthority)
+            if (CheckPlayer(other.gameObject, out PlayerController pc))
             {
-                GetItem(other.gameObject);
-                Destroy(gameObject);
+                foreach (var sphereCollider in GetComponents<Collider>())
+                    Destroy(sphereCollider);
+
+                StartCoroutine(MoveTargetCoroutine(other.gameObject));
             }
         }
 

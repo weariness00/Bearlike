@@ -10,6 +10,7 @@ using GamePlay;
 using GamePlay.DeadBodyObstacle;
 using Item.Looting;
 using Manager;
+using Monster.Container;
 using Photon;
 using Player;
 using Status;
@@ -113,14 +114,9 @@ namespace Monster
                 navMeshAgent.enabled = true;
             }
 
-            lootingTable.CalLootingItem(GetLootingData(id).LootingItems);
+            if(lootingTable)
+                lootingTable.CalLootingItem(GetLootingData(id).LootingItems);
             DieAction += OnDieAction;
-
-            var statusData = GetStatusData(id);
-            status.SetJsonData(statusData);
-            if (statusData.HasFloat("Rigidbody Mass")) rigidbody.mass = statusData.GetFloat("Rigidbody Mass");
-
-            SetDifficultStatus();
         }
         
         private void OnDestroy()
@@ -129,7 +125,13 @@ namespace Monster
         }
 
         public override void Spawned()
-        {
+        { 
+            var statusData = GetStatusData(id);
+            status.SetJsonData(statusData);
+            if (statusData.HasFloat("Rigidbody Mass")) rigidbody.mass = statusData.GetFloat("Rigidbody Mass");
+
+            SetDifficultStatus();
+            
             behaviorTreeRunner = new BehaviorTreeRunner(InitBT());
             aggroController.AddTarget(FindObjectsOfType<AggroTarget>());// 접속한 플레이어들 저장
         }
@@ -150,7 +152,7 @@ namespace Monster
 
         #region Member Function
 
-        private void SetDifficultStatus()
+        protected void SetDifficultStatus()
         {
             status.hp.Max = (int)(status.hp.Max * Difficult.MonsterHpRate);
             status.hp.SetMax();
@@ -164,7 +166,7 @@ namespace Monster
             Destroy(this);
 
             // Effect
-            if (dieEffectRef != NetworkPrefabRef.Empty)
+            if (HasStateAuthority && dieEffectRef != NetworkPrefabRef.Empty)
             {
                 var obj = await Runner.SpawnAsync(dieEffectRef, pivot.position, pivot.rotation);
                 Destroy(obj.gameObject, 2f);
@@ -396,7 +398,7 @@ namespace Monster
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void DieRPC()
         {
-            DieAction?.Invoke();//
+            DieAction?.Invoke();
             DebugManager.Log($"몬스터[{name}]이 사망했습니다.");
         }
         

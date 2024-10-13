@@ -41,12 +41,13 @@ namespace Weapon.Gun
         [Header("총 정보")] 
         public int id;
         public string explain;
+        public GunHandType handType;
 
         [Header("총 이펙트")] 
         public VisualEffect shootEffect; // 발사 이펙트
         public VisualEffect shotsmoke;      // 총구 연기
         [SerializeField] private MaterialPropertyBlockExtension shotOverHeatingPropertyBlock;
-        public NetworkPrefabRef hitEffectPrefab;
+        public GameObject hitEffectPrefab;
         
         [Header("사운드")]
         public AudioSource shootSound;
@@ -327,10 +328,7 @@ namespace Weapon.Gun
 
         #region Weapon Interface
 
-        public virtual void OnWeaponHitEffect(Vector3 hitPosition)
-        {
-            Runner.SpawnAsync(hitEffectPrefab, hitPosition);
-        }
+        public virtual void OnWeaponHitEffect(Vector3 hitPosition) => HitEffectRPC(hitPosition);
         public Action<GameObject, GameObject> BeforeHitAction { get; set; }
         public Action<GameObject, GameObject> AfterHitAction { get; set; }
 
@@ -389,7 +387,19 @@ namespace Weapon.Gun
             shotsmoke.SendEvent("OnPlay");
             // StartCoroutine(OverHeatCoroutine());
         }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void HitEffectRPC(Vector3 hitPosition)
+        {
+            Instantiate(hitEffectPrefab, hitPosition, Quaternion.identity);
+        }
         
         #endregion
+
+        public enum GunHandType
+        {
+            OneHand,
+            TwoHand,
+        }
     }
 }

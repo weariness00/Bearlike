@@ -1,6 +1,7 @@
 ﻿using Player;
 using Status;
 using UnityEngine;
+using Util;
 using Weapon.Gun;
 
 namespace Skill.Container
@@ -52,6 +53,8 @@ namespace Skill.Container
             base.ExplainUpdate();
             if (explain.Contains("(Level)"))
                 explain = explain.Replace("(Level)", $"{level.Current}");
+            
+            explain = explain.CalculateNumber();
         }
     }
 }

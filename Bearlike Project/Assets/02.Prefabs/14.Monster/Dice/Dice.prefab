@@ -230,6 +230,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 1
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 99999
@@ -316,9 +317,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8555778163261510392}
-  - component: {fileID: 7963566170756306045}
   - component: {fileID: 4519316146450510175}
   - component: {fileID: 6314795265027266568}
+  - component: {fileID: 5792094201659063885}
+  - component: {fileID: 7963566170756306045}
   - component: {fileID: 1856523567469083767}
   - component: {fileID: 6190889804286306999}
   - component: {fileID: -5128691535337078838}
@@ -346,37 +348,6 @@ Transform:
   - {fileID: 4243067389019000658}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7963566170756306045
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3465241712122150889}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5dc06719fb1c45ac9f2172990ecfa49c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _IsAsyncClient: []
-  _IsSpawnSuccess:
-    _value: 0
-  rigidbody: {fileID: 0}
-  networkAnimator: {fileID: 0}
-  status: {fileID: 0}
-  lootingTable: {fileID: 0}
-  pivot: {fileID: 0}
-  navMeshAgent: {fileID: 0}
-  id: 0
-  explain: 
-  type: 
-  targetPlayer: {fileID: 0}
-  targetMask:
-    serializedVersion: 2
-    m_Bits: 4096
-  animatorInfo: {fileID: 8355084743447907546}
-  diePrefab:
-    RawGuidValue: a222ce6f152d2804fa4425fc2a8a4f9b
 --- !u!114 &4519316146450510175
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -440,6 +411,7 @@ MonoBehaviour:
     isOverMin: 0
     isMin: 0
     isMax: 0
+  moveSpeedMultiple: 1
   attackSpeed:
     _min: 0
     _max: 0
@@ -477,6 +449,56 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isDrop: 0
   _dropItems: []
+--- !u!114 &5792094201659063885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3465241712122150889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6ca09b699fa07047ac0ec6c26b43509, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  targetScore: 0
+  aggroRange: 0
+--- !u!114 &7963566170756306045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3465241712122150889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5dc06719fb1c45ac9f2172990ecfa49c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _IsAsyncClient: []
+  _IsSpawnSuccess:
+    _value: 0
+  rigidbody: {fileID: 0}
+  collider: {fileID: 0}
+  networkAnimator: {fileID: 0}
+  status: {fileID: 0}
+  lootingTable: {fileID: 0}
+  pivot: {fileID: 0}
+  aggroController: {fileID: 0}
+  navMeshAgent: {fileID: 0}
+  id: 0
+  explain: 
+  type: 
+  crowdControlType: 0
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 4096
+  dieEffectRef:
+    RawGuidValue: 00000000000000000000000000000000
+  animatorInfo: {fileID: 8355084743447907546}
+  diePrefab:
+    RawGuidValue: a222ce6f152d2804fa4425fc2a8a4f9b
 --- !u!54 &1856523567469083767
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -521,8 +543,8 @@ MonoBehaviour:
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 7963566170756306045}
   - {fileID: 4519316146450510175}
+  - {fileID: 7963566170756306045}
   - {fileID: -5128691535337078838}
   - {fileID: 4954559184598586670}
   - {fileID: 5245332092334057491}

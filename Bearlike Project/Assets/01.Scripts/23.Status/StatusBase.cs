@@ -5,6 +5,7 @@ using Data;
 using DG.Tweening;
 using Fusion;
 using Manager;
+using Player;
 using UI.Status;
 using Unity.Mathematics;
 using UnityEngine;
@@ -110,6 +111,10 @@ namespace Status
                     {
                         _beforeApplyDamage += func;
                     }
+                }
+                else
+                {
+                    _beforeApplyDamage += func;
                 }
             }
             else
@@ -287,11 +292,11 @@ namespace Status
                 return;
             }
 
-            if (Random.Range(0f, 1f) < avoid.Current)
-            {
-                DebugManager.Log($"{name} 회피 성공");
-                return;
-            }
+            // if (Random.Range(0f, 1f) < avoid.Current)
+            // {
+            //     DebugManager.Log($"{name} 회피 성공");
+            //     return;
+            // }
 
             if (!ConditionDamageIgnoreIsOn())
             {
@@ -326,6 +331,16 @@ namespace Status
                         if (ownerObj.TryGetComponent(out IAfterApplyDamage afterApplyDamage))
                         {
                             afterApplyDamage.AfterApplyDamageAction?.Invoke(realDamage);
+                        }
+                        
+                        if (HasStateAuthority && ConditionDamageReflectIsOn())
+                        {
+                            var playerStatus = ownerObj.gameObject.GetComponent<PlayerStatus>();
+
+                            playerStatus.ApplyDamageRPC(realDamage / 10, DamageTextType.Normal, Object.Id, CrowdControl.Normality);
+                        
+                            DebugManager.Log($"{ownerObj.name} player가 반사로 인해 {realDamage / 10}만큼 데미지를 받음\n"+
+                                             $"남은 hp : {playerStatus.hp.Current}");
                         }
                     }
                 }
@@ -379,6 +394,7 @@ namespace Status
         public bool ConditionPoisonedIsOn() { return ConditionOn(CrowdControl.Poisoned); }
         public bool ConditionWeakIsOn() { return ConditionOn(CrowdControl.Weak); }
         public bool ConditionDamageIgnoreIsOn() { return ConditionOn(CrowdControl.DamageIgnore); }
+        public bool ConditionDamageReflectIsOn() { return ConditionOn(CrowdControl.DamageReflect); }
 
         public void AddCondition(CrowdControl cc)
         {
@@ -412,20 +428,20 @@ namespace Status
 
         public virtual void SetJsonData(StatusJsonData json)
         {
-            hp.Max = json.GetInt("Hp Max");
-            hp.Current = json.GetInt("Hp Current");
+            if(json.HasInt("Hp Max")) hp.Max = json.GetInt("Hp Max");
+            if(json.HasInt("Hp Max")) hp.Current = json.GetInt("Hp Current");
             
-            damage.Max = json.GetInt("Damage Max");
-            damage.Min = json.GetInt("Damage Min");
-            damage.Current = json.GetInt("Damage Current");
+            if(json.HasInt("Damage Max")) damage.Max = json.GetInt("Damage Max");
+            if(json.HasInt("Damage Min")) damage.Min = json.GetInt("Damage Min");
+            if(json.HasInt("Damage Current")) damage.Current = json.GetInt("Damage Current");
 
             if(json.HasFloat("Damage Multiple")) damageMultiple = json.GetFloat("Damage Multiple");
             if(json.HasFloat("CriticalHit Multiple")) damageMultiple = json.GetFloat("CriticalHit Multiple");
             criticalHitChance.Current = json.GetFloat("CriticalHit Chance");
             
-            defence.Max = json.GetInt("Defence Max");
-            defence.Min = json.GetInt("Defence Min");
-            defence.Current = json.GetInt("Defence Current");
+            if(json.HasInt("Defence Max")) defence.Max = json.GetInt("Defence Max");
+            if(json.HasInt("Defence Min")) defence.Min = json.GetInt("Defence Min");
+            if(json.HasInt("Defence Current")) defence.Current = json.GetInt("Defence Current");
             
             avoid.Current = json.GetFloat("Avoid Current");
             
@@ -514,15 +530,23 @@ namespace Status
             
             if(_enemynav != null) _enemynav.enabled = false;
 
-            transform.DOMove(transform.position + direction * amount * 10, 0.5f)
-                .SetEase(Ease.OutCirc);
-                        
-            StartCoroutine(RestartNavAgentCorutine(_enemynav));
+            // transform.DOMove(transform.position + direction * amount * 5, 0.5f)
+            //     .SetEase(Ease.OutCirc);
+            StartCoroutine(NuckNackCoroutine(_enemynav));
         }
-        
-        IEnumerator RestartNavAgentCorutine(UnityEngine.AI.NavMeshAgent _nav)
+
+        IEnumerator NuckNackCoroutine(UnityEngine.AI.NavMeshAgent _nav)
         {
-            yield return new WaitForSeconds(0.5f);
+            float time = 0.0f;
+
+            while (time < 1.0f)
+            {
+                transform.position = transform.position;
+                
+                time += 2 * Time.deltaTime;
+                yield return null;
+            }
+            
             if(_nav != null) _nav.enabled = true;
         }
 

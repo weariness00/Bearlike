@@ -36,9 +36,7 @@ namespace Item.Container
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.CompareTag("Player") && 
-                (other.TryGetComponent(out PlayerController pc) || other.transform.root.TryGetComponent(out pc)) &&
-                pc.HasInputAuthority)
+            if (CheckPlayer(other.gameObject, out PlayerController pc))
             {
                 foreach (var sphereCollider in GetComponentsInChildren<SphereCollider>())
                 {

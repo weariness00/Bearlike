@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Fusion;
+using GamePlay.Sync;
 using UnityEngine;
 using Weapon.Gun;
 
@@ -14,10 +15,13 @@ namespace Weapon
         public List<WeaponBase> weaponList;
         public GameObject smokeObject;
 
+        [SerializeField] private Transform oneHandGunTransform;
+        [SerializeField] private Transform twoHandGunTransform;
+        private TransformSync _transformSync;
+        
         private void Awake()
         {
-            var equipWeapon = GetComponentInChildren<WeaponBase>();
-            equipment = equipWeapon;
+            _transformSync = GetComponent<TransformSync>();
         }
 
         private void Start()
@@ -25,8 +29,11 @@ namespace Weapon
             weaponList = GetComponentsInChildren<WeaponBase>().ToList();
             foreach (var weapon in weaponList)
                 weapon.gameObject.SetActive(false);
-            ((WeaponBase)equipment).gameObject.SetActive(true);
-            
+            if(equipment is WeaponBase w) w.gameObject.SetActive(true);
+        }
+
+        public override void Spawned()
+        {
             if (HasInputAuthority)
             {
                 Transform[] children = new Transform[smokeObject.transform.childCount];
@@ -56,18 +63,31 @@ namespace Weapon
         public bool ChangeEquipment(int index, GameObject equipTargetObject)
         {
             if(weaponList.Count < index)  return false;
-            if((WeaponBase)equipment == weaponList[index]) return false;
+            if(equipment != null && (WeaponBase)equipment == weaponList[index]) return false;
             
             // 장비 해제
-            equipment.ReleaseEquipAction?.Invoke(equipTargetObject);
-            
+            equipment?.ReleaseEquipAction?.Invoke(equipTargetObject);
+
             // 장비 변경
-            equipment = weaponList[index];
+            var weapon = weaponList[index];
+            weapon.gameObject.SetActive(true);
+            equipment = weapon;
             
             // 변경한 장비를 착용
             equipment.EquipAction?.Invoke(equipTargetObject);
             if (equipment.IsGun && equipment is GunBase gun)
+            {
                 gun.OverHeatCal();
+                switch (gun.handType)
+                {
+                    case GunBase.GunHandType.OneHand:
+                        _transformSync.targetTransform = oneHandGunTransform;
+                        break;
+                    case GunBase.GunHandType.TwoHand:
+                        _transformSync.targetTransform = twoHandGunTransform;
+                        break;
+                }
+            }
             
             return true;
         }

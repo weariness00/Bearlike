@@ -1,6 +1,7 @@
 ﻿using System;
 using GamePlay.Stage.Container;
 using GamePlay.StageLevel.Container;
+using Status;
 using TMPro;
 using UnityEngine;
 
@@ -14,19 +15,30 @@ namespace UI
         public TMP_Text killText;
 
         private int _killCount;
+        private int _killMax;
+        private StatusValue<int> _monsterKill;
 
         private void Start()
         {
-            maxKillText.text = stage.monsterKillCount.Max.ToString();
-            killText.text = stage.monsterKillCount.Current.ToString();
+            _monsterKill = stage.monsterKillCount;
+            _killCount = _monsterKill.Current;
+            _killMax = _monsterKill.Max;
+            maxKillText.text = _monsterKill.Max.ToString();
+            killText.text = _monsterKill.Current.ToString();
         }
 
         private void Update()
         {
-            if (stage.monsterKillCount.Current != _killCount)
+            if (_monsterKill.Max != _killMax)
             {
-                killText.text = stage.monsterKillCount.Current.ToString();
-                _killCount = stage.monsterKillCount.Current;
+                maxKillText.text = _monsterKill.Max.ToString();
+                _killMax = _monsterKill.Max;
+            }
+                
+            if (_monsterKill.Current != _killCount)
+            {
+                killText.text = _monsterKill.Current.ToString();
+                _killCount = _monsterKill.Current;
             }
 
             if (stage.isStageClear)

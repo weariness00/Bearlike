@@ -16,6 +16,8 @@ namespace Manager
         MoveLeft,
         MoveRight,
         
+        Dash,
+        
         Jump,
         
         StageSelect,

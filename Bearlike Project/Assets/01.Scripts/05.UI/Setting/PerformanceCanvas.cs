@@ -18,6 +18,11 @@ namespace UI
                 fpsToggle.isOn = PlayerPrefs.GetString(FPSPrefs) == "T";
                 display.OnFPS(fpsToggle.isOn);
             }
+            
+            fpsToggle.onValueChanged.AddListener((value) =>
+            {
+                display.OnFPS(value);
+            });
         }
 
         private void OnDestroy()

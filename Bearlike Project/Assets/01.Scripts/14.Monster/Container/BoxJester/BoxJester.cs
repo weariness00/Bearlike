@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using BehaviorTree.Base;
@@ -10,7 +9,7 @@ using Status;
 using UI.Status;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.VFX;
+using UnityEngine.Rendering;
 using DebugManager = Manager.DebugManager;
 using Random = UnityEngine.Random;
 
@@ -18,16 +17,19 @@ namespace Monster.Container
 {
     public class BoxJester : MonsterBase
     {
-        #region Property
+        #region Property//
         
         [Header("Animator")]
         [SerializeField] private BoxJesterAnimator animator;
         
         [Header("Teleport Properties")]
         [SerializeField] private Transform[] tpPlaces;
+        [SerializeField] private Transform[] cloneTPPlaces;
 
         [Header("HandAttack Properties")] 
         [SerializeField] private GameObject[] hands;
+        [SerializeField] private GameObject hand;
+        [SerializeField] private float punchTime;
         
         [Header("Hat")]
         [SerializeField] private GameObject[] hat;
@@ -38,23 +40,20 @@ namespace Monster.Container
         [SerializeField] private GameObject lazer;
         [SerializeField] private GameObject breath;
         [SerializeField] private GameObject cloneObject;
-        
-        [Header("VFX Properties")]
-        [SerializeField] private VisualEffect tpEffect;
-        [SerializeField] private VisualEffect darknessAttackEffect;
-        [SerializeField] private VisualEffect HandLazerEffect;
 
         [Header("Effect")] 
         [SerializeField] private Material bloodShieldMat;
+
+        public GameObject ui;
         
         private static readonly int Dissolve = Shader.PropertyToID("_Dissolve");
         
         [Networked] public NetworkId OwnerId { get; set; }
         
-        // public SoundBox soundBox;
         private BehaviorTreeRunner _behaviorTreeRunner;
         private GameObject[] _players;
         private GameObject[] _masks;
+        private GameObject _handModel;
         
         enum MaskType
         {
@@ -71,20 +70,21 @@ namespace Monster.Container
         private bool _animationing = false;
         
         public int hatCount;
-        private readonly int HATNUM = 4;
+        private readonly int HATNUM = 5;
+
+        private readonly float _punchAttackDistance = 50.0f;
+
+        public bool isCloneSpawned = false;
         
         #endregion
 
-
         #region Unity Event Function
 
-        void Awake()
+        public override void Awake()
         {
             base.Awake();
             
             animator = GetComponentInChildren<BoxJesterAnimator>();
-            
-            tpEffect.SetFloat("Time", animator.tpClip.length);
 
             var bloodShieldRenderer = transform.Find("ShieldEffect").GetComponent<Renderer>();
             bloodShieldMat = bloodShieldRenderer.material;
@@ -96,6 +96,8 @@ namespace Monster.Container
             _masks[0] = boxJester.Find("Smile_Face").gameObject;
             _masks[1] = boxJester.Find("Sad_Face").gameObject;
             _masks[2] = boxJester.Find("Angry_Face").gameObject;
+
+            _handModel = transform.Find("Clown").Find("Hand").gameObject;
         }
         
         #endregion
@@ -105,10 +107,6 @@ namespace Monster.Container
         public override void Spawned()
         {
             base.Spawned();
-            tpEffect.SendEvent("StopPlay");
-            darknessAttackEffect.SendEvent("StopPlay");
-            HandLazerEffect.gameObject.SetActive(false);
-
             // TP Position 넣기
             // Transform rootTrans = transform.root.Find("TPPosition"); // pool에 들어가는 경우
             Transform rootTrans = GameObject.Find("Boss Stage").transform.Find("TPPosition"); // 안들어가는 경우
@@ -127,6 +125,23 @@ namespace Monster.Container
             {
                 DebugManager.LogError($"BoxJester의 TPPosition이 NULL입니다.");
             }
+            
+            // Clone TP
+            rootTrans = GameObject.Find("Boss Stage").transform.Find("CloneTPPosition"); // 안들어가는 경우
+
+            if (rootTrans != null)
+            {
+                cloneTPPlaces = new Transform[rootTrans.childCount];
+
+                for (int i = 0; i < rootTrans.childCount; ++i)
+                {
+                    cloneTPPlaces[i] = rootTrans.GetChild(i);
+                }
+            }
+            else
+            {
+                DebugManager.LogError($"BoxJester의 CloneTPPosition이 NULL입니다.");
+            }
 
             
             // Hat Position 넣기
@@ -139,7 +154,6 @@ namespace Monster.Container
 
                 for (int i = 0; i < rootTrans.childCount; ++i)
                 {
-                    DebugManager.Log($"HatPlaces[i] : {hatPlaces[i]}, rootTrans.GetChild(i) : {rootTrans.GetChild(i)}");
                     hatPlaces[i] = rootTrans.GetChild(i);
                 }
             }
@@ -156,9 +170,38 @@ namespace Monster.Container
             }
             _players = playerObjects.ToArray();
 
+            DieAction += () =>
+            {
+                AnimatorActiveRPC(true);
+                HandActiveRPC(true);           
+                ui.SetActive(false);
+                animator.PlayDieAction();
+                Destroy(gameObject, 3);
+            };
+
             OwnerId = gameObject.GetComponent<NetworkObject>().Id;
         }
         
+        private void OnCollisionEnter(Collision other)
+        {
+            StatusBase otherStatus = null;
+
+            if (status.IsDie == false)
+            {
+                if (true == other.gameObject.CompareTag("Player"))
+                {
+                    if (other.gameObject.TryGetComponent(out otherStatus) ||
+                        other.transform.root.gameObject.TryGetComponent(out otherStatus))
+                    {
+                        status.AddAdditionalStatus(otherStatus);
+                        // otherStatus.ApplyDamageRPC(status.CalDamage(out bool isCritical),
+                        //     isCritical ? DamageTextType.Critical : DamageTextType.Normal, OwnerId);
+                        otherStatus.ApplyDamageRPC(5, DamageTextType.Normal, OwnerId);
+                        status.RemoveAdditionalStatus(otherStatus);
+                    }
+                }
+            }
+        }
         
         #endregion
 
@@ -295,16 +338,14 @@ namespace Monster.Container
                     playerPosition = player.transform.position;
                 }
             }
-
+            
             float time = 0.0f;
             
-            while (true)
+            while (time < 1.0f)
             {
-                time += 0.01f;
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(new Vector3(playerPosition.x, 0, playerPosition.z)), time);
-                yield return new WaitForSeconds(0.01f);
-                if(time > 1.0f)
-                    yield break;
+                time += Time.deltaTime;
+                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(new Vector3(playerPosition.x, 0, playerPosition.z) - new Vector3(transform.position.x, 0, transform.position.z)), time);
+                yield return null;
             }
         }
         
@@ -334,7 +375,6 @@ namespace Monster.Container
         {
             if (false == _animationing)
             {
-                tpEffect.SendEvent("OnPlay");
                 animator.PlayTeleport();
                 _animationing = true;
             }
@@ -381,7 +421,6 @@ namespace Monster.Container
             if (false == _animationing)
             {
                 animator.PlaySmokingAttack();
-                darknessAttackEffect.SendEvent("OnPlay");
                 _animationing = true;
                 
                 Runner.SpawnAsync(breath, transform.position, transform.rotation, null,
@@ -425,6 +464,8 @@ namespace Monster.Container
         {
             if (false == _animationing)
             {
+                StartCoroutine(RotationCoroutine());
+                
                 int tmp = Random.Range(0, 3);
 
                 while (tmp == (int)(_maskType))
@@ -468,11 +509,11 @@ namespace Monster.Container
 
         private INode.NodeState PunchReady()
         {
-            // TODO : 코루틴으로 시간 맞춰서 주먹을 움직여야함
-            // TODO : 아니면 애니메이션을 두개로 쪼개야함
-            // 주먹질 애니메이션 실행
             if (false == _animationing)
             {
+                StartCoroutine(RotationCoroutine());
+                
+                GameObject playerObject = _players[0];
                 // Calculation
                 targetPosition = new Vector3(0, 0, 0);
                 fakeTargetPosition = new Vector3(0, 0, 0);
@@ -484,34 +525,37 @@ namespace Monster.Container
                     var distance = (int)(math.distance(player.transform.position, transform.position));
                     if (minDistance > distance)
                     {
+                        playerObject = player;
                         minDistance = distance;
-                        targetPosition = player.transform.position + new Vector3(0, 0.75f, 0);
+                        targetPosition = player.transform.position + new Vector3(0, 2f, 0);
                         fakeTargetPosition = targetPosition;
                     }
                 }
                 
-                // 공격 범위를 지정해서 구현할까? => 고민 필요
-                // if (attackDistance < minDistance)
-                //     return INode.NodeState.Failure;
+                if (_punchAttackDistance < minDistance)
+                    return INode.NodeState.Failure;
                 
-                // Animation Play
-                animator.PlayPunchReadyAction();
-                _animationing = true;
-
                 foreach(var player in _players)
                 {
                     if (_players.Length < 2)
                     {
-                        fakeTargetPosition = transform.position + new Vector3(0, 10, 0);
+                        fakeTargetPosition = transform.position + new Vector3(0, 20, 0);
                     }
-                    else if (player.transform.position != targetPosition)
+                    else if (playerObject != player)
                     {
                         fakeTargetPosition = (player.transform.position + targetPosition) / 2;
                         break;
-                    }        
+                    }
                 }
 
+                if (_punchAttackDistance < math.distance(transform.position, fakeTargetPosition))
+                    return INode.NodeState.Failure;
+                
                 type = Random.Range(0, 2);
+                
+                // Animation Play
+                animator.PlayPunchReadyAction();
+                _animationing = true;
             }
 
             if (false == animator.PunchReadyTimerExpired)
@@ -526,23 +570,69 @@ namespace Monster.Container
         
         private INode.NodeState Punching()
         {
-            // TODO : 코루틴으로 시간 맞춰서 주먹을 움직여야함
-            // TODO : 아니면 애니메이션을 두개로 쪼개야함
-            
-            // TODO : 먼저 몸을 돌려야 자연스럽지 않을까?
-            
-            
             if (false == _animationing)
             {
-                // dotween으로 주먹 이동 및 충돌 처리
-                PunchAttackRPC(type, targetPosition);
+                HandActiveRPC(false);
+                
+                GameObject playerObject = _players[0];
+                // Calculation
+                targetPosition = new Vector3(0, 0, 0);
+                fakeTargetPosition = new Vector3(0, 0, 0);
+                minDistance = int.MaxValue;
+            
+                // 가까운 대상 계산
+                foreach(var player in _players)
+                {
+                    var distance = (int)(math.distance(player.transform.position, transform.position));
+                    if (minDistance > distance)
+                    {
+                        playerObject = player;
+                        minDistance = distance;
+                        targetPosition = player.transform.position + new Vector3(0, 2f, 0);
+                        fakeTargetPosition = targetPosition;
+                    }
+                }
+                
+                if (_punchAttackDistance < minDistance)
+                    return INode.NodeState.Failure;
+                
+                foreach(var player in _players)
+                {
+                    if (_players.Length < 2)
+                    {
+                        fakeTargetPosition = transform.position + new Vector3(0, 20, 0);
+                    }
+                    else if (playerObject != player)
+                    {
+                        fakeTargetPosition = (player.transform.position + targetPosition) / 2;
+                        break;
+                    }
+                }
+
+                if (_punchAttackDistance < math.distance(transform.position, fakeTargetPosition))
+                    return INode.NodeState.Failure;
+                
+                Runner.SpawnAsync(hand, _handModel.transform.position, transform.rotation, null,
+                    (runner, o) =>
+                    {
+                        var h = o.GetComponent<BoxJesterAttackHand>();
+
+                        h.OwnerId = OwnerId;
+                        h.targetPosition = targetPosition;
+                        h.handType = type;
+                        h.isFake = false;
+                        h.time = punchTime;
+                    });
+                
                 animator.PlayPunchAction();
                 _animationing = true;
             }
 
             if (false == animator.PunchTimerExpired)
                 return INode.NodeState.Running;
-
+            
+            HandActiveRPC(true);
+            
             _animationing = false;
             DebugManager.Log($"Punching");
             
@@ -551,16 +641,61 @@ namespace Monster.Container
         
         private INode.NodeState FakePunching()
         {
-            // TODO : 코루틴으로 시간 맞춰서 주먹을 움직여야함
-            // TODO : 아니면 애니메이션을 두개로 쪼개야함
-            
-            // TODO : 먼저 몸을 돌려야 자연스럽지 않을까?
-            
-            
             if (false == _animationing)
             {
-                // dotween으로 주먹 절반 이동 및 다른 방향으로 다시 이동 및 충돌 처리
-                FakePunchAttackRPC(type, targetPosition, fakeTargetPosition);
+                HandActiveRPC(false);
+                
+                GameObject playerObject = _players[0];
+                // Calculation
+                targetPosition = new Vector3(0, 0, 0);
+                fakeTargetPosition = new Vector3(0, 0, 0);
+                minDistance = int.MaxValue;
+            
+                // 가까운 대상 계산
+                foreach(var player in _players)
+                {
+                    var distance = (int)(math.distance(player.transform.position, transform.position));
+                    if (minDistance > distance)
+                    {
+                        playerObject = player;
+                        minDistance = distance;
+                        targetPosition = player.transform.position + new Vector3(0, 2f, 0);
+                        fakeTargetPosition = targetPosition;
+                    }
+                }
+                
+                if (_punchAttackDistance < minDistance)
+                    return INode.NodeState.Failure;
+                
+                foreach(var player in _players)
+                {
+                    if (_players.Length < 2)
+                    {
+                        fakeTargetPosition = transform.position + new Vector3(0, 20, 0);
+                    }
+                    else if (playerObject != player)
+                    {
+                        fakeTargetPosition = (player.transform.position + targetPosition) / 2;
+                        break;
+                    }
+                }
+
+                if (_punchAttackDistance < math.distance(transform.position, fakeTargetPosition))
+                    return INode.NodeState.Failure;
+                
+                Runner.SpawnAsync(hand, _handModel.transform.position, transform.rotation, null,
+                    (runner, o) =>
+                    {
+                        var h = o.GetComponent<BoxJesterAttackHand>();
+
+                        h.OwnerId = OwnerId;
+                        h.targetPosition = targetPosition;
+                        h.fakeTargetPosition = fakeTargetPosition;
+                        h.handType = type;
+                        h.isFake = true;
+                        h.time = punchTime;
+                    });
+                
                 animator.PlayPunchAction();
                 _animationing = true;
             }
@@ -568,6 +703,8 @@ namespace Monster.Container
             if (false == animator.PunchTimerExpired)
                 return INode.NodeState.Running;
 
+            HandActiveRPC(true);
+            
             _animationing = false;
             DebugManager.Log($"Fake Punching");
             
@@ -576,6 +713,8 @@ namespace Monster.Container
 
         private INode.NodeState ClonePattern()
         {
+            if (isCloneSpawned) return INode.NodeState.Failure;
+            
             if (false == _animationing)
             {
                 animator.PlayCloneAction();
@@ -588,16 +727,17 @@ namespace Monster.Container
             _animationing = false;
             DebugManager.Log($"Clone Pattern");
 
-            int randomPlace = Random.Range(0, tpPlaces.Length);
+            int randomPlace = Random.Range(0, cloneTPPlaces.Length);
             
-            while(randomPlace == _tpPlaceIndex)
-                randomPlace = Random.Range(0, tpPlaces.Length);
-            
-            Runner.SpawnAsync(cloneObject, tpPlaces[randomPlace].position, transform.rotation, null,
+            Runner.SpawnAsync(cloneObject, cloneTPPlaces[randomPlace].position, transform.rotation, null,
                 (runner, o) =>
                 {
                     var h = o.GetComponent<BoxJesterClone>();
+
+                    h.OwnerId = OwnerId;
                 });
+            
+            isCloneSpawned = true;
             
             return INode.NodeState.Success;
         }
@@ -714,6 +854,8 @@ namespace Monster.Container
         {
             if (_animationing == false)
             {
+                StartCoroutine(RotationCoroutine());
+                
                 hatCount = HATNUM;
                 animator.PlayHatAction();
                 _animationing = true;
@@ -730,32 +872,21 @@ namespace Monster.Container
 
                 foreach (var index in indexList)
                 {
-                    Runner.SpawnAsync(hat[0].gameObject, hatPlaces[index].position, transform.rotation, null,
-                        (runner, o) =>
-                        {
-                            var h = o.GetComponent<BoxJesterHat>();
-                            h.OwnerId = OwnerId;
-                            h.hatType = 0;
-                        });
+                        Runner.SpawnAsync(hat[0].gameObject, hatPlaces[index].position, transform.rotation, null,
+                            (runner, o) =>
+                            {
+                                var h = o.GetComponent<BoxJesterHat>();
+                                h.OwnerId = OwnerId;
+                            });
+                        DebugManager.Log("BlueHat Spawn");
                 }
-                
-                // foreach (var hatplace in hatPlaces)
-                // {
-                //     Runner.SpawnAsync(hat[0].gameObject, hatplace.position, transform.rotation, null,
-                //         (runner, o) =>
-                //         {
-                //             var h = o.GetComponent<BoxJesterHat>();
-                //             h.OwnerId = OwnerId;
-                //             h.hatType = 0;
-                //         });
-                // }
             }
             if (false == animator.HatTimerExpired)
                 return INode.NodeState.Running;
 
             _animationing = false;
             DebugManager.Log($"Break Hat");
-            // 모자 소환 후 모자를 정속성으로 생성
+            
             return INode.NodeState.Success;
         }
         
@@ -763,7 +894,7 @@ namespace Monster.Container
         {
             DebugManager.Log($"hatCount : {hatCount}");
             if (hatCount > 0)
-                status.ApplyHealRPC(10 * hatCount, OwnerId);   // 힐량은 밸런스 측정해서 하자
+                status.ApplyHealRPC(300 * hatCount, OwnerId);   // 힐량은 밸런스 측정해서 하자
             
             return INode.NodeState.Success;
         }
@@ -772,6 +903,8 @@ namespace Monster.Container
         {            
             if (_animationing == false)
             {
+                StartCoroutine(RotationCoroutine());
+                
                 hatCount = HATNUM;
                 animator.PlayHatAction();
                 _animationing = true;
@@ -793,20 +926,9 @@ namespace Monster.Container
                         {
                             var h = o.GetComponent<BoxJesterHat>();
                             h.OwnerId = OwnerId;
-                            h.hatType = 1;
                         });
+                    DebugManager.Log("RedHat Spawn");
                 }
-                
-                // foreach (var hatplace in hatPlaces)
-                // {
-                //     Runner.SpawnAsync(hat[1].gameObject, hatplace.position, transform.rotation, null,
-                //         (runner, o) =>
-                //         {
-                //             var h = o.GetComponent<BoxJesterHat>();
-                //             h.OwnerId = OwnerId;
-                //             h.hatType = 1;
-                //         });
-                // }
             }
             if (false == animator.HatTimerExpired)
                 return INode.NodeState.Running;
@@ -814,7 +936,7 @@ namespace Monster.Container
             _animationing = false;
             
             DebugManager.Log($"Non Break Hat");
-            // 모자 소환 후 모자를 역속성으로 생성
+            
             return INode.NodeState.Success;
         }
         
@@ -822,7 +944,7 @@ namespace Monster.Container
         {
             DebugManager.Log($"hatCount : {hatCount}");
             
-            if (hatCount < HATNUM)
+            if (hatCount > 0)
             {
                 foreach (var player in _players)
                 {
@@ -869,6 +991,8 @@ namespace Monster.Container
         {
             if (false == _animationing)
             {
+                StartCoroutine(RotationCoroutine());
+                
                 animator.PlayThrowBoomAction();
                 _animationing = true;
 
@@ -896,6 +1020,7 @@ namespace Monster.Container
                 (runner, o) =>
                 {
                     var h = o.GetComponent<BoxJesterBoom>();
+                    
                     h.OwnerId = OwnerId;
                     h.dir = transform.forward;
                 });
@@ -905,7 +1030,7 @@ namespace Monster.Container
         {
             if (false == _animationing)
             {
-                animator.networkAnimator.Animator.enabled = false;
+                AnimatorActiveRPC(false);
                 animator.PlaySlapAction();
                 _animationing = true;
                 
@@ -916,7 +1041,8 @@ namespace Monster.Container
                 return INode.NodeState.Running;
 
             _animationing = false;
-            animator.networkAnimator.Animator.enabled = true;
+            
+            AnimatorActiveRPC(true);
             DebugManager.Log($"Slap Attack");
             
             return INode.NodeState.Success;
@@ -960,7 +1086,7 @@ namespace Monster.Container
         #endregion
 
         #region RPC Fuction
-
+        
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void TPPositionRPC()
         {
@@ -989,61 +1115,9 @@ namespace Monster.Container
         #region Punch Attack
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        private void PunchAttackRPC(int type, Vector3 targetPosition)
+        private void HandActiveRPC(bool value)
         {
-            animator.networkAnimator.Animator.enabled = false;
-            hands[type].transform.DOMove(targetPosition, 2).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
-            
-            DebugManager.Log($"targetPosition : {targetPosition}");
-            
-            StartCoroutine(ComeBackPunchCoroutine(2, type));
-        }
-            
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void FakePunchAttackRPC(int type, Vector3 targetPosition, Vector3 fakeTargetPosition)
-        {
-            animator.networkAnimator.Animator.enabled = false;
-            hands[type].transform.DOMove(fakeTargetPosition, 1).SetEase(Ease.OutCirc); // TODO : 공격 속도를 변수처리 해야함
-
-            StartCoroutine(RealTartgetMoveCoroutine(1.0f, type, targetPosition));
-            StartCoroutine(ComeBackPunchCoroutine(2, type));
-        }
-
-        private IEnumerator RealTartgetMoveCoroutine(float waitTime, int type, Vector3 targetPosition)
-        {
-            yield return new WaitForSeconds(waitTime);
-            RealPunchAttackRPC(type, targetPosition);
-        }
-        
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void RealPunchAttackRPC(int type, Vector3 targetPosition)
-        {
-            hands[type].transform.DOMove(targetPosition, 1).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
-        }
-
-        private IEnumerator ComeBackPunchCoroutine(float waitTime, int type)
-        {
-            yield return new WaitForSeconds(waitTime);
-
-            ComeBackPunchRPC(type);
-            yield return new WaitForSeconds(1.0f);
-            AnimatorOnRPC();
-        }
-        
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void ComeBackPunchRPC(int type)
-        {
-            float tmp = 3f;
-            if (type == 0)
-                tmp = -3f;
-            
-            hands[type].transform.DOLocalMove(new Vector3(tmp, 4f, 3f), 1).SetEase(Ease.InCirc); // TODO : 공격 속도를 변수처리 해야함
-        }
-        
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void AnimatorOnRPC()
-        {
-            animator.networkAnimator.Animator.enabled = true;
+            _handModel.SetActive(value);
         }
 
         #endregion
@@ -1081,15 +1155,15 @@ namespace Monster.Container
         }
         
         #endregion
-        
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        public void DestroyHatRPC()
-        {
-            hatCount -= 1;
-        }
 
         #region Slap
 
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void AnimatorActiveRPC(bool value)
+        {
+            animator.networkAnimator.Animator.enabled = value;
+        }
+        
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void SlapStartRPC()
         {

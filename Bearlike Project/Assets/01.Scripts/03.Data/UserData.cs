@@ -100,8 +100,8 @@ namespace Data
         {
             if (UserDictionary.TryGet(playerRef, out var data))
             {
-                UserDictionary.Remove(playerRef);
                 UserLeftAction?.Invoke(playerRef);
+                UserDictionary.Remove(playerRef);
             }
         }
 

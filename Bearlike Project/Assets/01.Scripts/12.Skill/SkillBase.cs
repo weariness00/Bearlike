@@ -118,7 +118,7 @@ namespace Skill
         public virtual void LevelUp(int upAmount = 1, bool isAddInventory = true)
         {
             level.Current += upAmount;
-            if(isAddInventory) ownerPlayer.skillInventory.AddItem(this);
+            if(isAddInventory) ownerPlayer.uiController.skillInventory.AddItem(this);
             ExplainUpdate();
             
             EventBusManager.Publish(EventBusType.SkillLevelUp, this);

@@ -10,6 +10,7 @@ using Photon;
 using Status;
 using UI.Status;
 using UnityEngine;
+using Util.UnityEventComponent;
 
 namespace Skill.Support
 {
@@ -27,31 +28,32 @@ namespace Skill.Support
         private readonly HashSet<GameObject> _damageMonsterSet = new HashSet<GameObject>(); // 이미 대미지를 입은 대상은 대미지를 다시 입으면 안됨으로 사용
         
         private StatusBase _status;
+        private int skillLevel;
 
         private Vector3 _destinationPosition; // 도미노가 닿을 목적지
 
         private void Awake()
         {
+            damageDominoObject.AddOnTriggerEnter(other =>
+            {
+                DebugManager.Log("충돌 도미노");
+                var ms = other.GetComponentInParent<MonsterStatus>();
+                if (ms)
+                {
+                    // 타격을 입은 몬스터인지 확인
+                    if (_damageMonsterSet.Contains(ms.gameObject) == false)
+                    {
+                        ms.ApplyDamageRPC(_status.AddAllDamage() * skillLevel, DamageTextType.Normal, Object.Id);
+
+                        _damageMonsterSet.Add(ms.gameObject);
+                    }
+                }
+            });
+            
             damageDominoObject.SetActive(false);
             collisionEffectObject.SetActive(false);
             _animator = GetComponent<Animator>();
             _animator.enabled = false;
-        }
-
-        private void OnTriggerEnter(Collider other)
-        {
-            DebugManager.Log("충돌 도미노");
-            if (other.TryGetComponent(out ColliderStatus cs))
-            {
-                StatusBase otherStatus = cs.originalStatus;
-                // 타격을 입은 몬스터인지 확인
-                if (_damageMonsterSet.Contains(otherStatus.gameObject) == false)
-                {
-                    otherStatus.ApplyDamageRPC(_status.CalDamage(out bool isCritical), isCritical ? DamageTextType.Critical : DamageTextType.Normal, Object.Id);
-
-                    _damageMonsterSet.Add(otherStatus.gameObject);
-                }
-            }
         }
 
         public override void Spawned()
@@ -59,11 +61,14 @@ namespace Skill.Support
             base.Spawned();
             transform.position -= transform.forward * transform.localScale.magnitude * 2f;
             
-            var skill = Runner.FindObject(SkillId);
-            if (skill && 
-                skill.TryGetComponent(out _status))
+            var skillObj = Runner.FindObject(SkillId);
+            if (skillObj && 
+                skillObj.TryGetComponent(out SkillBase skill))
             {
-                StartCoroutine(UpdateCoroutine());
+                _status = skill.status;
+                skillLevel = skill.level.Current;
+                _animator.enabled = true;
+                wallDownAudio.Play();
             }
             else
             {
@@ -71,18 +76,20 @@ namespace Skill.Support
             }
         }
 
-        private IEnumerator UpdateCoroutine()
-        {
-            _animator.enabled = true;
-            wallDownAudio.Play();
-            yield return new WaitForSeconds(downClip.length * 2f);
+        #region Animation Clip Event Function
 
-            collisionEffectObject.SetActive(true);
+        private void AttackStart()
+        {
             damageDominoObject.SetActive(true);
-            
-            yield return new WaitForSeconds(2f);
-            
-            Destroy(gameObject);
         }
+
+        private void AttackEnd()
+        {
+            damageDominoObject.SetActive(false);
+            collisionEffectObject.SetActive(true);
+            Destroy(gameObject, 2f);
+        }
+        
+        #endregion
     }
 }

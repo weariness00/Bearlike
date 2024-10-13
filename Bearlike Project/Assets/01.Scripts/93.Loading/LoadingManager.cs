@@ -39,9 +39,12 @@ namespace Loading
         // 초기화
         public static void Initialize()
         {
+            if(Instance.isDebug) DebugManager.Log("Loading 초기화");
+
             StartAction = null;
             EndAction = null;
             LoadingProcessSuccess = null;
+            Instance.isLoading = false;
 
             Instance.refValue.Max = 0;
             Instance._waitCount = 0;
@@ -66,6 +69,7 @@ namespace Loading
             
             --Instance._waitCount;
             Instance._downByte.Current += downByte;
+            ++Instance.refValue.Current;
 
             if (Instance._waitCount <= 0)
             {
@@ -91,11 +95,9 @@ namespace Loading
 
         private void AddWaitDownByte(int downByte = 0)
         {
-            if(isDebug) DebugManager.Log("Loading 추가");
-            
             if (isLoading == false)
             {
-                DebugManager.Log($"Loading 시작");
+                if(isDebug) DebugManager.Log($"Loading 시작");
                 
                 _waitCount = 0;
                 _downByte.Max = 0;
@@ -105,15 +107,18 @@ namespace Loading
                 isLoading = true;
             }
 
+            if(isDebug) DebugManager.Log("Loading 추가");
+
             ++refValue.Max;
             ++_waitCount;
             _downByte.Max += downByte;
         }
-        
+
+        private Coroutine _endWaitCoroutine;
         private void EndWaitActionEvent()
         {
-            StopCoroutine(EndWaitCoroutine());
-            StartCoroutine(EndWaitCoroutine());
+            if(_endWaitCoroutine != null) StopCoroutine(_endWaitCoroutine); 
+            _endWaitCoroutine = StartCoroutine(EndWaitCoroutine());
         }
         private IEnumerator EndWaitCoroutine()
         {
@@ -121,10 +126,9 @@ namespace Loading
 
             if (_waitCount <= 0)
             {
-                DebugManager.Log($"Loading 완료");
+                if(isDebug) DebugManager.Log($"Loading 완료");
 
                 EndAction?.Invoke();
-                ++refValue.Current;
                 isLoading = false;
             }
         }

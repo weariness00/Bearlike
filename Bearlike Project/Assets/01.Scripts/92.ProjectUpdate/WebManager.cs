@@ -12,6 +12,13 @@ namespace ProjectUpdate
     public class WebManager : Singleton<WebManager>
     {
         public WebServerInfo webServerInfo;
+
+        /// <summary>
+        /// 서버가 연결되었는지 확인
+        /// 코루틴으로 확인함으로 바로 확인은 불가능
+        /// </summary>
+        /// <param name="action">bool을 인자로 받는 이벤트 함수</param>
+        public static void IsConnect(Action<bool> action) => Instance.StartCoroutine(Instance.IsConnectCoroutine(action));
         
         public static async Task<byte[]> DownloadByteAsync(string url)
         {
@@ -44,6 +51,24 @@ namespace ProjectUpdate
 
         public static void DownloadJson(string url, string fileName,  Action<string> action = null, bool isLoop = false, bool isSave = false) => Instance.StartCoroutine(Instance.DownloadJsonCoroutine(new WebDownInfo(url, fileName), action, isLoop, isSave));
         public static void DownloadJson(WebDownInfo info,  Action<string> action = null, bool isLoop = false, bool isSave = false) => Instance.StartCoroutine(Instance.DownloadJsonCoroutine(info, action, isLoop, isSave));
+
+        IEnumerator IsConnectCoroutine(Action<bool> action)
+        {
+            using UnityWebRequest webRequest = UnityWebRequest.Get(webServerInfo.DefaultURL);
+            yield return webRequest.SendWebRequest();
+            
+            // 응답 처리
+            if (webRequest.result == UnityWebRequest.Result.ConnectionError || webRequest.result == UnityWebRequest.Result.ProtocolError)
+            {
+                action?.Invoke(false);
+                DebugManager.LogError("서버에 연결할 수 없습니다: " + webRequest.error);
+            }
+            else
+            {
+                action?.Invoke(true);
+                DebugManager.Log("서버가 정상적으로 작동 중입니다.");
+            }
+        }
         
         /// <summary>
         /// 웹에서 Json 파일 다운로드

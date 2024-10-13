@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Data;
 using Fusion;
@@ -18,11 +19,12 @@ namespace UI
         #region Network Variable
 
         private ChangeDetector _changeDetector;
+        private bool isSpawned = false;
         [Networked] public NetworkBool IsSettingUI { get; set; }
         [Networked] [Capacity(3)] private NetworkArray<NetworkBool> NetworkReadyArray { get; } // 투표를 마치고 준비가 되었는지
         [Networked] [Capacity(2)] public NetworkArray<int> StageVoteCount { get; }
         [Networked] [Capacity(2)] public NetworkArray<StageType> NetworkStages { get; }
-
+        
         #endregion
 
         public List<StageData> nextStageList = new List<StageData>();
@@ -42,8 +44,30 @@ namespace UI
             StageBase.StageClearAction -= SettingStageInfo;
         }
 
+        private void Update()
+        {
+            if(!isSpawned) return;
+            if (IsSettingUI)
+            {
+                if (Input.GetKeyDown(KeyCode.Alpha1))
+                {
+                    stageSelectUIHandlerList[0].toggle.isOn = !stageSelectUIHandlerList[0].toggle.isOn;
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha2))
+                {
+                    stageSelectUIHandlerList[1].toggle.isOn = !stageSelectUIHandlerList[1].toggle.isOn;
+                }
+
+                if (Input.GetKeyDown(KeyCode.Return))
+                {
+                    selectToggle.isOn = !selectToggle.isOn;
+                }
+            }
+        }
+
         public override void Spawned()
         {
+            isSpawned = true;
             _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
             
             clientNumber = UserData.Instance.UserDictionary.Get(Runner.LocalPlayer).ClientNumber;
@@ -113,8 +137,6 @@ namespace UI
         public void Ready(bool value)
         {
             ReadyRPC(clientNumber, value);
-            
-            DebugManager.ToDo("투표 관련 UI도 만들어주고 업데이트 해줘야한다.");
         }
 
         public void SettingStageInfo()
@@ -125,7 +147,6 @@ namespace UI
                 return;
             }
 
-            // 스테이지 최대치이면 보스 스테이지로 가도록 하기
             NetworkStages.Clear();
             for (int i = 0; i < NetworkStages.Length; i++)
             {
@@ -154,6 +175,7 @@ namespace UI
             for (int i = 0; i < NetworkStages.Length; i++)
             {
                 StageData stageData;
+                // 스테이지 최대치이면 보스 스테이지로 가도록 하기
                 if (GameManager.Instance.stageCount.isMax)
                 {
                     stageData = GameManager.Instance.GetBossStage();
@@ -199,18 +221,20 @@ namespace UI
             if (Runner.IsServer)
             {
                 int bicSelectIndex = 0;
+                int index = 0;
                 for (int i = 0; i < StageVoteCount.Length; i++)
                 {
                     int vote = StageVoteCount.Get(i);
                     if (bicSelectIndex < vote)
                     {
-                        bicSelectIndex = i;
+                        bicSelectIndex = vote;
+                        index = i;
                     }
                 }
 
                 IsSettingUI = false;
 
-                GameManager.Instance.SetStage(nextStageList[bicSelectIndex]);
+                GameManager.Instance.SetStage(nextStageList[index]);
             }
 
             foreach (var stageSelectUIHandler in stageSelectUIHandlerList)

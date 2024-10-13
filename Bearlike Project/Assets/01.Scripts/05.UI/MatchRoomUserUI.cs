@@ -32,22 +32,14 @@ namespace UI
         private void Start()
         {
             UserData.Instance.UserJoinAction += UserActionToDataUpdate;
-            UserData.Instance.UserLeftAction += UserActionToDataUpdate;
+            UserData.Instance.UserLeftAction += PlayerLeft;
             UserData.Instance.NameUpdateAfterAction += DataUpdateRPC;
-        }
-
-        private void Update()
-        {   
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                OnExit();
-            }
         }
 
         private void OnDestroy()
         {
             UserData.Instance.UserJoinAction -= UserActionToDataUpdate;
-            UserData.Instance.UserLeftAction -= UserActionToDataUpdate;
+            UserData.Instance.UserLeftAction -= PlayerLeft;
         }
 
         public override void Spawned()
@@ -70,6 +62,12 @@ namespace UI
     
         #endregion
 
+        private void PlayerLeft(PlayerRef player)
+        {
+            var clientNumber = UserData.GetClientNumber(player);
+            users_Text[clientNumber].text = "Unknown";
+        }
+        
         // UserData의 Action들에 넣고 뺼 용으로 사용하는 함수
         private void UserActionToDataUpdate(PlayerRef playerRef) => DataUpdateRPC();
         [Rpc(RpcSources.All,RpcTargets.All)]

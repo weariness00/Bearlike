@@ -29,8 +29,14 @@ namespace Player
         public Camera weaponCamera;
         public Camera uiCamera;
         public Camera fullScreenCamera;
+        
+        [Header("1인칭")]
         public Vector3 firstOffset;
+        public Quaternion firstRotateOffset;
+        
+        [Header("3인칭")]
         public Vector3 thirdOffset;
+        public Quaternion thirdRotateOffset;
 
         private Volume _globalVolume;
 
@@ -66,7 +72,7 @@ namespace Player
             TargetCameraAddOverlay(1,fullScreenCamera);
             TargetCameraAddOverlay(2,uiCamera);
 
-            StartCoroutine(WeaponCameraShake());
+            // StartCoroutine(WeaponCameraShake());
         }
 
         public void ChangeCameraMode(CameraMode mode)
@@ -96,8 +102,8 @@ namespace Player
         {
             Transform targetCameraTransform = targetCamera.transform;
 
-            targetCameraTransform.localPosition = Vector3.zero;
             targetCameraTransform.localPosition = firstOffset;
+            targetCameraTransform.localRotation = firstRotateOffset;
             
             weaponCamera.enabled = true;
         }
@@ -106,8 +112,8 @@ namespace Player
         {
             Transform targetCameraTransform = targetCamera.transform;
             
-            targetCameraTransform.localPosition = Vector3.zero;
             targetCameraTransform.localPosition = thirdOffset;
+            targetCameraTransform.localRotation = thirdRotateOffset;
 
             weaponCamera.enabled = false;
         }

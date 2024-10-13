@@ -17,6 +17,8 @@ namespace Manager
             Instance._isAdd = true;
         }
 
+        public static GameObject[] Dequeue() => Instance._ActiveUIQueue.Dequeue();
+        
         public static bool HasActiveUI() => Instance._ActiveUIQueue.IsEmpty() == false || Instance._isAdd;
 
         #endregion
@@ -36,8 +38,6 @@ namespace Manager
             {
                 if (_ActiveUIQueue.IsEmpty() == false)
                 {
-                    Cursor.lockState = CursorLockMode.None;
-
                     var queue = _ActiveUIQueue.Dequeue();
                     foreach (var o in queue)
                         if(o) o.SetActive(false);

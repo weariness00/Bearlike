@@ -1,24 +1,19 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using Aggro;
 using Data;
 using Fusion;
 using Fusion.Addons.SimpleKCC;
 using GamePlay;
-using GamePlay.UI;
-using Item;
 using Loading;
 using Manager;
 using Photon;
+using Player.Container;
 using Skill;
 using Status;
-using UI;
-using UI.Skill;
-using UI.Status;
-using UI.Weapon;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
-using User;
 using Weapon;
 using Weapon.Gun;
 
@@ -47,112 +42,132 @@ namespace Player
         public Sprite icon;
         
         // public Status status;
-        [Header("컴포넌트")] 
+        [Header("Player Related")] 
         public PlayerStatus status;
+        public PlayerUIController uiController;
         public PlayerCameraController cameraController;
+        public PlayerWeaponCameraController weaponCameraController;
         public PlayerSoundController soundController;
+        public PlayerRigController rigController;
         public SkillSystem skillSystem;
         public WeaponSystem weaponSystem;
-        public Canvas gunUI;
-        public Canvas hpUI;
-        public ItemInventory itemInventory;
-        public SkillInventory skillInventory;
-        public SkillSelectUI skillSelectUI;
-        public SkillCanvas skillCanvas;
-        public PlayerEXP levelCanvas;
-        public BuffCanvas buffCanvas;
-        public GoodsCanvas goodsCanvas;
-        public GameProgressCanvas progressCanvas;
         public AggroTarget aggroTarget;
-        
-        public Animator animator;
-        [HideInInspector] public SimpleKCC simpleKcc;
-        [HideInInspector] public RigBuilder rigBuilder;
+        public NetworkMecanimAnimator networkAnimator;
+
         private HitboxRoot _hitboxRoot;
-        private Rig _headRig;
-        private StageSelectUI _stageSelectUI;
         
-        [Tooltip("마우스 움직임에 따라 회전할 오브젝트")] public GameObject mouseRotateObject;
+        [HideInInspector] public SimpleKCC simpleKcc;
+        [Tooltip("마우스 움직임에 따라 회전할 오브젝트")] public List<GameObject> mouseRotateObjects;
 
         public Action<GameObject> MonsterKillAction;
         public Action<int> AfterApplyDamageAction { get; set; }
-
+        
+        [Networked] public NetworkBool IsCursor { get; private set; } = false;
         [Networked] public float W { get; set; } = 1f;
-        private TickTimer _uiKeyDownTimer;
+        private TickTimer _dashTimer;
+
+        public float _dashAmount = 100.0f;
         
         private ChangeDetector _changeDetector;
         
-        #region Animation Parametar
+        #region Animation
 
-        private int _gunLayer;
+        [Networked] private NetworkBool IsMove { get; set; }
+        
+        private int OneHandGunLayer = 1;
+        private int TwoHandGunLayer = 2;
 
-        private static readonly int AniShoot = Animator.StringToHash("isShoot");
-        private static readonly int AniFrontMove = Animator.StringToHash("fFrontMove");
-        private static readonly int AniSideMove = Animator.StringToHash("fSideMove");
+        private static readonly int AniMovement = Animator.StringToHash("f Movement");
+        private static readonly int AniFainMove = Animator.StringToHash("f Faint Move");
+        private static readonly int AniShoot = Animator.StringToHash("tShoot");
         private static readonly int AniJump = Animator.StringToHash("tJump");
         private static readonly int AniInjury = Animator.StringToHash("tInJury");
-        private static readonly int AniRevive = Animator.StringToHash("tRevive");
-        private static readonly int AniInjuryMove = Animator.StringToHash("Faint");
         private static readonly int AniDie = Animator.StringToHash("tDead");
+        private static readonly int AniRevive = Animator.StringToHash("tRevive");
+
+        public void SetLayer(float weight = 1)
+        {
+            networkAnimator.Animator.SetLayerWeight(OneHandGunLayer, 0);
+            networkAnimator.Animator.SetLayerWeight(TwoHandGunLayer, 0);
+            if (weaponSystem.TryGetEquipGun(out GunBase gun))
+            {
+                switch (gun.handType)
+                {
+                    case GunBase.GunHandType.OneHand:
+                        networkAnimator.Animator.SetLayerWeight(OneHandGunLayer, weight);
+                        break;
+                    case GunBase.GunHandType.TwoHand:
+                        networkAnimator.Animator.SetLayerWeight(TwoHandGunLayer, weight);
+                        break;
+                }
+            }
+        }
         
         #endregion
 
         #region Unity Event Function
         private void Awake()
         {
-            LoadingManager.AddWait();
-            
-            // 임시로 장비 착용
-            // 상호작용으로 착요하게 바꿀 예정
             status = gameObject.GetComponent<PlayerStatus>();
+            uiController = GetComponentInChildren<PlayerUIController>();
             cameraController = GetComponent<PlayerCameraController>();
+            weaponCameraController = GetComponentInChildren<PlayerWeaponCameraController>();
             soundController = GetComponent<PlayerSoundController>();
+            rigController = GetComponentInChildren<PlayerRigController>();
             weaponSystem = gameObject.GetComponentInChildren<WeaponSystem>();
-            animator = GetComponentInChildren<Animator>();
+            networkAnimator = GetComponentInChildren<NetworkMecanimAnimator>();
             aggroTarget = GetComponent<AggroTarget>();
 
-            _stageSelectUI = FindObjectOfType<StageSelectUI>();
-
             _hitboxRoot = GetComponent<HitboxRoot>();
-            rigBuilder = GetComponentInChildren<RigBuilder>();
-            _headRig = rigBuilder.layers.Find(rig => rig.name == "Head Rig").rig;
+            
+            // 애니메이터
+            OneHandGunLayer = networkAnimator.Animator.GetLayerIndex("One Hand Gun");
+            TwoHandGunLayer = networkAnimator.Animator.GetLayerIndex("Two Hand Gun");
         }
 
         private void Start()
         {
-            status.LevelUpAction += () =>
-            {
-                if (HasInputAuthority)
-                {
-                    if (skillSelectUI.GetSelectCount() <= 0)
-                        skillSelectUI.SpawnRandomSkillBlocks(3);
-                    skillSelectUI.AddSelectCount();
-                }
-            };
-                
             aggroTarget.AddCondition(AggroCondition);
+        }
+
+        private void Update()
+        {
+            if (HasInputAuthority)
+            {
+                if (KeyManager.InputActionDown(KeyToAction.LockCursor))
+                {
+                    switch (Cursor.lockState)
+                    {
+                        case CursorLockMode.None:
+                            Cursor.lockState = CursorLockMode.Locked;
+                            SetIsCursorRPC(false);
+                            break;
+                        case CursorLockMode.Locked:
+                            Cursor.lockState = CursorLockMode.None;
+                            SetIsCursorRPC(true);
+                            break;
+                    }
+                }
+            }
         }
 
         public override void Spawned()
         {
+            base.Spawned();
+            LoadingManager.AddWait();
+
             _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
-
-            DebugManager.LogWarning("headRig를 Update에서 계속 바꿔주고 있는거고치기");
             
-            _gunLayer = animator.GetLayerIndex("Gun Layer");
-
             StatusInit();
 
-            _uiKeyDownTimer = TickTimer.CreateFromTicks(Runner, 1);
             Cursor.lockState = CursorLockMode.Locked;
             simpleKcc = gameObject.GetOrAddComponent<SimpleKCC>();
             simpleKcc.Collider.tag = "Player";
-            // simpleKcc.SetGravity(new Vector3(0, -9.8f, 0));
             
             // 무기 초기화
-            weaponSystem.equipment?.EquipAction?.Invoke(gameObject);
-            animator.SetLayerWeight(_gunLayer, 1);
-            
+            ChangeWeaponRPC(0);
+            SetLayer();
+
             // 스킬 초기화
             foreach (var skill in skillSystem.skillList)
             {
@@ -160,38 +175,31 @@ namespace Player
                 skill.Earn(gameObject);
             }
             
-            progressCanvas = FindObjectOfType<GameProgressCanvas>();
-            
             // 권한에 따른 초기화
             if (HasInputAuthority)
             {
                 Object.
                 name = "Local Player";
                 Runner.SetPlayerObject(Runner.LocalPlayer, Object);
-
-                status.InjuryAction += () => cameraController.ChangeCameraMode(CameraMode.ThirdPerson);
-                status.RecoveryFromInjuryAction += () => cameraController.ChangeCameraMode(CameraMode.FirstPerson);
-                status.ReviveAction += () => cameraController.ChangeCameraMode(CameraMode.Free);
-                status.RecoveryFromReviveAction += () => cameraController.ChangeCameraMode(CameraMode.FirstPerson);
-
-                CanvasActive(true);
                 
-                goodsCanvas.CottonCoinUpdate(UserInformation.Instance.cottonInfo.GetCoin());
+                rigController.EnableArmMesh();
+                
                 DebugManager.Log($"Set Player Object : {Runner.LocalPlayer} - {Object}");
             }
             else
             {
-                CanvasActive(false);
                 name = "Remote Player";
             }
+            
+            StartCoroutine(InitCoroutine());
 
-            SpawnedSuccessRPC(UserData.ClientNumber, true);
+            _dashTimer = TickTimer.CreateFromTicks(Runner, 0);
         }
 
         public override void FixedUpdateNetwork()
         {
             // 임시
-            _headRig.weight = W;
+            rigController.RigWeight = W;
             
             if(!GameManager.Instance.isControl)
                 return;
@@ -213,17 +221,14 @@ namespace Player
 
             if (GetInput(out PlayerInputData data))
             {
-                if (!data.Cursor)
+                if (!IsCursor)
                 {
                     MouseRotateControl(data.MouseAxis);
                     MoveControl(data);
                     WeaponControl(data);
                 }
                 else
-                    simpleKcc.Move();
-
-                if (HasInputAuthority)
-                    UISetting(data);
+                    simpleKcc.Move(Vector3.zero, Vector3.zero);
             }
         }
 
@@ -232,38 +237,63 @@ namespace Player
             base.Render();
             foreach (var change in _changeDetector.DetectChanges(this))
             {
-                switch (change)
+                switch (change) 
                 {
                     case nameof(IsSpawnSuccess):
                         if(IsSpawnSuccess) LoadingManager.EndWait();
                         break;
                 }
             }
+            
+            networkAnimator.Animator.SetFloat(AniFainMove, IsMove ? 1 : 0);
+            networkAnimator.Animator.SetFloat(AniMovement, IsMove ? 1 : 0);
         }
 
         #endregion
         
         #region Member Function
 
-        private void CanvasActive(bool value)
+        private IEnumerator InitCoroutine()
         {
-            gunUI.gameObject.SetActive(value);
-            hpUI.gameObject.SetActive(value);
-            levelCanvas.gameObject.SetActive(value);
-            buffCanvas.gameObject.SetActive(value);
-            goodsCanvas.gameObject.SetActive(value);
-            skillCanvas.gameObject.SetActive(value);
+            LoadingManager.AddWait();
+            
+            GameManager.Instance.isControl = false;
+            float t = 0;
+            while (t < 1)
+            {
+                t += Time.deltaTime;
+
+                simpleKcc.SetLookRotation(Vector3.Lerp(Vector3.zero, new Vector3(0,720,0), t));
+                yield return null;
+            }
+
+            GameManager.Instance.isControl = true;
+            
+            LoadingManager.EndWait();
+            SpawnedSuccessRPC(UserData.ClientNumber, true);
         }
         
         private void StatusInit()
         {
+            if (HasInputAuthority)
+            {
+                status.InjuryAction += rigController.DisableArmMesh;
+                status.RecoveryFromInjuryAction += rigController.EnableArmMesh;
+                status.RecoveryFromReviveAction += rigController.EnableArmMesh;
+
+                status.InjuryAction += () => cameraController.ChangeCameraMode(CameraMode.ThirdPerson);
+                status.RecoveryFromInjuryAction += () => cameraController.ChangeCameraMode(CameraMode.FirstPerson);
+                status.ReviveAction += () => cameraController.ChangeCameraMode(CameraMode.Free);
+                status.RecoveryFromReviveAction += () => cameraController.ChangeCameraMode(CameraMode.FirstPerson);
+            }
+            
             // Status 관련 초기화
             status.InjuryAction += () =>
             {
                 GameManager.Instance.AlivePlayerCount--;
 
-                animator.SetTrigger(AniInjury); 
-                animator.SetLayerWeight(_gunLayer, 0);
+                networkAnimator.SetTrigger(AniInjury, true);
+                SetLayer(0);
                 // _headRig.weight = 0;
                 W = 0;
                 simpleKcc.Collider.transform.localPosition = new Vector3(0.05f, 0.33f, -0.44f);
@@ -281,8 +311,8 @@ namespace Player
             {
                 GameManager.Instance.AlivePlayerCount++;
                 
-                animator.SetTrigger(AniRevive);
-                animator.SetLayerWeight(_gunLayer, 1);
+                networkAnimator.SetTrigger(AniRevive,true);
+                SetLayer(0);
                 W = 1;
                 simpleKcc.Collider.transform.localPosition = Vector3.zero;
                 simpleKcc.Collider.transform.localRotation = Quaternion.identity;
@@ -297,14 +327,14 @@ namespace Player
             };
             status.ReviveAction += () =>
             {
-                animator.SetTrigger(AniDie);
+                networkAnimator.SetTrigger(AniDie, true);
             };
             status.RecoveryFromReviveAction += () =>
             {
                 GameManager.Instance.AlivePlayerCount++;
                 
-                animator.SetTrigger(AniRevive);
-                animator.SetLayerWeight(_gunLayer, 1);
+                networkAnimator.SetTrigger(AniRevive, true);
+                SetLayer(1);
                 W = 1;
                 simpleKcc.Collider.transform.localPosition = Vector3.zero;
                 simpleKcc.Collider.transform.localRotation = Quaternion.identity;
@@ -319,46 +349,6 @@ namespace Player
             };
         }
 
-        private void UISetting(PlayerInputData data)
-        {
-            if(_uiKeyDownTimer.Expired(Runner) == false)
-                return;
-
-            void UIActive(GameObject uiObj)
-            {
-                var isActive = uiObj.activeSelf;
-                UIManager.ActiveUIAllDisable();
-                if (!isActive)
-                {
-                    uiObj.SetActive(true);
-                    UIManager.AddActiveUI(uiObj);
-                }
-                
-                _uiKeyDownTimer = TickTimer.CreateFromTicks(Runner, 2);
-            }
-
-            if (data.StageSelect)
-            {
-                UIActive(_stageSelectUI.gameObject);
-            }
-            else if (data.ItemInventory)
-            {
-                UIActive(itemInventory.canvas.gameObject);
-            }
-            else if (data.SkillInventory)
-            {
-                UIActive(skillInventory.canvas.gameObject);
-            }
-            else if (data.SkillSelect)
-            {
-                UIActive(skillSelectUI.canvas.gameObject);
-            }
-            else if (data.GameProgress)
-            {
-                UIActive(progressCanvas.gameObject);
-            }
-        }
-        
         private void MoveControl(PlayerInputData data = default)
         {
             if (HasStateAuthority == false)
@@ -369,6 +359,8 @@ namespace Player
             Vector3 dir = Vector3.zero;
             Vector3 jumpImpulse = Vector3.zero;
             bool isMoveX = false, isMoveY = false;
+            bool isDash = false;
+            
             if (data.MoveFront)
             {
                 dir += transform.forward;
@@ -391,21 +383,31 @@ namespace Player
                 dir += transform.right;
                 isMoveY = true;
             }
+            
+            if (data.Dash && !status.isInjury && !status.isRevive)
+            {
+                if (_dashTimer.Expired(Runner))
+                {
+                    _dashTimer = TickTimer.CreateFromSeconds(Runner, 1.0f);
+                    dir *= _dashAmount;
+                }
+            }
 
-            animator.SetFloat(AniInjuryMove, isMoveX || isMoveY ? 1 : 0);
-            animator.SetFloat(AniFrontMove, isMoveX ? 1 : 0);
-            animator.SetFloat(AniSideMove, isMoveY ? 1 : 0);
+            IsMove = isMoveX || isMoveY;
             
             dir *= Runner.DeltaTime * status.GetMoveSpeed() * 110f;
 
+            // if (isDash)
+            //     dir *= 2;
+            
             if (data.Jump)
             {
                 var hitOptions = HitOptions.IncludePhysX | HitOptions.IgnoreInputAuthority;
                 DebugManager.DrawRay(transform.position + new Vector3(0,0.03f,0), -transform.up * 0.1f, Color.blue, 1f);
-                if (Runner.LagCompensation.Raycast(transform.position + new Vector3(0,0.03f,0), -transform.up, 0.1f, Runner.LocalPlayer, out var hit,Int32.MaxValue , hitOptions))
+                if (Runner.LagCompensation.Raycast(transform.position + new Vector3(0,0.03f,0), -transform.up, 0.1f, Object.InputAuthority, out var hit,Int32.MaxValue , hitOptions))
                 {
                     jumpImpulse = Vector3.up * status.jumpPower;
-                    animator.SetTrigger(AniJump);
+                    networkAnimator.SetTrigger(AniJump);
                 }
             }
 
@@ -430,7 +432,8 @@ namespace Player
 
             xRotate = Mathf.Clamp(xRotate, -45, 45); // 위, 아래 제한 
             simpleKcc.SetLookRotation(new Vector3(-xRotate, yRotate, 0));
-            mouseRotateObject.transform.rotation = Quaternion.Euler(-xRotate, transform.localRotation.eulerAngles.y, transform.localRotation.eulerAngles.z);
+            foreach (var mouseRotateObject in mouseRotateObjects)
+                mouseRotateObject.transform.rotation = Quaternion.Euler(-xRotate, transform.localRotation.eulerAngles.y, transform.localRotation.eulerAngles.z);
         }
 
         void WeaponControl(PlayerInputData data)
@@ -438,45 +441,44 @@ namespace Player
             if(status.isInjury)
                 return;
 
-            if (HasInputAuthority)
-            {
-                var overlayCameraSetups = FindObjectsOfType<OverlayCameraSetup>();
-                
-                if (data.ChangeWeapon0)
-                {
-                    foreach (var overlayCameraSetup in overlayCameraSetups)
-                    {
-                        overlayCameraSetup.ChangeWeapon(0);
-                    }
-                    ChangeWeaponRPC(0);
-                }
-                else if (data.ChangeWeapon1)
-                {
-                    foreach (var overlayCameraSetup in overlayCameraSetups)
-                    {
-                        overlayCameraSetup.ChangeWeapon(1);
-                    }
-                    ChangeWeaponRPC(1);
-                }
-                else if (data.ChangeWeapon2)
-                {
-                    foreach (var overlayCameraSetup in overlayCameraSetups)
-                    {
-                        overlayCameraSetup.ChangeWeapon(2);
-                    }
-                    ChangeWeaponRPC(2);
-                }
-            }
-            
+            // if (HasInputAuthority)
+            // {
+            //     var overlayCameraSetups = FindObjectsOfType<OverlayCameraSetup>();
+            //     
+            //     if (data.ChangeWeapon0)
+            //     {
+            //         foreach (var overlayCameraSetup in overlayCameraSetups)
+            //         {
+            //             overlayCameraSetup.ChangeWeapon(0);
+            //         }
+            //         ChangeWeaponRPC(0);
+            //     }
+            //     else if (data.ChangeWeapon1)
+            //     {
+            //         foreach (var overlayCameraSetup in overlayCameraSetups)
+            //         {
+            //             overlayCameraSetup.ChangeWeapon(1);
+            //         }
+            //         ChangeWeaponRPC(1);
+            //     }
+            //     else if (data.ChangeWeapon2)
+            //     {
+            //         foreach (var overlayCameraSetup in overlayCameraSetups)
+            //         {
+            //             overlayCameraSetup.ChangeWeapon(2);
+            //         }
+            //         ChangeWeaponRPC(2);
+            //     }
+            // }
 
             if (data.Attack && weaponSystem.equipment.IsGun)
             {
-                animator.SetBool(AniShoot, true);
+                networkAnimator.Animator.SetBool(AniShoot, true);
                 if(HasStateAuthority) weaponSystem.equipment.AttackAction?.Invoke();
             }
-            else if (animator.GetBool(AniShoot) == true)
+            else if (networkAnimator.Animator.GetBool(AniShoot) == true)
             {
-                animator.SetBool(AniShoot, false);
+                networkAnimator.Animator.SetBool(AniShoot, false);
             }
 
             if (data.ReLoad && weaponSystem.equipment.IsGun)
@@ -506,13 +508,13 @@ namespace Player
         
         #region RPC Function
 
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        private void SetIsCursorRPC(NetworkBool value) => IsCursor = value;
+
         [Rpc(RpcSources.All,RpcTargets.StateAuthority)]
         public new void SetPositionRPC(Vector3 pos) => simpleKcc.SetPosition(pos);
         [Rpc(RpcSources.All,RpcTargets.StateAuthority)]
         public void SetLookRotationRPC(Vector2 look) => simpleKcc.SetLookRotation(look);
-
-        [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
-        private void UISettingRPC(PlayerInputData data) => UISetting(data);
 
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void ChangeWeaponRPC(int index)
@@ -525,15 +527,34 @@ namespace Player
                 DebugManager.Log($"{name}이 총을 [ {index} ]로 변경");
                 
                 // 장비에 맞는 애니메이터 Layer Weight 주기
-                animator.SetLayerWeight(_gunLayer, 0);
-                if (weaponSystem.equipment.IsGun)
-                    animator.SetLayerWeight(_gunLayer, 1);
+                SetLayer();
                 
                 // 변경된 장비에 스킬이 적용되도록 스킬 초기화
                 foreach (var skillBase in skillSystem.skillList)
                 {
                     skillBase.Earn(gameObject);
                 }
+
+                // ik 설정
+                var ik = weaponSystem.equipment as IWeaponIK;
+                if (ik.LeftIK)
+                {
+                    rigController.LeftArmWeight = 1;
+                    rigController.SetLeftArmIK(ik.LeftIK);
+                }
+                else
+                    rigController.LeftArmWeight = 0;
+
+                if (ik.RightIK)
+                {
+                    rigController.RightArmWeight = 1;
+                    rigController.SetRightArmIK(ik.RightIK);
+                }
+                else
+                    rigController.RightArmWeight = 0;
+                
+                // Weapon Type에 따른 Camera 위치 변경
+                weaponCameraController.ChangeType(weaponSystem.equipment);
             }
         }
         

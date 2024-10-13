@@ -10,7 +10,6 @@ using Fusion.Photon.Realtime;
 using Fusion.Sockets;
 using Loading;
 using Manager;
-using Manager.FireBase;
 using SceneExtension;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -38,11 +37,7 @@ namespace Photon
         private NetworkRunner _runner;
         private SessionInfo[] _sessionInfoAll = Array.Empty<SessionInfo>();
 
-        public bool isCursor;
-
         public Action<SessionInfo[]> SessionListUpdateAction;
-
-        private TickTimer _keyDownTimer;
 
         #region Unity Event Function
 
@@ -157,6 +152,8 @@ namespace Photon
                               "누군가가 세션을 나가면 정보 업데이트 해줘야함\n" +
                               "세션에 한명도 없으면 json에 세션 지워줘야함");
 
+            LoadingManager.AddWait();
+            
             // Create the NetworkSceneInfo from the current scene
             var scene = SceneRef.FromIndex(SceneUtility.GetBuildIndexByScenePath(matchingScene));
             var sceneInfo = new NetworkSceneInfo();
@@ -190,8 +187,6 @@ namespace Photon
             }
 
             gameObject.transform.parent = Managers.Instance.transform;
-            
-            _keyDownTimer = TickTimer.CreateFromTicks(_runner, 2);
         }
 
         async Task RandomMatching()
@@ -268,7 +263,6 @@ namespace Photon
         {
             DebugManager.Log($"종료 : {player}");
 
-            UserData.Instance.UserDictionary.Remove(player);
             UserData.Instance.UserLeftRPC(player);
             
             if (runner.ActivePlayers.ToList().Count == 0)
@@ -287,35 +281,6 @@ namespace Photon
                 input.Set(playerInputData);
                 return;
             }
-            
-            // 마우스 휠 클릭시 UI와 상호작용 할 수 있도록 플레이어 정지
-            if (_keyDownTimer.Expired(runner))
-            {
-                if (KeyManager.InputActionDown(KeyToAction.LockCursor))
-                {
-                    switch (Cursor.lockState)
-                    {
-                        case CursorLockMode.None:
-                            Cursor.lockState = CursorLockMode.Locked;
-                            isCursor = true;
-                            break;
-                        case CursorLockMode.Locked:
-                            Cursor.lockState = CursorLockMode.None;
-                            isCursor = false;
-                            break;
-                    }
-                    isCursor = !isCursor;
-
-                    _keyDownTimer = TickTimer.CreateFromTicks(runner, 2);
-                }
-                if (KeyManager.InputAction(KeyToAction.Esc))
-                {
-                    playerInputData.Escape = true;
-                    _keyDownTimer = TickTimer.CreateFromTicks(runner, 2);
-                }
-            }
-            if (Cursor.lockState == CursorLockMode.None)
-                playerInputData.Cursor = trueValue;
 
             if (KeyManager.InputAction(KeyToAction.MoveFront))
                 playerInputData.MoveFront = trueValue;
@@ -325,6 +290,9 @@ namespace Photon
                 playerInputData.MoveLeft = trueValue;
             if (KeyManager.InputAction(KeyToAction.MoveRight))
                 playerInputData.MoveRight = trueValue;
+
+            if (KeyManager.InputAction(KeyToAction.Dash))
+                playerInputData.Dash = trueValue;
             
             if (KeyManager.InputAction(KeyToAction.Jump))
             {
@@ -351,18 +319,8 @@ namespace Photon
             else if (KeyManager.InputActionDown(KeyToAction.ChangeWeapon2))
                 playerInputData.ChangeWeapon2 = trueValue;
 
-            if (KeyManager.InputActionDown(KeyToAction.StageSelect))
-                playerInputData.StageSelect = trueValue;
-            if (KeyManager.InputActionDown(KeyToAction.ItemInventory))
-                playerInputData.ItemInventory = trueValue;
-            if (KeyManager.InputActionDown(KeyToAction.SkillInventory))
-                playerInputData.SkillInventory = trueValue;
-            if (KeyManager.InputActionDown(KeyToAction.SkillSelect))
-                playerInputData.SkillSelect = trueValue;
             if (KeyManager.InputAction(KeyToAction.Interact) || KeyManager.InputActionDown(KeyToAction.Interact))
                 playerInputData.Interact = trueValue;
-            if (KeyManager.InputActionDown(KeyToAction.GameProgress))
-                playerInputData.GameProgress = trueValue;
             
             playerInputData.MouseAxis.x = Input.GetAxis("Mouse X");
             playerInputData.MouseAxis.y = Input.GetAxis("Mouse Y");
@@ -391,8 +349,6 @@ namespace Photon
         {
             DebugManager.Log("서버 연결 성공\n" +
                              $"세션 이름 : {runner.SessionInfo.Name}");
-
-            _keyDownTimer = TickTimer.CreateFromTicks(runner, 2);
         }
 
         public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)

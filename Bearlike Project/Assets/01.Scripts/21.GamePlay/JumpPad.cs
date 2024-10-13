@@ -49,47 +49,36 @@ namespace GamePlay
             else
             {
                 var monster = other.GetComponentInParent<MonsterBase>();
-                if (monster)
+                if (monster != null)
                 {
                     var monsterObj = monster.gameObject;
                     var monsterAgent = monsterObj.GetComponent<NavMeshAgent>();
 
-                    if(monsterAgent != null)    // navmeshagent로 움직임을 관리하는 몬스터일경우
-                        StartCoroutine(ParabolicMove(monsterAgent));
-                    else
+                    if(monsterAgent == null)
                     {
                         // 아닐 경우 => 주사위
-                        
+                        StartCoroutine(DiceJumpCoroutine(monsterObj));
                     }
                 }
             }
         }
-        
-        IEnumerator ParabolicMove(NavMeshAgent agent)
+
+        IEnumerator DiceJumpCoroutine(GameObject monsterObj)
         {
-            var agentPosition = agent.transform.position;
-
-            Vector3 startPos = agentPosition;
-            Vector3 endPos = agentPosition + _navMeshLink.endPoint + Vector3.up * (agent.baseOffset + 1);
+            Vector3 startPos = monsterObj.transform.position;
+            Vector3 endPos = transform.position + _navMeshLink.endPoint;
             
-            float duration = (endPos - startPos).magnitude / (agent.speed + 2);
-            float height = 10.0f; // 포물선의 최고점 높이
-            float t = 0.0f; 
-
-            agent.updatePosition = false;
+            float duration = (endPos - startPos).magnitude / 5; // 길이의 따라 시간이 달라져야함
+            float height = 10f;
             
-            while (t < 1.0f)
+            float normalizedTime = 0.0f;
+            while (normalizedTime < 1.0f)
             {
-                t += Time.deltaTime / duration;
-                float parabolicT = t * 2 - 1;
-                Vector3 currentPos = Vector3.Lerp(startPos, endPos, t);
-                currentPos.y += height * (1 - parabolicT * parabolicT);
-                agent.transform.position = currentPos;//
+                float yOffset = height * 4.0f * (normalizedTime - normalizedTime * normalizedTime);
+                monsterObj.transform.position = Vector3.Lerp(startPos, endPos, normalizedTime) + yOffset * Vector3.up;
+                normalizedTime += Time.deltaTime / duration; 
                 yield return null;
             }
-
-            agent.CompleteOffMeshLink();
-            agent.updatePosition = true;
         }
     }
 }

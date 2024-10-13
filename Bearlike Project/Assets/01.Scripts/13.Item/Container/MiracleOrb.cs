@@ -2,6 +2,7 @@
 using Player;
 using Status;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Util;
 
 namespace Item.Container
@@ -12,8 +13,8 @@ namespace Item.Container
     /// </summary>
     public class MiracleOrb : ItemBase, IInteract
     {
-        private int _skillBlockSpawnCount = 3;
-        private OrbType _orbType;
+        [SerializeField] private int skillBlockSpawnCount = 3;
+        [SerializeField] private OrbType orbType;
         
         #region Unity Event Function
 
@@ -32,20 +33,27 @@ namespace Item.Container
         /// <param name="targetObject"></param>
         public override void GetItem(GameObject targetObject)
         {
+            IsInteract = false;
+            
             PlayerController pc;
             if (targetObject.TryGetComponent(out pc) || targetObject.transform.root.TryGetComponent(out pc))
             {
-                switch (_orbType)
+                switch (orbType)
                 {
                     case OrbType.Random:
-                        if(pc.skillSelectUI.GetSelectCount() <= 0)
-                            pc.skillSelectUI.SpawnRandomSkillBlocks(_skillBlockSpawnCount);
-                        pc.skillSelectUI.AddSelectCount();
+                        if(pc.uiController.skillSelectUI.GetSelectCount() <= 0)
+                            pc.uiController.skillSelectUI.SpawnRandomSkillBlocks(skillBlockSpawnCount);
+                        pc.uiController.skillSelectUI.AddSelectCount();
                         break;
                     case OrbType.HasRandom:
-                        pc.skillSelectUI.SpawnHasRandomSkillBlock(_skillBlockSpawnCount);
+                        pc.uiController.skillSelectUI.SpawnHasRandomSkillBlock(skillBlockSpawnCount);
                         break;
                     case OrbType.Has:
+                        break;
+                    case OrbType.All:
+                        if(pc.uiController.skillSelectUI.AllSelectCount <= 0)
+                            pc.uiController.skillSelectUI.SpawnAllSkillBlock();
+                        ++pc.uiController.skillSelectUI.AllSelectCount;
                         break;
                 }
                 Destroy(gameObject);   
@@ -73,17 +81,19 @@ namespace Item.Container
         public override void SetJsonData(StatusJsonData json)
         {
             base.SetJsonData(json);
-            _skillBlockSpawnCount = json.GetInt("Skill Block Spawn Count");
-            _orbType = (OrbType)json.GetInt("Orb Type");
+            skillBlockSpawnCount = json.GetInt("Skill Block Spawn Count");
+            orbType = (OrbType)json.GetInt("Orb Type");
         }
 
         #endregion
         
+        [System.Serializable]
         private enum OrbType
         {
             Random, // 만렙이 아닌 스킬들 중에서 랜덤 선택
             HasRandom, // 가지고 있는 것들 중에 랜덤
             Has, // 가지고 있는 것들 중에 선택
+            All, // 모든 스킬 중에 선택
         }
     }
 }

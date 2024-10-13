@@ -10,14 +10,7 @@ namespace Skill.Container
         [Header("테이프 변수")]
         [SerializeField] private Sprite buffIcon;
         [SerializeField] private StatusValue<int> damageNullified; // 최대 피해 무효 횟수
-
-        public override void Awake()
-        {
-            base.Awake();
-
-            damageNullified.Max = level.Max;
-        }
-
+        
         public override void Spawned()
         {
             base.Spawned();
@@ -29,11 +22,12 @@ namespace Skill.Container
         {
             base.Earn(earnTargetObject);
             ownerPlayer.status.AddBeforeApplyDamageEvent(DamageNullified);
+            StartCoolTimer(GetCoolTime());
         }
 
         public override void MainLoop()
         {
-            if (IsUse)
+            if (!damageNullified.isMax && IsUse)
             {
                 StartCoolTimer(GetCoolTime());
                 RunRPC();
@@ -44,17 +38,17 @@ namespace Skill.Container
         {
             ++damageNullified.Current;
             ownerPlayer.status.AddBeforeApplyDamageEvent(DamageNullified, false);
-
+            
             if (HasInputAuthority)
             {
-                if (!ownerPlayer.buffCanvas.HasUI(skillName))
+                if (!ownerPlayer.uiController.buffCanvas.HasUI(skillName))
                 {
-                    DebugManager.ToDo("풀 스크린 이펙트 넣기, 테이프 붙이는 효과음, 이펙트 넣기");
-                    URPRendererFeaturesManager.Instance.StartEffect("ShieldEffect");
+                    DebugManager.ToDo("테이프 붙이는 효과음");
+                    URPRendererFeaturesManager.Instance.StartShield();
 
-                    ownerPlayer.buffCanvas.SpawnUI(skillName);
-                    ownerPlayer.buffCanvas.SetIcon(skillName, buffIcon);
-                    ownerPlayer.buffCanvas.SetStackText(skillName, damageNullified);
+                    ownerPlayer.uiController.buffCanvas.SpawnUI(skillName);
+                    ownerPlayer.uiController.buffCanvas.SetIcon(skillName, buffIcon);
+                    ownerPlayer.uiController.buffCanvas.SetStackText(skillName, damageNullified);
                 }
             }
         }
@@ -66,6 +60,13 @@ namespace Skill.Container
             if (explain.Contains("(Level)")) explain = explain.Replace("(Level)", $"{level.Current}");
 
             explain = explain.CalculateNumber();
+        }
+
+        public override void LevelUp(int upAmount = 1, bool isAddInventory = true)
+        {
+            base.LevelUp(upAmount, isAddInventory);
+            damageNullified.Max = level.Max;
+            Run();
         }
 
         /// <summary>
@@ -81,18 +82,22 @@ namespace Skill.Container
                 --damageNullified.Current;
                 applyDamage = 0;
             }
-
-            if (damageNullified.isMin)
+            
+            if(damageNullified.isMin)
             {
+                URPRendererFeaturesManager.Instance.StopShield();
+                
+                StartCoolTimer(GetCoolTime());
+                
                 ownerPlayer.status.RemoveBeforeApplyDamageEvent(DamageNullified);
-                ownerPlayer.buffCanvas.RemoveUI(skillName);
+                ownerPlayer.uiController.buffCanvas.RemoveUI(skillName);
             }
             
             if (HasInputAuthority)
             {
                 DebugManager.ToDo("풀 스크린 이펙트 빼기, 쉴드가 깨지거나 테이프가 때지는 효과랑 효과음 넣기");
-                if (ownerPlayer.buffCanvas.HasUI(skillName))
-                    ownerPlayer.buffCanvas.SetStackText(skillName, damageNullified);
+                if (ownerPlayer.uiController.buffCanvas.HasUI(skillName))
+                    ownerPlayer.uiController.buffCanvas.SetStackText(skillName, damageNullified);
             }
             
             return applyDamage;

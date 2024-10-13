@@ -9,7 +9,7 @@ namespace GamePlay.Sync.Editor
         #region Property
 
         private SerializedProperty TargetTransform;
-        
+
         private SerializedProperty PositionOffset;
         private SerializedProperty PositionMultiple;
         
@@ -62,7 +62,7 @@ namespace GamePlay.Sync.Editor
                 EditorGUILayout.BeginHorizontal();
                 // X 토글
                 Rect rect = EditorGUILayout.GetControlRect(true, EditorGUIUtility.singleLineHeight);
-                rect.width = 80; // 라벨 너비 + 체크박스 너비
+                rect.width = 50; // 라벨 너비 + 체크박스 너비
                 rect.x = 40;
                 IsPositionLocal.boolValue = EditorGUI.ToggleLeft(rect, "Local", IsPositionLocal.boolValue);
 
@@ -87,7 +87,7 @@ namespace GamePlay.Sync.Editor
                 EditorGUILayout.BeginHorizontal();
                 // X 토글
                 Rect rect = EditorGUILayout.GetControlRect(true, EditorGUIUtility.singleLineHeight);
-                rect.width = 80; // 라벨 너비 + 체크박스 너비
+                rect.width = 50; // 라벨 너비 + 체크박스 너비
                 rect.x = 40;
                 IsRotateLocal.boolValue = EditorGUI.ToggleLeft(rect, "Local", IsRotateLocal.boolValue);
                 

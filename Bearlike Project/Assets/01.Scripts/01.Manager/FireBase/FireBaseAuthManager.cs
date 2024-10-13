@@ -28,6 +28,7 @@ namespace Manager.FireBase
         public static void Login(string email, string password, Action<bool> successAction = null) => Instance.FireBaseLogin(email, password, successAction);
         public static void LogOut() => Instance.FireBaseLogOut();
 
+        public static Action<string> AccountCreateAction { get; set; }
         public static Action<AuthError, string> AuthErrorAction { get; set; }
         public static Action<bool> LoginState { get; set; }
 
@@ -36,6 +37,8 @@ namespace Manager.FireBase
         private FirebaseAuth _auth;
         private FirebaseUser _user;
 
+        private bool tryLogin = false;
+        
         private void Init()
         {
             _auth = FirebaseAuth.DefaultInstance;
@@ -78,6 +81,7 @@ namespace Manager.FireBase
                 if (task.IsCanceled)
                 {
                     DebugManager.LogWarning("회원가입 취소");
+                    AccountCreateAction?.Invoke("회원가입 취소");
                     return;
                 }
 
@@ -94,17 +98,22 @@ namespace Manager.FireBase
 
                 FirebaseUser newUser = task.Result.User;
                 DebugManager.Log($"계정 생성 [{newUser.Email}]");
+                AccountCreateAction?.Invoke("계정 생성 성공");
             });
         }
 
         private void FireBaseLogin(string email, string password, Action<bool> successAction)
         {
+            if(tryLogin) return;
+            tryLogin = true;
+
             _auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWith(task =>
             {
                 if (task.IsCanceled)
                 {
                     Debug.LogWarning("로그인 취소");
                     successAction?.Invoke(false);
+                    tryLogin = false;
                     return;
                 }
 
@@ -117,12 +126,14 @@ namespace Manager.FireBase
                         HandleAuthError(errorCode);
                     }
                     successAction?.Invoke(false);
+                    tryLogin = false;
                     return;
                 }
 
                 FirebaseUser newUser = task.Result.User;
                 successAction?.Invoke(true);
                 Debug.Log($"로그인 [{newUser.Email}]");
+                tryLogin = false;
             });
         }
 

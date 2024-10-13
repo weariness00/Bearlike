@@ -13,6 +13,7 @@ namespace Player
     {
         private PlayerController _playerController;
 
+        [SerializeField] private Camera mainCamera;
         public float interactLength = 1f; // 상호작용 범위
 
         private IInteract _currentInteract;
@@ -24,10 +25,12 @@ namespace Player
         private void Awake()
         {
             _playerController = GetComponent<PlayerController>();
+            mainCamera = _playerController.cameraController.targetCamera;
         }
 
-        private void Start()
+        public override void Spawned()
         {
+            base.Spawned();
             InteractInit();
         }
 
@@ -48,7 +51,7 @@ namespace Player
                 return;
             }
 
-            Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+            Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
             var hitOptions = HitOptions.IncludePhysX | HitOptions.IgnoreInputAuthority;
             DebugManager.DrawRay(ray.origin, ray.direction * interactLength, Color.red, 1.0f);
             if (Runner.LagCompensation.Raycast(ray.origin, ray.direction, interactLength, Object.InputAuthority, out var hit, Int32.MaxValue, hitOptions))
@@ -128,16 +131,25 @@ namespace Player
 
         void InteractEnter(GameObject targetObject)
         {
-            if (_playerController.status.isInjury || _playerController.status.isRevive)
+            if (_playerController.status.isInjury)
             {
                 InteractUI.SetKeyActive(true);
                 InteractUI.KeyCodeText.text = "F";
+            }
+            else if (_playerController.status.isRevive && targetObject.TryGetComponent(out PlayerController remotePlayerController))
+            {
+                var battery = ItemObjectList.GetFromName("Battery");
+                if (remotePlayerController.uiController.itemInventory.HasItem(battery.Id))
+                {
+                    InteractUI.SetKeyActive(true);
+                    InteractUI.KeyCodeText.text = "F";
+                }
             }
         }
         
         public void InjuryInteractKeyDown(GameObject targetObject)
         {
-            if (_playerController.status.isInjury)
+            if (_playerController.status.isInjury && _playerController.gameObject != targetObject)
             {
                 var remotePlayerStatus = targetObject.GetComponent<PlayerStatus>();
                 
@@ -170,9 +182,9 @@ namespace Player
             {
                 var remotePlayerController = targetObject.GetComponent<PlayerController>();
                 var battery = ItemObjectList.GetFromName("Battery");
-                if (remotePlayerController.itemInventory.HasItem(battery.Id))
+                if (remotePlayerController.uiController.itemInventory.HasItem(battery.Id))
                 {
-                    remotePlayerController.itemInventory.UseItemRPC(new NetworkItemInfo(){Id = battery.Id, amount = 1});
+                    remotePlayerController.uiController.itemInventory.UseItemRPC(new NetworkItemInfo(){Id = battery.Id, amount = 1});
                     _playerController.status.RecoveryFromReviveActionRPC(); // 대상을 부활
                 }
 

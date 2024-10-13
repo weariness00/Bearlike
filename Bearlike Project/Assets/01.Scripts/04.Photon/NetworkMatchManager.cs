@@ -4,6 +4,7 @@ using Data;
 using Fusion;
 using GamePlay;
 using Loading;
+using Manager;
 using Player;
 using UI;
 using UnityEngine;
@@ -17,7 +18,6 @@ namespace Photon
         public MatchRoomUserUI roomUserUI;
         public SceneReference gameScene;
         public SceneReference playerJoinLoadingScene;
-        public SceneReference magicCotton;
 
         public List<NetworkPrefabRef> PlayerPrefabRefs;
 
@@ -29,12 +29,27 @@ namespace Photon
             LoadingManager.Initialize();
             LoadingManager.StartAction += ()=> SceneManager.LoadScene(playerJoinLoadingScene, LoadSceneMode.Additive);
             LoadingManager.EndAction += () => StartCoroutine(LoadingUnload());
-            SceneManager.LoadScene(magicCotton, LoadSceneMode.Additive);
+            // SceneManager.LoadScene(magicCotton, LoadSceneMode.Additive);
+
+            UserData.Instance.UserLeftAction += PlayerLeft;
+        }
+
+        public void OnDestroy()
+        {
+            UserData.Instance.UserLeftAction -= PlayerLeft;
         }
 
         public override void Spawned()
         {
             StartCoroutine(InitCoroutine());
+        }
+        
+        void PlayerLeft(PlayerRef player)
+        {
+            var clientNumber = UserData.GetClientNumber(player);
+            var targetPlayerModels = playerModels[clientNumber];
+            for (int i = 0; i < targetPlayerModels.transform.childCount; i++)
+                targetPlayerModels.transform.GetChild(i).gameObject.SetActive(false);
         }
 
         public void NextPlayerPrefab()
