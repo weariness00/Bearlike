@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Aggro;
 using BehaviorTree.Base;
 using Data;
@@ -10,9 +9,7 @@ using GamePlay;
 using GamePlay.DeadBodyObstacle;
 using Item.Looting;
 using Manager;
-using Monster.Container;
 using Photon;
-using Player;
 using Status;
 using Unity.VisualScripting;
 using UnityEngine;

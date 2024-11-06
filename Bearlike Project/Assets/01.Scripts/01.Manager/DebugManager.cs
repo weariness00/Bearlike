@@ -154,6 +154,12 @@ namespace Manager
             }
         }
 
+        /// <summary>
+        /// 특정 Object 정보가 있으면 Log를 더블 클릭하면 해당 오브젝트가 선택되도록 설정
+        /// </summary>
+        /// <param name="logString"></param>
+        /// <param name="instanceID"></param>
+        /// <returns></returns>
         private static bool TryGetInstanceIDFromLog(string logString, out int instanceID)
         {
             instanceID = -1;

@@ -1,12 +1,20 @@
 import { query, TableVesrionData } from './db.js'; // 수정된 부분
 
-//#region Gun
-
+// 모든 Gun의 정보 테이블 생성
 async function GunInfoQuery()
 {
     return await query(`SELECT * FROM bearlike.gun`);
 }
 
+// 모든 Gun의 능력치 데이터 테이블 생성
+// - Gun ID
+// - Gun Name
+// - Int형 능력치
+//  ㄴ 능력치 Name
+//  ㄴ 능력치 Value
+// - Float형 능력치
+//  ㄴ 능력치 Name
+//  ㄴ 능력치 Value
 async function GunStatusQuery()
 {
     return await query(
@@ -33,6 +41,7 @@ async function GunStatusQuery()
     );
 }
 
+// 모든 Gun의 정보 테이블을 웹에 Json으로 기재
 async function MakeGunInfoData(app)
 {
     app.get('/Gun/Version', async (req, res) => {
@@ -46,6 +55,7 @@ async function MakeGunInfoData(app)
     }); 
 }
 
+// 모든 Gun의 능력치 데이터 테이블을 웹에 Json으로 기재
 async function MakeGunStatusData(app)
 {
     app.get('/Gun/Status/Version', async (req, res) => {
@@ -70,7 +80,6 @@ async function MakeGunStatusData(app)
         res.json(data);
     })
 }
-//#endregion
 
 export async function MakeData(app)
 {

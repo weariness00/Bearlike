@@ -7,7 +7,6 @@ using Fusion;
 using Manager;
 using Player;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.VFX;
 using Util;
 using Weapon.Bullet;

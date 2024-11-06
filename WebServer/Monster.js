@@ -5,6 +5,15 @@ async function InfoQuery()
     return await query(`SELECT * FROM bearlike.monster`);
 }
 
+// 모든 몬스터의 능력치 데이터 테이블 생성
+// - 몬스터 ID
+// - 몬스터 Name
+// - Int형 능력치
+//  ㄴ 능력치 Name
+//  ㄴ 능력치 Value
+// - Float형 능력치
+//  ㄴ 능력치 Name
+//  ㄴ 능력치 Value
 async function MonsterStatusQuery(){ 
     return await query(
 `SELECT
@@ -29,6 +38,15 @@ async function MonsterStatusQuery(){
 FROM bearlike.monster monster;`);
 }
 
+
+// 몬스터가 드랍하는 아이템에 대한 루팅 테이블 데이터 생성
+// - 몬스터 ID
+// - 몬스터 Name
+// - 드랍할 아이템
+//  ㄴ 아이템 Id
+//  ㄴ 드랍 확률
+//  ㄴ 드랍할 갯수
+//  ㄴ 네트워크상의 아이템인지 개인 아이템인지
 async function LootingTableQuery()
 {
     return await query(
@@ -50,6 +68,7 @@ async function LootingTableQuery()
     );
 }
 
+// 모든 몬스터 정보 테이블 웹에 Json으로 기재
 async function MakeInfoData(app)
 {
     app.get('/Monster/Version', async (req, res) => {
@@ -63,6 +82,7 @@ async function MakeInfoData(app)
     });
 }
 
+// 모든 몬스터의 능력치 데이터 테이블 웹에 Json으로 기재
 async function MakeStatusData(app)
 {
     app.get('/Monster/Status/Version', async (req, res) => {
@@ -82,6 +102,7 @@ async function MakeStatusData(app)
     })
 }
 
+// 모든 몬스터의 루팅 데이터 테이블 웹에 Json으로 기재
 async function MakeLootingTable(app)
 {
     app.get('/Monster/LootingTable/Version', async (req, res) => {

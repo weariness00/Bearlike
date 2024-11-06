@@ -11,7 +11,7 @@ namespace ProjectUpdate
 {
     public class WebManager : Singleton<WebManager>
     {
-        public WebServerInfo webServerInfo;
+        #region Static
 
         /// <summary>
         /// 서버가 연결되었는지 확인
@@ -51,7 +51,14 @@ namespace ProjectUpdate
 
         public static void DownloadJson(string url, string fileName,  Action<string> action = null, bool isLoop = false, bool isSave = false) => Instance.StartCoroutine(Instance.DownloadJsonCoroutine(new WebDownInfo(url, fileName), action, isLoop, isSave));
         public static void DownloadJson(WebDownInfo info,  Action<string> action = null, bool isLoop = false, bool isSave = false) => Instance.StartCoroutine(Instance.DownloadJsonCoroutine(info, action, isLoop, isSave));
+        #endregion
+        public WebServerInfo webServerInfo;
 
+        /// <summary>
+        /// 서버와 연결되었는지 확인
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
         IEnumerator IsConnectCoroutine(Action<bool> action)
         {
             using UnityWebRequest webRequest = UnityWebRequest.Get(webServerInfo.DefaultURL);

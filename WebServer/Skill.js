@@ -1,10 +1,23 @@
 import { query, TableVesrionData } from './db.js'; // 수정된 부분
 
+// 모든 스킬 정보 테이블
+// - 스킬 Name
+// - 스킬 Id
+// - 스킬 설명
 async function InfoQuery()
 {
     return await query(`SELECT * FROM bearlike.skill;`)
 }
 
+// 모든 스킬 능력치 데이터 테이블 생성
+// - 스킬 ID
+// - 스킬 Name
+// - Int형 능력치
+//  ㄴ 능력치 Name
+//  ㄴ 능력치 Value
+// - Float형 능력치
+//  ㄴ 능력치 Name
+//  ㄴ 능력치 Value
 async function StatusQuery(){ 
     return await query(
 `SELECT
@@ -29,6 +42,7 @@ async function StatusQuery(){
 FROM bearlike.skill skill;`);
 }
 
+// 모든 스킬 정보 텥이블 웹에 Json으로 기재
 async function MakeInfoData(app)
 {
     app.get('/Skill/Version', async (req, res) => {
@@ -49,6 +63,7 @@ async function MakeInfoData(app)
     });
 }
 
+// 모든 스킬 능력치 테이블 웹에 Json으로 기재
 async function MakeStatusData(app)
 {
     app.get('/Skill/Status/Version', async (req, res) => {
